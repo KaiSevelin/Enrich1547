@@ -1,46 +1,63 @@
 // scripts/enrich-1547.js
+Hooks.once("ready", () => {
+    // Capture-phase helps when other listeners stop propagation
+    document.body.addEventListener("click", async (ev) => {
+        const el = ev.target?.closest?.("a.enricher-1547");
+        if (!el) return;
 
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        let rolls;
+        try {
+            rolls = JSON.parse(el.dataset.rolls ?? "[]");
+        } catch {
+            rolls = [];
+        }
+
+        if (!Array.isArray(rolls) || rolls.length === 0) {
+            return ui.notifications?.warn("No roll formulas found in @1547[...]");
+        }
+
+        const label = el.dataset.label ?? "@1547";
+        await show1547RollDialog(rolls, label);
+    }, true);
+
+    // Optional: allow keyboard activation (Enter/Space)
+    document.body.addEventListener("keydown", async (ev) => {
+        if (ev.key !== "Enter" && ev.key !== " ") return;
+        const el = ev.target?.closest?.("a.enricher-1547");
+        if (!el) return;
+        el.click();
+    }, true);
+});
 Hooks.once("init", () => {
   CONFIG.TextEditor.enrichers.push({
     // @1547[...]{...}
     pattern: /@1547\[([^\]]+)\](?:\{([^}]+)\})?/g,
-    enricher: async (match, options) => {
-      const raw = match[1] ?? "";
-      const label = match[2] ?? "@1547";
+      enricher: async (match, options) => {
+          const raw = match[1] ?? "";
+          const label = match[2] ?? "@1547";
 
-      // Split into an "array of rolls"
-      // Example: "1d20+5|2d6+3" -> ["1d20+5", "2d6+3"]
-      const rolls = raw
-        .split("|")
-        .map(s => s.trim())
-        .filter(Boolean);
+          const rolls = raw
+              .split("|")
+              .map(s => s.trim())
+              .filter(Boolean);
 
-      const a = document.createElement("a");
-      a.classList.add("enricher-1547");
-      a.dataset.rolls = JSON.stringify(rolls);
-      a.innerHTML = label;
+          // Store data on the element; do NOT attach listeners here
+          const a = document.createElement("a");
+          a.classList.add("enricher-1547");
+          a.dataset.rolls = JSON.stringify(rolls);
+          a.dataset.label = label;
+          a.innerHTML = label;
 
-      a.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        ev.stopPropagation();
+          // Optional: make it behave like a link for accessibility
+          a.setAttribute("role", "button");
+          a.tabIndex = 0;
 
-        let parsed;
-        try {
-          parsed = JSON.parse(a.dataset.rolls ?? "[]");
-        } catch {
-          parsed = [];
-        }
-
-        if (!Array.isArray(parsed) || parsed.length === 0) {
-          return ui.notifications?.warn("No roll formulas found in @1547[...]");
-        }
-
-        await show1547RollDialog(parsed, label);
-      });
-
-      return a;
-    },
-    replaceParent: false
+          return a;
+      },
+      replaceParent: false
   });
 });
 
