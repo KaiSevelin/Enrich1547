@@ -2,7 +2,7 @@
 	"id": "enrich1547",
 	"title": "enrich1547",
 	"description": "Adds a 1547 dice enricher",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"compatibility": {
 		"minimum": "11",
 		"verified": "13.350"
@@ -25,6 +25,6 @@
 		"./css/1547-enricher.css"
 	],
 	"url": "https://github.com/KaiSevelin/enrich1547",
-	"manifest": "https://github.com/KaiSevelin/enrich1547/master/module.json",
-	"download": "https://github.com/KaiSevelin/enrich1547/master/enrich1547.zip"
+	"manifest": "https://raw.githubusercontent.com/KaiSevelin/enrich1547/master/module.json",
+	"download": "https://raw.githubusercontent.com/KaiSevelin/enrich1547/master/enricher1547.zip"
 }
