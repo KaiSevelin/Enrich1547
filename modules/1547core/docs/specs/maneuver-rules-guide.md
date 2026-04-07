@@ -1,0 +1,1127 @@
+# Maneuver Rules Guide
+
+## Purpose
+
+This document rewrites the current maneuver concepts and maneuver list so they
+fit the `1547Core` combat model.
+
+It uses side-activation language throughout and follows the current rules for:
+
+- pre-maneuver declaration and reservation
+- reaction windows
+- post-maneuver crit spending
+- full-turn maneuver commitment and duration
+- safe attacks
+- threat zones, facing, and reach
+
+## Core Concepts
+
+Maneuvers are special combat options attached to one of 4 timing types:
+
+- `pre`
+- `reaction`
+- `post`
+- `full-turn`
+
+### Pre Maneuvers
+
+Pre-maneuvers are attached to an attack when that attack is declared.
+
+They are not separate actions.
+
+If a pre-maneuver has a cost:
+
+- its cost is reserved when the attack is declared
+- the reservation becomes spent only if the attack commits and the maneuver
+  effect is actually used
+- the reservation is released if the attack does not commit or the maneuver
+  effect is not used
+
+If multiple pre-maneuvers are attached to the same declared attack:
+
+- all their legal effects are merged into one attack state before the roll
+- any advantage and disadvantage they create are resolved as net `main die`
+  changes on that declared attack
+- these modifiers are not stored as a separate actor resource outside that
+  action
+
+### Reaction Maneuvers
+
+Reaction maneuvers become available only during a valid reaction window.
+
+Typical triggers include:
+
+- an actor entering a threat zone
+- an attack being declared
+- damage being taken
+
+Reaction maneuvers:
+
+- cost nothing or a stat-point cost
+- each individual maneuver can only be used once per side-based turn unless
+  later content says otherwise
+- do not trigger further reactions
+
+If a reaction creates an attack, that attack should be treated as a safe attack.
+
+Movement-triggered reactions are one unified reaction family.
+
+Within that family:
+
+- some maneuvers trigger because movement crossed a legal reaction point
+- some maneuvers suppress movement-triggered reactions for an attached movement
+- some maneuvers alter the outcome of the triggered movement reaction
+
+### Post Maneuvers
+
+Post-maneuvers are used after damage and after any damage-taken reactions have
+resolved.
+
+Post-maneuvers:
+
+- always spend `CriticalPoints`
+- are resolved defender first, then attacker
+- may only use crit points generated for that attack resolution
+
+When the post-maneuver window closes, any remaining `CriticalPoints` from that
+attack are cleared.
+
+### Full-Turn Maneuvers
+
+Full-turn maneuvers are chosen when an actor on the active side commits to a
+full-turn action during that side's activation.
+
+They are not declared at combat-round start for every actor.
+
+A full-turn maneuver:
+
+- uses that actor's normal move and attack availability when it commits
+- does not trigger normal movement or attack reactions by itself
+- may create a persistent effect
+
+Unless a maneuver says otherwise, a full-turn effect lasts until that same side
+becomes active again.
+
+### Prepared Effects
+
+Prepared effects are setup states that grant a later tactical benefit.
+
+The current prepared effects are:
+
+- `aimed`
+- `braced`
+- `overwatch`
+
+Shared prepared-effect rules:
+
+- they are gained by a setup maneuver rather than by an ordinary attack roll
+- they provide a later benefit while they remain active
+- they are spoiled if the owner becomes the target of an attack unless a later
+  rule explicitly says otherwise
+
+## Side Activation Timing
+
+Combat is side-based, not strict actor-turn based.
+
+That means maneuver timing should be read like this:
+
+- "while the actor's side is active" instead of "on the actor's turn"
+- "during this side activation" instead of "this turn" when the effect is short
+- "until that same side becomes active again" for most full-turn persistent
+  effects
+- "once per side-based turn" when an individual maneuver has a usage limit
+
+Actors on the active side may act in flexible order. A maneuver does not force a
+strict actor sequence unless the content says it does.
+
+Actors may also rotate freely during their side activation without spending
+movement unless a later rule explicitly says otherwise.
+
+## Attack And Maneuver Flow
+
+An attack with maneuver interaction follows this order:
+
+1. the attack is declared
+2. any pre-maneuvers are attached
+3. pre-maneuver costs are reserved
+4. reactions may modify the attack or defense
+5. attacker and defender roll simultaneously
+6. damage is applied
+7. damage-taken reactions may resolve
+8. defender post-maneuvers may spend `CriticalPoints`
+9. attacker post-maneuvers may spend `CriticalPoints`
+10. remaining `CriticalPoints` are cleared
+11. reserved points are spent or released
+12. the action commits
+
+If more than one reaction is legal in the same window:
+
+1. the reacting side chooses which legal reaction to resolve
+2. that chosen reaction resolves fully
+3. no further reactions are generated by that reaction
+
+If multiple actors on the same side could react, that side chooses their order.
+
+## Safe Attacks
+
+A safe attack is still a normal attack except:
+
+- it does not generate crits
+- it does not generate fumbles
+- it does not generate reactions from that attack
+
+A safe attack has no inherent bonus or penalty by itself.
+
+If the maneuver that created the safe attack also changes dice or other values,
+those changes still apply.
+
+In this document, maneuver-created bonus attacks should use the safe-attack rule
+unless a later rules update explicitly creates a separate attack type.
+
+## Threat Zones And Rear Vulnerability
+
+Threat zones depend on the actor's current facing and the reach of the equipped
+weapon.
+
+Examples for an actor facing `N`:
+
+- Reach `1` threatens `NW`, `N`, and `NE`
+- Reach `2` threatens 2 squares out on `NW`, `N`, and `NE`
+- Reach `2-3` threatens 3 squares out on `NW`, `N`, and `NE`, but not the
+  squares immediately adjacent to the actor
+
+That same actor is at a defense disadvantage against attacks from `SW`, `S`, and
+`SE`.
+
+Entering a threatened square commits movement into that square before the
+reaction resolves.
+
+Rotation does not count as movement unless a later rule explicitly says
+otherwise.
+
+## Traits
+
+Traits restrict maneuvers to weapons or attack forms that support them.
+
+Examples:
+
+- a dagger might support `Fast`
+- a polearm might support `Receiving`
+- a shield might support `Shield`
+- a bow should not be eligible for close-control maneuvers unless content
+  explicitly says so
+
+Traits are content filters. They decide whether a maneuver is legal for the
+current weapon or attack setup.
+
+## Weapon Readying And Switching
+
+Weapon readying should follow the current content direction:
+
+- there is no standalone `Draw` maneuver
+- changing to another weapon should normally consume a full-turn-equivalent
+  readying action unless a later rule or item explicitly says otherwise
+- `Quick Draw` is the fast exception for eligible sidearms
+
+This keeps ordinary weapon swapping slower by default while preserving a clear
+special case for sidearms and similar quick-access weapons.
+
+## Advantage And Disadvantage
+
+Some maneuvers grant advantage or impose disadvantage.
+
+In content terms, these should be treated as formalized dice-resolution terms.
+
+For the maneuver rules in this document:
+
+- the `main die` is the first die listed in an item's damage specification or an
+  armor's defense specification
+- advantage adds one `main die`
+- disadvantage removes one `main die`
+- multiple sources of advantage and disadvantage may apply to the same roll
+- each source changes the roll by `1` `main die`
+- advantage and disadvantage cancel each other on a one-for-one basis
+- disadvantage can never reduce a roll below `0` `main dice`
+- risk dice and multiplier dice are separate mechanics and are not the same as
+  advantage or disadvantage
+
+If a specific maneuver needs a different implementation, that maneuver should say
+so explicitly in its effect data or handler.
+
+## Maneuver Categories
+
+## Quick Action Maneuvers
+
+### Opportunity Strike
+
+- Type: `reaction`
+- Trigger: `threat-zone-entered` or `threat-zone-left`
+- Trait: Any ready weapon
+- Skill: None
+- Cost: `DexterityPoints 1`
+
+Effect:
+
+- when another actor enters or leaves the user's legal threat zone, the user may
+  make a free safe attack against that actor
+
+Role:
+
+- movement-control reaction that punishes entering or leaving threat
+
+### Feint
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: `Fast`
+- Skill: `Combat Melee 1`
+- Cost: `DexterityPoints 1`
+
+Effect:
+
+- grants advantage on one attached attack during the current attack declaration
+
+### Quick Reload
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: `Reloading`
+- Skill: `Combat Firearms 2` or `Combat Ranged 2`
+- Cost: `DexterityPoints 1`
+
+Effect:
+
+- reduces reload time by `1`
+- reload time cannot be reduced below `0`
+- a weapon with reload time `1` becomes ready immediately
+- a weapon with reload time `2` requires only `1` more reload step
+- a reload `2` weapon can be made ready immediately if `Quick Reload` is applied
+  twice
+- `Quick Reload` may be applied no more than twice to one declared action
+
+### Reload
+
+- Type: `full-turn`
+- Trigger: `full-turn-activation`
+- Trait: `Reloading`
+- Skill: None
+- Cost: `null`
+
+Effect:
+
+- spends one committed full-turn action to reduce the reload time of a weapon by
+  `1`
+- the actor cannot make other normal move or attack actions once the full-turn
+  maneuver commits
+
+### Point Blank
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: `Point Blank`
+- Skill: `Combat Firearms 1`
+- Cost: `null`
+
+Effect:
+
+- allows a firearm attack at melee distance
+- adds `1` risk die
+- adds `1` multiplier die
+
+### Counter Attack
+
+- Type: `reaction`
+- Trigger: `attack-declared`
+- Trait: `Fast`
+- Skill: `Combat Melee 2`
+- Cost: `DexterityPoints 1`
+
+Effect:
+
+- after the triggering attack resolves, make one free safe attack against the
+  attacker
+
+Role:
+
+- general melee counter that answers an incoming attack whether or not damage was
+  dealt
+
+### Provoke
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: None
+- Skill: `Combat Melee 1` or `Charisma Perform 1`
+- Cost: `CharismaPoints 1`
+
+Effect:
+
+- add `1` risk die to the target's next attack before that same side becomes
+  active again
+
+### Redouble
+
+- Type: `post`
+- Trigger: `post-attack`
+- Trait: `Fast`
+- Skill: `Combat Melee 2` or `Combat Ranged 2` or `Combat Unarmed 2`
+- Requirement: expertise in the weapon category
+- Cost: `CriticalPoints 1`
+
+Effect:
+
+- makes a second safe attack as part of the same attack resolution sequence
+- that follow-up safe attack is made with disadvantage
+
+### Riposte
+
+- Type: `reaction`
+- Trigger: `attack-dealt-0-damage`
+- Trait: `Fast`
+- Skill: `Combat Melee 3`
+- Requirement: expertise in the weapon category
+- Cost: `DexterityPoints 1`
+
+Effect:
+
+- after an incoming attack deals `0` damage, make one free safe attack against
+  the attacker
+
+Role:
+
+- high-skill punish that triggers only when the incoming attack fails to deal
+  damage
+
+### Throw
+
+- Type: `post`
+- Trigger: `post-attack`
+- Trait: `Control`
+- Skill: `Combat Unarmed 3`
+- Requirement: expertise in the weapon category
+- Cost: `CriticalPoints 2`
+
+Effect:
+
+- place the opponent on an adjacent square
+- the opponent becomes prone
+
+### Turn
+
+- Type: `post`
+- Trigger: `post-attack`
+- Trait: None
+- Skill: `Combat Melee 2`
+- Cost: `CriticalPoints 1`
+
+Effect:
+
+- rotate the target to one adjacent facing chosen by the attacker
+
+### Quick Draw
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: `Sidearm`
+- Skill: `Combat Melee 1` or `Combat Firearms 1`
+- Cost: `DexterityPoints 1`
+
+Effect:
+
+- immediately ready one equipped sidearm
+- the actor may use that sidearm as part of the current declared action if it is
+  otherwise legal
+- this is the normal exception to the slower default weapon-switching cadence
+
+## Precision Maneuvers
+
+### Quick Brace
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: `Bracing`
+- Skill: `Combat Firearms 2`
+- Cost: `StrengthPoints 1`
+
+Effect:
+
+- braces a firearm immediately for the attached attack
+- adds `1` multiplier die to each attack made while the braced effect remains
+  active
+
+### Brace
+
+- Type: `full-turn`
+- Trigger: `full-turn-activation`
+- Trait: `Bracing`
+- Skill: None
+- Cost: `null`
+
+Effect:
+
+- creates a braced persistent state
+- while the state remains active, attacks with the braced weapon gain `1`
+  multiplier die
+- the state lasts until that same side becomes active again unless later rules
+  extend or break it earlier
+
+### Quick Aim
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: `Aiming`
+- Skill: `Combat Ranged 2` or `Combat Thrown 2` or `Combat Firearms 2`
+- Cost: `IntelligencePoints 1`
+
+Effect:
+
+- grants advantage on the attached attack
+
+### Aim
+
+- Type: `full-turn`
+- Trigger: `full-turn-activation`
+- Trait: `Aiming`
+- Skill: None
+- Cost: `null`
+
+Effect:
+
+- creates an aimed persistent state
+- the next legal aimed attack before the effect expires gains advantage
+- the state lasts until that same side becomes active again unless consumed
+  earlier
+
+### Suppressing Fire
+
+- Type: `full-turn`
+- Trigger: `full-turn-activation`
+- Trait: `RangedWeapon` or `Firearm`
+- Skill: `Combat Ranged 3` or `Combat Firearms 3`
+- Cost: `StaminaPoints 1`
+
+Effect:
+
+- choose a `5x5` square area within the weapon's `maxRange`
+- this area may be beyond the weapon's normal `longRange`
+- this does not permit an ordinary direct attack beyond `longRange`
+- enemies within the area can move only `1` square for the rest of the current
+  round unless another effect overrides this
+
+### Volley Fire
+
+- Type: `full-turn`
+- Trigger: `full-turn-activation`
+- Trait: `RangedWeapon` or `Firearm`
+- Skill: `Combat Ranged 3` or `Combat Firearms 3`
+- Cost: `StaminaPoints 1`
+- Requirement: at least `2` ready allies on the active side commit to the same
+  volley with ready ranged weapons or firearms
+
+Effect:
+
+- choose a `3x3` square area within the `maxRange` of every participating
+  weapon
+- each participating actor commits a loaded and ready weapon to the volley
+- the participating side makes one shared attacker roll against the area
+- each participating weapon contributes `1` main die to that shared roll
+- the shared volley roll is made with disadvantage
+- each target in the area rolls defense separately against the same attacker
+  result
+
+### Overwatch
+
+- Type: `full-turn`
+- Trigger: `full-turn-activation`
+- Trait: `RangedWeapon` or `Firearm`
+- Skill: `Combat Ranged 3` or `Combat Firearms 3`
+- Cost: `DexterityPoints 1`
+
+Effect:
+
+- choose a `5x5` square area
+- up to `2` enemies per equipped ranged weapon that enter the area before that
+  same side becomes active again may be attacked
+- loading weapons may attack only `1` target while the effect lasts
+- overwatch attacks gain advantage
+
+## Defense Maneuvers
+
+### Parry
+
+- Type: `reaction`
+- Trigger: `attack-declared`
+- Trait: `Parrying`
+- Skill: `Combat Melee 2`
+- Cost: `null`
+
+Effect:
+
+- add `1` armor die against one attack
+- the weapon used to parry cannot be used to attack again during the current
+  side activation unless later rules say otherwise
+
+### Shield
+
+- Type: `reaction`
+- Trigger: `attack-declared`
+- Trait: `Shield`
+- Skill: `Combat Melee 1`
+- Cost: `null`
+
+Effect:
+
+- add `2` armor dice against one attack
+
+### Bind
+
+- Type: `reaction`
+- Trigger: `attack-declared`
+- Trait: `Parrying`
+- Skill: `Combat Melee 1`
+- Requirement: expertise in the weapon category
+- Cost: `StrengthPoints 1`
+
+Effect:
+
+- remove all multiplier dice from the incoming attack
+
+### Lock And Strike
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: `Control`
+- Skill: `Combat Unarmed 2`
+- Requirement: expertise in the weapon category
+- Cost: `StrengthPoints 1`
+
+Effect:
+
+- if the target is already locked, make a free attack with double advantage as
+  part of the declared attack sequence
+- that free attack is a safe attack
+
+### Disengage
+
+- Type: `pre`
+- Trigger: `move-declared`
+- Trait: None
+- Skill: None
+- Cost: `DexterityPoints 1`
+
+Effect:
+
+- the attached movement may ignore free attack reactions from enemy threat zones
+
+### Evade
+
+- Type: `reaction`
+- Trigger: `attack-declared`
+- Trait: None
+- Skill: None
+- Cost: `DexterityPoints 1`
+
+Effect:
+
+- remove `1` multiplier die from the incoming attack
+- cannot be used while wearing medium or heavy armor
+- cannot be used while locked or prone
+
+### Lock
+
+- Type: `post`
+- Trigger: `post-attack`
+- Trait: `Control`
+- Skill: `Combat Unarmed 1`
+- Cost: `CriticalPoints 1`
+
+Effect:
+
+- the target becomes locked
+- a locked target has disadvantage on attack and defense rolls
+- escaping the lock requires spending a later action to make an opposed roll
+- both sides may use `Strength` or `Dexterity` for that opposed roll
+
+### Disarm
+
+- Type: `post`
+- Trigger: `post-attack`
+- Trait: `Disarming`
+- Skill: `Combat Melee 2` or `Combat Unarmed 2`
+- Requirement: expertise in the weapon category
+- Cost: `CriticalPoints 2`
+
+Effect:
+
+- disarm one opponent weapon chosen by the acting player
+- place the disarmed weapon on a battlefield square chosen by the acting player
+  up to `2` squares away from the target
+- this does not undo the resolved attack result
+
+### Receive Charge
+
+- Type: `reaction`
+- Trigger: `charge-declared`
+- Trait: `Receiving`
+- Skill: `Combat Melee 2`
+- Requirement: expertise in the weapon category
+- Cost: `StaminaPoints 1`
+
+Effect:
+
+- against a charging opponent, make a free safe counterattack
+- add `1` multiplier die to that counterattack
+
+### Hook
+
+- Type: `post`
+- Trigger: `post-attack`
+- Trait: `Hooked`
+- Skill: `Combat Melee 2`
+- Cost: `CriticalPoints 2`
+
+Effect:
+
+- against a standing target, trip the target and make it prone
+- against a mounted target, dismount the target, make it prone, and place it on
+  a square next to the mount chosen by the acting player
+- alternatively, pull the target `1` square toward the attacker
+
+### Shield Bash
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: `Shield`
+- Skill: `Combat Melee 2`
+- Cost: `StrengthPoints 1`
+
+Effect:
+
+- if the attached attack deals damage, push the target `1` square
+
+## Offense Maneuvers
+
+### Break Armor
+
+- Type: `post`
+- Trigger: `post-attack`
+- Trait: `Armor breaking`
+- Skill: `Combat Melee 3`
+- Cost: `CriticalPoints 1`
+
+Effect:
+
+- add `1` damage for each `Shield 1` result on the defender's roll
+
+### Convert
+
+- Type: `post`
+- Trigger: `post-attack`
+- Trait: None
+- Skill: `Combat Melee 1`
+- Cost: `CriticalPoints 1`
+
+Effect:
+
+- convert `1` `CriticalPoint` into `1` additional damage
+
+### Half-Sword
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: `Sword`
+- Skill: `Combat Melee 3`
+- Cost: `StrengthPoints 1`
+
+Effect:
+
+- add `1` disadvantage to the attached attack
+- ignore the highest armor die on the defender's roll
+
+### Choke
+
+- Type: `post`
+- Trigger: `post-attack`
+- Trait: `Control`
+- Skill: `Combat Unarmed 2`
+- Requirement: the target is already locked
+- Cost: `CriticalPoints 1`
+
+Effect:
+
+- convert a lock into a choking hold
+- the choking hold escapes the same way as a normal lock
+- while the choking hold remains active, the user may make one free safe unarmed
+  attack during each later side activation in which the lock is maintained
+
+### Press
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: None
+- Skill: `Combat Melee 2`
+- Cost: `StaminaPoints 1`
+
+Effect:
+
+- the target cannot use `Disengage` during the current side activation
+- if the attached attack deals damage, the acting attacker may immediately move
+  `1` square toward the target
+- that follow-up movement does not trigger reactions from that target
+
+### Push Of Pike
+
+- Type: `post`
+- Trigger: `post-attack`
+- Trait: `Polearm`
+- Skill: `Combat Melee 2`
+- Requirement: an adjacent ally also wields a polearm or spear
+- Cost: `CriticalPoints 1`
+
+Effect:
+
+- push the target `1` square directly away from the attacker
+- add `1` `RiskPoint` to the target
+
+### All-in
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: `Heavy`
+- Skill: `Combat Melee 2`
+- Cost: `StrengthPoints 1`
+
+Effect:
+
+- add `1` multiplier die
+- add `2` risk dice
+
+### Charge
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: `Charging`
+- Skill: `Combat Melee 2`, `Outdoor Riding 2`
+- Requirement: mounted and moved at least `3` squares before the attack
+- Cost: `null`
+
+Effect:
+
+- add `1` multiplier die
+- gain advantage on the attached attack
+
+### Bull Charge
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: None
+- Skill: `Combat Melee 3`
+- Requirement: unmounted, using a melee weapon, and moved at least `3` squares
+  before the attack
+- Cost: `null`
+
+Effect:
+
+- add `1` multiplier die
+
+## Tactics Maneuvers
+
+### Formation
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: `Tactical`
+- Skill: `Combat Melee 2`
+- Requirement: an adjacent ally also has access to `Formation`
+- Cost: `null`
+
+Effect:
+
+- gain advantage on one attack roll for each participating actor in the
+  formation, subject to any later stacking limits
+
+### Flank
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: `Tactical`
+- Skill: `Combat Melee 2`
+- Requirement: one ally also threatens the target from another side
+- Cost: `DexterityPoints 1`
+
+Effect:
+
+- add `1` multiplier die to the attached attack
+
+### Shield Wall
+
+- Type: `reaction`
+- Trigger: `attack-declared`
+- Trait: `Shield`
+- Skill: `Tactics`
+- Requirement: an adjacent ally also has access to `Shield Wall`
+- Cost: `null`
+
+Effect:
+
+- grant advantage on one defense roll
+
+### Hold At Bay
+
+- Type: `reaction`
+- Trigger: `threat-zone-entered`
+- Trait: `Polearm` or `Spear`
+- Skill: `Combat Melee 2`
+- Cost: `StrengthPoints 1`
+
+Effect:
+
+- the entering actor must stop in the square it entered
+
+### Guard Ally
+
+- Type: `reaction`
+- Trigger: `attack-declared`
+- Trait: `Shield` or `Tactical`
+- Skill: `Combat Melee 1` or `Tactics`
+- Requirement: an adjacent ally is the target of the attack
+- Cost: `StaminaPoints 1`
+
+Effect:
+
+- add `1` armor die to that ally's defense against the triggering attack
+
+### Advance Under Guard
+
+- Type: `pre`
+- Trigger: `move-declared`
+- Trait: `Shield` or `Tactical`
+- Skill: `Combat Melee 2` or `Tactics`
+- Cost: `StaminaPoints 1`
+
+Effect:
+
+- move up to `2` squares as part of the attached movement
+- that movement does not trigger `Opportunity Strike`
+
+## Command Maneuvers
+
+### Rally
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: None
+- Skill: `Combat Melee 1`, `Charisma Perform 1`
+- Requirement: the user can communicate with nearby allies
+- Cost: `CharismaPoints 1`
+
+Effect:
+
+- allies within `2` squares gain advantage on attack and defense rolls during
+  the current side activation
+
+## Ascetic Maneuvers
+
+### Act Of Faith
+
+- Type: `full-turn`
+- Trigger: `full-turn-activation`
+- Trait: None
+- Skill: `Ascetic`
+- Requirement: a valid drive against the current opponent as adjudicated by the
+  GM
+- Cost: `FaithPoints 1`
+
+Effect:
+
+- add `1` multiplier die to the user's attacks and defenses until that same side
+  becomes active again
+
+## Stealth Maneuvers
+
+### Sap
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: None
+- Skill: `Subterfuge Stealth 1`
+- Requirement: hidden
+- Cost: `null`
+
+Effect:
+
+- make a nonlethal hidden attack
+- if the attack has no fumbles and meets or exceeds the target's defense, the
+  target falls unconscious
+- the target cannot use reactions against that attack
+
+### Assassinate
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: None
+- Skill: `Subterfuge Stealth 2`
+- Requirement: hidden
+- Cost: `null`
+
+Effect:
+
+- make a lethal hidden attack
+- add `1` multiplier die
+- remove all defender reactions against that attack
+
+## Athletic Maneuvers
+
+### Resist Hooking
+
+- Type: `reaction`
+- Trigger: `hook-applied`
+- Trait: None
+- Skill: `Strength Athletics 1`
+- Requirement: unlocked by skill
+- Cost: `StrengthPoints 1`
+
+Effect:
+
+- cancel the trip or dismount effect from a hooking maneuver
+
+### Grapple Break
+
+- Type: `reaction`
+- Trigger: `locked` or `choking-hold`
+- Trait: None
+- Skill: `Combat Unarmed 1` or `Strength Athletics 2`
+- Cost: `StrengthPoints 1`
+
+Effect:
+
+- gain advantage on the next escape roll from `Lock` or `Choke`
+- if that escape succeeds, make one free safe attack
+
+## Stat Maneuvers
+
+### Act Of Strength
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: None
+- Skill: None
+- Cost: `StrengthPoints 1`
+
+Effect:
+
+- add advantage to one melee attack
+
+### Act Of Precision
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: None
+- Skill: None
+- Cost: `IntelligencePoints 1`
+
+Effect:
+
+- add advantage to one ranged attack
+
+### Act Of Toughness
+
+- Type: `reaction`
+- Trigger: `damage-taken`
+- Trait: None
+- Skill: None
+- Cost: `StaminaPoints 1`
+
+Effect:
+
+- reduce damage taken from the triggering attack by `1`
+
+### Act Of Speed
+
+- Type: `pre`
+- Trigger: `move-declared`
+- Trait: None
+- Skill: None
+- Cost: `DexterityPoints 1`
+
+Effect:
+
+- add `2` squares to the attached movement budget
+
+### Act Of Inspiration
+
+- Type: `full-turn`
+- Trigger: `full-turn-activation`
+- Trait: None
+- Skill: None
+- Cost: `CharismaPoints 1`
+
+Effect:
+
+- choose one visible ally
+- that ally gains advantage on attack and defense rolls until that same side
+  becomes active again
+
+### Act Of Heroism
+
+- Type: `pre`
+- Trigger: `attack-declared`
+- Trait: None
+- Skill: None
+- Cost: `FaithPoints 1`
+
+Effect:
+
+- add `1` multiplier die
+- add `1` risk die
+
+### Catch Breath
+
+- Type: `full-turn`
+- Trigger: `full-turn-activation`
+- Trait: None
+- Skill: None
+- Cost: `null`
+
+Effect:
+
+- recover `1` spent stat point
+- clear all stored `RiskPoints`
+
+### Desperate Defense
+
+- Type: `reaction`
+- Trigger: `attack-declared`
+- Trait: None
+- Skill: None
+- Cost: `null`
+
+Effect:
+
+- cancel `1` incoming multiplier die
+- add `1` `RiskPoint` to the defending actor
+
+Implementation note:
+
+- this maneuver should not use a nonstandard maneuver cost type
+- instead, its handler should apply the additional `RiskPoint` as part of the
+  effect outcome
+
+## Automation Notes
+
+This document is compatible with the current automation model only if content and
+handlers follow these principles:
+
+- content declares legal timing, costs, traits, and effect intent
+- core opens the correct maneuver windows
+- core reserves and later spends or releases pre costs
+- handlers return structured outcomes instead of mutating combat documents
+  arbitrarily
+- persistent effects such as `Aim`, `Brace`, `Overwatch`, `Lock`, and `Choke`
+  are tracked as persistent state, not hidden text-only flags
+- advantage and disadvantage resolve through the formal `main die` rule
+- multiple advantage and disadvantage sources resolve as net `main die`
+  modifiers on the same roll
+- maneuver-created bonus attacks use the safe-attack rule
+- maneuver usage tracking enforces once per side-based turn for each individual
+  maneuver unless a rule explicitly overrides it

@@ -1,0 +1,216 @@
+[
+    {
+        "_id": "XmiFUIMXNJSmpAed",
+        "id": "XmiFUIMXNJSmpAed",
+        "name": "Brigandine",
+        "uuid": "Item.XmiFUIMXNJSmpAed",
+        "folder": "Armor",
+        "itemType": "armor",
+        "armorClass": "Medium",
+        "weight": 9,
+        "value": 40,
+        "equipped": false,
+        "traits": [
+            "Noisy"
+        ],
+        "defenseDice": [
+            "Evade",
+            "Armor",
+            "Armor"
+        ],
+        "img": "media/home/games/1547/Items/Brigandine.webp"
+    },
+    {
+        "_id": "5vtW5THEe36DpyQM",
+        "id": "5vtW5THEe36DpyQM",
+        "name": "Cuir Boilii",
+        "uuid": "Item.5vtW5THEe36DpyQM",
+        "folder": "Armor",
+        "itemType": "armor",
+        "armorClass": "Medium",
+        "weight": 5,
+        "value": 18,
+        "equipped": false,
+        "traits": [],
+        "defenseDice": [
+            "Evade",
+            "Armor",
+            "Armor"
+        ],
+        "img": "media/home/games/1547/Items/Cuir boilii.webp"
+    },
+    {
+        "_id": "8HHK2qAtkk3UIm63",
+        "id": "8HHK2qAtkk3UIm63",
+        "name": "Cuirass",
+        "uuid": "Item.8HHK2qAtkk3UIm63",
+        "folder": "Armor",
+        "itemType": "armor",
+        "armorClass": "Heavy",
+        "weight": 8,
+        "value": 60,
+        "equipped": false,
+        "traits": [
+            "Noisy"
+        ],
+        "defenseDice": [
+            "Armor",
+            "Armor",
+            "Armor"
+        ],
+        "img": "media/home/games/1547/Items/Cuirass.webp"
+    },
+    {
+        "_id": "NtuIgSoiGq1cgS3j",
+        "id": "NtuIgSoiGq1cgS3j",
+        "name": "Full Plate",
+        "uuid": "Item.NtuIgSoiGq1cgS3j",
+        "folder": "Armor",
+        "itemType": "armor",
+        "armorClass": "Very Heavy",
+        "weight": 24,
+        "value": 300,
+        "equipped": false,
+        "traits": [
+            "Resistance",
+            "Encumbering",
+            "Noisy"
+        ],
+        "defenseDice": [
+            "Armor",
+            "Armor",
+            "Armor"
+        ],
+        "img": "media/home/games/1547/Items/Full plate.webp"
+    },
+    {
+        "_id": "Sg4Z9ZuPuvJPA1ZL",
+        "id": "Sg4Z9ZuPuvJPA1ZL",
+        "name": "Hauberk",
+        "uuid": "Item.Sg4Z9ZuPuvJPA1ZL",
+        "folder": "Armor",
+        "itemType": "armor",
+        "armorClass": "Medium",
+        "weight": 10,
+        "value": 55,
+        "equipped": false,
+        "traits": [
+            "Flexible",
+            "Noisy"
+        ],
+        "defenseDice": [
+            "Evade",
+            "Armor",
+            "Armor"
+        ],
+        "img": "media/home/games/1547/Items/Hauberk.webp"
+    },
+    {
+        "_id": "HFkQFGKAqizAJ2TD",
+        "id": "HFkQFGKAqizAJ2TD",
+        "name": "Infantry Plate",
+        "uuid": "Item.HFkQFGKAqizAJ2TD",
+        "folder": "Armor",
+        "itemType": "armor",
+        "armorClass": "Heavy",
+        "weight": 18,
+        "value": 120,
+        "equipped": false,
+        "traits": [
+            "Noisy"
+        ],
+        "defenseDice": [
+            "Armor",
+            "Armor",
+            "Armor"
+        ],
+        "img": "media/home/games/1547/Items/Infantry plate.webp"
+    },
+    {
+        "_id": "9njxPwtelimMHnmC",
+        "id": "9njxPwtelimMHnmC",
+        "name": "Leather Jerkin",
+        "uuid": "Item.9njxPwtelimMHnmC",
+        "folder": "Armor",
+        "itemType": "armor",
+        "armorClass": "Light",
+        "weight": 3,
+        "value": 12,
+        "equipped": false,
+        "traits": [
+            "Concealable",
+            "Flexible"
+        ],
+        "defenseDice": [
+            "Evade",
+            "Evade",
+            "Armor"
+        ],
+        "img": "media/home/games/1547/Items/Leather jerkin.webp"
+    },
+    {
+        "_id": "3E1CBj0UvOLkK4Op",
+        "id": "3E1CBj0UvOLkK4Op",
+        "name": "Munition Plate",
+        "uuid": "Item.3E1CBj0UvOLkK4Op",
+        "folder": "Armor",
+        "itemType": "armor",
+        "armorClass": "Heavy",
+        "weight": 20,
+        "value": 150,
+        "equipped": false,
+        "traits": [
+            "Noisy"
+        ],
+        "defenseDice": [
+            "Armor",
+            "Armor",
+            "Armor"
+        ],
+        "img": "media/home/games/1547/Items/Munition plate.webp"
+    },
+    {
+        "_id": "gPHGJJhTH1gKsKzb",
+        "id": "gPHGJJhTH1gKsKzb",
+        "name": "Padded Jack",
+        "uuid": "Item.gPHGJJhTH1gKsKzb",
+        "folder": "Armor",
+        "itemType": "armor",
+        "armorClass": "Light",
+        "weight": 4.5,
+        "value": 10,
+        "equipped": false,
+        "traits": [
+            "Soft"
+        ],
+        "defenseDice": [
+            "Evade",
+            "Evade",
+            "Armor"
+        ],
+        "img": "media/home/games/1547/Items/Quilted jack.webp"
+    },
+    {
+        "_id": "Ks0DY58ekFT8itt3",
+        "id": "Ks0DY58ekFT8itt3",
+        "name": "Tournament Armor",
+        "uuid": "Item.Ks0DY58ekFT8itt3",
+        "folder": "Armor",
+        "itemType": "armor",
+        "armorClass": "Very Heavy",
+        "weight": 30,
+        "value": 500,
+        "equipped": false,
+        "traits": [
+            "Resistance",
+            "Encumbering",
+            "Noisy"
+        ],
+        "defenseDice": [
+            "Armor",
+            "Armor",
+            "Armor"
+        ],
+        "img": "media/home/games/1547/Items/Tournament plate.webp"
+    }
+]
