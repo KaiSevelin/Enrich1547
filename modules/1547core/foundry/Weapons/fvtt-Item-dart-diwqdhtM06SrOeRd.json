@@ -1,4 +1,4 @@
-{
+﻿{
     "_id": "diwqdhtM06SrOeRd",
     "name": "Dart",
     "type": "equippableItem",
@@ -1100,7 +1100,7 @@
             "WeaponType": "Thrown",
             "ReloadTime": 0,
             "ReloadProgress": 0,
-            "Attack": "Finesse, Finesse, Finesse",
+            "Attack": "Grace, Grace, Grace",
             "AttackB": "",
             "AttackC": "",
             "Traits_Aiming": true,
@@ -1165,9 +1165,9 @@
                         "name": "Default",
                         "attackType": "thrown",
                         "dice": [
-                            "Finesse",
-                            "Finesse",
-                            "Finesse"
+                            "Grace",
+                            "Grace",
+                            "Grace"
                         ],
                         "tags": []
                     }

@@ -1,4 +1,4 @@
-[
+﻿[
     {
         "_id": "ladrJocl1LJMEBsy",
         "id": "ladrJocl1LJMEBsy",
@@ -121,7 +121,7 @@
                 "dice": [
                     "Control",
                     "Control",
-                    "Finesse"
+                    "Grace"
                 ],
                 "tags": []
             }
@@ -204,7 +204,7 @@
                 "name": "Default",
                 "attackType": "ranged",
                 "dice": [
-                    "Finesse",
+                    "Grace",
                     "Penetration",
                     "Multiplier"
                 ],
@@ -253,8 +253,8 @@
                 "name": "Default",
                 "attackType": "melee",
                 "dice": [
-                    "Finesse",
-                    "Finesse",
+                    "Grace",
+                    "Grace",
                     "Control"
                 ],
                 "tags": []
@@ -296,9 +296,9 @@
                 "name": "Default",
                 "attackType": "thrown",
                 "dice": [
-                    "Finesse",
-                    "Finesse",
-                    "Finesse"
+                    "Grace",
+                    "Grace",
+                    "Grace"
                 ],
                 "tags": []
             }
@@ -341,7 +341,7 @@
                 "name": "Thrust",
                 "attackType": "melee",
                 "dice": [
-                    "Finesse",
+                    "Grace",
                     "Balanced",
                     "Balanced"
                 ],
@@ -753,7 +753,7 @@
                 "dice": [
                     "Balanced",
                     "Heavy",
-                    "Finesse"
+                    "Grace"
                 ],
                 "tags": []
             }
@@ -795,7 +795,7 @@
                 "name": "Default",
                 "attackType": "ranged",
                 "dice": [
-                    "Finesse",
+                    "Grace",
                     "Penetration",
                     "Balanced"
                 ],
@@ -928,8 +928,8 @@
                 "name": "Default",
                 "attackType": "melee",
                 "dice": [
-                    "Finesse",
-                    "Finesse",
+                    "Grace",
+                    "Grace",
                     "Balanced"
                 ],
                 "tags": []
@@ -1014,8 +1014,8 @@
                 "name": "Default",
                 "attackType": "melee",
                 "dice": [
-                    "Finesse",
-                    "Finesse",
+                    "Grace",
+                    "Grace",
                     "Control"
                 ],
                 "tags": []
@@ -1102,8 +1102,8 @@
                 "attackType": "melee",
                 "dice": [
                     "Control",
-                    "Finesse",
-                    "Finesse"
+                    "Grace",
+                    "Grace"
                 ],
                 "tags": []
             }
@@ -1246,8 +1246,8 @@
                 "name": "Thrust",
                 "attackType": "melee",
                 "dice": [
-                    "Finesse",
-                    "Finesse",
+                    "Grace",
+                    "Grace",
                     "Balanced"
                 ],
                 "tags": []
@@ -1257,7 +1257,7 @@
                 "name": "Bind",
                 "attackType": "melee",
                 "dice": [
-                    "Finesse",
+                    "Grace",
                     "Control",
                     "Balanced"
                 ],
@@ -1300,8 +1300,8 @@
                 "name": "Default",
                 "attackType": "melee",
                 "dice": [
-                    "Finesse",
-                    "Finesse",
+                    "Grace",
+                    "Grace",
                     "Control"
                 ],
                 "tags": []
@@ -1383,8 +1383,8 @@
                 "name": "Default",
                 "attackType": "ranged",
                 "dice": [
-                    "Finesse",
-                    "Finesse",
+                    "Grace",
+                    "Grace",
                     "Balanced"
                 ],
                 "tags": [],
@@ -1476,8 +1476,8 @@
                 "name": "Default",
                 "attackType": "thrown",
                 "dice": [
-                    "Finesse",
-                    "Finesse",
+                    "Grace",
+                    "Grace",
                     "Balanced"
                 ],
                 "tags": []
@@ -1660,7 +1660,7 @@
                 "attackType": "ranged",
                 "dice": [
                     "Lethality",
-                    "Finesse",
+                    "Grace",
                     "Risk"
                 ],
                 "tags": [],
@@ -1722,7 +1722,7 @@
             "MeleeWeapon",
             "Sword"
         ],
-        "img": "media/home/games/1547/Items/Zweihänder.webp",
+        "img": "media/home/games/1547/Items/ZweihÃ¤nder.webp",
         "minReach": 2,
         "maxReach": 2,
         "usesAmmo": false,

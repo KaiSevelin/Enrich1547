@@ -1,4 +1,4 @@
-{
+﻿{
     "_id": "PcbdeyJ6Vlj7FSO3",
     "name": "Pike",
     "type": "equippableItem",
@@ -1100,7 +1100,7 @@
             "WeaponType": "Polearm",
             "ReloadTime": 0,
             "ReloadProgress": 0,
-            "Attack": "Control, Finesse, Finesse",
+            "Attack": "Control, Grace, Grace",
             "AttackB": "",
             "AttackC": "",
             "Traits_Aiming": false,
@@ -1164,8 +1164,8 @@
                         "attackType": "melee",
                         "dice": [
                             "Control",
-                            "Finesse",
-                            "Finesse"
+                            "Grace",
+                            "Grace"
                         ],
                         "tags": []
                     }
@@ -1190,3 +1190,4 @@
         "default": 0
     }
 }
+

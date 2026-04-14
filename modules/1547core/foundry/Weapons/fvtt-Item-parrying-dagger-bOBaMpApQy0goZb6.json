@@ -1,4 +1,4 @@
-{
+﻿{
     "_id": "bOBaMpApQy0goZb6",
     "name": "Parrying Dagger",
     "type": "equippableItem",
@@ -1100,7 +1100,7 @@
             "WeaponType": "Knife",
             "ReloadTime": 0,
             "ReloadProgress": 0,
-            "Attack": "Finesse, Finesse, Control",
+            "Attack": "Grace, Grace, Control",
             "AttackB": "",
             "AttackC": "",
             "Traits_Aiming": false,
@@ -1162,8 +1162,8 @@
                         "name": "Default",
                         "attackType": "melee",
                         "dice": [
-                            "Finesse",
-                            "Finesse",
+                            "Grace",
+                            "Grace",
                             "Control"
                         ],
                         "tags": []
@@ -1188,3 +1188,4 @@
         "default": 0
     }
 }
+

@@ -11,7 +11,8 @@ function getDiceTermCode(dieName) {
         case "Balanced": return "b";
         case "Control": return "c";
         case "Evade": return "e";
-        case "Finesse": return "f";
+        case "Finesse":
+        case "Grace": return "g";
         case "Heavy": return "h";
         case "Lethality": return "l";
         case "Penetration": return "p";
@@ -41,11 +42,58 @@ function extractDice1547Totals(game, message) {
     };
 }
 
+function waitForDice1547HookResult(message, { timeoutMs = 5000 } = {}) {
+    const messageId = String(message?.id ?? message ?? "").trim();
+    if (!messageId || !globalThis?.Hooks?.on) return Promise.resolve(null);
+    return new Promise((resolve) => {
+        let settled = false;
+        let hookId = null;
+        const finish = (result) => {
+            if (settled) return;
+            settled = true;
+            if (hookId != null) {
+                globalThis.Hooks.off("dice1547RollResult", hookId);
+            }
+            resolve(result?.totals ? {
+                damage: Number(result.totals.damage ?? 0) || 0,
+                protection: Number(result.totals.protection ?? 0) || 0,
+                crit: Number(result.totals.crit ?? 0) || 0,
+                fumble: Number(result.totals.fumble ?? 0) || 0,
+                multiplier: Number(result.totals.multiplier ?? 1) || 1,
+            } : null);
+        };
+        hookId = globalThis.Hooks.on("dice1547RollResult", (result, hookMessage) => {
+            if (String(hookMessage?.id ?? "").trim() !== messageId) return;
+            finish(result);
+        });
+        setTimeout(() => finish(null), timeoutMs);
+    });
+}
+
+async function waitForDice1547Totals(game, message, { timeoutMs = 5000, intervalMs = 50 } = {}) {
+    const immediate = extractDice1547Totals(game, message);
+    if (immediate) return immediate;
+
+    const hookPromise = waitForDice1547HookResult(message, { timeoutMs });
+    const pollPromise = (async () => {
+        const startedAt = Date.now();
+        while ((Date.now() - startedAt) < timeoutMs) {
+            const totals = extractDice1547Totals(game, message);
+            if (totals) return totals;
+            await new Promise((resolve) => setTimeout(resolve, intervalMs));
+        }
+        return extractDice1547Totals(game, message);
+    })();
+
+    const [hookResult, polledResult] = await Promise.all([hookPromise, pollPromise]);
+    return hookResult ?? polledResult ?? null;
+}
+
 async function rollFormulaToChatAndSummarize({ Roll, speaker, formula, flavor, game }) {
     if (!formula) return null;
     const roll = await new Roll(formula).evaluate({ async: true });
     const message = await roll.toMessage({ speaker, flavor });
-    return extractDice1547Totals(game, message);
+    return waitForDice1547Totals(game, message);
 }
 async function consumeHudFullTurn(actor) {
     if (!actor?.update) return;

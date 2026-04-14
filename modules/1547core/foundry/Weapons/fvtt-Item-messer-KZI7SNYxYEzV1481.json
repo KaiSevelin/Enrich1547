@@ -1,4 +1,4 @@
-{
+﻿{
     "_id": "KZI7SNYxYEzV1481",
     "name": "Messer",
     "type": "equippableItem",
@@ -1100,7 +1100,7 @@
             "WeaponType": "Blade",
             "ReloadTime": 0,
             "ReloadProgress": 0,
-            "Attack": "Finesse, Finesse, Balanced",
+            "Attack": "Grace, Grace, Balanced",
             "AttackB": "",
             "AttackC": "",
             "Traits_Aiming": false,
@@ -1162,8 +1162,8 @@
                         "name": "Default",
                         "attackType": "melee",
                         "dice": [
-                            "Finesse",
-                            "Finesse",
+                            "Grace",
+                            "Grace",
                             "Balanced"
                         ],
                         "tags": []
@@ -1188,3 +1188,4 @@
         "default": 0
     }
 }
+

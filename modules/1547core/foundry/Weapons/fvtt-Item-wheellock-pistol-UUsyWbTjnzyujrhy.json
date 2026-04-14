@@ -1,4 +1,4 @@
-{
+﻿{
     "_id": "UUsyWbTjnzyujrhy",
     "name": "Wheellock Pistol",
     "type": "equippableItem",
@@ -1100,7 +1100,7 @@
             "WeaponType": "Firearm",
             "ReloadTime": 1,
             "ReloadProgress": 0,
-            "Attack": "Lethality, Finesse, Risk",
+            "Attack": "Lethality, Grace, Risk",
             "AttackB": "",
             "AttackC": "",
             "Traits_Aiming": true,
@@ -1166,7 +1166,7 @@
                         "attackType": "ranged",
                         "dice": [
                             "Lethality",
-                            "Finesse",
+                            "Grace",
                             "Risk"
                         ],
                         "tags": []
@@ -1191,3 +1191,4 @@
         "default": 0
     }
 }
+

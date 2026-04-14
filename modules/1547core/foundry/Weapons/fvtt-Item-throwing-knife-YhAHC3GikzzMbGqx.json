@@ -1,4 +1,4 @@
-{
+﻿{
     "_id": "YhAHC3GikzzMbGqx",
     "name": "Throwing Knife",
     "type": "equippableItem",
@@ -1100,7 +1100,7 @@
             "WeaponType": "Thrown",
             "ReloadTime": 0,
             "ReloadProgress": 0,
-            "Attack": "Finesse, Finesse, Balanced",
+            "Attack": "Grace, Grace, Balanced",
             "AttackB": "",
             "AttackC": "",
             "Traits_Aiming": true,
@@ -1165,8 +1165,8 @@
                         "name": "Default",
                         "attackType": "thrown",
                         "dice": [
-                            "Finesse",
-                            "Finesse",
+                            "Grace",
+                            "Grace",
                             "Balanced"
                         ],
                         "tags": []

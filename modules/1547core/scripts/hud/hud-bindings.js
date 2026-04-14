@@ -10,6 +10,20 @@
         clearHudReactionWindow,
         getActiveDamageTakenWindow,
         clearHudDamageTakenWindow,
+        getDiceTabAttackSelection,
+        setDiceTabAttackSelectionCount,
+        clearDiceTabAttackSelection,
+        setPendingNextAttackDice,
+        clearPendingNextAttackDice,
+        getDiceTabSkillDice,
+        setDiceTabSkillDice,
+        clearDiceTabSkillDice,
+        setPendingNextSkillDice,
+        clearPendingNextSkillDice,
+        clearIgnoredCostManeuver,
+        clearIgnoredCostManeuvers,
+        setIgnoredCostManeuver,
+        confirmManeuverCostSelection,
         getActivePostManeuverWindow,
         toggleSelectedPostManeuver,
         getSelectedPostManeuverId,
@@ -30,6 +44,9 @@
         executeWeaponReadyAction,
         executeItemUnequipAction,
         sanitizeCounterRollDice,
+        Roll,
+        ChatMessage,
+        getAttackDiceTabOptions,
     } = deps;
 
     for (const select of root.querySelectorAll("[data-hud-inventory-filter]")) {
@@ -52,18 +69,23 @@
             void renderHudForSelection();
         });
     }
-    for (const input of root.querySelectorAll("[data-hud-dice-attack-input]")) {
-        input.addEventListener("change", (event) => {
+    for (const button of root.querySelectorAll("[data-hud-dice-attack-adjust]")) {
+        button.addEventListener("click", (event) => {
             if (!token?.actor) return;
-            const dieKey = event.currentTarget.dataset.hudDiceAttackInput;
-            setDiceTabAttackSelectionCount(token.actor.id, dieKey, event.currentTarget.value);
+            const dieKey = event.currentTarget.dataset.hudDiceAttackAdjust;
+            const delta = Number(event.currentTarget.dataset.hudDiceDelta ?? 0) || 0;
+            const current = getDiceTabAttackSelection(token.actor.id);
+            const nextValue = Math.max(0, Number(current?.[dieKey] ?? 0) + delta);
+            setDiceTabAttackSelectionCount(token.actor.id, dieKey, nextValue);
             void renderHudForSelection();
         });
     }
-    for (const input of root.querySelectorAll("[data-hud-dice-skill-input]")) {
-        input.addEventListener("change", (event) => {
+    for (const button of root.querySelectorAll("[data-hud-dice-skill-adjust]")) {
+        button.addEventListener("click", (event) => {
             if (!token?.actor) return;
-            setDiceTabSkillDice(token.actor.id, event.currentTarget.value);
+            const delta = Number(event.currentTarget.dataset.hudDiceDelta ?? 0) || 0;
+            const current = Math.max(0, Number(getDiceTabSkillDice(token.actor.id)) || 0);
+            setDiceTabSkillDice(token.actor.id, Math.max(0, current + delta));
             void renderHudForSelection();
         });
     }

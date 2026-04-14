@@ -1,4 +1,4 @@
-# Dice Resolution Spec V1.1
+﻿# Dice Resolution Spec V1.1
 
 ## Purpose
 
@@ -31,7 +31,7 @@ At runtime, `1547` uses Foundry custom dice terms:
 - `db` = `Balanced`
 - `dc` = `Control`
 - `de` = `Evade`
-- `df` = `Finesse`
+- `dg` = `Grace`
 - `dh` = `Heavy`
 - `dl` = `Lethality`
 - `dp` = `Penetration`
@@ -47,10 +47,10 @@ Example:
 means one each of:
 
 - `Balanced`
-- `Finesse`
+- `Grace`
 - `Heavy`
 
-Stored data should use canonical family names such as `Balanced`, `Finesse`,
+Stored data should use canonical family names such as `Balanced`, `Grace`,
 and `Heavy`. Roll formulas should convert those names to the Foundry custom
 dice-term notation when executed.
 
@@ -87,7 +87,7 @@ Example:
 ```js
 {
   orderedDice: [
-    { dieType: "Finesse", source: "weapon-base" },
+    { dieType: "Grace", source: "weapon-base" },
     { dieType: "Control", source: "weapon-base" },
     { dieType: "Balanced", source: "weapon-base" }
   ]
@@ -118,7 +118,7 @@ The canonical stored weapon profile shape is:
   id,
   name,
   attackType,
-  dice: ["Finesse", "Control", "Balanced"],
+  dice: ["Grace", "Control", "Balanced"],
   allowedAmmoTypes: [],
   tags: []
 }
@@ -280,7 +280,7 @@ Otherwise they remain non-automated narrative or GM-adjudicated effects.
 Base pool:
 
 ```js
-["Finesse", "Control", "Balanced"]
+["Grace", "Control", "Balanced"]
 ```
 
 With:
@@ -293,8 +293,8 @@ Final ordered pool:
 
 ```js
 [
-  "Finesse",
-  "Finesse",
+  "Grace",
+  "Grace",
   "Control",
   "Balanced",
   "Risk",
@@ -322,7 +322,7 @@ Weapon profile:
 {
   id: "shot",
   attackType: "ranged",
-  dice: ["Balanced", "Finesse"],
+  dice: ["Balanced", "Grace"],
   allowedAmmoTypes: ["Arrow"],
   tags: []
 }
@@ -345,7 +345,7 @@ Final attacker definition:
 
 ```js
 {
-  dice: ["Balanced", "Finesse", "Penetration"],
+  dice: ["Balanced", "Grace", "Penetration"],
   tags: ["Reloading", "Armor Breaking"],
   resultModifiers: [
     { type: "ignoreProtectionResult", value: 1 }
@@ -368,7 +368,7 @@ Weapon profile:
 {
   id: "shot",
   attackType: "ranged",
-  dice: ["Lethality", "Finesse", "Risk"],
+  dice: ["Lethality", "Grace", "Risk"],
   allowedAmmoTypes: ["Bullet"],
   tags: []
 }
@@ -408,3 +408,4 @@ This spec is intentionally aligned with the current equipment schema:
 If the combat engine later gains more granular post-roll effect timing or more
 complex ammo substitution behavior, that should be introduced as a future spec
 revision rather than implied in this version.
+

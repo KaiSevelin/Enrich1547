@@ -1,4 +1,4 @@
-[
+﻿[
     {
         "_id": "ladrJocl1LJMEBsy",
         "name": "Arming Sword",
@@ -3497,7 +3497,7 @@
                 "WeaponType": "Polearm",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
-                "Attack": "Control, Control, Finesse",
+                "Attack": "Control, Control, Grace",
                 "AttackB": "",
                 "AttackC": "",
                 "Traits_Aiming": false,
@@ -3565,7 +3565,7 @@
                             "dice": [
                                 "Control",
                                 "Control",
-                                "Finesse"
+                                "Grace"
                             ],
                             "tags": []
                         }
@@ -5881,7 +5881,7 @@
                 "WeaponType": "Crossbow",
                 "ReloadTime": 1,
                 "ReloadProgress": 0,
-                "Attack": "Finesse, Penetration, Multiplier",
+                "Attack": "Grace, Penetration, Multiplier",
                 "AttackB": "",
                 "AttackC": "",
                 "Traits_Aiming": true,
@@ -5948,7 +5948,7 @@
                             "name": "Default",
                             "attackType": "ranged",
                             "dice": [
-                                "Finesse",
+                                "Grace",
                                 "Penetration",
                                 "Multiplier"
                             ],
@@ -7082,7 +7082,7 @@
                 "WeaponType": "Knife",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
-                "Attack": "Finesse, Finesse, Control",
+                "Attack": "Grace, Grace, Control",
                 "AttackB": "",
                 "AttackC": "",
                 "Traits_Aiming": false,
@@ -7147,8 +7147,8 @@
                             "name": "Default",
                             "attackType": "melee",
                             "dice": [
-                                "Finesse",
-                                "Finesse",
+                                "Grace",
+                                "Grace",
                                 "Control"
                             ],
                             "tags": []
@@ -8275,7 +8275,7 @@
                 "WeaponType": "Thrown",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
-                "Attack": "Finesse, Finesse, Finesse",
+                "Attack": "Grace, Grace, Grace",
                 "AttackB": "",
                 "AttackC": "",
                 "Traits_Aiming": true,
@@ -8340,9 +8340,9 @@
                             "name": "Default",
                             "attackType": "thrown",
                             "dice": [
-                                "Finesse",
-                                "Finesse",
-                                "Finesse"
+                                "Grace",
+                                "Grace",
+                                "Grace"
                             ],
                             "tags": []
                         }
@@ -9470,7 +9470,7 @@
                 "WeaponType": "Blade",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
-                "Attack": "Thrust: Finesse, Balanced, Balanced",
+                "Attack": "Thrust: Grace, Balanced, Balanced",
                 "AttackB": "Swing: Balanced, Balanced, Control",
                 "AttackC": "",
                 "Traits_Aiming": false,
@@ -9535,7 +9535,7 @@
                             "name": "Thrust",
                             "attackType": "melee",
                             "dice": [
-                                "Finesse",
+                                "Grace",
                                 "Balanced",
                                 "Balanced"
                             ],
@@ -19068,7 +19068,7 @@
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
                 "Attack": "Swing: Balanced, Heavy, Control",
-                "AttackB": "Thrust: Balanced, Heavy, Finesse",
+                "AttackB": "Thrust: Balanced, Heavy, Grace",
                 "AttackC": "",
                 "Traits_Aiming": false,
                 "Traits_ArmorBreaking": false,
@@ -19148,7 +19148,7 @@
                             "dice": [
                                 "Balanced",
                                 "Heavy",
-                                "Finesse"
+                                "Grace"
                             ],
                             "tags": []
                         }
@@ -20274,7 +20274,7 @@
                 "WeaponType": "Bow",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
-                "Attack": "Finesse, Penetration, Balanced",
+                "Attack": "Grace, Penetration, Balanced",
                 "AttackB": "",
                 "AttackC": "",
                 "Traits_Aiming": true,
@@ -20340,7 +20340,7 @@
                             "name": "Default",
                             "attackType": "ranged",
                             "dice": [
-                                "Finesse",
+                                "Grace",
                                 "Penetration",
                                 "Balanced"
                             ],
@@ -23858,7 +23858,7 @@
                 "WeaponType": "Blade",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
-                "Attack": "Finesse, Finesse, Balanced",
+                "Attack": "Grace, Grace, Balanced",
                 "AttackB": "",
                 "AttackC": "",
                 "Traits_Aiming": false,
@@ -23923,8 +23923,8 @@
                             "name": "Default",
                             "attackType": "melee",
                             "dice": [
-                                "Finesse",
-                                "Finesse",
+                                "Grace",
+                                "Grace",
                                 "Balanced"
                             ],
                             "tags": []
@@ -26244,7 +26244,7 @@
                 "WeaponType": "Knife",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
-                "Attack": "Finesse, Finesse, Control",
+                "Attack": "Grace, Grace, Control",
                 "AttackB": "",
                 "AttackC": "",
                 "Traits_Aiming": false,
@@ -26309,8 +26309,8 @@
                             "name": "Default",
                             "attackType": "melee",
                             "dice": [
-                                "Finesse",
-                                "Finesse",
+                                "Grace",
+                                "Grace",
                                 "Control"
                             ],
                             "tags": []
@@ -28630,7 +28630,7 @@
                 "WeaponType": "Polearm",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
-                "Attack": "Control, Finesse, Finesse",
+                "Attack": "Control, Grace, Grace",
                 "AttackB": "",
                 "AttackC": "",
                 "Traits_Aiming": false,
@@ -28697,8 +28697,8 @@
                             "attackType": "melee",
                             "dice": [
                                 "Control",
-                                "Finesse",
-                                "Finesse"
+                                "Grace",
+                                "Grace"
                             ],
                             "tags": []
                         }
@@ -32224,8 +32224,8 @@
                 "WeaponType": "Blade",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
-                "Attack": "Thrust: Finesse, Finesse, Balanced",
-                "AttackB": "Bind: Finesse, Control, Balanced",
+                "Attack": "Thrust: Grace, Grace, Balanced",
+                "AttackB": "Bind: Grace, Control, Balanced",
                 "AttackC": "",
                 "Traits_Aiming": false,
                 "Traits_ArmorBreaking": false,
@@ -32291,8 +32291,8 @@
                             "name": "Thrust",
                             "attackType": "melee",
                             "dice": [
-                                "Finesse",
-                                "Finesse",
+                                "Grace",
+                                "Grace",
                                 "Balanced"
                             ],
                             "tags": []
@@ -32302,7 +32302,7 @@
                             "name": "Bind",
                             "attackType": "melee",
                             "dice": [
-                                "Finesse",
+                                "Grace",
                                 "Control",
                                 "Balanced"
                             ],
@@ -33430,7 +33430,7 @@
                 "WeaponType": "Knife",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
-                "Attack": "Finesse, Finesse, Control",
+                "Attack": "Grace, Grace, Control",
                 "AttackB": "",
                 "AttackC": "",
                 "Traits_Aiming": false,
@@ -33495,8 +33495,8 @@
                             "name": "Default",
                             "attackType": "melee",
                             "dice": [
-                                "Finesse",
-                                "Finesse",
+                                "Grace",
+                                "Grace",
                                 "Control"
                             ],
                             "tags": []
@@ -35813,7 +35813,7 @@
                 "WeaponType": "Bow",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
-                "Attack": "Finesse, Finesse, Balanced",
+                "Attack": "Grace, Grace, Balanced",
                 "AttackB": "",
                 "AttackC": "",
                 "Traits_Aiming": true,
@@ -35878,8 +35878,8 @@
                             "name": "Default",
                             "attackType": "ranged",
                             "dice": [
-                                "Finesse",
-                                "Finesse",
+                                "Grace",
+                                "Grace",
                                 "Balanced"
                             ],
                             "tags": [],
@@ -38206,7 +38206,7 @@
                 "WeaponType": "Thrown",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
-                "Attack": "Finesse, Finesse, Balanced",
+                "Attack": "Grace, Grace, Balanced",
                 "AttackB": "",
                 "AttackC": "",
                 "Traits_Aiming": true,
@@ -38271,8 +38271,8 @@
                             "name": "Default",
                             "attackType": "thrown",
                             "dice": [
-                                "Finesse",
-                                "Finesse",
+                                "Grace",
+                                "Grace",
                                 "Balanced"
                             ],
                             "tags": []
@@ -42986,7 +42986,7 @@
                 "WeaponType": "Firearm",
                 "ReloadTime": 1,
                 "ReloadProgress": 0,
-                "Attack": "Lethality, Finesse, Risk",
+                "Attack": "Lethality, Grace, Risk",
                 "AttackB": "",
                 "AttackC": "",
                 "Traits_Aiming": true,
@@ -43055,7 +43055,7 @@
                             "attackType": "ranged",
                             "dice": [
                                 "Lethality",
-                                "Finesse",
+                                "Grace",
                                 "Risk"
                             ],
                             "tags": [],
@@ -43091,7 +43091,7 @@
         "_id": "uiBd5Tc4WXxGQCFB",
         "name": "Zweihander",
         "type": "equippableItem",
-        "img": "media/home/games/1547/Items/Zweihänder.webp",
+        "img": "media/home/games/1547/Items/ZweihÃ¤nder.webp",
         "system": {
             "body": {
                 "contents": [
@@ -44268,7 +44268,7 @@
                         "MeleeWeapon",
                         "Sword"
                     ],
-                    "img": "media/home/games/1547/Items/Zweihänder.webp",
+                    "img": "media/home/games/1547/Items/ZweihÃ¤nder.webp",
                     "minReach": 2,
                     "maxReach": 2,
                     "usesAmmo": false,

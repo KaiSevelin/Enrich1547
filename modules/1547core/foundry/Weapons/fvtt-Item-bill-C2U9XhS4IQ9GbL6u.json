@@ -1,4 +1,4 @@
-{
+﻿{
     "_id": "C2U9XhS4IQ9GbL6u",
     "name": "Bill",
     "type": "equippableItem",
@@ -1100,7 +1100,7 @@
             "WeaponType": "Polearm",
             "ReloadTime": 0,
             "ReloadProgress": 0,
-            "Attack": "Control, Control, Finesse",
+            "Attack": "Control, Control, Grace",
             "AttackB": "",
             "AttackC": "",
             "Traits_Aiming": false,
@@ -1165,7 +1165,7 @@
                         "dice": [
                             "Control",
                             "Control",
-                            "Finesse"
+                            "Grace"
                         ],
                         "tags": []
                     }
@@ -1189,3 +1189,4 @@
         "default": 0
     }
 }
+

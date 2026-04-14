@@ -1,4 +1,4 @@
-{
+﻿{
     "_id": "4oOoj5XDMtERRQur",
     "name": "Falchion",
     "type": "equippableItem",
@@ -1100,7 +1100,7 @@
             "WeaponType": "Blade",
             "ReloadTime": 0,
             "ReloadProgress": 0,
-            "Attack": "Thrust: Finesse, Balanced, Balanced",
+            "Attack": "Thrust: Grace, Balanced, Balanced",
             "AttackB": "Swing: Balanced, Balanced, Control",
             "AttackC": "",
             "Traits_Aiming": false,
@@ -1162,7 +1162,7 @@
                         "name": "Thrust",
                         "attackType": "melee",
                         "dice": [
-                            "Finesse",
+                            "Grace",
                             "Balanced",
                             "Balanced"
                         ],
@@ -1199,3 +1199,4 @@
         "default": 0
     }
 }
+

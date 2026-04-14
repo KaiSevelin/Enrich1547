@@ -1,4 +1,4 @@
-export const DICE1547_MODULE_ID = "dice1547" as const;
+﻿export const DICE1547_MODULE_ID = "dice1547" as const;
 export const DICE1547_ROLL_RESULT_HOOK = "dice1547RollResult" as const;
 
 export type Dice1547DieType =
@@ -6,7 +6,7 @@ export type Dice1547DieType =
     | "balanced"
     | "control"
     | "evade"
-    | "finesse"
+    | "grace"
     | "heavy"
     | "lethality"
     | "multiplier"
@@ -18,7 +18,7 @@ export type Dice1547Denomination =
     | "b"
     | "c"
     | "e"
-    | "f"
+    | "g"
     | "h"
     | "l"
     | "x"
@@ -123,9 +123,9 @@ export const DICE1547_DIE_SPECS: Record<Dice1547DieType, Dice1547DieSpec> = {
             { face: 6, label: "critical", totals: { crit: 1 } }
         ]
     },
-    finesse: {
-        type: "finesse",
-        denomination: "f",
+    grace: {
+        type: "grace",
+        denomination: "g",
         faces: [
             { face: 1, label: "blank", totals: {} },
             { face: 2, label: "blank", totals: {} },
@@ -218,3 +218,4 @@ Hooks.on(DICE1547_ROLL_RESULT_HOOK, (result, message) => {
 const api = game.modules.get(DICE1547_MODULE_ID)?.api as Dice1547Api | undefined;
 const result = api?.getRollResult(message.id);
 */
+

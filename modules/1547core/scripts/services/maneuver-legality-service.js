@@ -460,22 +460,30 @@ function passesUsageLimit(maneuver, context) {
 }
 
 function passesActionEconomyGate(maneuver, context) {
+    const movementBudgetRemaining = context.movementBudgetRemaining;
+    const attacksRemaining = context.attacksRemaining;
     if (maneuver.type === "full-turn" && context.fullTurnAvailable === false) {
         return false;
     }
 
     if (
         maneuver.triggerType === "move-declared" &&
-        Number.isFinite(Number(context.movementBudgetRemaining)) &&
-        Number(context.movementBudgetRemaining) <= 0
+        movementBudgetRemaining !== null &&
+        movementBudgetRemaining !== undefined &&
+        movementBudgetRemaining !== "" &&
+        Number.isFinite(Number(movementBudgetRemaining)) &&
+        Number(movementBudgetRemaining) <= 0
     ) {
         return false;
     }
 
     if (
         maneuver.triggerType === "attack-declared" &&
-        Number.isFinite(Number(context.attacksRemaining)) &&
-        Number(context.attacksRemaining) <= 0
+        attacksRemaining !== null &&
+        attacksRemaining !== undefined &&
+        attacksRemaining !== "" &&
+        Number.isFinite(Number(attacksRemaining)) &&
+        Number(attacksRemaining) <= 0
     ) {
         return false;
     }

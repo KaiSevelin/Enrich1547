@@ -1,4 +1,4 @@
-{
+﻿{
     "_id": "UtqcOV0UPpNLjFt5",
     "name": "Rapier",
     "type": "equippableItem",
@@ -1100,8 +1100,8 @@
             "WeaponType": "Blade",
             "ReloadTime": 0,
             "ReloadProgress": 0,
-            "Attack": "Thrust: Finesse, Finesse, Balanced",
-            "AttackB": "Bind: Finesse, Control, Balanced",
+            "Attack": "Thrust: Grace, Grace, Balanced",
+            "AttackB": "Bind: Grace, Control, Balanced",
             "AttackC": "",
             "Traits_Aiming": false,
             "Traits_ArmorBreaking": false,
@@ -1164,8 +1164,8 @@
                         "name": "Thrust",
                         "attackType": "melee",
                         "dice": [
-                            "Finesse",
-                            "Finesse",
+                            "Grace",
+                            "Grace",
                             "Balanced"
                         ],
                         "tags": []
@@ -1175,7 +1175,7 @@
                         "name": "Bind",
                         "attackType": "melee",
                         "dice": [
-                            "Finesse",
+                            "Grace",
                             "Control",
                             "Balanced"
                         ],
@@ -1201,3 +1201,4 @@
         "default": 0
     }
 }
+

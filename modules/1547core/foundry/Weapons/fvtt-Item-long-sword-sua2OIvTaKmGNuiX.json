@@ -1,4 +1,4 @@
-{
+﻿{
     "_id": "sua2OIvTaKmGNuiX",
     "name": "Long Sword",
     "type": "equippableItem",
@@ -1101,7 +1101,7 @@
             "ReloadTime": 0,
             "ReloadProgress": 0,
             "Attack": "Swing: Balanced, Heavy, Control",
-            "AttackB": "Thrust: Balanced, Heavy, Finesse",
+            "AttackB": "Thrust: Balanced, Heavy, Grace",
             "AttackC": "",
             "Traits_Aiming": false,
             "Traits_ArmorBreaking": false,
@@ -1178,7 +1178,7 @@
                         "dice": [
                             "Balanced",
                             "Heavy",
-                            "Finesse"
+                            "Grace"
                         ],
                         "tags": []
                     }
@@ -1202,3 +1202,4 @@
         "default": 0
     }
 }
+

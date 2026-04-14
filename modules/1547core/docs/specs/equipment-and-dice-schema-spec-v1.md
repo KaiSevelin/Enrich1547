@@ -1,4 +1,4 @@
-# Equipment And Dice Schema Spec V1.1
+﻿# Equipment And Dice Schema Spec V1.1
 
 ## Purpose
 
@@ -32,7 +32,7 @@ not describe a more advanced weapon model than the engine actually resolves.
 The canonical dice families are:
 
 - `Balanced`
-- `Finesse`
+- `Grace`
 - `Heavy`
 - `Penetration`
 - `Lethality`
@@ -50,7 +50,7 @@ The canonical Foundry dice-term mapping is:
 - `b` = `Balanced`
 - `c` = `Control`
 - `e` = `Evade`
-- `f` = `Finesse`
+- `g` = `Grace`
 - `h` = `Heavy`
 - `l` = `Lethality`
 - `p` = `Penetration`
@@ -66,7 +66,7 @@ Example:
 rolls:
 
 - `Balanced`
-- `Finesse`
+- `Grace`
 - `Heavy`
 
 ## Dice Representation Layers
@@ -79,7 +79,7 @@ rolls:
 The content/schema representation uses canonical family names:
 
 ```js
-["Balanced", "Finesse", "Heavy"]
+["Balanced", "Grace", "Heavy"]
 ```
 
 The runtime roll-formula representation uses Foundry custom dice terms:
@@ -96,7 +96,7 @@ Conversion between these two layers should be deterministic and lossless.
 
 Standard weapon die family.
 
-### `Finesse`
+### `Grace`
 
 High-control and highly maneuverable weapon die family.
 
@@ -585,7 +585,7 @@ workflow, the schema can be expanded in a future version.
       id: "thrust",
       name: "Thrust",
       attackType: "melee",
-      dice: ["Finesse", "Finesse", "Balanced"],
+      dice: ["Grace", "Grace", "Balanced"],
       allowedAmmoTypes: [],
       tags: []
     },
@@ -593,7 +593,7 @@ workflow, the schema can be expanded in a future version.
       id: "bind",
       name: "Bind",
       attackType: "melee",
-      dice: ["Finesse", "Control", "Balanced"],
+      dice: ["Grace", "Control", "Balanced"],
       allowedAmmoTypes: [],
       tags: []
     }
@@ -909,3 +909,4 @@ This schema version does not attempt to standardize:
 - deep inventory-container behavior for ammunition stacks
 
 Those can be added later once the runtime model for them is stable.
+

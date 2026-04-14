@@ -384,15 +384,9 @@ function buildDiceTree(data, deps = {}) {
                 <span class="hud-row-sub">d${escapeHtml(option.code)}</span>
             </div>
             <div class="hud-dice-row-controls">
-                <input
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="1"
-                    value="${escapeHtml(option.selectedCount ?? 0)}"
-                    data-hud-dice-attack-input="${escapeHtml(option.key)}"
-                    title="${escapeHtml(option.tooltip || "")}" 
-                >
+                <button type="button" class="hud-mini-button" data-hud-dice-attack-adjust="${escapeHtml(option.key)}" data-hud-dice-delta="-1" title="${escapeHtml(option.tooltip || "")}">-</button>
+                <span class="hud-dice-count" title="${escapeHtml(option.tooltip || "")}">${escapeHtml(option.selectedCount ?? 0)}</span>
+                <button type="button" class="hud-mini-button" data-hud-dice-attack-adjust="${escapeHtml(option.key)}" data-hud-dice-delta="1" title="${escapeHtml(option.tooltip || "")}">+</button>
             </div>
         </li>
     `).join("");
@@ -417,15 +411,11 @@ function buildDiceTree(data, deps = {}) {
             <div class="hud-section-title">D6</div>
             <div class="hud-d6-picker-row">
                 <span class="hud-row-main" title="Standard d6 added to the next stat or skill roll.">d6</span>
-                <input
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="1"
-                    value="${escapeHtml(diceTab.selectedSkillDice ?? 0)}"
-                    data-hud-dice-skill-input
-                    title="Standard d6 added to the next stat or skill roll."
-                >
+                <div class="hud-dice-row-controls">
+                    <button type="button" class="hud-mini-button" data-hud-dice-skill-adjust data-hud-dice-delta="-1" title="Standard d6 added to the next stat or skill roll.">-</button>
+                    <span class="hud-dice-count" title="Standard d6 added to the next stat or skill roll.">${escapeHtml(diceTab.selectedSkillDice ?? 0)}</span>
+                    <button type="button" class="hud-mini-button" data-hud-dice-skill-adjust data-hud-dice-delta="1" title="Standard d6 added to the next stat or skill roll.">+</button>
+                </div>
             </div>
             <div class="hud-dice-preview-row"><span class="hud-tree-key">Selected</span><span class="hud-tree-value">${escapeHtml(skillSelectionLabel)}</span></div>
             <div class="hud-dice-preview-row"><span class="hud-tree-key">Next stat / skill</span><span class="hud-tree-value">${escapeHtml(pendingSkillLabel)}</span></div>

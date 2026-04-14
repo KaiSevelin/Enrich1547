@@ -37,6 +37,7 @@ import {
     clearPendingNextSkillDice,
     clearIgnoredCostManeuver,
     clearIgnoredCostManeuvers,
+    getIgnoredCostManeuverIds,
     setIgnoredCostManeuver,
 } from "./hud-state.js";
 import { summarizeActor as summarizeActorFromModule } from "./hud-summary.js";
@@ -132,14 +133,14 @@ const MANEUVER_COST_SHORT_LABELS = {
     CriticalPoints: "CRIT"
 };
 const DICE_TAB_ATTACK_OPTIONS = [
-    { key: "balanced", label: "Balanced", dieName: "Balanced", code: "b", tooltip: "Flexible attack die with steady damage." },
-    { key: "control", label: "Control", dieName: "Control", code: "c", tooltip: "Control die with safer pressure and crit chance." },
-    { key: "finesse", label: "Finesse", dieName: "Finesse", code: "f", tooltip: "Clean precision die with low risk." },
-    { key: "heavy", label: "Heavy", dieName: "Heavy", code: "h", tooltip: "High-impact die with swingier damage." },
-    { key: "lethality", label: "Lethality", dieName: "Lethality", code: "l", tooltip: "Explosive damage die with sharp upside." },
-    { key: "multiplier", label: "Multiplier", dieName: "Multiplier", code: "x", tooltip: "Adds multiplier potential to a hit." },
-    { key: "penetration", label: "Penetration", dieName: "Penetration", code: "p", tooltip: "Punches through protection more reliably." },
-    { key: "risk", label: "Risk", dieName: "Risk", code: "r", tooltip: "Volatile die with danger and payoff." },
+    { key: "balanced", label: "Balanced", dieName: "Balanced", code: "b", tooltip: "Flexible attack die with steady damage.\n1: Fumble\n2: Blank\n3: Damage 1\n4: Damage 1\n5: Damage 2\n6: Critical" },
+    { key: "control", label: "Control", dieName: "Control", code: "c", tooltip: "Control die with safer pressure and crit chance.\n1: Fumble\n2: Blank\n3: Blank\n4: Damage 1\n5: Critical\n6: Critical" },
+    { key: "grace", label: "Grace", dieName: "Grace", code: "g", tooltip: "Clean precision die with low risk.\n1: Blank\n2: Blank\n3: Damage 1\n4: Damage 1\n5: Critical\n6: Critical" },
+    { key: "heavy", label: "Heavy", dieName: "Heavy", code: "h", tooltip: "High-impact die with swingier damage.\n1: Fumble\n2: Fumble\n3: Damage 1\n4: Damage 2\n5: Damage 4\n6: Critical" },
+    { key: "lethality", label: "Lethality", dieName: "Lethality", code: "l", tooltip: "Explosive damage die with sharp upside.\n1: Fumble\n2: Fumble\n3: Damage 2\n4: Damage 3\n5: Damage 5\n6: Critical" },
+    { key: "multiplier", label: "Multiplier", dieName: "Multiplier", code: "x", tooltip: "Adds multiplier potential to a hit.\n1: 0x\n2: Blank\n3: Blank\n4: 2x\n5: 2x\n6: 3x" },
+    { key: "penetration", label: "Penetration", dieName: "Penetration", code: "p", tooltip: "Punches through protection more reliably.\n1: Fumble\n2: Blank\n3: Damage 1\n4: Damage 1\n5: Damage 3\n6: Critical" },
+    { key: "risk", label: "Risk", dieName: "Risk", code: "r", tooltip: "Volatile die with danger and payoff.\n1: 0x\n2: Fumble\n3: Fumble\n4: Blank\n5: Damage 2\n6: Critical" },
 ];
 
 function getAttackDiceTabOptions() {
@@ -832,7 +833,8 @@ function getDiceTermCode(dieName) {
         case "Balanced": return "b";
         case "Control": return "c";
         case "Evade": return "e";
-        case "Finesse": return "f";
+        case "Finesse":
+        case "Grace": return "g";
         case "Heavy": return "h";
         case "Lethality": return "l";
         case "Penetration": return "p";
@@ -1655,6 +1657,8 @@ function summarizeActor(actor, token) {
         setSelectedPreManeuverIds,
         getSelectedFullTurnManeuverId,
         clearSelectedFullTurnManeuver,
+        getIgnoredCostManeuverIds,
+        applyIgnoredCostOverride,
         buildReservedResourceTotals,
         getChebyshevDistanceSquares,
         isTruthyLike,
@@ -2071,6 +2075,7 @@ export function register1547ActorHud() {
     window.addEventListener("resize", scheduleHudRerender, { passive: true });
     void renderHudForSelection();
 }
+
 
 
 

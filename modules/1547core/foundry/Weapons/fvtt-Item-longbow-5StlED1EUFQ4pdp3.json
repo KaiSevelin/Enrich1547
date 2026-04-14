@@ -1,4 +1,4 @@
-{
+﻿{
     "_id": "5StlED1EUFQ4pdp3",
     "name": "Longbow",
     "type": "equippableItem",
@@ -1100,7 +1100,7 @@
             "WeaponType": "Bow",
             "ReloadTime": 0,
             "ReloadProgress": 0,
-            "Attack": "Finesse, Penetration, Balanced",
+            "Attack": "Grace, Penetration, Balanced",
             "AttackB": "",
             "AttackC": "",
             "Traits_Aiming": true,
@@ -1163,7 +1163,7 @@
                         "name": "Default",
                         "attackType": "ranged",
                         "dice": [
-                            "Finesse",
+                            "Grace",
                             "Penetration",
                             "Balanced"
                         ],
@@ -1188,3 +1188,4 @@
         "default": 0
     }
 }
+
