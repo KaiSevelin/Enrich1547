@@ -1086,7 +1086,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -1128,7 +1128,11 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "Traits_RigidBlade": true,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -1155,7 +1159,8 @@
                     "reloadProgress": 0,
                     "traits": [
                         "Parrying",
-                        "Disarming"
+                        "Disarming",
+                        "Rigid Blade"
                     ],
                     "attackProfiles": [
                         {
@@ -2276,7 +2281,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -2318,7 +2323,10 @@
                 "UsesAmmo": true,
                 "AmmoType": "Bullet",
                 "AmmoCapacity": 1,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": 4,
+                "LongRange": 7,
+                "MaxRange": 14
             }
         },
         "effects": [],
@@ -2359,7 +2367,10 @@
                                 "Lethality",
                                 "Risk"
                             ],
-                            "tags": []
+                            "tags": [],
+                            "allowedAmmoTypes": [
+                                "Bullet"
+                            ]
                         }
                     ],
                     "groups": [
@@ -2371,7 +2382,11 @@
                     "usesAmmo": true,
                     "ammoType": "Bullet",
                     "ammoCapacity": 1,
-                    "ammoLoaded": 0
+                    "ammoLoaded": 0,
+                    "loadedAmmoId": null,
+                    "shortRange": 4,
+                    "longRange": 7,
+                    "maxRange": 14
                 }
             }
         },
@@ -3467,7 +3482,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -3509,7 +3524,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -4658,7 +4676,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -4700,7 +4718,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -5845,7 +5866,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -5887,7 +5908,10 @@
                 "UsesAmmo": true,
                 "AmmoType": "Bolt",
                 "AmmoCapacity": 1,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": 4,
+                "LongRange": 7,
+                "MaxRange": 14
             }
         },
         "effects": [],
@@ -5928,7 +5952,10 @@
                                 "Penetration",
                                 "Multiplier"
                             ],
-                            "tags": []
+                            "tags": [],
+                            "allowedAmmoTypes": [
+                                "Bolt"
+                            ]
                         }
                     ],
                     "groups": [
@@ -5940,7 +5967,11 @@
                     "usesAmmo": true,
                     "ammoType": "Bolt",
                     "ammoCapacity": 1,
-                    "ammoLoaded": 0
+                    "ammoLoaded": 0,
+                    "loadedAmmoId": null,
+                    "shortRange": 4,
+                    "longRange": 7,
+                    "maxRange": 14
                 }
             }
         },
@@ -7036,7 +7067,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -7078,7 +7109,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -8226,7 +8260,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -8268,7 +8302,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": 2,
+                "LongRange": 4,
+                "MaxRange": 6
             }
         },
         "effects": [],
@@ -8311,7 +8348,6 @@
                         }
                     ],
                     "groups": [
-                        "RangedWeapon",
                         "ThrownWeapon"
                     ],
                     "img": "media/home/games/1547/Items/Dart.webp",
@@ -8320,7 +8356,10 @@
                     "usesAmmo": false,
                     "ammoType": "",
                     "ammoCapacity": 0,
-                    "ammoLoaded": 0
+                    "ammoLoaded": 0,
+                    "shortRange": 2,
+                    "longRange": 4,
+                    "maxRange": 6
                 }
             }
         },
@@ -9416,7 +9455,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -9458,7 +9497,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -10617,7 +10659,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -10659,7 +10701,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -11806,7 +11851,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -11848,7 +11893,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -13008,7 +13056,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -13050,7 +13098,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -14210,7 +14261,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -14252,7 +14303,10 @@
                 "UsesAmmo": true,
                 "AmmoType": "Bullet",
                 "AmmoCapacity": 1,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": 3,
+                "LongRange": 5,
+                "MaxRange": 10
             }
         },
         "effects": [],
@@ -14293,7 +14347,10 @@
                                 "Risk",
                                 "Balanced"
                             ],
-                            "tags": []
+                            "tags": [],
+                            "allowedAmmoTypes": [
+                                "Bullet"
+                            ]
                         }
                     ],
                     "groups": [
@@ -14305,7 +14362,11 @@
                     "usesAmmo": true,
                     "ammoType": "Bullet",
                     "ammoCapacity": 1,
-                    "ammoLoaded": 0
+                    "ammoLoaded": 0,
+                    "loadedAmmoId": null,
+                    "shortRange": 3,
+                    "longRange": 5,
+                    "maxRange": 10
                 }
             }
         },
@@ -15401,7 +15462,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -15443,7 +15504,10 @@
                 "UsesAmmo": true,
                 "AmmoType": "Bullet",
                 "AmmoCapacity": 1,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": 5,
+                "LongRange": 8,
+                "MaxRange": 16
             }
         },
         "effects": [],
@@ -15485,7 +15549,10 @@
                                 "Lethality",
                                 "Multiplier"
                             ],
-                            "tags": []
+                            "tags": [],
+                            "allowedAmmoTypes": [
+                                "Bullet"
+                            ]
                         }
                     ],
                     "groups": [
@@ -15497,7 +15564,11 @@
                     "usesAmmo": true,
                     "ammoType": "Bullet",
                     "ammoCapacity": 1,
-                    "ammoLoaded": 0
+                    "ammoLoaded": 0,
+                    "loadedAmmoId": null,
+                    "shortRange": 5,
+                    "longRange": 8,
+                    "maxRange": 16
                 }
             }
         },
@@ -16593,7 +16664,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -16635,7 +16706,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -17783,7 +17857,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -17825,7 +17899,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -18975,7 +19052,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -19017,7 +19094,11 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "Traits_RigidBlade": true,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -19045,7 +19126,8 @@
                     "traits": [
                         "Parrying",
                         "Disarming",
-                        "Heavy"
+                        "Heavy",
+                        "Rigid Blade"
                     ],
                     "attackProfiles": [
                         {
@@ -20177,7 +20259,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -20219,7 +20301,10 @@
                 "UsesAmmo": true,
                 "AmmoType": "Arrow",
                 "AmmoCapacity": 1,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": 6,
+                "LongRange": 10,
+                "MaxRange": 24
             }
         },
         "effects": [],
@@ -20259,7 +20344,10 @@
                                 "Penetration",
                                 "Balanced"
                             ],
-                            "tags": []
+                            "tags": [],
+                            "allowedAmmoTypes": [
+                                "Arrow"
+                            ]
                         }
                     ],
                     "groups": [
@@ -20271,7 +20359,11 @@
                     "usesAmmo": true,
                     "ammoType": "Arrow",
                     "ammoCapacity": 1,
-                    "ammoLoaded": 0
+                    "ammoLoaded": 0,
+                    "loadedAmmoId": null,
+                    "shortRange": 6,
+                    "longRange": 10,
+                    "maxRange": 24
                 }
             }
         },
@@ -21367,7 +21459,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -21409,7 +21501,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -22556,7 +22651,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -22598,7 +22693,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -23745,7 +23843,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -23787,7 +23885,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -24935,7 +25036,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -24977,7 +25078,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -26125,7 +26229,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -26167,7 +26271,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -27315,7 +27422,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -27357,7 +27464,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -28505,7 +28615,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -28547,7 +28657,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -29697,7 +29810,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -29739,7 +29852,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -30899,7 +31015,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -30941,7 +31057,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -32090,7 +32209,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -32132,7 +32251,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -33293,7 +33415,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -33335,7 +33457,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -34483,7 +34608,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -34525,7 +34650,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -35670,7 +35798,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -35712,7 +35840,10 @@
                 "UsesAmmo": true,
                 "AmmoType": "Arrow",
                 "AmmoCapacity": 1,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": 5,
+                "LongRange": 8,
+                "MaxRange": 18
             }
         },
         "effects": [],
@@ -35751,7 +35882,10 @@
                                 "Finesse",
                                 "Balanced"
                             ],
-                            "tags": []
+                            "tags": [],
+                            "allowedAmmoTypes": [
+                                "Arrow"
+                            ]
                         }
                     ],
                     "groups": [
@@ -35763,7 +35897,11 @@
                     "usesAmmo": true,
                     "ammoType": "Arrow",
                     "ammoCapacity": 1,
-                    "ammoLoaded": 0
+                    "ammoLoaded": 0,
+                    "loadedAmmoId": null,
+                    "shortRange": 5,
+                    "longRange": 8,
+                    "maxRange": 18
                 }
             }
         },
@@ -36859,7 +36997,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -36901,7 +37039,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -38050,7 +38191,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -38092,7 +38233,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": 2,
+                "LongRange": 3,
+                "MaxRange": 5
             }
         },
         "effects": [],
@@ -38135,7 +38279,6 @@
                         }
                     ],
                     "groups": [
-                        "RangedWeapon",
                         "ThrownWeapon"
                     ],
                     "img": "media/home/games/1547/Items/Throwing knife.webp",
@@ -38144,7 +38287,10 @@
                     "usesAmmo": false,
                     "ammoType": "",
                     "ammoCapacity": 0,
-                    "ammoLoaded": 0
+                    "ammoLoaded": 0,
+                    "shortRange": 2,
+                    "longRange": 3,
+                    "maxRange": 5
                 }
             }
         },
@@ -39240,7 +39386,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -39282,7 +39428,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -40430,7 +40579,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -40472,7 +40621,10 @@
                 "UsesAmmo": true,
                 "AmmoType": "Arrow",
                 "AmmoCapacity": 1,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": 7,
+                "LongRange": 12,
+                "MaxRange": 30
             }
         },
         "effects": [],
@@ -40512,7 +40664,10 @@
                                 "Penetration",
                                 "Balanced"
                             ],
-                            "tags": []
+                            "tags": [],
+                            "allowedAmmoTypes": [
+                                "Arrow"
+                            ]
                         }
                     ],
                     "groups": [
@@ -40524,7 +40679,11 @@
                     "usesAmmo": true,
                     "ammoType": "Arrow",
                     "ammoCapacity": 1,
-                    "ammoLoaded": 0
+                    "ammoLoaded": 0,
+                    "loadedAmmoId": null,
+                    "shortRange": 7,
+                    "longRange": 12,
+                    "maxRange": 30
                 }
             }
         },
@@ -41620,7 +41779,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -41662,7 +41821,10 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -42809,7 +42971,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -42851,7 +43013,10 @@
                 "UsesAmmo": true,
                 "AmmoType": "Bullet",
                 "AmmoCapacity": 1,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "ShortRange": 2,
+                "LongRange": 4,
+                "MaxRange": 8
             }
         },
         "effects": [],
@@ -42893,7 +43058,10 @@
                                 "Finesse",
                                 "Risk"
                             ],
-                            "tags": []
+                            "tags": [],
+                            "allowedAmmoTypes": [
+                                "Bullet"
+                            ]
                         }
                     ],
                     "groups": [
@@ -42906,7 +43074,11 @@
                     "usesAmmo": true,
                     "ammoType": "Bullet",
                     "ammoCapacity": 1,
-                    "ammoLoaded": 0
+                    "ammoLoaded": 0,
+                    "loadedAmmoId": null,
+                    "shortRange": 2,
+                    "longRange": 4,
+                    "maxRange": 8
                 }
             }
         },
@@ -44002,7 +44174,7 @@
             "hidden": [
                 {
                     "name": "Traits",
-                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                    "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
                 }
             ],
             "modifiers": [],
@@ -44044,7 +44216,11 @@
                 "UsesAmmo": false,
                 "AmmoType": "",
                 "AmmoCapacity": 0,
-                "AmmoLoaded": 0
+                "AmmoLoaded": 0,
+                "Traits_RigidBlade": true,
+                "ShortRange": "",
+                "LongRange": "",
+                "MaxRange": ""
             }
         },
         "effects": [],
@@ -44072,7 +44248,8 @@
                     "traits": [
                         "Tactical",
                         "Heavy",
-                        "Parrying"
+                        "Parrying",
+                        "Rigid Blade"
                     ],
                     "attackProfiles": [
                         {

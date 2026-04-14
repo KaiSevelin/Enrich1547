@@ -1,4 +1,4 @@
-const MODULE_ID = "1547core";
+﻿const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
 const MANEUVER_DATA_SETTING = "maneuverData";
 
@@ -131,36 +131,180 @@ export function evaluateManeuverLegality(maneuverInput, context = {}) {
     };
 }
 
+function parseJsonString(value, fallback = null) {
+    if (typeof value !== "string" || value.trim() === "") return fallback;
+    try {
+        return JSON.parse(value);
+    } catch {
+        return fallback;
+    }
+}
+
+function isTruthyLike(value) {
+    if (typeof value === "boolean") return value;
+    if (typeof value === "number") return value > 0;
+    const normalized = String(value ?? "").trim().toLowerCase();
+    return ["true", "yes", "y", "1", "override"].includes(normalized);
+}
+
+function resolveAmmoRangeSpec(source = {}, props = {}) {
+    const sourceRange = source?.range;
+    const propRange = parseJsonString(props?.Range, null);
+    const explicitRange = (
+        props?.RangeShort !== undefined
+        || props?.RangeMedium !== undefined
+        || props?.RangeLong !== undefined
+    )
+        ? {
+            mode: isTruthyLike(props?.RangeModeOverride) ? "override" : "modify",
+            shortRange: Number(props?.RangeShort),
+            longRange: Number(props?.RangeMedium),
+            maxRange: Number(props?.RangeLong),
+        }
+        : null;
+    const legacyOverride = source?.rangeOverride ?? parseJsonString(props?.RangeOverride, null);
+    const legacyModifier = source?.rangeModifier ?? parseJsonString(props?.RangeModifier, null);
+
+    const range = sourceRange ?? explicitRange ?? propRange;
+    if (range && typeof range === "object") {
+        const mode = String(range.mode ?? "modify").trim().toLowerCase();
+        return {
+            mode: mode === "override" ? "override" : "modify",
+            shortRange: Number(range.shortRange),
+            longRange: Number(range.longRange),
+            maxRange: Number(range.maxRange),
+        };
+    }
+
+    if (legacyOverride && typeof legacyOverride === "object") {
+        return {
+            mode: "override",
+            shortRange: Number(legacyOverride.shortRange),
+            longRange: Number(legacyOverride.longRange),
+            maxRange: Number(legacyOverride.maxRange),
+        };
+    }
+
+    if (legacyModifier && typeof legacyModifier === "object") {
+        return {
+            mode: "modify",
+            shortRange: Number(legacyModifier.shortRange),
+            longRange: Number(legacyModifier.longRange),
+            maxRange: Number(legacyModifier.maxRange),
+        };
+    }
+
+    return null;
+}
+
 function normalizeManeuver(maneuver) {
     if (!maneuver) return null;
     return maneuver.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? maneuver.flags?.[MODULE_ID]?.sourceData ?? maneuver;
 }
 
-function normalizeWeapon(weapon) {
-    if (!weapon) return null;
-    const source = weapon.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? weapon.flags?.[MODULE_ID]?.sourceData ?? weapon;
+function normalizeRangeBands(rangeBands) {
+    let shortRange = firstFiniteNumber([rangeBands.shortRange]);
+    let longRange = firstFiniteNumber([rangeBands.longRange]);
+    let maxRange = firstFiniteNumber([rangeBands.maxRange]);
+    shortRange = shortRange == null ? null : Math.max(0, shortRange);
+    longRange = longRange == null ? null : Math.max(0, longRange);
+    maxRange = maxRange == null ? null : Math.max(0, maxRange);
+    if (shortRange != null && longRange != null && longRange < shortRange) longRange = shortRange;
+    if (longRange != null && maxRange != null && maxRange < longRange) maxRange = longRange;
+    if (longRange == null && shortRange != null) longRange = shortRange;
+    if (maxRange == null && longRange != null) maxRange = longRange;
+    return { shortRange, longRange, maxRange };
+}
+
+function applyAmmoRangeEffects(rangeBands, ammo) {
+    const range = ammo?.range ?? null;
+    if (range && typeof range === "object") {
+        if (range.mode === "override") {
+            return normalizeRangeBands({
+                shortRange: range.shortRange,
+                longRange: range.longRange,
+                maxRange: range.maxRange,
+            });
+        }
+
+        return normalizeRangeBands({
+            shortRange: (rangeBands.shortRange ?? 0) + (Number(range.shortRange) || 0),
+            longRange: (rangeBands.longRange ?? rangeBands.shortRange ?? 0) + (Number(range.longRange) || 0),
+            maxRange: (rangeBands.maxRange ?? rangeBands.longRange ?? 0) + (Number(range.maxRange) || 0),
+        });
+    }
+
+    return normalizeRangeBands(rangeBands);
+}
+
+function normalizeAmmoItem(ammo) {
+    if (!ammo) return null;
+    const source = ammo.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? ammo.flags?.[MODULE_ID]?.sourceData ?? ammo;
+    const props = ammo.system?.props ?? {};
     return {
         ...source,
-        _id: source._id ?? weapon.id ?? weapon._id ?? null,
+        _id: ammo.id ?? ammo._id ?? source._id ?? null,
+        name: source.name ?? ammo.name ?? "",
+        ammoType:
+            props.AmmoType ??
+            ammo.ammoType ??
+            source.ammoType ??
+            "",
+        quantity:
+            firstFiniteNumber([
+                props.Quantity,
+                ammo.quantity,
+                source.quantity,
+            ]) ?? 0,
+        range: resolveAmmoRangeSpec(source, props),
+    };
+}
+
+function normalizeWeapon(weapon, actor = null) {
+    if (!weapon) return null;
+    const source = weapon.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? weapon.flags?.[MODULE_ID]?.sourceData ?? weapon;
+    const loadedAmmoId = String(
+        weapon.system?.props?.LoadedAmmoId ??
+        weapon.loadedAmmoId ??
+        source.loadedAmmoId ??
+        ""
+    ).trim() || null;
+    const loadedAmmoItem = loadedAmmoId
+        ? (actor?.items?.get?.(loadedAmmoId) ?? weapon.parent?.items?.get?.(loadedAmmoId) ?? null)
+        : null;
+    const loadedAmmo = normalizeAmmoItem(loadedAmmoItem);
+    const effectiveRangeBands = applyAmmoRangeEffects(
+        {
+            shortRange:
+                weapon.system?.props?.ShortRange ??
+                weapon.shortRange ??
+                source.shortRange ??
+                null,
+            longRange:
+                weapon.system?.props?.LongRange ??
+                weapon.longRange ??
+                source.longRange ??
+                null,
+            maxRange:
+                weapon.system?.props?.MaxRange ??
+                weapon.maxRange ??
+                source.maxRange ??
+                null,
+        },
+        loadedAmmo
+    );
+    return {
+        ...source,
+        _id: weapon.id ?? weapon._id ?? source._id ?? null,
         name: source.name ?? weapon.name ?? "",
         traits: Array.isArray(source.traits) ? source.traits : [],
         groups: Array.isArray(source.groups) ? source.groups : [],
         attackProfiles: Array.isArray(source.attackProfiles) ? source.attackProfiles : [],
-        shortRange:
-            weapon.system?.props?.ShortRange ??
-            weapon.shortRange ??
-            source.shortRange ??
-            null,
-        longRange:
-            weapon.system?.props?.LongRange ??
-            weapon.longRange ??
-            source.longRange ??
-            null,
-        maxRange:
-            weapon.system?.props?.MaxRange ??
-            weapon.maxRange ??
-            source.maxRange ??
-            null,
+        loadedAmmoId,
+        loadedAmmo,
+        shortRange: effectiveRangeBands.shortRange,
+        longRange: effectiveRangeBands.longRange,
+        maxRange: effectiveRangeBands.maxRange,
         equipped:
             weapon.system?.props?.Equipped ??
             weapon.equipped ??
@@ -288,7 +432,7 @@ function passesActorStateGate(maneuver, context) {
 }
 
 function passesWeaponGate(maneuver, context) {
-    const weapon = normalizeWeapon(context.weapon);
+    const weapon = normalizeWeapon(context.weapon, context.actor);
     const requiredTraits = asArray(maneuver.requirements?.requiredWeaponTraits);
     const requiredGroups = asArray(maneuver.requirements?.requiredWeaponGroups);
     const excludedTags = asArray(maneuver.requirements?.excludedWeaponTags);
@@ -320,6 +464,14 @@ function passesWeaponGate(maneuver, context) {
     return true;
 }
 
+function isRangedAttackType(attackType) {
+    return attackType === "ranged";
+}
+
+function isDistanceAttackType(attackType) {
+    return attackType === "ranged" || attackType === "thrown";
+}
+
 function passesProfileGate(maneuver, context) {
     const profile = context.profile ?? null;
     const appliesTo = maneuver.effectData?.appliesTo ?? null;
@@ -331,7 +483,7 @@ function passesProfileGate(maneuver, context) {
     }
 
     if (appliesTo === "ranged-attack") {
-        return profile.attackType === "ranged";
+        return isRangedAttackType(profile.attackType);
     }
 
     return true;
@@ -369,12 +521,12 @@ function passesTargetStateGate(maneuver, context) {
 
 function passesRangeGate(maneuver, context) {
     const profile = context.profile ?? null;
-    if (!profile || profile.attackType !== "ranged") return true;
+    if (!profile || !isDistanceAttackType(profile.attackType)) return true;
 
     const distanceSquares = Number(context.distanceSquares ?? context.rangeSquares);
     if (!Number.isFinite(distanceSquares) || distanceSquares < 0) return true;
 
-    const weapon = normalizeWeapon(context.weapon);
+    const weapon = normalizeWeapon(context.weapon, context.actor);
     if (!weapon) return true;
 
     const shortRange = firstFiniteNumber([weapon.shortRange]);
@@ -480,3 +632,5 @@ function firstFiniteNumber(values) {
     }
     return null;
 }
+
+

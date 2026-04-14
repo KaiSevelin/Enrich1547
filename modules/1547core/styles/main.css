@@ -1,4 +1,4 @@
-/* ----------------------------- */
+﻿/* ----------------------------- */
 /* @1547 feature link in text    */
 /* ----------------------------- */
 
@@ -541,6 +541,18 @@ a.enricher-1547::before {
   font-weight: 700;
 }
 
+.actor-hud-1547 .hud-mini-button:disabled {
+  cursor: default;
+  opacity: 0.52;
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.actor-hud-1547 .hud-mini-button:disabled:hover {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
 .actor-hud-1547 .hud-mini-button-sub {
   color: rgba(243, 234, 215, 0.72);
   font-size: 0.62rem;
@@ -683,4 +695,276 @@ a.enricher-1547::before {
   .actor-hud-1547 .hud-points-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.actor-hud-1547 .hud-weapon-action-strip {
+  margin-top: 0.35rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.actor-hud-1547 .hud-weapon-action-status {
+  margin-top: 0.25rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(255, 249, 238, 0.9);
+}
+
+.actor-hud-1547 .hud-weapon-action-status.is-valid {
+  color: #d8efc2;
+}
+
+.actor-hud-1547 .hud-weapon-action-status.is-invalid {
+  color: #f5c0b8;
+}
+
+.actor-hud-1547 .hud-mini-button-primary {
+  border-color: rgba(201, 171, 113, 0.42);
+  background: rgba(201, 171, 113, 0.18);
+  color: #fff9ee;
+}
+
+.actor-hud-1547 .hud-mini-button-primary:hover {
+  border-color: rgba(201, 171, 113, 0.54);
+  background: rgba(201, 171, 113, 0.24);
+}
+
+.combat-tracker .combat-side-header {
+  margin: 0.35rem 0 0.15rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid rgba(201, 171, 113, 0.28);
+  border-radius: 0.45rem;
+  background: linear-gradient(180deg, rgba(38, 44, 58, 0.92), rgba(29, 34, 44, 0.88));
+}
+
+.combat-tracker .combat-side-header.is-active-side {
+  border-color: rgba(201, 171, 113, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(201, 171, 113, 0.18);
+}
+
+.combat-tracker .combat-side-header__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.combat-tracker .combat-side-header__label {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.combat-tracker .combat-side-header__meta {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+.combat-tracker li.combatant[data-side-id] {
+  position: relative;
+}
+
+.combat-tracker li.combatant.is-active-side-member {
+  box-shadow: inset 3px 0 0 rgba(201, 171, 113, 0.7);
+}
+
+.combat-tracker .combatant-side-chip {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.45rem;
+  padding: 0.08rem 0.38rem;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 171, 113, 0.3);
+  background: rgba(201, 171, 113, 0.12);
+  color: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+.combat-side-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin: 0.45rem 0 0.35rem;
+  padding: 0.35rem 0.45rem;
+  border: 1px solid rgba(201, 171, 113, 0.22);
+  border-radius: 0.45rem;
+  background: rgba(27, 31, 40, 0.55);
+}
+
+.combat-side-toolbar__status {
+  font-size: 0.8rem;
+}
+
+.combat-side-toolbar__button {
+  padding: 0.2rem 0.55rem;
+  border: 1px solid rgba(201, 171, 113, 0.32);
+  border-radius: 999px;
+  background: rgba(201, 171, 113, 0.14);
+  color: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.combat-side-toolbar__button:hover {
+  background: rgba(201, 171, 113, 0.22);
+}
+
+.combat-side-assignment-form .notes {
+  margin-bottom: 0.65rem;
+}
+
+.combat-side-assignment-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.combat-side-assignment-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.combat-side-assignment-row label {
+  font-weight: 700;
+}
+
+.combat-side-assignment-row select {
+  min-width: 7rem;
+}
+.combat-side-ready-confirm {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.25rem 0.1rem 0;
+}
+
+.combat-side-ready-confirm__eyebrow {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(201, 171, 113, 0.92);
+}
+
+.combat-side-ready-confirm__title {
+  font-size: 1.08rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.combat-side-ready-confirm__body {
+  color: rgba(255, 249, 238, 0.78);
+  line-height: 1.45;
+}
+
+.combat-side-ready-confirm__next {
+  display: grid;
+  gap: 0.16rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgba(201, 171, 113, 0.24);
+  border-radius: 0.55rem;
+  background: linear-gradient(180deg, rgba(42, 48, 61, 0.82), rgba(30, 35, 44, 0.74));
+}
+
+.combat-side-ready-confirm__next-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(201, 171, 113, 0.88);
+}
+
+.combat-side-ready-confirm__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.2rem;
+  font-weight: 600;
+}
+.combat-side-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.combat-side-toolbar__button--secondary {
+  background: rgba(255, 249, 238, 0.06);
+}
+
+.dialog-1547-maneuver-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dialog-1547-maneuver-confirm__eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8c6b3b;
+}
+
+.dialog-1547-maneuver-confirm__title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2d2417;
+}
+
+.dialog-1547-maneuver-confirm__body {
+  line-height: 1.45;
+}
+
+.dialog-1547-maneuver-confirm__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.actor-hud-1547 .hud-action-row.is-muted {
+  opacity: 0.78;
+  cursor: default;
+}
+.actor-hud-1547 .hud-dice-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.actor-hud-1547 .hud-dice-row-main {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+}
+
+.actor-hud-1547 .hud-dice-row-controls input,
+.actor-hud-1547 .hud-d6-picker-row input {
+  width: 3.25rem;
+  height: 1.8rem;
+  padding: 0.12rem 0.3rem;
+  border-radius: 7px;
+  border: 1px solid rgba(201, 171, 113, 0.3);
+  background: rgba(14, 18, 26, 0.78);
+  color: #fff8ec;
+  text-align: center;
+}
+
+.actor-hud-1547 .hud-dice-preview-row,
+.actor-hud-1547 .hud-d6-picker-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.45rem;
+}
+
+.actor-hud-1547 .hud-dice-action-strip {
+  margin-top: 0.55rem;
 }

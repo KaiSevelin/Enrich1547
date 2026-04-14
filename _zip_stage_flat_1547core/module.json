@@ -2,7 +2,7 @@
     "id":  "1547core",
     "title":  "1547 Core",
     "description":  "Core rules and shared runtime for 1547",
-    "version":  "0.0.46",
+    "version":  "0.0.61",
     "compatibility":  {
                           "minimum":  "11",
                           "verified":  "13.350"
@@ -22,5 +22,3 @@
     "manifest":  "https://raw.githubusercontent.com/KaiSevelin/Enrich1547/master/modules/1547core/module.json",
     "download":  "https://raw.githubusercontent.com/KaiSevelin/Enrich1547/master/1547core.zip"
 }
-
-

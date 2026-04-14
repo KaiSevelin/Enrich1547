@@ -1,4 +1,4 @@
-import { COMBAT_EVENTS, onCombatEvent } from "../services/combat-events.js";
+﻿import { COMBAT_EVENTS, onCombatEvent } from "../services/combat-events.js";
 
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
@@ -16,14 +16,14 @@ const VULNERABILITY_FILL_COLOR = 0xB85A5A;
 const VULNERABILITY_FILL_ALPHA = 0.14;
 const VULNERABILITY_STROKE_ALPHA = 0.22;
 const RANGE_SHORT_FILL_COLOR = 0x4B86C5;
-const RANGE_SHORT_FILL_ALPHA = 0.1;
-const RANGE_SHORT_STROKE_ALPHA = 0.18;
+const RANGE_SHORT_FILL_ALPHA = 0.16;
+const RANGE_SHORT_STROKE_ALPHA = 0.28;
 const RANGE_LONG_FILL_COLOR = 0xC9A14A;
-const RANGE_LONG_FILL_ALPHA = 0.08;
-const RANGE_LONG_STROKE_ALPHA = 0.16;
+const RANGE_LONG_FILL_ALPHA = 0.13;
+const RANGE_LONG_STROKE_ALPHA = 0.24;
 const RANGE_MAX_FILL_COLOR = 0x7C8894;
-const RANGE_MAX_FILL_ALPHA = 0.06;
-const RANGE_MAX_STROKE_ALPHA = 0.14;
+const RANGE_MAX_FILL_ALPHA = 0.1;
+const RANGE_MAX_STROKE_ALPHA = 0.2;
 const CSB_TEMPLATE_IDS = {
     armor: "uLlgZXz3GlXPFtsj",
     container: "l4j1zT3kpdkZmACQ",
@@ -47,8 +47,23 @@ const HUD_STATE = {
     counterRollEnabled: false,
     counterRollDice: 1,
     collapsed: false,
-    reactionWindow: null
+    reactionWindow: null,
+    selectedAmmoByWeapon: {},
+    inventoryFilter: "all"
 };
+
+const INVENTORY_FILTER_OPTIONS = [
+    { value: "all", label: "All" },
+    { value: "Item.389uqkKKn8M1SKux", label: "Ammunitions" },
+    { value: "Item.uLlgZXz3GlXPFtsj", label: "Armors" },
+    { value: "Item.PDxRO5ObvLaThpez", label: "Consumables" },
+    { value: "Item.l4j1zT3kpdkZmACQ", label: "Containers" },
+    { value: "Item.eCIZRFXbcQVZKqEr", label: "Equippable items" },
+    { value: "Item.CmGj09PEdHfklGsT", label: "Light sources" },
+    { value: "Item.HkiFlUWUkUycJdBZ", label: "Magic items" },
+    { value: "Item.qZCfLEYQ7egbm1B9", label: "Weapons" },
+    { value: "Item.woHyeHPKKdo4JDJd", label: "Unequippable items" }
+];
 
 let reactionHudTicker = null;
 
@@ -101,6 +116,13 @@ function getStringProp(props, keys) {
     return "";
 }
 
+function isTruthyLike(value) {
+    if (typeof value === "boolean") return value;
+    if (typeof value === "number") return value > 0;
+    const normalized = String(value ?? "").trim().toLowerCase();
+    if (!normalized) return false;
+    return ["true", "yes", "y", "1", "available", "ready"].includes(normalized);
+}
 function normalizeTemplateId(value) {
     const text = String(value ?? "").trim();
     if (!text) return "";
@@ -109,6 +131,25 @@ function normalizeTemplateId(value) {
 
 function getItemTemplateId(item) {
     return normalizeTemplateId(item?.system?.template);
+}
+
+function normalizeInventoryFilterValue(value) {
+    const normalized = String(value ?? "all").trim();
+    if (!normalized || normalized.toLowerCase() === "all") return "all";
+    return normalizeTemplateId(normalized);
+}
+
+function getInventoryFilterOptions() {
+    return INVENTORY_FILTER_OPTIONS.map((option) => ({
+        ...option,
+        normalizedValue: normalizeInventoryFilterValue(option.value)
+    }));
+}
+
+function matchesInventoryFilter(item, filterValue) {
+    const normalizedFilter = normalizeInventoryFilterValue(filterValue);
+    if (normalizedFilter === "all") return true;
+    return normalizeTemplateId(item?.templateId) === normalizedFilter;
 }
 
 function getCsbItemKind(item) {
@@ -177,6 +218,36 @@ function isInternalHudFolderName(folderName) {
         || normalized.includes("do not remove");
 }
 
+function normalizeManeuverTimingKey(value) {
+    const normalized = String(value ?? "").trim().toLowerCase();
+    if (!normalized) return "other";
+    if (normalized === "full-turn" || normalized === "full turn") return "full-turn";
+    if (["pre", "reaction", "post", "move", "attack"].includes(normalized)) return normalized;
+    return normalized;
+}
+
+function formatManeuverTimingLabel(value) {
+    switch (normalizeManeuverTimingKey(value)) {
+        case "pre":
+            return "Pre";
+        case "reaction":
+            return "Reaction";
+        case "post":
+            return "Post";
+        case "full-turn":
+            return "Full Turn";
+        case "move":
+            return "Move";
+        case "attack":
+            return "Attack";
+        default: {
+            const text = String(value ?? "").trim();
+            if (!text) return "Other";
+            return text.charAt(0).toUpperCase() + text.slice(1);
+        }
+    }
+}
+
 function getPlayerFacingItemGroup(item) {
     const itemKind = getCsbItemKind(item);
 
@@ -213,25 +284,122 @@ function getWeaponReach(item) {
     };
 }
 
-function getWeaponRangeBands(item) {
+function parseJsonProp(value, fallback = null) {
+    if (typeof value !== "string" || value.trim() === "") return fallback;
+    try {
+        return JSON.parse(value);
+    } catch {
+        return fallback;
+    }
+}
+
+function parseListProp(value) {
+    if (Array.isArray(value)) return value.filter(Boolean);
+    if (typeof value !== "string") return [];
+    return value.split(",").map((entry) => entry.trim()).filter(Boolean);
+}
+
+function getAmmoRangeData(item) {
     const itemProps = item?.system?.props ?? {};
     const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-    const shortRange = getNumericProp(itemProps, ["ShortRange"])
-        ?? getNumericProp(sourceData, ["shortRange"])
-        ?? null;
-    const longRange = getNumericProp(itemProps, ["LongRange"])
-        ?? getNumericProp(sourceData, ["longRange"])
-        ?? null;
-    const maxRange = getNumericProp(itemProps, ["MaxRange"])
-        ?? getNumericProp(sourceData, ["maxRange"])
-        ?? null;
+    const loadedAmmoId = String(itemProps.LoadedAmmoId ?? sourceData.loadedAmmoId ?? "").trim();
+    if (!loadedAmmoId) {
+        return { range: null };
+    }
+    const ammoItem = item?.parent?.items?.get?.(loadedAmmoId) ?? null;
+    const ammoProps = ammoItem?.system?.props ?? {};
+    const ammoSource = ammoItem?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? ammoItem?.flags?.[MODULE_ID]?.sourceData ?? ammoItem ?? null;
+    if (!ammoSource && !ammoItem) {
+        return { range: null };
+    }
+    const sourceRange = ammoSource?.range ?? null;
+    const explicitRange = (
+        ammoProps.RangeShort !== undefined
+        || ammoProps.RangeMedium !== undefined
+        || ammoProps.RangeLong !== undefined
+    )
+        ? {
+            mode: isTruthyLike(ammoProps.RangeModeOverride) ? "override" : "modify",
+            shortRange: Number(ammoProps.RangeShort),
+            longRange: Number(ammoProps.RangeMedium),
+            maxRange: Number(ammoProps.RangeLong)
+        }
+        : null;
+    const propRange = parseJsonProp(ammoProps.Range, null);
+    const legacyOverride = ammoSource?.rangeOverride ?? parseJsonProp(ammoProps.RangeOverride, null);
+    const legacyModifier = ammoSource?.rangeModifier ?? parseJsonProp(ammoProps.RangeModifier, null);
+    const range = sourceRange ?? explicitRange ?? propRange
+        ?? (legacyOverride ? { mode: "override", ...legacyOverride } : null)
+        ?? (legacyModifier ? { mode: "modify", ...legacyModifier } : null);
+    if (!range || typeof range !== "object") {
+        return { range: null };
+    }
     return {
-        shortRange,
-        longRange,
-        maxRange
+        range: {
+            mode: String(range.mode ?? "modify").trim().toLowerCase() === "override" ? "override" : "modify",
+            shortRange: Number(range.shortRange),
+            longRange: Number(range.longRange),
+            maxRange: Number(range.maxRange)
+        }
     };
 }
 
+function normalizeRangeBandOrder(rangeBands) {
+    let shortRange = Number.isFinite(rangeBands.shortRange) ? Math.max(0, rangeBands.shortRange) : null;
+    let longRange = Number.isFinite(rangeBands.longRange) ? Math.max(0, rangeBands.longRange) : null;
+    let maxRange = Number.isFinite(rangeBands.maxRange) ? Math.max(0, rangeBands.maxRange) : null;
+    if (Number.isFinite(shortRange) && Number.isFinite(longRange) && longRange < shortRange) longRange = shortRange;
+    if (Number.isFinite(longRange) && Number.isFinite(maxRange) && maxRange < longRange) maxRange = longRange;
+    if (!Number.isFinite(longRange) && Number.isFinite(shortRange)) longRange = shortRange;
+    if (!Number.isFinite(maxRange) && Number.isFinite(longRange)) maxRange = longRange;
+    return { shortRange, longRange, maxRange };
+}
+
+function applyAmmoRangeBands(rangeBands, ammoRangeData) {
+    const range = ammoRangeData?.range ?? null;
+    if (range && typeof range === "object") {
+        if (range.mode === "override") {
+            return normalizeRangeBandOrder({
+                shortRange: range.shortRange,
+                longRange: range.longRange,
+                maxRange: range.maxRange
+            });
+        }
+        return normalizeRangeBandOrder({
+            shortRange: (Number.isFinite(rangeBands.shortRange) ? rangeBands.shortRange : 0) + (Number(range.shortRange) || 0),
+            longRange: (Number.isFinite(rangeBands.longRange) ? rangeBands.longRange : (Number.isFinite(rangeBands.shortRange) ? rangeBands.shortRange : 0)) + (Number(range.longRange) || 0),
+            maxRange: (Number.isFinite(rangeBands.maxRange) ? rangeBands.maxRange : (Number.isFinite(rangeBands.longRange) ? rangeBands.longRange : 0)) + (Number(range.maxRange) || 0)
+        });
+    }
+    return normalizeRangeBandOrder(rangeBands);
+}
+
+function getWeaponRangeBands(item) {
+    const itemProps = item?.system?.props ?? {};
+    const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
+    const baseRangeBands = {
+        shortRange: getNumericProp(itemProps, ["ShortRange"])
+            ?? getNumericProp(sourceData, ["shortRange"])
+            ?? null,
+        longRange: getNumericProp(itemProps, ["LongRange"])
+            ?? getNumericProp(sourceData, ["longRange"])
+            ?? null,
+        maxRange: getNumericProp(itemProps, ["MaxRange"])
+            ?? getNumericProp(sourceData, ["maxRange"])
+            ?? null
+    };
+    return applyAmmoRangeBands(baseRangeBands, getAmmoRangeData(item));
+}
+
+function getChebyshevDistanceSquares(sourceToken, targetToken) {
+    const source = sourceToken?.center ?? null;
+    const target = targetToken?.center ?? null;
+    const size = Number(canvas?.dimensions?.size) || 0;
+    if (!source || !target || size <= 0) return null;
+    const dx = Math.abs(Number(target.x) - Number(source.x));
+    const dy = Math.abs(Number(target.y) - Number(source.y));
+    return Math.round(Math.max(dx, dy) / size);
+}
 function hasReach(item) {
     const { minReach, maxReach } = getWeaponReach(item);
     return Number.isFinite(minReach) && Number.isFinite(maxReach) && maxReach >= minReach && maxReach > 0;
@@ -272,6 +440,8 @@ function getWeaponAttackProfiles(item) {
             index,
             label: sourceProfile?.name ?? (index === 0 ? "Default" : `Alternative ${index}`),
             formula,
+            dice: Array.isArray(sourceProfile?.dice) ? [...sourceProfile.dice] : [],
+            attackType: sourceProfile?.attackType ?? null,
             profileId: sourceProfile?.id ?? null,
             allowedAmmoTypes: allowedAmmoText
                 ? allowedAmmoText.split(",").map((entry) => entry.trim()).filter(Boolean)
@@ -288,6 +458,39 @@ function getWeaponActiveAttackProfile(item) {
     return availableProfiles.find((profile) => profile.key === selectedKey)
         ?? availableProfiles[0]
         ?? null;
+}
+
+function getDiceTermCode(dieName) {
+    switch (String(dieName ?? "").trim()) {
+        case "Armor": return "a";
+        case "Balanced": return "b";
+        case "Control": return "c";
+        case "Evade": return "e";
+        case "Finesse": return "f";
+        case "Heavy": return "h";
+        case "Lethality": return "l";
+        case "Penetration": return "p";
+        case "Risk": return "r";
+        case "Multiplier": return "x";
+        default: return "";
+    }
+}
+
+function buildFoundryAttackRollFormula(profile, rollContext = {}) {
+    const baseDice = Array.isArray(profile?.dice) ? [...profile.dice] : [];
+    if (!baseDice.length) return "";
+    const pool = [...baseDice];
+    const advantageDice = Math.max(0, Number(rollContext?.advantageDice) || 0);
+    const riskDice = Math.max(0, Number(rollContext?.riskDice) || 0);
+    const firstDie = baseDice[0] ?? "";
+    for (let index = 0; index < advantageDice; index += 1) {
+        if (firstDie) pool.push(firstDie);
+    }
+    for (let index = 0; index < riskDice; index += 1) {
+        pool.push("Risk");
+    }
+    const terms = pool.map((die) => getDiceTermCode(die)).filter(Boolean).map((code) => "1d" + code);
+    return terms.join(" + ");
 }
 
 function getAmmoQuantity(item) {
@@ -309,12 +512,153 @@ function getAmmoType(item) {
 function getAmmoSummary(item) {
     const itemProps = item?.system?.props ?? {};
     const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-    const addDiceSummary = getStringProp(itemProps, ["AddDiceSummary", "AddDice"]);
-    if (addDiceSummary) return addDiceSummary;
-    if (Array.isArray(sourceData?.addDice) && sourceData.addDice.length) {
-        return sourceData.addDice.join(", ");
+    const sourceAddDice = Array.isArray(sourceData?.addDice) ? sourceData.addDice.join(", ") : "";
+    const sourceTags = Array.isArray(sourceData?.tags) ? sourceData.tags.join(", ") : "";
+    const sourceModifiers = Array.isArray(sourceData?.resultModifiers) && sourceData.resultModifiers.length
+        ? JSON.stringify(sourceData.resultModifiers)
+        : "";
+    const addDiceSummary = getStringProp(itemProps, ["AddDiceSummary", "AddDice"]) || sourceAddDice;
+    const tagsSummary = getStringProp(itemProps, ["TagsSummary", "Tags"]) || sourceTags;
+    const parsedModifiers = parseJsonProp(itemProps.ResultModifiers, null);
+    const modifiersSummary = getStringProp(itemProps, ["ResultModifiersSummary"]) || (parsedModifiers ? JSON.stringify(parsedModifiers) : sourceModifiers);
+    return [addDiceSummary, tagsSummary, modifiersSummary].filter(Boolean).join(" | ");
+}
+
+function getWeaponAttackState(weapon, {
+    token = null,
+    primaryTarget = null,
+    targetCount = 0,
+    attacksRemaining = null
+} = {}) {
+    if (!weapon) {
+        return {
+            status: "invalid",
+            label: "No weapon",
+            reason: "Weapon is unavailable.",
+            distanceSquares: null
+        };
     }
-    return "";
+    if (Number.isFinite(attacksRemaining) && attacksRemaining <= 0) {
+        return {
+            status: "invalid",
+            label: "No attacks remaining",
+            reason: "This actor has no attacks remaining this turn.",
+            distanceSquares: null
+        };
+    }
+    if (!weapon.equipped && !weapon.ready) {
+        return {
+            status: "invalid",
+            label: "Not equipped",
+            reason: "Weapon is not equipped.",
+            distanceSquares: null
+        };
+    }
+    if (weapon.usesAmmo) {
+        if (!weapon.loadedAmmoId) {
+            return {
+                status: "invalid",
+                label: "No ammo loaded",
+                reason: "Load compatible ammunition first.",
+                distanceSquares: null
+            };
+        }
+        if (!Number.isFinite(weapon.loadedAmmoQuantity) || weapon.loadedAmmoQuantity <= 0) {
+            return {
+                status: "invalid",
+                label: "Ammo depleted",
+                reason: "The loaded ammunition stack is empty.",
+                distanceSquares: null
+            };
+        }
+        if (Array.isArray(weapon.activeAttackAllowedAmmoTypes) && weapon.activeAttackAllowedAmmoTypes.length) {
+            if (!weapon.loadedAmmoType || !weapon.activeAttackAllowedAmmoTypes.includes(weapon.loadedAmmoType)) {
+                return {
+                    status: "invalid",
+                    label: "Wrong ammo",
+                    reason: "Loaded ammunition is not compatible with the active attack profile.",
+                    distanceSquares: null
+                };
+            }
+        }
+    }
+    if (targetCount > 1 && !weapon.canTargetMultiple) {
+        return {
+            status: "invalid",
+            label: "Multiple targets marked",
+            reason: "This weapon can only declare attacks against a single target.",
+            distanceSquares: null
+        };
+    }
+    if (!primaryTarget) {
+        return {
+            status: "valid",
+            label: "No target",
+            reason: "Click Attack to roll this weapon to chat without declaring a target.",
+            distanceSquares: null,
+            previewOnly: true
+        };
+    }
+
+    const distanceSquares = getChebyshevDistanceSquares(token, primaryTarget);
+    if (!Number.isFinite(distanceSquares)) {
+        return {
+            status: "valid",
+            label: "Target selected",
+            reason: "Could not measure target distance.",
+            distanceSquares: null
+        };
+    }
+
+    if (weapon.activeAttackType === "ranged" || weapon.activeAttackType === "thrown" || Number.isFinite(weapon.shortRange) || Number.isFinite(weapon.longRange) || Number.isFinite(weapon.maxRange)) {
+        if (Number.isFinite(weapon.shortRange) && distanceSquares <= weapon.shortRange) {
+            return {
+                status: "valid",
+                label: `Short range (${distanceSquares})`,
+                reason: "Attack is legal at normal range.",
+                distanceSquares
+            };
+        }
+        if (Number.isFinite(weapon.longRange) && distanceSquares <= weapon.longRange) {
+            return {
+                status: "valid",
+                label: `Long range (${distanceSquares})`,
+                reason: "Attack is legal but disadvantaged at long range.",
+                distanceSquares
+            };
+        }
+        if (Number.isFinite(weapon.maxRange) && distanceSquares <= weapon.maxRange) {
+            return {
+                status: "invalid",
+                label: `Beyond long range (${distanceSquares})`,
+                reason: "Direct attacks are not legal beyond long range.",
+                distanceSquares
+            };
+        }
+        return {
+            status: "invalid",
+            label: `Out of range (${distanceSquares})`,
+            reason: "Target is beyond maximum range.",
+            distanceSquares
+        };
+    }
+
+    const minReach = Number.isFinite(weapon.minReach) ? weapon.minReach : 0;
+    const maxReach = Number.isFinite(weapon.maxReach) ? weapon.maxReach : null;
+    if (Number.isFinite(maxReach) && distanceSquares >= minReach && distanceSquares <= maxReach) {
+        return {
+            status: "valid",
+            label: `In reach (${distanceSquares})`,
+            reason: "Target is within melee reach.",
+            distanceSquares
+        };
+    }
+    return {
+        status: "invalid",
+        label: `Out of reach (${distanceSquares})`,
+        reason: "Target is not within melee reach.",
+        distanceSquares
+    };
 }
 
 function getThreatSource(actor) {
@@ -810,12 +1154,14 @@ function buildSkillRollData(baseStat, diceShift, advantageDice = 0) {
 
 function buildHudActionContext(actor, token) {
     const summary = summarizeActor(actor, token);
+    const targetedTokens = Array.from(game.user?.targets ?? []);
     return {
         actor,
         token,
         selectedToken: getSelectedToken(),
         hoveredToken: canvas?.tokens?.hover,
-        targetedTokens: Array.from(game.user?.targets ?? []),
+        targetedTokens,
+        primaryTarget: targetedTokens[0] ?? null,
         inCombat: Boolean(game.combat?.started),
         combatRound: game.combat?.round ?? null,
         counterRollEnabled: HUD_STATE.counterRollEnabled,
@@ -859,6 +1205,25 @@ function createSkillActionDescriptor(context, skillName) {
         rollData: {},
         metadata: {
             skillName
+        }
+    };
+}
+function createWeaponAttackActionDescriptor(context, weaponId) {
+    const weapon = context.summary.equippedWeapons.find((entry) => entry.id === weaponId);
+    return {
+        actionType: "attack-with-weapon",
+        sourceType: "weapon",
+        sourceId: weaponId,
+        label: weapon ? `Attack with ${weapon.name}` : "Attack",
+        actorId: context.actor?.id ?? "",
+        tokenId: context.token?.id ?? "",
+        handlerId: "attack-with-weapon",
+        targeting: "single-or-none",
+        requirements: {},
+        costs: {},
+        rollData: {},
+        metadata: {
+            weaponId
         }
     };
 }
@@ -980,12 +1345,74 @@ function evaluateSkillAction(descriptor, context) {
     };
 }
 
+function evaluateWeaponAttackAction(descriptor, context) {
+    const weapon = context.summary.equippedWeapons.find((entry) => entry.id === descriptor.metadata?.weaponId);
+    if (!weapon) {
+        return {
+            status: "invalid",
+            reasons: ["Weapon is not available on this actor"],
+            resolvedTargets: [],
+            resolvedCosts: {},
+            rollPreview: null,
+            followUp: null,
+            resolvedSource: null
+        };
+    }
+
+    const attackState = getWeaponAttackState(weapon, {
+        token: context.token,
+        primaryTarget: context.primaryTarget,
+        targetCount: context.targetedTokens.length,
+        attacksRemaining: context.summary.attacksRemaining
+    });
+
+    if (attackState.status !== "valid") {
+        return {
+            status: "invalid",
+            reasons: [attackState.reason || "This attack is not currently legal."],
+            resolvedTargets: context.primaryTarget ? [context.primaryTarget] : [],
+            resolvedCosts: {},
+            rollPreview: null,
+            followUp: null,
+            resolvedSource: {
+                weapon,
+                attackState
+            }
+        };
+    }
+
+    return {
+        status: "valid",
+        reasons: [],
+        resolvedTargets: context.primaryTarget ? [context.primaryTarget] : [],
+        resolvedCosts: {},
+        rollPreview: {
+            title: descriptor.label,
+            actionType: descriptor.actionType,
+            sourceLabel: weapon.name,
+            targetLabels: context.primaryTarget ? [context.primaryTarget.name ?? context.primaryTarget.actor?.name ?? "Target"] : [],
+            baseFormula: weapon.activeAttackFormula || "-",
+            advantageDice: context.summary.rollContext.advantageDice,
+            riskDice: context.summary.rollContext.riskDice,
+            finalFormula: buildFoundryAttackRollFormula(weapon.activeAttackProfileData, context.summary.rollContext) || weapon.activeAttackFormula || "-",
+            costs: {},
+            notes: [attackState.label, attackState.reason].filter(Boolean)
+        },
+        followUp: null,
+        resolvedSource: {
+            weapon,
+            attackState
+        }
+    };
+}
 function evaluateHudAction(descriptor, context) {
     switch (descriptor.actionType) {
         case "roll-stat":
             return evaluateStatAction(descriptor, context);
         case "roll-skill":
             return evaluateSkillAction(descriptor, context);
+        case "attack-with-weapon":
+            return evaluateWeaponAttackAction(descriptor, context);
         default:
             return {
                 status: "invalid",
@@ -998,7 +1425,6 @@ function evaluateHudAction(descriptor, context) {
             };
     }
 }
-
 async function executeStatAction(descriptor, context, evaluation) {
     const stat = evaluation.resolvedSource;
     const formula = evaluation.rollPreview?.finalFormula ?? stat?.formula;
@@ -1035,12 +1461,182 @@ async function executeSkillAction(descriptor, context, evaluation) {
     await maybeRollCounter(context, descriptor.label, roll.total);
 }
 
+async function executeWeaponAttackAction(descriptor, context, evaluation) {
+    const weaponId = descriptor.metadata?.weaponId;
+    const weaponItem = context.actor?.items?.get?.(weaponId);
+    if (!weaponItem) {
+        ui.notifications?.warn?.("Weapon item could not be resolved.");
+        return;
+    }
+
+    const currentSummary = summarizeActor(context.actor, context.token);
+    const currentWeapon = currentSummary.equippedWeapons.find((entry) => entry.id === weaponId) ?? evaluation?.resolvedSource?.weapon ?? null;
+    const attackFormula = buildFoundryAttackRollFormula(currentWeapon?.activeAttackProfileData, currentSummary.rollContext) || "";
+
+    if (!context.primaryTarget) {
+        if (!attackFormula) {
+            const speaker = ChatMessage.getSpeaker({ actor: context.actor, token: context.token?.document });
+            await ChatMessage.create({
+                speaker,
+                content: `<strong>${escapeHtml(descriptor.label)}</strong><br>No target selected.<br>Attack pool: ${escapeHtml(currentWeapon?.activeAttackFormula || "Unavailable")}`
+            });
+            return;
+        }
+        const roll = await new Roll(attackFormula).evaluate({ async: true });
+        const speaker = ChatMessage.getSpeaker({ actor: context.actor, token: context.token?.document });
+        const flavor = `${descriptor.label}<br>No target selected: rolled to chat only.`;
+        await roll.toMessage({ speaker, flavor });
+        return;
+    }
+
+    const refreshedAttackState = getWeaponAttackState(currentWeapon, {
+        token: context.token,
+        primaryTarget: context.primaryTarget,
+        targetCount: context.targetedTokens.length,
+        attacksRemaining: currentSummary.attacksRemaining
+    });
+    if (refreshedAttackState.status !== "valid") {
+        ui.notifications?.warn?.(refreshedAttackState.reason || "This attack is not currently legal.");
+        return;
+    }
+
+    const combatApi = game.modules.get(MODULE_ID)?.api?.combat;
+    const declareAttack = combatApi?.declareAttack;
+    if (typeof declareAttack !== "function") {
+        ui.notifications?.warn?.("Combat resolver is not available.");
+        return;
+    }
+
+    const targetActor = context.primaryTarget?.actor ?? null;
+    const distanceSquares = refreshedAttackState.distanceSquares ?? getChebyshevDistanceSquares(context.token, context.primaryTarget);
+    try {
+        const result = await declareAttack({
+            actor: context.actor,
+            target: targetActor,
+            targets: targetActor ? [targetActor] : [],
+            weapon: weaponItem,
+            profileId: currentWeapon?.activeAttackProfileId ?? null,
+            distanceSquares
+        });
+        if (result?.cancelled) {
+            ui.notifications?.info?.("Attack declaration was cancelled by a reaction.");
+            return;
+        }
+        ui.notifications?.info?.(`Attack declared against ${targetActor?.name ?? "target"}.`);
+    } catch (error) {
+        ui.notifications?.warn?.(error?.message || "Could not declare the attack.");
+    }
+}
+
+async function consumeHudFullTurn(actor) {
+    if (!actor?.update) return;
+    await actor.update({
+        "system.props.FullTurnAvailable": false
+    });
+}
+
+async function executeWeaponReloadAction(weaponId, actor, summary) {
+    const requiresFullTurn = summary?.isCombatActive === true;
+    if (requiresFullTurn && !isTruthyLike(summary?.fullTurnAvailable)) {
+        ui.notifications?.warn?.("A full turn is required to reload.");
+        return;
+    }
+
+    const weapon = summary?.equippedWeapons?.find((entry) => entry.id === weaponId) ?? null;
+    const weaponItem = actor?.items?.get?.(weaponId) ?? null;
+    if (!weapon || !weaponItem) {
+        ui.notifications?.warn?.("Weapon item could not be resolved.");
+        return;
+    }
+    if (!weapon.usesAmmo) {
+        ui.notifications?.warn?.("This weapon does not use ammunition.");
+        return;
+    }
+
+    const selectedAmmoId = HUD_STATE.selectedAmmoByWeapon?.[weaponId] ?? weapon.loadedAmmoId ?? null;
+    const chosenAmmo = selectedAmmoId
+        ? weapon.compatibleAmmo.find((ammo) => ammo.id === selectedAmmoId) ?? null
+        : (weapon.compatibleAmmo.length === 1 ? weapon.compatibleAmmo[0] : null);
+
+    if (!chosenAmmo) {
+        ui.notifications?.warn?.("Choose a compatible ammo chip first, or keep only one compatible ammo stack.");
+        return;
+    }
+
+    const loadWeaponAmmo = game.modules.get(MODULE_ID)?.api?.combat?.loadWeaponAmmo;
+    if (typeof loadWeaponAmmo !== "function") {
+        ui.notifications?.warn?.("Combat resolver is not available.");
+        return;
+    }
+
+    await loadWeaponAmmo({
+        actor,
+        weapon: weaponItem,
+        ammoItemId: chosenAmmo.id,
+        profileId: weapon.activeAttackProfileId ?? null
+    });
+
+    if (summary?.isCombatActive === true) {
+        await consumeHudFullTurn(actor);
+    }
+    ui.notifications?.info?.(`Reloaded ${weapon.name} with ${chosenAmmo.name}.`);
+}
+
+async function executeWeaponReadyAction(weaponId, actor, summary) {
+    const requiresFullTurn = summary?.isCombatActive === true;
+    if (requiresFullTurn && !isTruthyLike(summary?.fullTurnAvailable)) {
+        ui.notifications?.warn?.("A full turn is required to ready a weapon.");
+        return;
+    }
+
+    const weaponItem = actor?.items?.get?.(weaponId) ?? null;
+    if (!weaponItem?.update) {
+        ui.notifications?.warn?.("Weapon item could not be resolved.");
+        return;
+    }
+
+    await weaponItem.update({
+        "system.props.Equipped": true,
+        "system.props.Ready": true
+    });
+    if (summary?.isCombatActive === true) {
+        await consumeHudFullTurn(actor);
+    }
+    ui.notifications?.info?.(`Readied ${weaponItem.name}.`);
+}
+
+async function executeItemUnequipAction(itemId, actor, summary) {
+    const requiresFullTurn = summary?.isCombatActive === true;
+    if (requiresFullTurn && !isTruthyLike(summary?.fullTurnAvailable)) {
+        ui.notifications?.warn?.("A full turn is required to unequip an item.");
+        return;
+    }
+
+    const item = actor?.items?.get?.(itemId) ?? null;
+    if (!item?.update) {
+        ui.notifications?.warn?.("Item could not be resolved.");
+        return;
+    }
+
+    await item.update({
+        "system.props.Equipped": false,
+        "system.props.Ready": false
+    });
+    if (summary?.isCombatActive === true) {
+        await consumeHudFullTurn(actor);
+    }
+    ui.notifications?.info?.(`Unequipped ${item.name}.`);
+}
+
 const HUD_ACTION_HANDLERS = {
     "roll-stat": {
         execute: executeStatAction
     },
     "roll-skill": {
         execute: executeSkillAction
+    },
+    "attack-with-weapon": {
+        execute: executeWeaponAttackAction
     }
 };
 
@@ -1089,6 +1685,9 @@ function summarizeActor(actor, token) {
     const props = getActorProps(actor);
     const items = actor?.items?.contents ?? actor?.items ?? [];
     const effects = actor?.effects?.contents ?? actor?.effects ?? [];
+    const targetedTokens = Array.from(game.user?.targets ?? []);
+    const primaryTarget = targetedTokens[0] ?? null;
+    const attacksRemaining = getNumericProp(props, ["AttacksRemaining", "AttackRemaining", "attacksRemaining"]);
     const weaponItems = items.filter(isWeaponItem);
     const armorItems = items.filter(isArmorItem);
     const ammoItems = items.filter(isAmmoItem);
@@ -1104,6 +1703,7 @@ function summarizeActor(actor, token) {
         const attackProfiles = getWeaponAttackProfiles(item);
         const activeAttackProfile = getWeaponActiveAttackProfile(item);
         const rangeBands = getWeaponRangeBands(item);
+        const reach = getWeaponReach(item);
         const usesAmmo = Boolean(itemProps.UsesAmmo);
         const loadedAmmoId = String(itemProps.LoadedAmmoId ?? "").trim();
         const loadedAmmo = ammoItems.find((ammo) => ammo.id === loadedAmmoId) ?? null;
@@ -1118,12 +1718,20 @@ function summarizeActor(actor, token) {
                 return weaponAmmoType ? weaponAmmoType === ammoType : true;
             })
             : [];
-        return {
+        const selectedAmmoId = compatibleAmmo.some((ammo) => ammo.id === HUD_STATE.selectedAmmoByWeapon?.[item.id])
+            ? HUD_STATE.selectedAmmoByWeapon[item.id]
+            : (loadedAmmoId || null);
+        if (usesAmmo && selectedAmmoId) {
+            HUD_STATE.selectedAmmoByWeapon[item.id] = selectedAmmoId;
+        }
+        const weaponSummary = {
             id: item.id,
             name: item.name,
             ready: Boolean(itemProps.Ready),
             equipped: Boolean(itemProps.Equipped),
-            type: itemProps.WeaponType ?? "",
+            type: itemProps.WeaponType ?? sourceData.category ?? sourceData.type ?? "",
+            minReach: reach.minReach,
+            maxReach: reach.maxReach,
             shortRange: rangeBands.shortRange,
             longRange: rangeBands.longRange,
             maxRange: rangeBands.maxRange,
@@ -1132,14 +1740,19 @@ function summarizeActor(actor, token) {
             ammoLoaded: getNumericProp(itemProps, ["AmmoLoaded"]) ?? 0,
             loadedAmmoId: loadedAmmoId || null,
             loadedAmmoName: loadedAmmo?.name ?? "",
+            loadedAmmoType: loadedAmmo ? getAmmoType(loadedAmmo) : "",
             loadedAmmoSummary: loadedAmmo ? getAmmoSummary(loadedAmmo) : "",
             loadedAmmoQuantity: loadedAmmo ? getAmmoQuantity(loadedAmmo) : 0,
+            selectedAmmoId,
             attackProfiles,
             activeAttackProfile: activeAttackProfile?.key ?? "Attack",
-            activeAttackFormula: activeAttackProfile?.formula ?? ""
-            ,
+            activeAttackFormula: activeAttackProfile?.formula ?? "",
+            activeAttackType: activeAttackProfile?.attackType ?? null,
             activeAttackProfileId: activeAttackProfile?.profileId ?? null,
             activeAttackAmmoText: activeAttackProfile?.allowedAmmoText ?? "",
+            activeAttackAllowedAmmoTypes: Array.isArray(activeAttackProfile?.allowedAmmoTypes) ? [...activeAttackProfile.allowedAmmoTypes] : [],
+            activeAttackProfileData: activeAttackProfile ? { ...activeAttackProfile } : null,
+            canTargetMultiple: Number(activeAttackProfile?.targetCount ?? 1) > 1,
             compatibleAmmo: compatibleAmmo.map((ammo) => ({
                 id: ammo.id,
                 name: ammo.name,
@@ -1148,41 +1761,79 @@ function summarizeActor(actor, token) {
                 summary: getAmmoSummary(ammo)
             }))
         };
+        weaponSummary.attackState = getWeaponAttackState(weaponSummary, {
+            token,
+            primaryTarget,
+            targetCount: targetedTokens.length,
+            attacksRemaining
+        });
+        return weaponSummary;
     }).filter((item) => item.equipped || item.ready);
 
     const equippedArmor = armorItems.map((item) => {
         const itemProps = item.system?.props ?? {};
+        const sourceData = item.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item.flags?.[MODULE_ID]?.sourceData ?? {};
         return {
+            id: item.id,
             name: item.name,
             equipped: Boolean(itemProps.Equipped),
-            defense: itemProps.Defense ?? ""
+            defense: itemProps.Defense ?? "",
+            type: itemProps.ArmorType ?? sourceData.armorClass ?? sourceData.type ?? "armor"
         };
     }).filter((item) => item.equipped);
+
+    const isCombatActive = Boolean(game.combat?.started);
+    const fullTurnAvailable = getStringProp(props, ["FullTurnAvailable", "fullTurnAvailable"]) || "Unknown";
+    const activeWeaponSummary = equippedWeapons.find((item) => item.ready) ?? equippedWeapons[0] ?? null;
+    const activeWeaponItem = activeWeaponSummary ? actor.items?.get?.(activeWeaponSummary.id) ?? null : null;
+    const getLegalManeuvers = game.modules.get(MODULE_ID)?.api?.combat?.getLegalManeuvers;
+    const maneuverNameFilter = typeof getLegalManeuvers === "function"
+        ? new Set(getLegalManeuvers({
+            actor,
+            weapon: activeWeaponItem,
+            profile: activeWeaponSummary?.activeAttackProfileData ?? null,
+            target: primaryTarget?.actor ?? null,
+            distanceSquares: getChebyshevDistanceSquares(token, primaryTarget),
+            rangeSquares: getChebyshevDistanceSquares(token, primaryTarget),
+            attacksRemaining,
+            fullTurnAvailable: isTruthyLike(fullTurnAvailable),
+            includeReasons: false
+        }).map((maneuver) => maneuver?.name).filter(Boolean))
+        : null;
 
     const maneuvers = maneuverItems.map((item) => {
         const sourceData = item.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item.flags?.[MODULE_ID]?.sourceData ?? {};
         const itemProps = item.system?.props ?? {};
+        const rawTiming = sourceData.type ?? sourceData.timing ?? itemProps.Type ?? itemProps.Timing ?? sourceData.usage ?? itemProps.Usage ?? "";
+        const timingKey = normalizeManeuverTimingKey(rawTiming);
         return {
             name: item.name,
-            timing: sourceData.timing ?? itemProps.Timing ?? "",
-            usage: sourceData.usage ?? itemProps.Usage ?? "",
-            type: sourceData.type ?? itemProps.Type ?? ""
+            timing: formatManeuverTimingLabel(timingKey),
+            timingKey,
+            groupLabel: formatManeuverTimingLabel(timingKey),
+            usage: timingKey,
+            type: timingKey
         };
-    });
+    }).filter((maneuver) => !maneuverNameFilter || maneuverNameFilter.has(maneuver.name));
 
     const inventory = inventoryItems.map((item) => {
         const sourceData = item.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item.flags?.[MODULE_ID]?.sourceData ?? {};
         const itemProps = item.system?.props ?? {};
         return {
+            id: item.id,
             name: item.name,
             group: getPlayerFacingItemGroup(item),
             equipped: Boolean(itemProps.Equipped),
             ready: Boolean(itemProps.Ready),
             consumable: isConsumableItem(item),
-            type: itemProps.WeaponType ?? itemProps.ArmorType ?? sourceData.type ?? ""
+            itemKind: getCsbItemKind(item),
+            templateId: item.system?.template ?? "",
+            type: itemProps.WeaponType ?? itemProps.ArmorType ?? sourceData.category ?? sourceData.armorClass ?? sourceData.type ?? ""
         };
     });
 
+    const equippedInventory = inventory.filter((item) => item.equipped || item.ready);
+    const stowedInventory = inventory.filter((item) => !item.equipped && !item.ready);
     const pointPools = [
         { label: "STR", key: "StrengthPoints" },
         { label: "STA", key: "StaminaPoints" },
@@ -1282,8 +1933,9 @@ function summarizeActor(actor, token) {
         hitPoints: hitPointSummary.current,
         maxHitPoints: hitPointSummary.max,
         movement: getNumericProp(props, ["MovementRemaining", "MoveRemaining", "movementRemaining"]),
-        attacks: getNumericProp(props, ["AttacksRemaining", "AttackRemaining", "attacksRemaining"]),
-        fullTurnAvailable: getStringProp(props, ["FullTurnAvailable", "fullTurnAvailable"]) || "Unknown",
+        attacks: attacksRemaining,
+        attacksRemaining,
+        fullTurnAvailable,
         readyState: getStringProp(props, ["Done", "done"]) || "Unknown",
         stats,
         pointPools,
@@ -1294,9 +1946,10 @@ function summarizeActor(actor, token) {
         equippedArmor,
         maneuvers,
         skills,
-        inventory,
+        inventory: stowedInventory,
+        equippedInventory,
         maneuverCount: maneuverItems.length,
-        isCombatActive: Boolean(game.combat?.started),
+        isCombatActive,
         round: game.combat?.round ?? null
     };
 }
@@ -1348,12 +2001,12 @@ function buildGroupedTree(groups, formatter, options = {}) {
 }
 
 function getManeuverGroups(data) {
-    return groupEntries(data.maneuvers, (maneuver) => maneuver.timing || maneuver.usage || maneuver.type || "Other");
+    return groupEntries(data.maneuvers, (maneuver) => maneuver.groupLabel || maneuver.timing || "Other");
 }
 
 function buildWeaponsTree(data) {
     return buildTreeList(data.equippedWeapons, (weapon) => {
-        const state = weapon.ready ? "Ready" : "Equipped";
+        const state = weapon.ready ? "Ready" : (weapon.equipped ? "Equipped" : "Stowed");
         const summaryParts = [
             state,
             weapon.type,
@@ -1420,7 +2073,7 @@ function buildStatsTree(data) {
     `;
 }
 
-function buildInventoryTree(data) {
+function buildEquippedTree(data) {
     const equippedWeaponRows = data.equippedWeapons.length
         ? buildTreeList(data.equippedWeapons, (weapon) => {
             const profileButtons = weapon.attackProfiles.map((profile) => `
@@ -1438,7 +2091,7 @@ function buildInventoryTree(data) {
                     ? weapon.compatibleAmmo.map((ammo) => `
                         <button
                             type="button"
-                            class="hud-mini-button${ammo.id === weapon.loadedAmmoId ? " is-active" : ""}"
+                            class="hud-mini-button${ammo.id === (weapon.selectedAmmoId ?? weapon.loadedAmmoId) ? " is-active" : ""}"
                             data-hud-weapon-ammo="${escapeHtml(weapon.id)}"
                             data-hud-ammo-id="${escapeHtml(ammo.id)}"
                             data-hud-profile-id="${escapeHtml(weapon.activeAttackProfileId ?? "")}"
@@ -1452,7 +2105,36 @@ function buildInventoryTree(data) {
             return `
                 <li class="hud-tree-item hud-weapon-card">
                     <div class="hud-row-main">${escapeHtml(weapon.name)}</div>
-                    <div class="hud-row-sub">${escapeHtml([weapon.ready ? "Ready" : "Equipped", weapon.type, weapon.rangeSummary ? `Range ${weapon.rangeSummary}` : ""].filter(Boolean).join(" - "))}</div>
+                    <div class="hud-row-sub">${escapeHtml([weapon.ready ? "Ready" : (weapon.equipped ? "Equipped" : "Stowed"), weapon.type, weapon.rangeSummary ? `Range ${weapon.rangeSummary}` : ""].filter(Boolean).join(" - "))}</div>
+                    <div class="hud-weapon-action-strip">
+                        <button
+                            type="button"
+                            class="hud-mini-button hud-mini-button-primary"
+                            data-hud-weapon-attack="${escapeHtml(weapon.id)}"
+                        >
+                            Attack
+                        </button>
+                        ${weapon.usesAmmo ? `
+                            <button
+                                type="button"
+                                class="hud-mini-button"
+                                data-hud-weapon-reload="${escapeHtml(weapon.id)}"
+                            >
+                                Reload
+                            </button>
+                        ` : ""}
+                        ${weapon.type === "Unarmed" || weapon.name === "Unarmed" ? "" : `
+                            <button
+                                type="button"
+                                class="hud-mini-button"
+                                data-hud-item-unequip="${escapeHtml(weapon.id)}"
+                            >
+                                Unequip
+                            </button>
+                        `}
+                    </div>
+                    <div class="hud-weapon-action-status ${weapon.attackState?.status === "valid" ? "is-valid" : "is-invalid"}">${escapeHtml(weapon.attackState?.label || "Unavailable")}</div>
+                    <div class="hud-row-sub">${escapeHtml(weapon.attackState?.reason || "")}</div>
                     <ul class="hud-tree-children hud-tree-compact">
                         <li><span class="hud-tree-key">Active</span><span class="hud-tree-value">${escapeHtml(weapon.activeAttackFormula || "-")}</span></li>
                         ${weapon.usesAmmo ? `<li><span class="hud-tree-key">Loaded Ammo</span><span class="hud-tree-value">${escapeHtml(weapon.loadedAmmoName ? `${weapon.loadedAmmoName} (${weapon.ammoLoaded})` : "None")}</span></li>` : ""}
@@ -1475,23 +2157,43 @@ function buildInventoryTree(data) {
         })
         : `<li class="hud-empty-row">No equipped weapons</li>`;
 
-    const inventoryGroups = groupEntries(data.inventory, (item) => {
-        if (item.equipped || item.ready) return "Equipped / Ready";
-        return item.group || "Other Gear";
-    });
+    const equippedArmorRows = data.equippedArmor.length
+        ? buildTreeList(data.equippedArmor, (armor) => `
+            <li class="hud-tree-item">
+                <div class="hud-row-main">${escapeHtml(armor.name)}</div>
+                <div class="hud-row-sub">${escapeHtml(armor.defense || armor.type || "Equipped")}</div>
+                <div class="hud-weapon-action-strip">
+                    <button
+                        type="button"
+                        class="hud-mini-button"
+                        data-hud-item-unequip="${escapeHtml(armor.id)}"
+                    >
+                        Unequip
+                    </button>
+                </div>
+            </li>
+        `)
+        : `<li class="hud-empty-row">No equipped armor</li>`;
 
-    const inventoryRows = buildGroupedTree(inventoryGroups, (item) => {
-        const status = [
-            item.type,
-            item.equipped ? "Equipped" : "",
-            item.ready ? "Ready" : "",
-            item.consumable ? "Usable" : ""
-        ].filter(Boolean);
-
+    const equippedItemGroups = groupEntries(
+        data.equippedInventory.filter((item) => item.itemKind !== "weapon" && item.itemKind !== "armor"),
+        (item) => item.group || "Other Gear"
+    );
+    const equippedItemRows = buildGroupedTree(equippedItemGroups, (item) => {
+        const status = [item.type, item.ready ? "Ready" : (item.equipped ? "Equipped" : ""), item.consumable ? "Usable" : ""].filter(Boolean);
         return `
             <li class="hud-tree-item">
                 <div class="hud-row-main">${escapeHtml(item.name)}</div>
                 ${status.length ? `<ul class="hud-tree-children"><li>${escapeHtml(status.join(" - "))}</li></ul>` : ""}
+                <div class="hud-weapon-action-strip">
+                    <button
+                        type="button"
+                        class="hud-mini-button"
+                        data-hud-item-unequip="${escapeHtml(item.id)}"
+                    >
+                        Unequip
+                    </button>
+                </div>
             </li>
         `;
     }, { scroll: true });
@@ -1502,12 +2204,73 @@ function buildInventoryTree(data) {
             <ul class="hud-list hud-tree-list">${equippedWeaponRows}</ul>
         </div>
         <div class="hud-tree-block">
+            <div class="hud-section-title">Equipped Armor</div>
+            <ul class="hud-list hud-tree-list">${equippedArmorRows}</ul>
+        </div>
+        <div class="hud-tree-block">
+            <div class="hud-section-title">Equipped Gear</div>
+            <div class="hud-group-stack">${equippedItemRows}</div>
+        </div>
+    `;
+}
+
+function buildInventoryTree(data) {
+    const filterOptions = getInventoryFilterOptions();
+    const activeFilter = filterOptions.some((option) => option.normalizedValue === normalizeInventoryFilterValue(HUD_STATE.inventoryFilter))
+        ? HUD_STATE.inventoryFilter
+        : "all";
+    const filteredItems = data.inventory.filter((item) => matchesInventoryFilter(item, activeFilter));
+    const inventoryGroups = groupEntries(filteredItems, (item) => item.group || "Other Gear");
+
+    const filterControl = `
+        <div class="hud-tree-block hud-inventory-filter-bar">
+            <label class="hud-counter-roll-config">
+                <span>Filter</span>
+                <select data-hud-inventory-filter>
+                    ${filterOptions.map((option) => `
+                        <option value="${escapeHtml(option.value)}"${option.value === activeFilter ? " selected" : ""}>${escapeHtml(option.label)}</option>
+                    `).join("")}
+                </select>
+            </label>
+        </div>
+    `;
+
+    const inventoryRows = buildGroupedTree(inventoryGroups, (item) => {
+        const status = [
+            item.type,
+            item.consumable ? "Usable" : ""
+        ].filter(Boolean);
+        const readyButton = item.itemKind === "weapon"
+            ? `
+                <div class="hud-weapon-action-strip">
+                    <button
+                        type="button"
+                        class="hud-mini-button"
+                        data-hud-weapon-ready="${escapeHtml(item.id)}"
+                    >
+                        Ready
+                    </button>
+                </div>
+            `
+            : "";
+
+        return `
+            <li class="hud-tree-item">
+                <div class="hud-row-main">${escapeHtml(item.name)}</div>
+                ${status.length ? `<ul class="hud-tree-children"><li>${escapeHtml(status.join(" - "))}</li></ul>` : ""}
+                ${readyButton}
+            </li>
+        `;
+    }, { scroll: true });
+
+    return `
+        ${filterControl}
+        <div class="hud-tree-block">
             <div class="hud-section-title">Inventory</div>
             <div class="hud-group-stack">${inventoryRows}</div>
         </div>
     `;
 }
-
 function buildConditionTree(data) {
     return buildTreeList(data.conditions, (condition) => `
         <li class="hud-tree-item">
@@ -1613,6 +2376,11 @@ function getCategoryDefinitions(data) {
     return [
         { key: "overview", label: "Overview", count: null },
         { key: "stats", label: "Stats", count: data.stats.length },
+        {
+            key: "equipped",
+            label: "Equipped",
+            count: data.equippedWeapons.length + data.equippedArmor.length + data.equippedInventory.filter((item) => item.itemKind !== "weapon" && item.itemKind !== "armor").length
+        },
         { key: "inventory", label: "Inventory", count: data.inventory.length },
         { key: "maneuvers", label: "Maneuvers", count: data.maneuverCount },
         { key: "skills", label: "Skills", count: data.skills.length },
@@ -1638,6 +2406,8 @@ function buildCategoryContent(data, activeCategory) {
                 `)}
             </ul>`;
             })();
+        case "equipped":
+            return buildEquippedTree(data);
         case "inventory":
             return buildInventoryTree(data);
         case "maneuvers":
@@ -1670,7 +2440,7 @@ function buildCategoryContent(data, activeCategory) {
                             ${buildTreeList(activeEntries, (maneuver) => `
                                 <li class="hud-tree-item">
                                     <div class="hud-row-main">${escapeHtml(maneuver.name)}</div>
-                                    <div class="hud-row-sub">${escapeHtml([maneuver.usage, maneuver.type].filter(Boolean).join(" - ") || maneuver.timing || "")}</div>
+                                    <div class="hud-row-sub">${escapeHtml(maneuver.timing || "") }</div>
                                 </li>
                             `)}
                         </ul>
@@ -1701,17 +2471,7 @@ function buildHudHtml(data) {
     const activeCategory = categories.some((category) => category.key === HUD_STATE.activeCategory)
         ? HUD_STATE.activeCategory
         : categories[0].key;
-    const targetToggle = `
-        <button
-            type="button"
-            class="hud-category-tab hud-icon-tab${isHudTargetModeActive() ? " is-active" : ""}"
-            data-hud-target-toggle
-            title="Target mode"
-            aria-label="Target mode"
-        >
-            <i class="fa-solid fa-bullseye"></i>
-        </button>
-    `;
+    const targetToggle = "";
     const sideReadyButton = data.isCombatActive ? `
         <button
             type="button"
@@ -1759,7 +2519,7 @@ function buildHudHtml(data) {
 
             ${HUD_STATE.collapsed ? "" : `
             <section class="hud-section">
-                <div class="hud-category-row">${targetToggle}${sideReadyButton}${categoryTabs}</div>
+                <div class="hud-category-row">${sideReadyButton}${categoryTabs}</div>
             </section>
 
             <section class="hud-section hud-tree-panel">
@@ -1865,7 +2625,13 @@ async function renderHudForSelection() {
     root.dataset.actorId = token.actor.id;
     root.innerHTML = buildHudHtml(summarizeActor(token.actor, token));
     applyHudPlacement(root);
-    renderThreatOverlay(token);
+    clearThreatOverlay();
+    for (const select of root.querySelectorAll("[data-hud-inventory-filter]")) {
+        select.addEventListener("change", (event) => {
+            HUD_STATE.inventoryFilter = event.currentTarget.value || "all";
+            void renderHudForSelection();
+        });
+    }
     for (const button of root.querySelectorAll("[data-hud-category]")) {
         button.addEventListener("click", (event) => {
             const category = event.currentTarget.dataset.hudCategory;
@@ -1878,14 +2644,6 @@ async function renderHudForSelection() {
         button.addEventListener("click", () => {
             HUD_STATE.collapsed = !HUD_STATE.collapsed;
             void renderHudForSelection();
-        });
-    }
-    for (const button of root.querySelectorAll("[data-hud-target-toggle]")) {
-        button.addEventListener("click", () => {
-            toggleHudTargetMode();
-            window.setTimeout(() => {
-                void renderHudForSelection();
-            }, 0);
         });
     }
     for (const button of root.querySelectorAll("[data-hud-side-ready]")) {
@@ -1940,6 +2698,43 @@ async function renderHudForSelection() {
             void renderHudForSelection();
         });
     }
+    for (const button of root.querySelectorAll("[data-hud-weapon-attack]")) {
+        button.addEventListener("click", async (event) => {
+            const weaponId = event.currentTarget.dataset.hudWeaponAttack;
+            if (!weaponId || !token?.actor) return;
+            const context = buildHudActionContext(token.actor, token);
+            const descriptor = createWeaponAttackActionDescriptor(context, weaponId);
+            await runHudAction(descriptor, context);
+            void renderHudForSelection();
+        });
+    }
+    for (const button of root.querySelectorAll("[data-hud-weapon-reload]")) {
+        button.addEventListener("click", async (event) => {
+            const weaponId = event.currentTarget.dataset.hudWeaponReload;
+            if (!weaponId || !token?.actor) return;
+            const context = buildHudActionContext(token.actor, token);
+            await executeWeaponReloadAction(weaponId, token.actor, context.summary);
+            void renderHudForSelection();
+        });
+    }
+    for (const button of root.querySelectorAll("[data-hud-weapon-ready]")) {
+        button.addEventListener("click", async (event) => {
+            const weaponId = event.currentTarget.dataset.hudWeaponReady;
+            if (!weaponId || !token?.actor) return;
+            const context = buildHudActionContext(token.actor, token);
+            await executeWeaponReadyAction(weaponId, token.actor, context.summary);
+            void renderHudForSelection();
+        });
+    }
+    for (const button of root.querySelectorAll("[data-hud-item-unequip]")) {
+        button.addEventListener("click", async (event) => {
+            const itemId = event.currentTarget.dataset.hudItemUnequip;
+            if (!itemId || !token?.actor) return;
+            const context = buildHudActionContext(token.actor, token);
+            await executeItemUnequipAction(itemId, token.actor, context.summary);
+            void renderHudForSelection();
+        });
+    }
     for (const button of root.querySelectorAll("[data-hud-weapon-profile]")) {
         button.addEventListener("click", async (event) => {
             const weaponId = event.currentTarget.dataset.hudWeaponProfile;
@@ -1947,6 +2742,19 @@ async function renderHudForSelection() {
             if (!weaponId || !profileKey || !token?.actor) return;
             const weaponItem = token.actor.items?.get?.(weaponId);
             if (!weaponItem?.update) return;
+
+            const context = buildHudActionContext(token.actor, token);
+            const weaponSummary = context.summary.equippedWeapons.find((entry) => entry.id === weaponId) ?? null;
+            const nextProfile = weaponSummary?.attackProfiles?.find((profile) => profile.key === profileKey) ?? null;
+            const selectedAmmoId = HUD_STATE.selectedAmmoByWeapon?.[weaponId] ?? null;
+            if (weaponSummary && nextProfile && selectedAmmoId) {
+                const selectedAmmo = weaponSummary.compatibleAmmo.find((ammo) => ammo.id === selectedAmmoId) ?? null;
+                const allowedAmmoTypes = Array.isArray(nextProfile.allowedAmmoTypes) ? nextProfile.allowedAmmoTypes : [];
+                if (selectedAmmo && allowedAmmoTypes.length && !allowedAmmoTypes.includes(selectedAmmo.ammoType)) {
+                    delete HUD_STATE.selectedAmmoByWeapon[weaponId];
+                }
+            }
+
             await weaponItem.update({
                 "system.props.ActiveAttackProfile": profileKey
             });
@@ -1957,21 +2765,8 @@ async function renderHudForSelection() {
         button.addEventListener("click", async (event) => {
             const weaponId = event.currentTarget.dataset.hudWeaponAmmo;
             const ammoId = event.currentTarget.dataset.hudAmmoId;
-            const profileId = event.currentTarget.dataset.hudProfileId || null;
             if (!weaponId || !ammoId || !token?.actor) return;
-            const weaponItem = token.actor.items?.get?.(weaponId);
-            const loadWeaponAmmo = game.modules.get(MODULE_ID)?.api?.combat?.loadWeaponAmmo;
-            if (!weaponItem || typeof loadWeaponAmmo !== "function") return;
-            try {
-                await loadWeaponAmmo({
-                    actor: token.actor,
-                    weapon: weaponItem,
-                    ammoItemId: ammoId,
-                    profileId
-                });
-            } catch (error) {
-                ui.notifications?.warn?.(error?.message || "Could not load ammunition.");
-            }
+            HUD_STATE.selectedAmmoByWeapon[weaponId] = ammoId;
             void renderHudForSelection();
         });
     }
@@ -2058,11 +2853,6 @@ export function register1547ActorHud() {
             renderThreatOverlay(token);
             return;
         }
-        const selectedToken = getSelectedToken();
-        if (selectedToken?.id) {
-            renderThreatOverlay(selectedToken);
-            return;
-        }
         clearThreatOverlay();
     });
     Hooks.on("canvasReady", () => {
@@ -2085,3 +2875,34 @@ export function register1547ActorHud() {
     window.addEventListener("resize", scheduleHudRerender, { passive: true });
     void renderHudForSelection();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

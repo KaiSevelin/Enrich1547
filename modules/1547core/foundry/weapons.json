@@ -15,7 +15,8 @@
         "reloadProgress": 0,
         "traits": [
             "Parrying",
-            "Disarming"
+            "Disarming",
+            "Rigid Blade"
         ],
         "attackProfiles": [
             {
@@ -303,7 +304,6 @@
             }
         ],
         "groups": [
-            "RangedWeapon",
             "ThrownWeapon"
         ],
         "img": "media/home/games/1547/Items/Dart.webp",
@@ -312,7 +312,10 @@
         "usesAmmo": false,
         "ammoType": "",
         "ammoCapacity": 0,
-        "ammoLoaded": 0
+        "ammoLoaded": 0,
+        "shortRange": 2,
+        "longRange": 4,
+        "maxRange": 6
     },
     {
         "_id": "4oOoj5XDMtERRQur",
@@ -728,7 +731,8 @@
         "traits": [
             "Parrying",
             "Disarming",
-            "Heavy"
+            "Heavy",
+            "Rigid Blade"
         ],
         "attackProfiles": [
             {
@@ -1480,7 +1484,6 @@
             }
         ],
         "groups": [
-            "RangedWeapon",
             "ThrownWeapon"
         ],
         "img": "media/home/games/1547/Items/Throwing knife.webp",
@@ -1489,7 +1492,10 @@
         "usesAmmo": false,
         "ammoType": "",
         "ammoCapacity": 0,
-        "ammoLoaded": 0
+        "ammoLoaded": 0,
+        "shortRange": 2,
+        "longRange": 3,
+        "maxRange": 5
     },
     {
         "_id": "j2xrFYjojE9yUPYc",
@@ -1696,7 +1702,8 @@
         "traits": [
             "Tactical",
             "Heavy",
-            "Parrying"
+            "Parrying",
+            "Rigid Blade"
         ],
         "attackProfiles": [
             {

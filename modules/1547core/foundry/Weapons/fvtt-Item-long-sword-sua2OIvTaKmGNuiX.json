@@ -1085,7 +1085,7 @@
         "hidden": [
             {
                 "name": "Traits",
-                "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\",\n)\n}$"
+                "value": "${\nconcat(\n  Traits_Aiming ? \"Traits_Aiming,\" : \"\",\n  Traits_ArmorBreaking ? \"Traits_ArmorBreaking,\" : \"\",\n  Traits_Bracing ? \"Traits_Bracing,\" : \"\",\n  Traits_Charging ? \"Traits_Charging,\" : \"\",\n  Traits_Control ? \"Traits_Control,\" : \"\",\n  Traits_Disarming ? \"Traits_Disarming,\" : \"\",\n  Traits_Fast ? \"Traits_Fast,\" : \"\",\n  Traits_Fragile ? \"Traits_Fragile,\" : \"\",\n  Traits_Heavy ? \"Traits_Heavy,\" : \"\",\n  Traits_Hooking ? \"Traits_Hooking,\" : \"\",\n  Traits_Narrow ? \"Traits_Narrow,\" : \"\",\n  Traits_Parrying ? \"Traits_Parrying,\" : \"\",\n  Traits_PointBlank ? \"Traits_PointBlank,\" : \"\",\n  Traits_Receiving ? \"Traits_Receiving,\" : \"\",\n  Traits_Reloading ? \"Traits_Reloading,\" : \"\",\n  Traits_Shield ? \"Traits_Shield,\" : \"\",\n  Traits_SmallShield ? \"Traits_SmallShield,\" : \"\",\n  Traits_Tactical ? \"Traits_Tactical,\" : \"\"\n)\n}$"
             }
         ],
         "modifiers": [],
@@ -1127,7 +1127,8 @@
             "UsesAmmo": false,
             "AmmoType": "",
             "AmmoCapacity": 0,
-            "AmmoLoaded": 0
+            "AmmoLoaded": 0,
+            "Traits_RigidBlade": true
         }
     },
     "effects": [],
@@ -1155,7 +1156,8 @@
                 "traits": [
                     "Parrying",
                     "Disarming",
-                    "Heavy"
+                    "Heavy",
+                    "Rigid Blade"
                 ],
                 "attackProfiles": [
                     {

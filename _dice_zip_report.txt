@@ -1,0 +1,123 @@
+﻿DICE_ENTRIES
+images/
+images/0x_chat.png
+images/0x_multiply_bg.png
+images/0x_risk_bg.png
+images/2x_chat.png
+images/2x_multiply_bg.png
+images/3x_chat.png
+images/3x_multiply_bg.png
+images/armor_bump.png
+images/balanced_bump.png
+images/blank_armor_bg.png
+images/blank_balanced_bg.png
+images/blank_chat.png
+images/blank_control_bg.png
+images/blank_evade_bg.png
+images/blank_finesse_bg.png
+images/blank_heavy_bg.png
+images/blank_lethal_bg.png
+images/blank_multiply_bg.png
+images/blank_penetration_bg.png
+images/blank_risk_bg.png
+images/control_bump.png
+images/crit_armor_bg.png
+images/crit_balanced_bg.png
+images/crit_chat.png
+images/crit_control_bg.png
+images/crit_evade_bg.png
+images/crit_finesse_bg.png
+images/crit_heavy_bg.png
+images/crit_lethal_bg.png
+images/crit_penetration_bg.png
+images/crit_risk_bg.png
+images/d1_balanced_bg.png
+images/d1_chat.png
+images/d1_control_bg.png
+images/d1_finesse_bg.png
+images/d1_heavy_bg.png
+images/d1_penetration_bg.png
+images/d2_balanced_bg.png
+images/d2_chat.png
+images/d2_heavy_bg.png
+images/d2_lethal_bg.png
+images/d2_risk_bg.png
+images/d3_chat.png
+images/d3_lethal_bg.png
+images/d3_penetration_bg.png
+images/d4_chat.png
+images/d4_heavy_bg.png
+images/d5_chat.png
+images/d5_lethal_bg.png
+images/evade_bump.png
+images/finesse_bump.png
+images/fumble_armor_bg.png
+images/fumble_balanced_bg.png
+images/fumble_chat.png
+images/fumble_control_bg.png
+images/fumble_evade_bg.png
+images/fumble_heavy_bg.png
+images/fumble_lethal_bg.png
+images/fumble_penetration_bg.png
+images/fumble_risk_bg.png
+images/heavy_bump.png
+images/lethal_bump.png
+images/multiply_bump.png
+images/p1_armor_bg.png
+images/p1_chat.png
+images/p1_evade_bg.png
+images/p2_armor_bg.png
+images/p2_chat.png
+images/p2_evade_bg.png
+images/p4_armor_bg.png
+images/p4_chat.png
+images/penetration_bump.png
+images/risk_bump.png
+modules/
+modules/armor.js
+modules/balanced.js
+modules/control.js
+modules/dice1547.js
+modules/evade.js
+modules/finesse.js
+modules/heavy.js
+modules/lethality.js
+modules/multiplier.js
+modules/penetration.js
+modules/risk.js
+module.json
+css/
+css/dice1547.css
+DICE_MODULE_JSON_PATH
+module.json
+DICE_MODULE_JSON
+{
+	"id": "dice1547",
+	"title": "dice1547",
+	"description": "Adds the ability to roll 1547 dice",
+	"version": "0.0.10",
+	"compatibility": {
+		"minimum": "11",
+		"verified": "13.350"
+	},
+	"authors": [
+		{
+			"name": "Kai"
+		}
+	],
+	"relationships": [
+		{
+			"type": "requires",
+			"id": "dice-so-nice"
+		}
+	],
+	"esmodules": [
+		"./modules/dice1547.js"
+	],
+	"styles": [
+		"./css/dice1547.css"
+	],
+	"url": "https://github.com/KaiSevelin/1547Dice",
+	"manifest": "https://github.com/KaiSevelin/1547Dice/master/module.json",
+	"download": "https://github.com/KaiSevelin/1547Dice/master/fvtt-dice1547.zip"
+}

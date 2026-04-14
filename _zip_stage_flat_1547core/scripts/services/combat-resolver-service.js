@@ -34,7 +34,7 @@ export function buildPendingAttack({
     selectedPreManeuvers = [],
     ...context
 } = {}) {
-    const normalizedWeapon = normalizeWeapon(weapon);
+    const normalizedWeapon = normalizeWeapon(weapon, actor);
     if (!actor) throw new Error("Missing actor.");
     if (!normalizedWeapon) throw new Error("Missing weapon.");
 
@@ -159,6 +159,16 @@ export function buildPendingMove({
 export async function declareAttack(options = {}) {
     const pendingAttack = buildPendingAttack(options);
     const event = await emitCombatEvent(COMBAT_EVENTS.ATTACK_DECLARED, pendingAttack);
+
+    const declarationCommitted = !event.cancelled || event.reason === "reaction-triggered";
+    if (declarationCommitted && !pendingAttack.committed) {
+        await consumeLoadedAmmo({
+            actor: pendingAttack.actor,
+            weapon: pendingAttack.weapon,
+            loadedAmmo: pendingAttack.loadedAmmo,
+        });
+        pendingAttack.committed = true;
+    }
 
     return {
         pendingAttack,
@@ -316,12 +326,14 @@ export async function resolveAttackOutcome({
         }
     );
 
-    pendingAttack.committed = true;
-    await consumeLoadedAmmo({
-        actor: pendingAttack.actor,
-        weapon: pendingAttack.weapon,
-        loadedAmmo: pendingAttack.loadedAmmo,
-    });
+    if (!pendingAttack.committed) {
+        await consumeLoadedAmmo({
+            actor: pendingAttack.actor,
+            weapon: pendingAttack.weapon,
+            loadedAmmo: pendingAttack.loadedAmmo,
+        });
+        pendingAttack.committed = true;
+    }
     const commitEvent = await emitCombatEvent(COMBAT_EVENTS.ACTION_COMMITTED, {
         type: "attack",
         pendingAttack,
@@ -354,7 +366,7 @@ export async function loadWeaponAmmo({
     profile = null,
     profileId = null,
 } = {}) {
-    const normalizedWeapon = normalizeWeapon(weapon);
+    const normalizedWeapon = normalizeWeapon(weapon, actor);
     if (!actor) throw new Error("Missing actor.");
     if (!normalizedWeapon) throw new Error("Missing weapon.");
 
@@ -371,6 +383,7 @@ export async function loadWeaponAmmo({
         weapon: normalizedWeapon,
         profile: selectedProfile,
         ammo: resolvedAmmo,
+        requireQuantity: true,
     });
 
     if (!validation.valid) {
@@ -378,11 +391,29 @@ export async function loadWeaponAmmo({
     }
 
     const weaponItem = normalizedWeapon.itemDocument;
+    const ammoDocument = resolvedAmmo.itemDocument ?? actor?.items?.get?.(resolvedAmmo._id) ?? null;
     if (!weaponItem?.update) {
         throw new Error("Weapon item is not an updatable actor item.");
     }
+    if (!ammoDocument?.update) {
+        throw new Error("Ammunition item is not an updatable actor item.");
+    }
 
+    const currentQuantity = firstFiniteNumber([
+        ammoDocument.system?.props?.Quantity,
+        resolvedAmmo.quantity,
+    ]) ?? 0;
+    if (currentQuantity < 1) {
+        throw new Error(`${resolvedAmmo.name || "Ammunition"} is out of ammunition.`);
+    }
+
+    const nextQuantity = Math.max(0, currentQuantity - 1);
     const nextLoaded = Math.min(Math.max(1, normalizedWeapon.ammoCapacity ?? 1), 1);
+
+    await ammoDocument.update({
+        "system.props.Quantity": nextQuantity,
+    });
+
     await weaponItem.update({
         "system.props.LoadedAmmoId": resolvedAmmo._id,
         "system.props.AmmoLoaded": nextLoaded,
@@ -392,6 +423,7 @@ export async function loadWeaponAmmo({
         weaponId: normalizedWeapon._id,
         loadedAmmoId: resolvedAmmo._id,
         ammoLoaded: nextLoaded,
+        remainingQuantity: nextQuantity,
     };
 }
 
@@ -399,16 +431,134 @@ export async function swapLoadedAmmo(options = {}) {
     return loadWeaponAmmo(options);
 }
 
+function parseJsonString(value, fallback = null) {
+    if (typeof value !== "string" || value.trim() === "") return fallback;
+    try {
+        return JSON.parse(value);
+    } catch {
+        return fallback;
+    }
+}
+
+function parseCommaList(value) {
+    if (Array.isArray(value)) return value.filter(Boolean);
+    if (typeof value !== "string") return [];
+    return value.split(",").map((entry) => entry.trim()).filter(Boolean);
+}
+
+function isTruthyLike(value) {
+    if (typeof value === "boolean") return value;
+    if (typeof value === "number") return value > 0;
+    const normalized = String(value ?? "").trim().toLowerCase();
+    return ["true", "yes", "y", "1", "override"].includes(normalized);
+}
+function resolveAmmoRangeSpec(source = {}, props = {}) {
+    const sourceRange = source?.range;
+    const propRange = parseJsonString(props?.Range, null);
+    const explicitRange = (
+        props?.RangeShort !== undefined
+        || props?.RangeMedium !== undefined
+        || props?.RangeLong !== undefined
+    )
+        ? {
+            mode: isTruthyLike(props?.RangeModeOverride) ? "override" : "modify",
+            shortRange: Number(props?.RangeShort),
+            longRange: Number(props?.RangeMedium),
+            maxRange: Number(props?.RangeLong)
+        }
+        : null;
+    const legacyOverride = source?.rangeOverride ?? parseJsonString(props?.RangeOverride, null);
+    const legacyModifier = source?.rangeModifier ?? parseJsonString(props?.RangeModifier, null);
+
+    const range = sourceRange ?? explicitRange ?? propRange;
+    if (range && typeof range === "object") {
+        const mode = String(range.mode ?? "modify").trim().toLowerCase();
+        return {
+            mode: mode === "override" ? "override" : "modify",
+            shortRange: Number(range.shortRange),
+            longRange: Number(range.longRange),
+            maxRange: Number(range.maxRange)
+        };
+    }
+
+    if (legacyOverride && typeof legacyOverride === "object") {
+        return {
+            mode: "override",
+            shortRange: Number(legacyOverride.shortRange),
+            longRange: Number(legacyOverride.longRange),
+            maxRange: Number(legacyOverride.maxRange)
+        };
+    }
+
+    if (legacyModifier && typeof legacyModifier === "object") {
+        return {
+            mode: "modify",
+            shortRange: Number(legacyModifier.shortRange),
+            longRange: Number(legacyModifier.longRange),
+            maxRange: Number(legacyModifier.maxRange)
+        };
+    }
+
+    return null;
+}
+
 function normalizeManeuver(maneuver) {
     return maneuver?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? maneuver?.flags?.[MODULE_ID]?.sourceData ?? maneuver ?? null;
 }
 
-function normalizeWeapon(weapon) {
+function normalizeRangeBands(rangeBands) {
+    let shortRange = firstFiniteNumber([rangeBands.shortRange]);
+    let longRange = firstFiniteNumber([rangeBands.longRange]);
+    let maxRange = firstFiniteNumber([rangeBands.maxRange]);
+    shortRange = shortRange == null ? null : Math.max(0, shortRange);
+    longRange = longRange == null ? null : Math.max(0, longRange);
+    maxRange = maxRange == null ? null : Math.max(0, maxRange);
+    if (shortRange != null && longRange != null && longRange < shortRange) longRange = shortRange;
+    if (longRange != null && maxRange != null && maxRange < longRange) maxRange = longRange;
+    if (longRange == null && shortRange != null) longRange = shortRange;
+    if (maxRange == null && longRange != null) maxRange = longRange;
+    return { shortRange, longRange, maxRange };
+}
+
+function applyAmmoRangeEffects(rangeBands, ammo) {
+    const range = ammo?.range ?? null;
+    if (range && typeof range === "object") {
+        if (range.mode === "override") {
+            return normalizeRangeBands({
+                shortRange: range.shortRange,
+                longRange: range.longRange,
+                maxRange: range.maxRange
+            });
+        }
+        return normalizeRangeBands({
+            shortRange: (rangeBands.shortRange ?? 0) + (Number(range.shortRange) || 0),
+            longRange: (rangeBands.longRange ?? rangeBands.shortRange ?? 0) + (Number(range.longRange) || 0),
+            maxRange: (rangeBands.maxRange ?? rangeBands.longRange ?? 0) + (Number(range.maxRange) || 0)
+        });
+    }
+    return normalizeRangeBands(rangeBands);
+}
+
+function normalizeWeapon(weapon, actor = null) {
     if (!weapon) return null;
     const source = weapon.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? weapon.flags?.[MODULE_ID]?.sourceData ?? weapon;
+    const loadedAmmoId = String(
+        weapon.system?.props?.LoadedAmmoId ??
+        weapon.loadedAmmoId ??
+        source.loadedAmmoId ??
+        ""
+    ).trim() || null;
+    const loadedAmmoItem = loadedAmmoId ? (actor?.items?.get?.(loadedAmmoId) ?? weapon.parent?.items?.get?.(loadedAmmoId) ?? null) : null;
+    const loadedAmmo = normalizeAmmoItem(loadedAmmoItem);
+    const baseRangeBands = {
+        shortRange: firstFiniteNumber([weapon.system?.props?.ShortRange, weapon.shortRange, source.shortRange]),
+        longRange: firstFiniteNumber([weapon.system?.props?.LongRange, weapon.longRange, source.longRange]),
+        maxRange: firstFiniteNumber([weapon.system?.props?.MaxRange, weapon.maxRange, source.maxRange])
+    };
+    const effectiveRangeBands = applyAmmoRangeEffects(baseRangeBands, loadedAmmo);
     return {
         ...source,
-        _id: source._id ?? weapon.id ?? weapon._id ?? null,
+        _id: weapon.id ?? weapon._id ?? source._id ?? null,
         name: source.name ?? weapon.name ?? "",
         attackProfiles: Array.isArray(source.attackProfiles) ? source.attackProfiles : [],
         ammoType:
@@ -435,13 +585,11 @@ function normalizeWeapon(weapon) {
                 source.activeAttackProfile ??
                 ""
             ).trim() || "Attack",
-        loadedAmmoId:
-            String(
-                weapon.system?.props?.LoadedAmmoId ??
-                weapon.loadedAmmoId ??
-                source.loadedAmmoId ??
-                ""
-            ).trim() || null,
+        loadedAmmoId,
+        loadedAmmo,
+        shortRange: effectiveRangeBands.shortRange,
+        longRange: effectiveRangeBands.longRange,
+        maxRange: effectiveRangeBands.maxRange,
         usesAmmo:
             weapon.system?.props?.UsesAmmo ??
             weapon.usesAmmo ??
@@ -478,24 +626,32 @@ function isWeaponSource(source) {
 function normalizeAmmoItem(ammo) {
     if (!ammo) return null;
     const source = ammo.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? ammo.flags?.[MODULE_ID]?.sourceData ?? ammo;
+    const props = ammo.system?.props ?? {};
     return {
         ...source,
-        _id: source._id ?? ammo.id ?? ammo._id ?? null,
+        _id: ammo.id ?? ammo._id ?? source._id ?? null,
         name: source.name ?? ammo.name ?? "",
         ammoType:
-            ammo.system?.props?.AmmoType ??
+            props.AmmoType ??
             ammo.ammoType ??
             source.ammoType ??
             "",
         quantity:
             firstFiniteNumber([
-                ammo.system?.props?.Quantity,
+                props.Quantity,
                 ammo.quantity,
                 source.quantity,
             ]) ?? 0,
-        addDice: Array.isArray(source.addDice) ? source.addDice : [],
-        tags: Array.isArray(source.tags) ? source.tags : [],
-        resultModifiers: Array.isArray(source.resultModifiers) ? source.resultModifiers : [],
+        addDice: Array.isArray(source.addDice) && source.addDice.length
+            ? source.addDice
+            : parseCommaList(props.AddDiceSummary ?? props.AddDice),
+        tags: Array.isArray(source.tags) && source.tags.length
+            ? source.tags
+            : parseCommaList(props.TagsSummary ?? props.Tags),
+        resultModifiers: Array.isArray(source.resultModifiers) && source.resultModifiers.length
+            ? source.resultModifiers
+            : (parseJsonString(props.ResultModifiers, []) ?? []),
+        range: resolveAmmoRangeSpec(source, props),
         itemDocument: ammo,
     };
 }
@@ -545,6 +701,7 @@ function resolveLoadedAmmoForAttack({ actor, weapon, profile }) {
         weapon,
         profile,
         ammo: loadedAmmo,
+        requireQuantity: false,
     });
 
     if (!validation.valid) {
@@ -557,7 +714,7 @@ function resolveLoadedAmmoForAttack({ actor, weapon, profile }) {
     };
 }
 
-function validateAmmoCompatibility({ weapon, profile, ammo }) {
+function validateAmmoCompatibility({ weapon, profile, ammo, requireQuantity = true }) {
     const allowedAmmoTypes = getAllowedAmmoTypes(weapon, profile);
     if (!ammo) {
         return {
@@ -567,7 +724,7 @@ function validateAmmoCompatibility({ weapon, profile, ammo }) {
         };
     }
 
-    if ((ammo.quantity ?? 0) < 1) {
+    if (requireQuantity && (ammo.quantity ?? 0) < 1) {
         return {
             valid: false,
             reason: `${ammo.name || "Loaded ammunition"} is out of ammunition.`,
@@ -609,39 +766,25 @@ function getAllowedAmmoTypes(weapon, profile) {
 }
 
 async function consumeLoadedAmmo({ actor, weapon, loadedAmmo }) {
-    if (!weapon?.usesAmmo || !loadedAmmo?._id) return null;
+    if (!weapon?.usesAmmo) return null;
 
     const weaponItem = weapon.itemDocument ?? actor?.items?.get?.(weapon._id) ?? null;
-    const ammoItem = loadedAmmo.itemDocument ?? actor?.items?.get?.(loadedAmmo._id) ?? null;
-    if (!weaponItem?.update || !ammoItem?.update) return null;
+    if (!weaponItem?.update) return null;
 
-    const currentQuantity = firstFiniteNumber([
-        ammoItem.system?.props?.Quantity,
-        loadedAmmo.quantity,
-    ]) ?? 0;
-    if (currentQuantity < 1) {
-        throw new Error(`${loadedAmmo.name || "Loaded ammunition"} is already depleted.`);
-    }
-
-    const nextQuantity = Math.max(0, currentQuantity - 1);
     const currentLoaded = firstFiniteNumber([
         weaponItem.system?.props?.AmmoLoaded,
         weapon.ammoLoaded,
     ]) ?? 0;
     const nextLoaded = Math.max(0, currentLoaded - 1);
 
-    await ammoItem.update({
-        "system.props.Quantity": nextQuantity,
-    });
-
     await weaponItem.update({
         "system.props.AmmoLoaded": nextLoaded,
-        "system.props.LoadedAmmoId": nextLoaded > 0 ? loadedAmmo._id : "",
+        "system.props.LoadedAmmoId": nextLoaded > 0 ? (loadedAmmo?._id ?? "") : "",
     });
 
     return {
-        ammoItemId: loadedAmmo._id,
-        remainingQuantity: nextQuantity,
+        ammoItemId: loadedAmmo?._id ?? null,
+        remainingQuantity: loadedAmmo?.quantity ?? null,
         ammoLoaded: nextLoaded,
     };
 }
@@ -732,3 +875,8 @@ function firstFiniteNumber(values) {
 }
 
 const ACTIVE_ATTACK_PROFILE_KEYS = ["Attack", "AttackB", "AttackC"];
+
+
+
+
+

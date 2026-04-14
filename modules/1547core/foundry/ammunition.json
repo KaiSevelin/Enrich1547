@@ -12,7 +12,8 @@
         "addDice": [],
         "tags": [],
         "resultModifiers": [],
-        "description": "Standard arrow for bows."
+        "description": "Standard arrow for bows.",
+        "img": "media/home/games/1547/Items/Standard arrow.webp"
     },
     {
         "_id": "A2n6Qp9LmR4TsV8K",
@@ -29,7 +30,8 @@
         ],
         "tags": [],
         "resultModifiers": [],
-        "description": "A broad cutting head that favors raw injury."
+        "description": "A broad cutting head that favors raw injury.",
+        "img": "media/home/games/1547/Items/Broad arrow.webp"
     },
     {
         "_id": "B7m3Lq8TxP2vNc5R",
@@ -53,7 +55,8 @@
                 "value": 1
             }
         ],
-        "description": "A narrow hardened head for punching through armor seams."
+        "description": "A narrow hardened head for punching through armor seams.",
+        "img": "media/home/games/1547/Items/Bodkin arrow.webp"
     },
     {
         "_id": "3mK8vT1QpL6rXsD2",
@@ -68,7 +71,8 @@
         "addDice": [],
         "tags": [],
         "resultModifiers": [],
-        "description": "Standard crossbow bolt."
+        "description": "Standard crossbow bolt.",
+        "img": "media/home/games/1547/Items/Standard arrow.webp"
     },
     {
         "_id": "H4p9Vt2LmQ7xNc6R",
@@ -85,7 +89,14 @@
         ],
         "tags": [],
         "resultModifiers": [],
-        "description": "A thicker bolt that trades speed for impact."
+        "description": "A thicker bolt that trades speed for impact.",
+        "img": "media/home/games/1547/Items/Heavy bolt.webp",
+        "range": {
+            "mode": "modify",
+            "shortRange": 0,
+            "longRange": -1,
+            "maxRange": -1
+        }
     },
     {
         "_id": "J6r2Nc8VmP4tLq7X",
@@ -109,7 +120,8 @@
                 "value": 1
             }
         ],
-        "description": "A rigid armor-piercing bolt."
+        "description": "A rigid armor-piercing bolt.",
+        "img": "media/home/games/1547/Items/Bodkin arrow.webp"
     },
     {
         "_id": "5nR4xQ8mLp2TcV7K",
@@ -124,7 +136,8 @@
         "addDice": [],
         "tags": [],
         "resultModifiers": [],
-        "description": "Standard lead ball for firearms."
+        "description": "Standard lead ball for firearms.",
+        "img": "media/home/games/1547/Items/Bullet.webp"
     },
     {
         "_id": "K5t8Lp3VnQ2rXc6M",
@@ -141,7 +154,14 @@
         ],
         "tags": [],
         "resultModifiers": [],
-        "description": "A heavier ball with greater crushing force."
+        "description": "A heavier ball with greater crushing force.",
+        "img": "media/home/games/1547/Items/Heavy bullet.webp",
+        "range": {
+            "mode": "modify",
+            "shortRange": 0,
+            "longRange": -1,
+            "maxRange": -1
+        }
     },
     {
         "_id": "S2m7Qx4Lp9VcTr5N",
@@ -165,6 +185,13 @@
                 "value": "short"
             }
         ],
-        "description": "A pellet load that is only effective at short range but can spike hard on impact."
+        "description": "A pellet load that is only effective at short range but can spike hard on impact.",
+        "img": "media/home/games/1547/Items/Scattershot bullet.webp",
+        "range": {
+            "mode": "override",
+            "shortRange": 2,
+            "longRange": 2,
+            "maxRange": 3
+        }
     }
 ]

@@ -1,4 +1,4 @@
-const MODULE_ID = "1547core";
+﻿const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
 const TEMPLATE_FILES = {
     maneuver: "fvtt-Item-maneuvertemplate-4owc4YQBlp94GbGs.json",
@@ -81,7 +81,7 @@ function buildWeaponProps(weapon) {
     const traitKeys = [
         "Aiming", "ArmorBreaking", "Bracing", "Charging", "Control",
         "Disarming", "Fast", "Fragile", "Heavy", "Hooking",
-        "Narrow", "Parrying", "PointBlank",
+        "Narrow", "Parrying", "PointBlank", "RigidBlade",
         "Receiving", "Reloading", "Shield", "SmallShield", "Tactical"
     ];
     const normalizedTraits = new Set((weapon.traits ?? []).map(normalizeTraitKey));
@@ -168,6 +168,10 @@ function buildArmorProps(armor) {
 function buildAmmoProps(ammo) {
     const addDice = Array.isArray(ammo.addDice) ? ammo.addDice.join(", ") : "";
     const tags = Array.isArray(ammo.tags) ? ammo.tags.join(", ") : "";
+    const range = ammo.range
+        ?? (ammo.rangeOverride ? { mode: "override", ...ammo.rangeOverride } : null)
+        ?? (ammo.rangeModifier ? { mode: "modify", ...ammo.rangeModifier } : null)
+        ?? null;
     return {
         Description: ammo.description ?? "",
         Weight: ammo.weight ?? 0,
@@ -178,6 +182,11 @@ function buildAmmoProps(ammo) {
         AddDiceSummary: addDice,
         Tags: tags,
         TagsSummary: tags,
+        RangeModeOverride: String(range?.mode ?? "modify").trim().toLowerCase() === "override",
+        RangeShort: range?.shortRange ?? 0,
+        RangeMedium: range?.longRange ?? 0,
+        RangeLong: range?.maxRange ?? 0,
+        Range: range ? JSON.stringify(range, null, 2) : "",
         ResultModifiers: JSON.stringify(ammo.resultModifiers ?? [], null, 2)
     };
 }
@@ -348,6 +357,29 @@ async function upsertWorldItems(docs) {
         created: toCreate.length,
         updated: toUpdate.length
     };
+}
+
+async function pruneManagedFolderItems({ folderId, validIds, templateId, folderHint }) {
+    if (!folderId || !(validIds instanceof Set) || validIds.size === 0) {
+        return { removed: 0 };
+    }
+
+    const staleIds = game.items
+        .filter((item) => item.folder?.id === folderId)
+        .filter((item) => {
+            const sourceFlag = item.flags?.[SOURCE_FLAG_SCOPE] ?? {};
+            const itemFolderHint = sourceFlag.folderHint ?? sourceFlag.sourceData?.folder ?? null;
+            const usesManagedTemplate = item.system?.template === templateId;
+            const isManaged = itemFolderHint === folderHint || usesManagedTemplate;
+            return isManaged && !validIds.has(item.id);
+        })
+        .map((item) => item.id);
+
+    if (staleIds.length > 0) {
+        await Item.deleteDocuments(staleIds);
+    }
+
+    return { removed: staleIds.length };
 }
 
 export function register1547ModuleSettings() {
@@ -565,19 +597,49 @@ function createModuleSetupFormApplicationClass() {
                 this.#getOrCreateFolder("Ammunition")
             ]);
 
+            const maneuverDocs = maneuvers.map((maneuver) =>
+                makeItemDoc(normalizeSourceEntry(maneuver, "maneuver"), maneuverTemplate, maneuver.img ?? maneuverTemplate.img ?? "icons/svg/combat.svg", buildManeuverProps, maneuverFolder.id)
+            );
+            const weaponDocs = weapons.map((weapon) =>
+                makeItemDoc(normalizeSourceEntry(weapon, "weapon"), weaponTemplate, weapon.img ?? weaponTemplate.img ?? "icons/svg/sword.svg", buildWeaponProps, weaponFolder.id)
+            );
+            const armorDocs = armors.map((armor) =>
+                makeItemDoc(normalizeSourceEntry(armor, "armor"), armorTemplate, armor.img ?? armorTemplate.img ?? "icons/svg/holy-shield.svg", buildArmorProps, armorFolder.id)
+            );
+            const ammoDocs = ammunition.map((ammo) =>
+                makeItemDoc(normalizeSourceEntry(ammo, "ammo"), ammoTemplate, ammo.img ?? ammoTemplate.img ?? "icons/svg/item-bag.svg", buildAmmoProps, ammoFolder.id)
+            );
+
+            await pruneManagedFolderItems({
+                folderId: maneuverFolder.id,
+                validIds: new Set(maneuverDocs.map((doc) => doc._id)),
+                templateId: maneuverTemplate._id,
+                folderHint: "Maneuvers"
+            });
+            await pruneManagedFolderItems({
+                folderId: weaponFolder.id,
+                validIds: new Set(weaponDocs.map((doc) => doc._id)),
+                templateId: weaponTemplate._id,
+                folderHint: "Weapons"
+            });
+            await pruneManagedFolderItems({
+                folderId: armorFolder.id,
+                validIds: new Set(armorDocs.map((doc) => doc._id)),
+                templateId: armorTemplate._id,
+                folderHint: "Armor"
+            });
+            await pruneManagedFolderItems({
+                folderId: ammoFolder.id,
+                validIds: new Set(ammoDocs.map((doc) => doc._id)),
+                templateId: ammoTemplate._id,
+                folderHint: "Ammunition"
+            });
+
             const docs = [
-                ...maneuvers.map((maneuver) =>
-                    makeItemDoc(normalizeSourceEntry(maneuver, "maneuver"), maneuverTemplate, "icons/svg/combat.svg", buildManeuverProps, maneuverFolder.id)
-                ),
-                ...weapons.map((weapon) =>
-                    makeItemDoc(normalizeSourceEntry(weapon, "weapon"), weaponTemplate, "icons/svg/sword.svg", buildWeaponProps, weaponFolder.id)
-                ),
-                ...armors.map((armor) =>
-                    makeItemDoc(normalizeSourceEntry(armor, "armor"), armorTemplate, "icons/svg/holy-shield.svg", buildArmorProps, armorFolder.id)
-                ),
-                ...ammunition.map((ammo) =>
-                    makeItemDoc(normalizeSourceEntry(ammo, "ammo"), ammoTemplate, "icons/svg/item-bag.svg", buildAmmoProps, ammoFolder.id)
-                )
+                ...maneuverDocs,
+                ...weaponDocs,
+                ...armorDocs,
+                ...ammoDocs
             ];
             const result = await upsertWorldItems(docs);
 
@@ -589,4 +651,5 @@ function createModuleSetupFormApplicationClass() {
         }
     };
 }
+
 

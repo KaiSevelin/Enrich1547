@@ -1,4 +1,77 @@
-import { COMBAT_EVENTS, onCombatEvent } from "../services/combat-events.js";
+﻿import { COMBAT_EVENTS, onCombatEvent } from "../services/combat-events.js";
+import {
+    HUD_STATE,
+    getSelectedPreManeuverIds,
+    setSelectedPreManeuverIds,
+    clearSelectedPreManeuvers,
+    toggleSelectedPreManeuver,
+    getSelectedFullTurnManeuverId,
+    setSelectedFullTurnManeuverId,
+    clearSelectedFullTurnManeuver,
+    toggleSelectedFullTurnManeuver,
+    clearActorManeuverSelections,
+    getSelectedReactionChoiceId,
+    setSelectedReactionChoiceId,
+    toggleSelectedReactionChoiceId,
+    normalizePostManeuverChoiceId,
+    getActivePostManeuverWindow,
+    queuePostManeuverWindow,
+    advancePostManeuverWindow,
+    clearPostManeuverWindows,
+    getSelectedPostManeuverId,
+    toggleSelectedPostManeuver,
+    getActiveDamageTakenWindow,
+    setHudDamageTakenWindow,
+    clearHudDamageTakenWindow,
+    getDiceTabAttackSelection,
+    setDiceTabAttackSelectionCount,
+    clearDiceTabAttackSelection,
+    getPendingNextAttackDice,
+    setPendingNextAttackDice,
+    clearPendingNextAttackDice,
+    getDiceTabSkillDice,
+    setDiceTabSkillDice,
+    clearDiceTabSkillDice,
+    getPendingNextSkillDice,
+    setPendingNextSkillDice,
+    clearPendingNextSkillDice,
+    clearIgnoredCostManeuver,
+    clearIgnoredCostManeuvers,
+    setIgnoredCostManeuver,
+} from "./hud-state.js";
+import { summarizeActor as summarizeActorFromModule } from "./hud-summary.js";
+import {
+    buildReactionPrompt as buildReactionPromptFromModule,
+    buildDamageTakenPrompt as buildDamageTakenPromptFromModule,
+    buildPostManeuverPrompt as buildPostManeuverPromptFromModule,
+} from "./hud-prompts.js";
+import {
+    executeSelectedFullTurnManeuver as executeSelectedFullTurnManeuverFromModule,
+    executeWeaponReloadAction as executeWeaponReloadActionFromModule,
+    executeWeaponReadyAction as executeWeaponReadyActionFromModule,
+    executeItemUnequipAction as executeItemUnequipActionFromModule,
+    runHudAction as runHudActionFromModule,
+} from "./hud-actions.js";
+import {
+    buildHudActionContext as buildHudActionContextFromModule,
+    createStatActionDescriptor as createStatActionDescriptorFromModule,
+    createSkillActionDescriptor as createSkillActionDescriptorFromModule,
+    createWeaponAttackActionDescriptor as createWeaponAttackActionDescriptorFromModule,
+    evaluateHudAction as evaluateHudActionFromModule,
+} from "./hud-evaluation.js";
+import {
+    buildHudHtml as buildHudHtmlFromModule,
+    buildEmptyHtml as buildEmptyHtmlFromModule,
+} from "./hud-render.js";
+import { bindHudInteractions as bindHudInteractionsFromModule } from "./hud-bindings.js";
+import {
+    getOrderedCombatants,
+    resolveCombatantSideId,
+    getSideLabel,
+    getActiveSideId,
+    getResolvedSideOrder,
+    persistCombatSideState,
+} from "../combat-tracker/side-tracker.js";
 
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
@@ -16,14 +89,14 @@ const VULNERABILITY_FILL_COLOR = 0xB85A5A;
 const VULNERABILITY_FILL_ALPHA = 0.14;
 const VULNERABILITY_STROKE_ALPHA = 0.22;
 const RANGE_SHORT_FILL_COLOR = 0x4B86C5;
-const RANGE_SHORT_FILL_ALPHA = 0.1;
-const RANGE_SHORT_STROKE_ALPHA = 0.18;
+const RANGE_SHORT_FILL_ALPHA = 0.16;
+const RANGE_SHORT_STROKE_ALPHA = 0.28;
 const RANGE_LONG_FILL_COLOR = 0xC9A14A;
-const RANGE_LONG_FILL_ALPHA = 0.08;
-const RANGE_LONG_STROKE_ALPHA = 0.16;
+const RANGE_LONG_FILL_ALPHA = 0.13;
+const RANGE_LONG_STROKE_ALPHA = 0.24;
 const RANGE_MAX_FILL_COLOR = 0x7C8894;
-const RANGE_MAX_FILL_ALPHA = 0.06;
-const RANGE_MAX_STROKE_ALPHA = 0.14;
+const RANGE_MAX_FILL_ALPHA = 0.1;
+const RANGE_MAX_STROKE_ALPHA = 0.2;
 const CSB_TEMPLATE_IDS = {
     armor: "uLlgZXz3GlXPFtsj",
     container: "l4j1zT3kpdkZmACQ",
@@ -40,18 +113,250 @@ const CSB_TEMPLATE_IDS = {
     usageEffect: "mwPqEYUoOfzXpyT9",
     weapon: "qZCfLEYQ7egbm1B9"
 };
-const HUD_STATE = {
-    activeCategory: "overview",
-    activeManeuverGroup: "",
-    activeStatPreview: "",
-    counterRollEnabled: false,
-    counterRollDice: 1,
-    collapsed: false,
-    reactionWindow: null
+const MANEUVER_FILTER_OPTIONS = [
+    { value: "all", label: "All" },
+    { value: "usable", label: "Usable" },
+    { value: "pre", label: "Pre" },
+    { value: "full-turn", label: "Full turn" },
+    { value: "post", label: "Post" },
+    { value: "reaction", label: "Reaction" },
+];
+const MANEUVER_COST_SHORT_LABELS = {
+    StrengthPoints: "STR",
+    StaminaPoints: "STA",
+    DexterityPoints: "DEX",
+    IntelligencePoints: "INT",
+    FaithPoints: "FTH",
+    CharismaPoints: "CHA",
+    PowerPoints: "POW",
+    CriticalPoints: "CRIT"
 };
+const DICE_TAB_ATTACK_OPTIONS = [
+    { key: "balanced", label: "Balanced", dieName: "Balanced", code: "b", tooltip: "Flexible attack die with steady damage." },
+    { key: "control", label: "Control", dieName: "Control", code: "c", tooltip: "Control die with safer pressure and crit chance." },
+    { key: "finesse", label: "Finesse", dieName: "Finesse", code: "f", tooltip: "Clean precision die with low risk." },
+    { key: "heavy", label: "Heavy", dieName: "Heavy", code: "h", tooltip: "High-impact die with swingier damage." },
+    { key: "lethality", label: "Lethality", dieName: "Lethality", code: "l", tooltip: "Explosive damage die with sharp upside." },
+    { key: "multiplier", label: "Multiplier", dieName: "Multiplier", code: "x", tooltip: "Adds multiplier potential to a hit." },
+    { key: "penetration", label: "Penetration", dieName: "Penetration", code: "p", tooltip: "Punches through protection more reliably." },
+    { key: "risk", label: "Risk", dieName: "Risk", code: "r", tooltip: "Volatile die with danger and payoff." },
+];
+
+function getAttackDiceTabOptions() {
+    return DICE_TAB_ATTACK_OPTIONS.map((option) => ({ ...option }));
+}
+
+function formatAttackDiceSelectionLabel(diceMap = {}) {
+    const parts = DICE_TAB_ATTACK_OPTIONS.flatMap((option) => {
+        const count = Math.max(0, Number(diceMap?.[option.key] ?? 0) || 0);
+        return count > 0 ? [String(count) + "d" + option.code] : [];
+    });
+    return parts.join(" + ") || "0 dice";
+}
+
+function formatSkillD6SelectionLabel(count = 0) {
+    const safeCount = Math.max(0, Number(count) || 0);
+    return safeCount > 0 ? String(safeCount) + "d6" : "0d6";
+}
+function buildReservedResourceTotals(maneuvers) {
+    return (Array.isArray(maneuvers) ? maneuvers : []).reduce((totals, maneuver) => {
+        const costType = String(maneuver?.CostType ?? "").trim();
+        const costAmount = Math.max(0, Number(maneuver?.CostAmount ?? 0) || 0);
+        if (!costType || costType === "null" || costAmount <= 0) return totals;
+        totals[costType] = (totals[costType] ?? 0) + costAmount;
+        return totals;
+    }, {});
+}
+
+function getManeuverCostSummary(maneuver) {
+    const costType = String(maneuver?.CostType ?? "").trim();
+    const costAmount = Math.max(0, Number(maneuver?.CostAmount ?? 0) || 0);
+    if (!costType || costType === "null" || costAmount <= 0) return "No cost";
+    const label = MANEUVER_COST_SHORT_LABELS[costType] ?? costType;
+    return `${label} ${costAmount}`;
+}
+
+function getManeuverTimingSummary(maneuver) {
+    const timing = String(maneuver?.TimingType ?? maneuver?.timing ?? maneuver?.timingKey ?? "").trim().toLowerCase();
+    switch (timing) {
+        case "pre": return "Pre maneuver";
+        case "full-turn": return "Full-turn maneuver";
+        case "post": return "Post maneuver";
+        case "reaction": return "Reaction maneuver";
+        default: return timing ? `${timing} maneuver` : "Maneuver";
+    }
+}
+
+function getManeuverDurationSummary(maneuver) {
+    const duration = String(maneuver?.Duration ?? maneuver?.duration ?? maneuver?.effectData?.duration ?? "").trim();
+    switch (duration) {
+        case "until-side-active-again": return "Lasts until your side is active again";
+        case "until-side-active-again-or-consumed": return "Lasts until used or your side is active again";
+        case "scene": return "Lasts for the scene";
+        case "round": return "Lasts for the round";
+        default: return duration ? `Duration: ${duration}` : "";
+    }
+}
+
+function getManeuverRequirementSummary(maneuver) {
+    const text = String(maneuver?.requirements?.text ?? "").trim();
+    if (!text) return "";
+    return `Needs: ${text}`;
+}
+
+function getManeuverEffectSummary(maneuver) {
+    const effect = maneuver?.effectData ?? {};
+    const parts = [];
+    if (Number(effect.addMainDice ?? 0) > 0) parts.push(`+${effect.addMainDice} main die`);
+    if (Number(effect.addMultiplierDice ?? 0) > 0) parts.push(`+${effect.addMultiplierDice} multiplier die`);
+    if (Number(effect.addRiskDice ?? 0) > 0) parts.push(`+${effect.addRiskDice} risk die`);
+    if (Number(effect.addMoveSquares ?? 0) > 0) parts.push(`+${effect.addMoveSquares} move`);
+    if (Number(effect.reduceDamageTaken ?? 0) > 0) parts.push(`Reduce damage by ${effect.reduceDamageTaken}`);
+    if (effect.ignoreHighestArmorDie === true) parts.push("Ignore highest armor die");
+    if (effect.createsSafeAttack === true) parts.push("Makes the attack safe");
+    if (String(effect.createsPersistentEffect ?? "").trim()) {
+        parts.push(`Creates ${getPersistentEffectLabel(effect.createsPersistentEffect)}`);
+    }
+    return parts.join("; ") || "No immediate effect";
+}
+
+function buildManeuverSummaryLine(maneuver) {
+    return [
+        getManeuverTimingSummary(maneuver),
+        getManeuverCostSummary(maneuver),
+        getManeuverEffectSummary(maneuver)
+    ].filter(Boolean).join(" | ");
+}
+
+function buildManeuverDetailLine(maneuver) {
+    return [
+        getManeuverRequirementSummary(maneuver),
+        getManeuverDurationSummary(maneuver)
+    ].filter(Boolean).join(" | ");
+}
+
+function buildManeuverTooltip(maneuver, blockingReason = "") {
+    return [
+        String(blockingReason ?? "").trim(),
+        buildManeuverSummaryLine(maneuver),
+        buildManeuverDetailLine(maneuver)
+    ].filter(Boolean).join(" | ");
+}
+
+function summarizeManeuverEffects(maneuvers) {
+    return (Array.isArray(maneuvers) ? maneuvers : []).reduce((summary, maneuver) => {
+        const effect = maneuver?.effectData ?? {};
+        summary.addMainDice += Number(effect.addMainDice ?? 0) || 0;
+        summary.addMultiplierDice += Number(effect.addMultiplierDice ?? 0) || 0;
+        summary.addRiskDice += Number(effect.addRiskDice ?? 0) || 0;
+        summary.addDisadvantage += Number(effect.addDisadvantage ?? 0) || 0;
+        return summary;
+    }, {
+        addMainDice: 0,
+        addMultiplierDice: 0,
+        addRiskDice: 0,
+        addDisadvantage: 0,
+    });
+}
+
+function buildWeaponRollContext(summary, maneuverEffects = {}) {
+    const base = summary?.weaponRollContext ?? summary?.rollContext ?? { advantageDice: 0, riskDice: 0 };
+    return {
+        ...base,
+        addMainDice: Math.max(0, Number(base.addMainDice ?? 0) + Number(maneuverEffects.addMainDice ?? 0)),
+        addMultiplierDice: Math.max(0, Number(base.addMultiplierDice ?? 0) + Number(maneuverEffects.addMultiplierDice ?? 0)),
+        riskDice: Math.max(0, Number(base.riskDice ?? 0) + Number(maneuverEffects.addRiskDice ?? 0) + Number(maneuverEffects.addDisadvantage ?? 0)),
+        extraDiceCounts: {
+            ...(base.extraDiceCounts ?? {}),
+        },
+    };
+}
+const INVENTORY_FILTER_OPTIONS = [
+    { value: "all", label: "All" },
+    { value: "Item.389uqkKKn8M1SKux", label: "Ammunitions" },
+    { value: "Item.uLlgZXz3GlXPFtsj", label: "Armors" },
+    { value: "Item.PDxRO5ObvLaThpez", label: "Consumables" },
+    { value: "Item.l4j1zT3kpdkZmACQ", label: "Containers" },
+    { value: "Item.eCIZRFXbcQVZKqEr", label: "Equippable items" },
+    { value: "Item.CmGj09PEdHfklGsT", label: "Light sources" },
+    { value: "Item.HkiFlUWUkUycJdBZ", label: "Magic items" },
+    { value: "Item.qZCfLEYQ7egbm1B9", label: "Weapons" },
+    { value: "Item.woHyeHPKKdo4JDJd", label: "Unequippable items" }
+];
 
 let reactionHudTicker = null;
 
+function getManeuverFilterOptions() {
+    return MANEUVER_FILTER_OPTIONS.map((option) => ({ ...option }));
+}
+
+function matchesManeuverFilter(maneuver, filterValue) {
+    const normalized = String(filterValue ?? "all").trim().toLowerCase() || "all";
+    if (normalized === "all") return true;
+    if (normalized === "usable") return maneuver?.usable === true;
+    return String(maneuver?.timingKey ?? "").trim().toLowerCase() === normalized;
+}
+
+function applyIgnoredCostOverride(maneuver, ignored = false) {
+    if (!maneuver || !ignored) return maneuver;
+    return {
+        ...maneuver,
+        CostType: "null",
+        CostAmount: 0,
+        ignoreCost: true,
+    };
+}
+
+async function confirmManeuverCostSelection(maneuver) {
+    const costType = String(maneuver?.CostType ?? "").trim();
+    const costAmount = Math.max(0, Number(maneuver?.CostAmount ?? 0) || 0);
+    if (!costType || costType === "null" || costAmount <= 0) {
+        return { confirmed: true, ignoreCost: false };
+    }
+
+    return await new Promise((resolve) => {
+        let settled = false;
+        const content = "<form class=\"dialog-1547 dialog-1547-maneuver-confirm\">"
+            + "<div class=\"dialog-1547-maneuver-confirm__eyebrow\">Maneuver Cost</div>"
+            + "<div class=\"dialog-1547-maneuver-confirm__title\">" + escapeHtml(maneuver?.name ?? "Maneuver") + "</div>"
+            + "<div class=\"dialog-1547-maneuver-confirm__body\">Selecting this maneuver normally reserves <strong>" + escapeHtml(getManeuverCostSummary(maneuver)) + "</strong>.</div>"
+            + "<label class=\"dialog-1547-maneuver-confirm__toggle\">"
+            + "<input type=\"checkbox\" name=\"ignoreCost\" />"
+            + "<span>Ignore cost</span>"
+            + "</label>"
+            + "</form>";
+        const dialog = new Dialog({
+            title: "Select Maneuver",
+            content,
+            buttons: {
+                ok: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: "OK",
+                    callback: (html) => {
+                        settled = true;
+                        resolve({
+                            confirmed: true,
+                            ignoreCost: html.find('[name="ignoreCost"]')[0]?.checked === true,
+                        });
+                    },
+                },
+                cancel: {
+                    label: "Cancel",
+                    callback: () => {
+                        settled = true;
+                        resolve({ confirmed: false, ignoreCost: false });
+                    },
+                },
+            },
+            default: "ok",
+            classes: ["dialog-1547"],
+            close: () => {
+                if (!settled) resolve({ confirmed: false, ignoreCost: false });
+            },
+        });
+        dialog.render(true);
+    });
+}
 function isHudTargetModeActive() {
     return Boolean(
         document.querySelector("#controls .scene-control.active[data-control='token'], #controls .scene-control.active[data-control='tokens']") &&
@@ -101,6 +406,13 @@ function getStringProp(props, keys) {
     return "";
 }
 
+function isTruthyLike(value) {
+    if (typeof value === "boolean") return value;
+    if (typeof value === "number") return value > 0;
+    const normalized = String(value ?? "").trim().toLowerCase();
+    if (!normalized) return false;
+    return ["true", "yes", "y", "1", "available", "ready"].includes(normalized);
+}
 function normalizeTemplateId(value) {
     const text = String(value ?? "").trim();
     if (!text) return "";
@@ -109,6 +421,78 @@ function normalizeTemplateId(value) {
 
 function getItemTemplateId(item) {
     return normalizeTemplateId(item?.system?.template);
+}
+
+function normalizeInventoryFilterValue(value) {
+    const normalized = String(value ?? "all").trim();
+    if (!normalized || normalized.toLowerCase() === "all") return "all";
+    return normalizeTemplateId(normalized);
+}
+
+
+function isDefenseStateStillActive(actor, defenseState = {}) {
+    const lockUntil = String(defenseState?.lockedParryingWeaponUntil ?? "").trim();
+    if (!lockUntil) return false;
+
+    if (lockUntil === "current-side-activation-end" || lockUntil === "until-side-active-again") {
+        const fullTurnAvailable = actor?.system?.props?.FullTurnAvailable;
+        if (isTruthyLike(fullTurnAvailable)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function getPersistentEffectLabel(effectType) {
+    switch (String(effectType ?? "").trim()) {
+        case "aimed": return "Aimed";
+        case "braced": return "Braced";
+        case "overwatch": return "Overwatch";
+        default: return String(effectType ?? "").trim() || "Persistent Effect";
+    }
+}
+
+function getActivePersistentEffectsForActor(actor, {
+    isCombatActive = false,
+    fullTurnAvailable = false,
+} = {}) {
+    const getter = game.modules.get(MODULE_ID)?.api?.combat?.getActivePersistentEffects;
+    const entries = typeof getter === "function"
+        ? getter(actor, { isCombatActive, fullTurnAvailable })
+        : (Array.isArray(actor?.flags?.[MODULE_ID]?.activeFullTurnManeuvers) ? actor.flags[MODULE_ID].activeFullTurnManeuvers : []);
+
+    return (Array.isArray(entries) ? entries : []).map((entry) => ({
+        id: entry?.id ?? null,
+        name: entry?.name ?? getPersistentEffectLabel(entry?.createsPersistentEffect),
+        effectType: String(entry?.createsPersistentEffect ?? "").trim(),
+        duration: String(entry?.duration ?? "").trim(),
+        effectData: entry?.effectData ?? {},
+        label: getPersistentEffectLabel(entry?.createsPersistentEffect),
+    })).filter((entry) => entry.effectType);
+}
+function getActiveDefenseStateForActor(actor) {
+    const defenseState = actor?.flags?.[MODULE_ID]?.defenseState ?? {};
+    if (!isDefenseStateStillActive(actor, defenseState)) return [];
+    const lockedUntil = String(defenseState?.lockedParryingWeaponUntil ?? "").trim();
+    return [{
+        id: `defense-lock:${actor?.id ?? "actor"}`,
+        label: "Parrying Weapon Locked",
+        duration: lockedUntil,
+        effectType: "parry-lock",
+    }];
+}
+function getInventoryFilterOptions() {
+    return INVENTORY_FILTER_OPTIONS.map((option) => ({
+        ...option,
+        normalizedValue: normalizeInventoryFilterValue(option.value)
+    }));
+}
+
+function matchesInventoryFilter(item, filterValue) {
+    const normalizedFilter = normalizeInventoryFilterValue(filterValue);
+    if (normalizedFilter === "all") return true;
+    return normalizeTemplateId(item?.templateId) === normalizedFilter;
 }
 
 function getCsbItemKind(item) {
@@ -177,6 +561,36 @@ function isInternalHudFolderName(folderName) {
         || normalized.includes("do not remove");
 }
 
+function normalizeManeuverTimingKey(value) {
+    const normalized = String(value ?? "").trim().toLowerCase();
+    if (!normalized) return "other";
+    if (normalized === "full-turn" || normalized === "full turn") return "full-turn";
+    if (["pre", "reaction", "post", "move", "attack"].includes(normalized)) return normalized;
+    return normalized;
+}
+
+function formatManeuverTimingLabel(value) {
+    switch (normalizeManeuverTimingKey(value)) {
+        case "pre":
+            return "Pre";
+        case "reaction":
+            return "Reaction";
+        case "post":
+            return "Post";
+        case "full-turn":
+            return "Full Turn";
+        case "move":
+            return "Move";
+        case "attack":
+            return "Attack";
+        default: {
+            const text = String(value ?? "").trim();
+            if (!text) return "Other";
+            return text.charAt(0).toUpperCase() + text.slice(1);
+        }
+    }
+}
+
 function getPlayerFacingItemGroup(item) {
     const itemKind = getCsbItemKind(item);
 
@@ -201,35 +615,155 @@ function isUnarmedWeapon(item) {
 function getWeaponReach(item) {
     const itemProps = item?.system?.props ?? {};
     const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-    const minReach = getNumericProp(itemProps, ["MinReach"])
-        ?? getNumericProp(sourceData, ["minReach"])
-        ?? null;
-    const maxReach = getNumericProp(itemProps, ["MaxReach"])
-        ?? getNumericProp(sourceData, ["maxReach"])
-        ?? null;
+    const propReach = {
+        minReach: getNumericProp(itemProps, ["MinReach"]),
+        maxReach: getNumericProp(itemProps, ["MaxReach"])
+    };
+    const sourceReach = {
+        minReach: getNumericProp(sourceData, ["minReach"]),
+        maxReach: getNumericProp(sourceData, ["maxReach"])
+    };
+    const propHasReach = Number.isFinite(propReach.minReach) && Number.isFinite(propReach.maxReach) && propReach.maxReach > 0;
+    const sourceHasReach = Number.isFinite(sourceReach.minReach) && Number.isFinite(sourceReach.maxReach) && sourceReach.maxReach > 0;
+    const propLooksLikeTemplateDefault = propReach.minReach === 1 && propReach.maxReach === 1;
+    const shouldPreferSource = sourceHasReach && (!propHasReach || (propLooksLikeTemplateDefault && (sourceReach.minReach !== 1 || sourceReach.maxReach !== 1)));
+    const minReach = shouldPreferSource ? sourceReach.minReach : (propReach.minReach ?? sourceReach.minReach ?? null);
+    const maxReach = shouldPreferSource ? sourceReach.maxReach : (propReach.maxReach ?? sourceReach.maxReach ?? null);
     return {
         minReach,
         maxReach
     };
 }
 
+function parseJsonProp(value, fallback = null) {
+    if (typeof value !== "string" || value.trim() === "") return fallback;
+    try {
+        return JSON.parse(value);
+    } catch {
+        return fallback;
+    }
+}
+
+function parseListProp(value) {
+    if (Array.isArray(value)) return value.filter(Boolean);
+    if (typeof value !== "string") return [];
+    return value.split(",").map((entry) => entry.trim()).filter(Boolean);
+}
+
+function getAmmoRangeData(item) {
+    const itemProps = item?.system?.props ?? {};
+    const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
+    const loadedAmmoId = String(itemProps.LoadedAmmoId ?? sourceData.loadedAmmoId ?? "").trim();
+    if (!loadedAmmoId) {
+        return { range: null };
+    }
+    const ammoItem = item?.parent?.items?.get?.(loadedAmmoId) ?? null;
+    const ammoProps = ammoItem?.system?.props ?? {};
+    const ammoSource = ammoItem?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? ammoItem?.flags?.[MODULE_ID]?.sourceData ?? ammoItem ?? null;
+    if (!ammoSource && !ammoItem) {
+        return { range: null };
+    }
+    const sourceRange = ammoSource?.range ?? null;
+    const explicitRange = (
+        ammoProps.RangeShort !== undefined
+        || ammoProps.RangeMedium !== undefined
+        || ammoProps.RangeLong !== undefined
+    )
+        ? {
+            mode: isTruthyLike(ammoProps.RangeModeOverride) ? "override" : "modify",
+            shortRange: Number(ammoProps.RangeShort),
+            longRange: Number(ammoProps.RangeMedium),
+            maxRange: Number(ammoProps.RangeLong)
+        }
+        : null;
+    const propRange = parseJsonProp(ammoProps.Range, null);
+    const legacyOverride = ammoSource?.rangeOverride ?? parseJsonProp(ammoProps.RangeOverride, null);
+    const legacyModifier = ammoSource?.rangeModifier ?? parseJsonProp(ammoProps.RangeModifier, null);
+    const range = sourceRange ?? explicitRange ?? propRange
+        ?? (legacyOverride ? { mode: "override", ...legacyOverride } : null)
+        ?? (legacyModifier ? { mode: "modify", ...legacyModifier } : null);
+    if (!range || typeof range !== "object") {
+        return { range: null };
+    }
+    return {
+        range: {
+            mode: String(range.mode ?? "modify").trim().toLowerCase() === "override" ? "override" : "modify",
+            shortRange: Number(range.shortRange),
+            longRange: Number(range.longRange),
+            maxRange: Number(range.maxRange)
+        }
+    };
+}
+
+function normalizeRangeBandOrder(rangeBands) {
+    let shortRange = Number.isFinite(rangeBands.shortRange) ? Math.max(0, rangeBands.shortRange) : null;
+    let longRange = Number.isFinite(rangeBands.longRange) ? Math.max(0, rangeBands.longRange) : null;
+    let maxRange = Number.isFinite(rangeBands.maxRange) ? Math.max(0, rangeBands.maxRange) : null;
+    if (Number.isFinite(shortRange) && Number.isFinite(longRange) && longRange < shortRange) longRange = shortRange;
+    if (Number.isFinite(longRange) && Number.isFinite(maxRange) && maxRange < longRange) maxRange = longRange;
+    if (!Number.isFinite(longRange) && Number.isFinite(shortRange)) longRange = shortRange;
+    if (!Number.isFinite(maxRange) && Number.isFinite(longRange)) maxRange = longRange;
+    return { shortRange, longRange, maxRange };
+}
+
+function applyAmmoRangeBands(rangeBands, ammoRangeData) {
+    const range = ammoRangeData?.range ?? null;
+    if (range && typeof range === "object") {
+        if (range.mode === "override") {
+            return normalizeRangeBandOrder({
+                shortRange: range.shortRange,
+                longRange: range.longRange,
+                maxRange: range.maxRange
+            });
+        }
+        return normalizeRangeBandOrder({
+            shortRange: (Number.isFinite(rangeBands.shortRange) ? rangeBands.shortRange : 0) + (Number(range.shortRange) || 0),
+            longRange: (Number.isFinite(rangeBands.longRange) ? rangeBands.longRange : (Number.isFinite(rangeBands.shortRange) ? rangeBands.shortRange : 0)) + (Number(range.longRange) || 0),
+            maxRange: (Number.isFinite(rangeBands.maxRange) ? rangeBands.maxRange : (Number.isFinite(rangeBands.longRange) ? rangeBands.longRange : 0)) + (Number(range.maxRange) || 0)
+        });
+    }
+    return normalizeRangeBandOrder(rangeBands);
+}
+
 function getWeaponRangeBands(item) {
     const itemProps = item?.system?.props ?? {};
     const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-    const shortRange = getNumericProp(itemProps, ["ShortRange"])
-        ?? getNumericProp(sourceData, ["shortRange"])
-        ?? null;
-    const longRange = getNumericProp(itemProps, ["LongRange"])
-        ?? getNumericProp(sourceData, ["longRange"])
-        ?? null;
-    const maxRange = getNumericProp(itemProps, ["MaxRange"])
-        ?? getNumericProp(sourceData, ["maxRange"])
-        ?? null;
-    return {
-        shortRange,
-        longRange,
-        maxRange
+    const propRangeBands = {
+        shortRange: getNumericProp(itemProps, ["ShortRange"]),
+        longRange: getNumericProp(itemProps, ["LongRange"]),
+        maxRange: getNumericProp(itemProps, ["MaxRange"])
     };
+    const sourceRangeBands = {
+        shortRange: getNumericProp(sourceData, ["shortRange"]),
+        longRange: getNumericProp(sourceData, ["longRange"]),
+        maxRange: getNumericProp(sourceData, ["maxRange"])
+    };
+    const propHasUsableRange = [propRangeBands.shortRange, propRangeBands.longRange, propRangeBands.maxRange]
+        .some((value) => Number.isFinite(value) && value > 0);
+    const sourceHasUsableRange = [sourceRangeBands.shortRange, sourceRangeBands.longRange, sourceRangeBands.maxRange]
+        .some((value) => Number.isFinite(value) && value > 0);
+    const baseRangeBands = propHasUsableRange
+        ? propRangeBands
+        : (sourceHasUsableRange ? sourceRangeBands : {
+            shortRange: null,
+            longRange: null,
+            maxRange: null
+        });
+    return applyAmmoRangeBands(baseRangeBands, getAmmoRangeData(item));
+}
+
+function getChebyshevDistanceSquares(sourceToken, targetToken) {
+    const source = sourceToken?.center ?? null;
+    const target = targetToken?.center ?? null;
+    const size = Number(canvas?.dimensions?.size) || 0;
+    if (!source || !target || size <= 0) return null;
+    const dx = Math.abs(Number(target.x) - Number(source.x));
+    const dy = Math.abs(Number(target.y) - Number(source.y));
+    return Math.round(Math.max(dx, dy) / size);
+}
+function hasUsableRangeBands(rangeBands = {}) {
+    return [rangeBands.shortRange, rangeBands.longRange, rangeBands.maxRange]
+        .some((value) => Number.isFinite(value) && value > 0);
 }
 
 function hasReach(item) {
@@ -272,6 +806,8 @@ function getWeaponAttackProfiles(item) {
             index,
             label: sourceProfile?.name ?? (index === 0 ? "Default" : `Alternative ${index}`),
             formula,
+            dice: Array.isArray(sourceProfile?.dice) ? [...sourceProfile.dice] : [],
+            attackType: sourceProfile?.attackType ?? null,
             profileId: sourceProfile?.id ?? null,
             allowedAmmoTypes: allowedAmmoText
                 ? allowedAmmoText.split(",").map((entry) => entry.trim()).filter(Boolean)
@@ -288,6 +824,54 @@ function getWeaponActiveAttackProfile(item) {
     return availableProfiles.find((profile) => profile.key === selectedKey)
         ?? availableProfiles[0]
         ?? null;
+}
+
+function getDiceTermCode(dieName) {
+    switch (String(dieName ?? "").trim()) {
+        case "Armor": return "a";
+        case "Balanced": return "b";
+        case "Control": return "c";
+        case "Evade": return "e";
+        case "Finesse": return "f";
+        case "Heavy": return "h";
+        case "Lethality": return "l";
+        case "Penetration": return "p";
+        case "Risk": return "r";
+        case "Multiplier": return "x";
+        default: return "";
+    }
+}
+
+function buildFoundryAttackRollFormula(profile, rollContext = {}) {
+    const baseDice = Array.isArray(profile?.dice) ? [...profile.dice] : [];
+    if (!baseDice.length) return "";
+    const pool = [...baseDice];
+    const advantageDice = Math.max(0, Number(rollContext?.advantageDice) || 0);
+    const riskDice = Math.max(0, Number(rollContext?.riskDice) || 0);
+    const addMainDice = Math.max(0, Number(rollContext?.addMainDice) || 0);
+    const addMultiplierDice = Math.max(0, Number(rollContext?.addMultiplierDice) || 0);
+    const extraDiceCounts = rollContext?.extraDiceCounts ?? {};
+    const firstDie = baseDice[0] ?? "";
+    for (let index = 0; index < advantageDice; index += 1) {
+        if (firstDie) pool.push(firstDie);
+    }
+    for (let index = 0; index < addMainDice; index += 1) {
+        if (firstDie) pool.push(firstDie);
+    }
+    for (let index = 0; index < addMultiplierDice; index += 1) {
+        pool.push("Multiplier");
+    }
+    for (const option of DICE_TAB_ATTACK_OPTIONS) {
+        const count = Math.max(0, Number(extraDiceCounts?.[option.key] ?? 0) || 0);
+        for (let index = 0; index < count; index += 1) {
+            pool.push(option.dieName);
+        }
+    }
+    for (let index = 0; index < riskDice; index += 1) {
+        pool.push("Risk");
+    }
+    const terms = pool.map((die) => getDiceTermCode(die)).filter(Boolean).map((code) => "1d" + code);
+    return terms.join(" + ");
 }
 
 function getAmmoQuantity(item) {
@@ -309,12 +893,157 @@ function getAmmoType(item) {
 function getAmmoSummary(item) {
     const itemProps = item?.system?.props ?? {};
     const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-    const addDiceSummary = getStringProp(itemProps, ["AddDiceSummary", "AddDice"]);
-    if (addDiceSummary) return addDiceSummary;
-    if (Array.isArray(sourceData?.addDice) && sourceData.addDice.length) {
-        return sourceData.addDice.join(", ");
+    const sourceAddDice = Array.isArray(sourceData?.addDice) ? sourceData.addDice.join(", ") : "";
+    const sourceTags = Array.isArray(sourceData?.tags) ? sourceData.tags.join(", ") : "";
+    const sourceModifiers = Array.isArray(sourceData?.resultModifiers) && sourceData.resultModifiers.length
+        ? JSON.stringify(sourceData.resultModifiers)
+        : "";
+    const addDiceSummary = getStringProp(itemProps, ["AddDiceSummary", "AddDice"]) || sourceAddDice;
+    const tagsSummary = getStringProp(itemProps, ["TagsSummary", "Tags"]) || sourceTags;
+    const parsedModifiers = parseJsonProp(itemProps.ResultModifiers, null);
+    const modifiersSummary = getStringProp(itemProps, ["ResultModifiersSummary"]) || (parsedModifiers ? JSON.stringify(parsedModifiers) : sourceModifiers);
+    return [addDiceSummary, tagsSummary, modifiersSummary].filter(Boolean).join(" | ");
+}
+
+function getWeaponAttackState(weapon, {
+    token = null,
+    primaryTarget = null,
+    targetCount = 0,
+    attacksRemaining = null
+} = {}) {
+    if (!weapon) {
+        return {
+            status: "invalid",
+            label: "No weapon",
+            reason: "Weapon is unavailable.",
+            distanceSquares: null
+        };
     }
-    return "";
+    if (Number.isFinite(attacksRemaining) && attacksRemaining <= 0) {
+        return {
+            status: "invalid",
+            label: "No attacks remaining",
+            reason: "This actor has no attacks remaining this turn.",
+            distanceSquares: null
+        };
+    }
+    if (!weapon.equipped && !weapon.ready) {
+        return {
+            status: "invalid",
+            label: "Not equipped",
+            reason: "Weapon is not equipped.",
+            distanceSquares: null
+        };
+    }
+    if (weapon.usesAmmo) {
+        if (!weapon.loadedAmmoId) {
+            return {
+                status: "invalid",
+                label: "No ammo loaded",
+                reason: "Load compatible ammunition first.",
+                distanceSquares: null
+            };
+        }
+        if (!Number.isFinite(weapon.loadedAmmoQuantity) || weapon.loadedAmmoQuantity <= 0) {
+            return {
+                status: "invalid",
+                label: "Ammo depleted",
+                reason: "The loaded ammunition stack is empty.",
+                distanceSquares: null
+            };
+        }
+        if (Array.isArray(weapon.activeAttackAllowedAmmoTypes) && weapon.activeAttackAllowedAmmoTypes.length) {
+            if (!weapon.loadedAmmoType || !weapon.activeAttackAllowedAmmoTypes.includes(weapon.loadedAmmoType)) {
+                return {
+                    status: "invalid",
+                    label: "Wrong ammo",
+                    reason: "Loaded ammunition is not compatible with the active attack profile.",
+                    distanceSquares: null
+                };
+            }
+        }
+    }
+    if (targetCount > 1 && !weapon.canTargetMultiple) {
+        return {
+            status: "invalid",
+            label: "Multiple targets marked",
+            reason: "This weapon can only declare attacks against a single target.",
+            distanceSquares: null
+        };
+    }
+    if (!primaryTarget) {
+        return {
+            status: "valid",
+            label: "No target",
+            reason: "Click Attack to roll this weapon to chat without declaring a target.",
+            distanceSquares: null,
+            previewOnly: true
+        };
+    }
+
+    const distanceSquares = getChebyshevDistanceSquares(token, primaryTarget);
+    if (!Number.isFinite(distanceSquares)) {
+        return {
+            status: "valid",
+            label: "Target selected",
+            reason: "Could not measure target distance.",
+            distanceSquares: null
+        };
+    }
+
+    const usesDistanceBands = weapon.activeAttackType === "ranged"
+        || weapon.activeAttackType === "thrown"
+        || hasUsableRangeBands(weapon);
+
+    if (usesDistanceBands) {
+        if (Number.isFinite(weapon.shortRange) && distanceSquares <= weapon.shortRange) {
+            return {
+                status: "valid",
+                label: `Short range (${distanceSquares})`,
+                reason: "Attack is legal at normal range.",
+                distanceSquares
+            };
+        }
+        if (Number.isFinite(weapon.longRange) && distanceSquares <= weapon.longRange) {
+            return {
+                status: "valid",
+                label: `Long range (${distanceSquares})`,
+                reason: "Attack is legal but disadvantaged at long range.",
+                distanceSquares
+            };
+        }
+        if (Number.isFinite(weapon.maxRange) && distanceSquares <= weapon.maxRange) {
+            return {
+                status: "invalid",
+                label: `Beyond long range (${distanceSquares})`,
+                reason: "Direct attacks are not legal beyond long range.",
+                distanceSquares
+            };
+        }
+        return {
+            status: "invalid",
+            label: `Out of range (${distanceSquares})`,
+            reason: "Target is beyond maximum range.",
+            distanceSquares
+        };
+    }
+
+    const minReach = Number.isFinite(weapon.minReach) ? weapon.minReach : 0;
+    const maxReach = Number.isFinite(weapon.maxReach) ? weapon.maxReach : null;
+    if (Number.isFinite(maxReach) && distanceSquares >= minReach && distanceSquares <= maxReach) {
+        return {
+            status: "valid",
+            label: `In reach (${distanceSquares})`,
+            reason: "Target is within melee reach.",
+            distanceSquares
+        };
+    }
+    return {
+        status: "invalid",
+        label: `Out of reach (${distanceSquares})`,
+        reason: "Target is not within melee reach.",
+        distanceSquares
+    };
 }
 
 function getThreatSource(actor) {
@@ -663,6 +1392,7 @@ function setHudReactionWindow(reactionWindow) {
 
 function clearHudReactionWindow() {
     HUD_STATE.reactionWindow = null;
+    HUD_STATE.selectedReactionChoiceId = null;
     stopReactionHudTicker();
 }
 
@@ -695,60 +1425,36 @@ function normalizeReactionChoiceId(candidate) {
 }
 
 function buildReactionPrompt() {
-    const reactionWindow = getActiveReactionWindow();
-    if (!reactionWindow) return "";
-
-    const actorName = reactionWindow.actor?.name ?? "";
-    const targetName = reactionWindow.target?.name ?? "";
-    let actorTargetSummary = "";
-    if (actorName && targetName) {
-        actorTargetSummary = `${actorName} -> ${targetName}`;
-    } else if (actorName) {
-        actorTargetSummary = actorName;
-    } else if (targetName) {
-        actorTargetSummary = targetName;
-    }
-
-    const summaryParts = [
-        reactionWindow.trigger === "attack" ? "Attack Reaction" : "Threat Reaction",
-        actorTargetSummary,
-        `Closes in ${getReactionCountdownText(reactionWindow)}`
-    ].filter(Boolean);
-
-    const candidateButtons = reactionWindow.candidates.map((candidate) => {
-        const choiceId = normalizeReactionChoiceId(candidate);
-        let label = "Reaction";
-        if (candidate?.name) {
-            label = candidate.name;
-        } else if (choiceId) {
-            label = choiceId;
-        }
-        const subtitle = [candidate?.usage, candidate?.type].filter(Boolean).join(" - ");
-        return `
-            <button
-                type="button"
-                class="hud-mini-button"
-                data-hud-reaction-choice="${escapeHtml(choiceId)}"
-            >
-                ${escapeHtml(label)}
-                ${subtitle ? `<span class="hud-mini-button-sub">${escapeHtml(subtitle)}</span>` : ""}
-            </button>
-        `;
-    }).join("");
-
-    return `
-        <section class="hud-tree-block hud-reaction-banner">
-            <div class="hud-section-title">Reaction Window</div>
-            <div class="hud-row-main">${escapeHtml(summaryParts[0] ?? "Reaction")}</div>
-            <div class="hud-row-sub">${escapeHtml(summaryParts.slice(1).join(" - "))}</div>
-            <div class="hud-chip-row hud-reaction-actions">
-                ${candidateButtons ? candidateButtons : '<span class="hud-empty-pill">No legal reactions</span>'}
-                <button type="button" class="hud-mini-button" data-hud-reaction-pass>Pass</button>
-            </div>
-        </section>
-    `;
+    return buildReactionPromptFromModule({
+        getActiveReactionWindow,
+        getReactionCountdownText,
+        getSelectedReactionChoiceId,
+        normalizeReactionChoiceId,
+        getManeuverCostSummary,
+        getManeuverEffectSummary,
+        getManeuverTimingSummary,
+        buildManeuverDetailLine,
+        escapeHtml,
+    });
 }
 
+function buildDamageTakenPrompt() {
+    return buildDamageTakenPromptFromModule({
+        getActiveDamageTakenWindow,
+        escapeHtml,
+    });
+}
+
+function buildPostManeuverPrompt() {
+    return buildPostManeuverPromptFromModule({
+        getActivePostManeuverWindow,
+        getSelectedPostManeuverId,
+        normalizePostManeuverChoiceId,
+        buildManeuverSummaryLine,
+        buildManeuverDetailLine,
+        escapeHtml,
+    });
+}
 function getStatPreview(data) {
     return data.stats.find((stat) => stat.label === HUD_STATE.activeStatPreview) ?? data.stats[0] ?? null;
 }
@@ -785,11 +1491,11 @@ function buildRollFormula(dice, mod) {
     return safeMod > 0 ? `${safeDice}d6 + ${safeMod}` : `${safeDice}d6`;
 }
 
-function buildSkillRollData(baseStat, diceShift, advantageDice = 0) {
+function buildSkillRollData(baseStat, diceShift, advantageDice = 0, extraDice = 0) {
     const baseDice = Math.max(0, baseStat?.dice ?? 0);
     const baseMod = Math.max(0, baseStat?.mod ?? 0);
     const shiftedDice = baseDice + (Number(diceShift) || 0);
-    const totalDice = shiftedDice + Math.max(0, Number(advantageDice) || 0);
+    const totalDice = shiftedDice + Math.max(0, Number(advantageDice) || 0) + Math.max(0, Number(extraDice) || 0);
 
     if (totalDice < 1) {
         return {
@@ -809,263 +1515,100 @@ function buildSkillRollData(baseStat, diceShift, advantageDice = 0) {
 }
 
 function buildHudActionContext(actor, token) {
-    const summary = summarizeActor(actor, token);
-    return {
-        actor,
-        token,
-        selectedToken: getSelectedToken(),
-        hoveredToken: canvas?.tokens?.hover,
-        targetedTokens: Array.from(game.user?.targets ?? []),
-        inCombat: Boolean(game.combat?.started),
-        combatRound: game.combat?.round ?? null,
-        counterRollEnabled: HUD_STATE.counterRollEnabled,
-        counterRollDice: sanitizeCounterRollDice(HUD_STATE.counterRollDice),
-        summary
-    };
+    return buildHudActionContextFromModule(actor, token, {
+        summarizeActor,
+        game,
+        getSelectedToken,
+        canvas,
+        HUD_STATE,
+        sanitizeCounterRollDice,
+    });
 }
 
 function createStatActionDescriptor(context, statLabel) {
-    return {
-        actionType: "roll-stat",
-        sourceType: "stat",
-        sourceId: statLabel,
-        label: `${statLabel} Check`,
-        actorId: context.actor?.id ?? "",
-        tokenId: context.token?.id ?? "",
-        handlerId: "roll-stat",
-        targeting: "none",
-        requirements: {},
-        costs: {},
-        rollData: {},
-        metadata: {
-            statLabel
-        }
-    };
+    return createStatActionDescriptorFromModule(context, statLabel);
 }
 
 function createSkillActionDescriptor(context, skillName) {
-    const skill = context.summary.skills.find((entry) => entry.name === skillName);
-    return {
-        actionType: "roll-skill",
-        sourceType: "skill",
-        sourceId: skill?.id ?? skillName,
-        label: `${skillName} Check`,
-        actorId: context.actor?.id ?? "",
-        tokenId: context.token?.id ?? "",
-        handlerId: "roll-skill",
-        targeting: "none",
-        requirements: {},
-        costs: {},
-        rollData: {},
-        metadata: {
-            skillName
-        }
-    };
+    return createSkillActionDescriptorFromModule(context, skillName);
 }
 
-function evaluateStatAction(descriptor, context) {
-    const stat = context.summary.stats.find((entry) => entry.label === descriptor.metadata?.statLabel);
-    if (!stat) {
-        return {
-            status: "invalid",
-            reasons: ["Stat is not available on this actor"],
-            resolvedTargets: [],
-            resolvedCosts: {},
-            rollPreview: null,
-            followUp: null,
-            resolvedSource: null
-        };
-    }
-
-    const totalDice = stat.dice + context.summary.rollContext.advantageDice;
-    const finalFormula = buildRollFormula(totalDice, stat.mod);
-    return {
-        status: "valid",
-        reasons: [],
-        resolvedTargets: [],
-        resolvedCosts: {},
-        rollPreview: {
-            title: descriptor.label,
-            actionType: descriptor.actionType,
-            sourceLabel: stat.label,
-            targetLabels: [],
-            baseFormula: stat.formula,
-            advantageDice: context.summary.rollContext.advantageDice,
-            riskDice: context.summary.rollContext.riskDice,
-            finalFormula,
-            costs: {},
-            notes: []
-        },
-        followUp: null,
-        resolvedSource: stat
-    };
-}
-
-function evaluateSkillAction(descriptor, context) {
-    const skill = context.summary.skills.find((entry) => entry.name === descriptor.metadata?.skillName);
-    if (!skill) {
-        return {
-            status: "invalid",
-            reasons: ["Skill is not available on this actor"],
-            resolvedTargets: [],
-            resolvedCosts: {},
-            rollPreview: null,
-            followUp: null,
-            resolvedSource: null
-        };
-    }
-    if (!skill.canRoll) {
-        return {
-            status: "invalid",
-            reasons: ["This skill cannot be rolled from the HUD"],
-            resolvedTargets: [],
-            resolvedCosts: {},
-            rollPreview: null,
-            followUp: null,
-            resolvedSource: skill
-        };
-    }
-    if (!skill.linkedStat) {
-        return {
-            status: "invalid",
-            reasons: ["Skill is missing a linked stat"],
-            resolvedTargets: [],
-            resolvedCosts: {},
-            rollPreview: null,
-            followUp: null,
-            resolvedSource: skill
-        };
-    }
-
-    const baseStat = context.summary.stats.find((entry) => entry.label === skill.linkedStat) ?? null;
-    if (!baseStat) {
-        return {
-            status: "invalid",
-            reasons: [`Actor is missing ${skill.linkedStat}`],
-            resolvedTargets: [],
-            resolvedCosts: {},
-            rollPreview: null,
-            followUp: null,
-            resolvedSource: skill
-        };
-    }
-
-    const rollData = buildSkillRollData(baseStat, skill.diceShift, context.summary.rollContext.advantageDice);
-    const notes = [];
-    if (rollData.usedFallback) notes.push("Fallback: minimum skill roll is 1d6");
-
-    return {
-        status: "valid",
-        reasons: [],
-        resolvedTargets: [],
-        resolvedCosts: {},
-        rollPreview: {
-            title: descriptor.label,
-            actionType: descriptor.actionType,
-            sourceLabel: skill.name,
-            targetLabels: [],
-            baseFormula: skill.baseFormula || "-",
-            advantageDice: context.summary.rollContext.advantageDice,
-            riskDice: context.summary.rollContext.riskDice,
-            finalFormula: rollData.formula,
-            costs: {},
-            notes
-        },
-        followUp: null,
-        resolvedSource: {
-            ...skill,
-            baseStat,
-            rollData
-        }
-    };
+function createWeaponAttackActionDescriptor(context, weaponId) {
+    return createWeaponAttackActionDescriptorFromModule(context, weaponId);
 }
 
 function evaluateHudAction(descriptor, context) {
-    switch (descriptor.actionType) {
-        case "roll-stat":
-            return evaluateStatAction(descriptor, context);
-        case "roll-skill":
-            return evaluateSkillAction(descriptor, context);
-        default:
-            return {
-                status: "invalid",
-                reasons: ["No HUD handler is defined for this action"],
-                resolvedTargets: [],
-                resolvedCosts: {},
-                rollPreview: null,
-                followUp: null,
-                resolvedSource: null
-            };
-    }
-}
-
-async function executeStatAction(descriptor, context, evaluation) {
-    const stat = evaluation.resolvedSource;
-    const formula = evaluation.rollPreview?.finalFormula ?? stat?.formula;
-    if (!formula || !stat) return;
-
-    HUD_STATE.activeStatPreview = stat.label;
-    const roll = await new Roll(formula).evaluate({ async: true });
-    const speaker = ChatMessage.getSpeaker({ actor: context.actor, token: context.token?.document });
-    const flavor = `${descriptor.label}<br>Base: ${escapeHtml(evaluation.rollPreview.baseFormula)}<br>Advantage Dice: ${escapeHtml(evaluation.rollPreview.advantageDice)}<br>Risk Dice: ${escapeHtml(evaluation.rollPreview.riskDice)}`;
-    await roll.toMessage({
-        speaker,
-        flavor
+    return evaluateHudActionFromModule(descriptor, context, {
+        buildRollFormula,
+        buildSkillRollData,
+        summarizeManeuverEffects,
+        buildWeaponRollContext,
+        getWeaponAttackState,
+        buildFoundryAttackRollFormula,
     });
-    await maybeRollCounter(context, descriptor.label, roll.total);
 }
 
-async function executeSkillAction(descriptor, context, evaluation) {
-    const skill = evaluation.resolvedSource;
-    const formula = evaluation.rollPreview?.finalFormula ?? skill?.formula;
-    if (!formula || !skill) return;
-
-    if (skill.linkedStat) {
-        HUD_STATE.activeStatPreview = skill.linkedStat;
-    }
-
-    const roll = await new Roll(formula).evaluate({ async: true });
-    const speaker = ChatMessage.getSpeaker({ actor: context.actor, token: context.token?.document });
-    const fallbackNote = skill.rollData?.usedFallback ? "<br>Fallback: minimum skill roll is 1d6" : "";
-    const flavor = `${descriptor.label}<br>Stat: ${escapeHtml(skill.linkedStat)}<br>Base Stat: ${escapeHtml(skill.baseFormula || "-")}<br>Level: ${escapeHtml(skill.currentLevel)}<br>Dice Shift: ${escapeHtml(skill.diceShift)}<br>Advantage Dice: ${escapeHtml(evaluation.rollPreview.advantageDice)}<br>Risk Dice: ${escapeHtml(evaluation.rollPreview.riskDice)}${fallbackNote}`;
-    await roll.toMessage({
-        speaker,
-        flavor
+async function executeSelectedFullTurnManeuver(actor, summary) {
+    return executeSelectedFullTurnManeuverFromModule(actor, summary, {
+        MODULE_ID,
+        game,
+        ui,
+        getSelectedFullTurnManeuverId,
+        clearSelectedFullTurnManeuver,
+        clearActorManeuverSelections,
+        getPrimaryTargetToken,
+        isTruthyLike,
     });
-    await maybeRollCounter(context, descriptor.label, roll.total);
 }
-
-const HUD_ACTION_HANDLERS = {
-    "roll-stat": {
-        execute: executeStatAction
-    },
-    "roll-skill": {
-        execute: executeSkillAction
-    }
-};
-
+async function executeWeaponReloadAction(weaponId, actor, summary) {
+    return executeWeaponReloadActionFromModule(weaponId, actor, summary, {
+        MODULE_ID,
+        HUD_STATE,
+        game,
+        ui,
+        isTruthyLike,
+    });
+}
+async function executeWeaponReadyAction(weaponId, actor, summary) {
+    return executeWeaponReadyActionFromModule(weaponId, actor, summary, {
+        ui,
+        isTruthyLike,
+    });
+}
+async function executeItemUnequipAction(itemId, actor, summary) {
+    return executeItemUnequipActionFromModule(itemId, actor, summary, {
+        ui,
+        isTruthyLike,
+    });
+}
 async function runHudAction(descriptor, context) {
     const evaluation = evaluateHudAction(descriptor, context);
-    if (evaluation.status !== "valid") {
-        const message = evaluation.reasons?.[0] || "This action is not currently available.";
-        ui.notifications?.warn?.(message);
-        return evaluation;
-    }
-
-    const handler = HUD_ACTION_HANDLERS[descriptor.handlerId];
-    if (!handler?.execute) {
-        ui.notifications?.warn?.("No HUD action handler is defined for this action.");
-        return {
-            ...evaluation,
-            status: "invalid",
-            reasons: ["No HUD action handler is defined for this action"]
-        };
-    }
-
-    await handler.execute(descriptor, context, evaluation);
-    return evaluation;
+    return runHudActionFromModule(descriptor, context, evaluation, {
+        MODULE_ID,
+        HUD_STATE,
+        game,
+        ui,
+        Roll,
+        ChatMessage,
+        escapeHtml,
+        maybeRollCounter,
+        summarizeActor,
+        summarizeManeuverEffects,
+        buildWeaponRollContext,
+        buildFoundryAttackRollFormula,
+        getWeaponAttackState,
+        clearActorManeuverSelections,
+        getChebyshevDistanceSquares,
+        getSelectedFullTurnManeuverId,
+        clearSelectedFullTurnManeuver,
+        getPrimaryTargetToken,
+        isTruthyLike,
+        getPendingNextAttackDice,
+        clearPendingNextAttackDice,
+        getPendingNextSkillDice,
+        clearPendingNextSkillDice,
+    });
 }
-
 function sanitizeCounterRollDice(value) {
     return clamp(Number(value) || 1, 1, 10);
 }
@@ -1086,701 +1629,91 @@ function getResourceSummary(props, baseName) {
 }
 
 function summarizeActor(actor, token) {
-    const props = getActorProps(actor);
-    const items = actor?.items?.contents ?? actor?.items ?? [];
-    const effects = actor?.effects?.contents ?? actor?.effects ?? [];
-    const weaponItems = items.filter(isWeaponItem);
-    const armorItems = items.filter(isArmorItem);
-    const ammoItems = items.filter(isAmmoItem);
-    const maneuverItems = items.filter((item) => getCsbItemKind(item) === "maneuver");
-    const skillItems = items.filter((item) => getCsbItemKind(item) === "skill");
-    const inventoryItems = items.filter((item) => {
-        const kind = getCsbItemKind(item);
-        return !["maneuver", "skill", "pact", "power", "spell", "usage-effect"].includes(kind);
-    });
-
-    const equippedWeapons = weaponItems.map((item) => {
-        const itemProps = item.system?.props ?? {};
-        const attackProfiles = getWeaponAttackProfiles(item);
-        const activeAttackProfile = getWeaponActiveAttackProfile(item);
-        const rangeBands = getWeaponRangeBands(item);
-        const usesAmmo = Boolean(itemProps.UsesAmmo);
-        const loadedAmmoId = String(itemProps.LoadedAmmoId ?? "").trim();
-        const loadedAmmo = ammoItems.find((ammo) => ammo.id === loadedAmmoId) ?? null;
-        const compatibleAmmo = usesAmmo
-            ? ammoItems.filter((ammo) => {
-                const ammoType = getAmmoType(ammo);
-                if (!ammoType || getAmmoQuantity(ammo) < 1) return false;
-                if (activeAttackProfile?.allowedAmmoTypes?.length) {
-                    return activeAttackProfile.allowedAmmoTypes.includes(ammoType);
-                }
-                const weaponAmmoType = String(itemProps.AmmoType ?? "").trim();
-                return weaponAmmoType ? weaponAmmoType === ammoType : true;
-            })
-            : [];
-        return {
-            id: item.id,
-            name: item.name,
-            ready: Boolean(itemProps.Ready),
-            equipped: Boolean(itemProps.Equipped),
-            type: itemProps.WeaponType ?? "",
-            shortRange: rangeBands.shortRange,
-            longRange: rangeBands.longRange,
-            maxRange: rangeBands.maxRange,
-            rangeSummary: formatRangeSummary(rangeBands),
-            usesAmmo,
-            ammoLoaded: getNumericProp(itemProps, ["AmmoLoaded"]) ?? 0,
-            loadedAmmoId: loadedAmmoId || null,
-            loadedAmmoName: loadedAmmo?.name ?? "",
-            loadedAmmoSummary: loadedAmmo ? getAmmoSummary(loadedAmmo) : "",
-            loadedAmmoQuantity: loadedAmmo ? getAmmoQuantity(loadedAmmo) : 0,
-            attackProfiles,
-            activeAttackProfile: activeAttackProfile?.key ?? "Attack",
-            activeAttackFormula: activeAttackProfile?.formula ?? ""
-            ,
-            activeAttackProfileId: activeAttackProfile?.profileId ?? null,
-            activeAttackAmmoText: activeAttackProfile?.allowedAmmoText ?? "",
-            compatibleAmmo: compatibleAmmo.map((ammo) => ({
-                id: ammo.id,
-                name: ammo.name,
-                ammoType: getAmmoType(ammo),
-                quantity: getAmmoQuantity(ammo),
-                summary: getAmmoSummary(ammo)
-            }))
-        };
-    }).filter((item) => item.equipped || item.ready);
-
-    const equippedArmor = armorItems.map((item) => {
-        const itemProps = item.system?.props ?? {};
-        return {
-            name: item.name,
-            equipped: Boolean(itemProps.Equipped),
-            defense: itemProps.Defense ?? ""
-        };
-    }).filter((item) => item.equipped);
-
-    const maneuvers = maneuverItems.map((item) => {
-        const sourceData = item.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item.flags?.[MODULE_ID]?.sourceData ?? {};
-        const itemProps = item.system?.props ?? {};
-        return {
-            name: item.name,
-            timing: sourceData.timing ?? itemProps.Timing ?? "",
-            usage: sourceData.usage ?? itemProps.Usage ?? "",
-            type: sourceData.type ?? itemProps.Type ?? ""
-        };
-    });
-
-    const inventory = inventoryItems.map((item) => {
-        const sourceData = item.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item.flags?.[MODULE_ID]?.sourceData ?? {};
-        const itemProps = item.system?.props ?? {};
-        return {
-            name: item.name,
-            group: getPlayerFacingItemGroup(item),
-            equipped: Boolean(itemProps.Equipped),
-            ready: Boolean(itemProps.Ready),
-            consumable: isConsumableItem(item),
-            type: itemProps.WeaponType ?? itemProps.ArmorType ?? sourceData.type ?? ""
-        };
-    });
-
-    const pointPools = [
-        { label: "STR", key: "StrengthPoints" },
-        { label: "STA", key: "StaminaPoints" },
-        { label: "DEX", key: "DexterityPoints" },
-        { label: "INT", key: "IntelligencePoints" },
-        { label: "FTH", key: "FaithPoints" },
-        { label: "CHA", key: "CharismaPoints" },
-        { label: "POW", key: "PowerPoints" }
-    ].map((entry) => {
-        const summary = getResourceSummary(props, entry.key);
-        return {
-            label: entry.label,
-            key: entry.key,
-            current: summary.current,
-            max: summary.max,
-            display: summary.display
-        };
-    }).filter((entry) => entry.current !== null || entry.max !== null);
-
-    const riskAndCritical = [
-        { label: "RISK", key: "RiskPoints" },
-        { label: "CRIT", key: "CriticalPoints" }
-    ].map((entry) => {
-        const summary = getResourceSummary(props, entry.key);
-        return {
-            label: entry.label,
-            key: entry.key,
-            current: summary.current,
-            max: summary.max,
-            display: summary.display
-        };
-    }).filter((entry) => entry.current !== null || entry.max !== null);
-
-    const statDefinitions = [
-        "Strength",
-        "Stamina",
-        "Dexterity",
-        "Charisma",
-        "Intelligence",
-        "Faith",
-        "Power"
-    ];
-
-    const stats = statDefinitions.map((label) => {
-        const dice = getNumericProp(props, [`Stats_${label}Dice`, `${label}Dice`]);
-        const mod = getNumericProp(props, [`Stats_${label}Mod`, `${label}Mod`]) ?? 0;
-        if (dice === null && mod === null) return null;
-        return {
-            label,
-            dice: Math.max(0, dice ?? 0),
-            mod: Math.max(0, mod ?? 0),
-            formula: buildRollFormula(dice ?? 0, mod ?? 0)
-        };
-    }).filter(Boolean);
-
-    const statMap = new Map(stats.map((stat) => [stat.label, stat]));
-
-    const skills = skillItems.map((item) => {
-        const sourceData = item.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item.flags?.[MODULE_ID]?.sourceData ?? {};
-        const itemProps = item.system?.props ?? {};
-        const statLabel = itemProps.Stat ?? sourceData.linkedStat ?? itemProps.LinkedStat ?? "";
-        const baseStat = statMap.get(statLabel) ?? null;
-        const currentLevel = getNumericProp(itemProps, ["CurrentLevel"]) ?? 0;
-        const diceShift = getSkillDiceShift(itemProps);
-        const rollData = buildSkillRollData(baseStat, diceShift, 0);
-        return {
-            id: item.id,
-            name: item.name,
-            group: sourceData.group ?? itemProps.Group ?? "",
-            linkedStat: statLabel,
-            currentLevel,
-            diceShift,
-            canRoll: Boolean(itemProps.CanRoll),
-            formula: baseStat ? rollData.formula : "",
-            baseFormula: baseStat?.formula ?? "",
-            finalDice: rollData.dice,
-            finalMod: rollData.mod,
-            usedFallback: rollData.usedFallback
-        };
-    });
-
-    const hitPointSummary = {
-        current: getNumericProp(props, ["CurrentHitPoints", "HitPoints", "HP", "CurrentHP"]),
-        max: getNumericProp(props, ["MaxHitPoints", "HitPointsMax", "HPMax", "MaximumHitPoints"])
-    };
-
-    const rollContext = {
-        advantageDice: getNumericProp(props, ["AvailableAdvantageDice", "AdvantageDice", "Advantage"]) ?? 0,
-        riskDice: getNumericProp(props, ["AvailableRiskDice", "RiskDice"]) ?? 0
-    };
-
-    return {
-        actorId: actor.id,
-        actorName: actor.name,
-        tokenName: token?.name ?? actor.name,
-        actorImg: token?.document?.texture?.src || actor.img || "icons/svg/mystery-man.svg",
-        hitPoints: hitPointSummary.current,
-        maxHitPoints: hitPointSummary.max,
-        movement: getNumericProp(props, ["MovementRemaining", "MoveRemaining", "movementRemaining"]),
-        attacks: getNumericProp(props, ["AttacksRemaining", "AttackRemaining", "attacksRemaining"]),
-        fullTurnAvailable: getStringProp(props, ["FullTurnAvailable", "fullTurnAvailable"]) || "Unknown",
-        readyState: getStringProp(props, ["Done", "done"]) || "Unknown",
-        stats,
-        pointPools,
-        riskAndCritical,
-        rollContext,
-        conditions: effects.map((effect) => effect.name).filter(Boolean),
-        equippedWeapons,
-        equippedArmor,
-        maneuvers,
-        skills,
-        inventory,
-        maneuverCount: maneuverItems.length,
-        isCombatActive: Boolean(game.combat?.started),
-        round: game.combat?.round ?? null
-    };
-}
-
-function renderPills(entries) {
-    if (!entries.length) return `<span class="hud-empty-pill">None</span>`;
-    return entries.map((entry) => `
-        <span class="hud-pill">
-            <span class="hud-pill-label">${escapeHtml(entry.label)}</span>
-            <span class="hud-pill-value">${escapeHtml(entry.value)}</span>
-        </span>
-    `).join("");
-}
-
-function renderSimpleList(entries, formatter) {
-    if (!entries.length) return `<li class="hud-empty-row">None</li>`;
-    return entries.map((entry) => `<li>${formatter(entry)}</li>`).join("");
-}
-
-function buildTreeList(items, formatter) {
-    if (!items.length) return `<li class="hud-empty-row">None</li>`;
-    return items.map((item) => formatter(item)).join("");
-}
-
-function groupEntries(entries, grouper) {
-    const groups = new Map();
-    for (const entry of entries) {
-        const key = grouper(entry) || "Other";
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key).push(entry);
-    }
-    return Array.from(groups.entries());
-}
-
-function buildGroupedTree(groups, formatter, options = {}) {
-    const { scroll = false, openFirst = true } = options;
-    if (!groups.length) return `<div class="hud-empty-row">None</div>`;
-    return groups.map(([label, entries], index) => `
-        <details class="hud-tree-group"${openFirst && index === 0 ? " open" : ""}>
-            <summary class="hud-tree-summary">
-                <span>${escapeHtml(label)}</span>
-                <span class="hud-tree-badge">${escapeHtml(entries.length)}</span>
-            </summary>
-            <ul class="hud-list hud-tree-list${scroll ? " hud-list-scroll" : ""}">
-                ${buildTreeList(entries, formatter)}
-            </ul>
-        </details>
-    `).join("");
-}
-
-function getManeuverGroups(data) {
-    return groupEntries(data.maneuvers, (maneuver) => maneuver.timing || maneuver.usage || maneuver.type || "Other");
-}
-
-function buildWeaponsTree(data) {
-    return buildTreeList(data.equippedWeapons, (weapon) => {
-        const state = weapon.ready ? "Ready" : "Equipped";
-        const summaryParts = [
-            state,
-            weapon.type,
-            weapon.rangeSummary ? `Range ${weapon.rangeSummary}` : "",
-            weapon.activeAttackFormula ? `Active ${weapon.activeAttackFormula}` : ""
-        ].filter(Boolean);
-        const children = weapon.attackProfiles.length
-            ? weapon.attackProfiles.map((profile) => {
-                const prefix = profile.key === weapon.activeAttackProfile ? "Active: " : "";
-                const ammoText = profile.allowedAmmoText ? ` | Ammo ${profile.allowedAmmoText}` : "";
-                return `<li>${escapeHtml(`${prefix}${profile.formula}${ammoText}`)}</li>`;
-            }).join("")
-            : `<li>No profiles</li>`;
-        return `
-            <li class="hud-tree-item">
-                <div class="hud-row-main">${escapeHtml(weapon.name)}</div>
-                <div class="hud-row-sub">${escapeHtml(summaryParts.join(" - "))}</div>
-                <ul class="hud-tree-children">
-                    ${weapon.rangeSummary ? `<li>Short / Long / Max: ${escapeHtml(weapon.rangeSummary)}</li>` : ""}
-                    ${children}
-                </ul>
-            </li>
-        `;
+    return summarizeActorFromModule(actor, token, {
+        MODULE_ID,
+        SOURCE_FLAG_SCOPE,
+        HUD_STATE,
+        canvas,
+        game,
+        getActorProps,
+        getNumericProp,
+        getStringProp,
+        isWeaponItem,
+        isArmorItem,
+        isAmmoItem,
+        getCsbItemKind,
+        getWeaponAttackProfiles,
+        getWeaponActiveAttackProfile,
+        getWeaponRangeBands,
+        getWeaponReach,
+        formatRangeSummary,
+        getAmmoType,
+        getAmmoQuantity,
+        getAmmoSummary,
+        getWeaponAttackState,
+        getSelectedPreManeuverIds,
+        setSelectedPreManeuverIds,
+        getSelectedFullTurnManeuverId,
+        clearSelectedFullTurnManeuver,
+        buildReservedResourceTotals,
+        getChebyshevDistanceSquares,
+        isTruthyLike,
+        normalizeManeuverTimingKey,
+        formatManeuverTimingLabel,
+        buildManeuverTooltip,
+        getManeuverCostSummary,
+        getManeuverEffectSummary,
+        buildManeuverSummaryLine,
+        buildManeuverDetailLine,
+        getPlayerFacingItemGroup,
+        isConsumableItem,
+        getResourceSummary,
+        formatCurrentMax,
+        buildRollFormula,
+        getSkillDiceShift,
+        buildSkillRollData,
+        getActivePersistentEffectsForActor,
+        getActiveDefenseStateForActor,
+        getDiceTabAttackSelection,
+        getPendingNextAttackDice,
+        getDiceTabSkillDice,
+        getPendingNextSkillDice,
+        getAttackDiceTabOptions,
+        formatAttackDiceSelectionLabel,
+        formatSkillD6SelectionLabel,
     });
 }
-
-function buildManeuverTree(data) {
-    return buildTreeList(data.maneuvers, (maneuver) => `
-        <li class="hud-tree-item">
-            <div class="hud-row-main">${escapeHtml(maneuver.name)}</div>
-            <ul class="hud-tree-children">
-                ${maneuver.timing ? `<li>Timing: ${escapeHtml(maneuver.timing)}</li>` : ""}
-                ${maneuver.usage ? `<li>Usage: ${escapeHtml(maneuver.usage)}</li>` : ""}
-                ${maneuver.type ? `<li>Type: ${escapeHtml(maneuver.type)}</li>` : ""}
-            </ul>
-        </li>
-    `);
-}
-
-function buildSkillTree(data) {
-    return buildTreeList(data.skills, (skill) => `
-        <li class="hud-tree-item">
-            <div class="hud-row-main">${escapeHtml(skill.name)}</div>
-            <ul class="hud-tree-children">
-                ${skill.group ? `<li>Group: ${escapeHtml(skill.group)}</li>` : ""}
-                ${skill.linkedStat ? `<li>Linked Stat: ${escapeHtml(skill.linkedStat)}</li>` : ""}
-            </ul>
-        </li>
-    `);
-}
-
-function buildStatsTree(data) {
-    const statRows = data.stats.map((stat) => `<li><span class="hud-tree-key">${escapeHtml(stat.label)}</span><span class="hud-tree-value">${escapeHtml(stat.formula)}</span></li>`).join("");
-    const resourceRows = data.pointPools.map((resource) => `<li><span class="hud-tree-key">${escapeHtml(resource.label)}</span><span class="hud-tree-value">${escapeHtml(resource.display)}</span></li>`).join("");
-    return `
-        <div class="hud-tree-block">
-            <div class="hud-section-title">Stats</div>
-            <ul class="hud-tree-children hud-tree-compact">${statRows || '<li class="hud-empty-row">None</li>'}</ul>
-        </div>
-        <div class="hud-tree-block">
-            <div class="hud-section-title">Resources</div>
-            <ul class="hud-tree-children hud-tree-compact">${resourceRows || '<li class="hud-empty-row">None</li>'}</ul>
-        </div>
-    `;
-}
-
-function buildInventoryTree(data) {
-    const equippedWeaponRows = data.equippedWeapons.length
-        ? buildTreeList(data.equippedWeapons, (weapon) => {
-            const profileButtons = weapon.attackProfiles.map((profile) => `
-                <button
-                    type="button"
-                    class="hud-mini-button${profile.key === weapon.activeAttackProfile ? " is-active" : ""}"
-                    data-hud-weapon-profile="${escapeHtml(weapon.id)}"
-                    data-hud-profile-key="${escapeHtml(profile.key)}"
-                >
-                    ${escapeHtml(profile.label)}
-                </button>
-            `).join("");
-            const ammoButtons = weapon.usesAmmo
-                ? weapon.compatibleAmmo.length
-                    ? weapon.compatibleAmmo.map((ammo) => `
-                        <button
-                            type="button"
-                            class="hud-mini-button${ammo.id === weapon.loadedAmmoId ? " is-active" : ""}"
-                            data-hud-weapon-ammo="${escapeHtml(weapon.id)}"
-                            data-hud-ammo-id="${escapeHtml(ammo.id)}"
-                            data-hud-profile-id="${escapeHtml(weapon.activeAttackProfileId ?? "")}"
-                        >
-                            ${escapeHtml(`${ammo.name} x${ammo.quantity}`)}
-                        </button>
-                    `).join("")
-                    : `<span class="hud-empty-pill">No compatible ammo</span>`
-                : "";
-
-            return `
-                <li class="hud-tree-item hud-weapon-card">
-                    <div class="hud-row-main">${escapeHtml(weapon.name)}</div>
-                    <div class="hud-row-sub">${escapeHtml([weapon.ready ? "Ready" : "Equipped", weapon.type, weapon.rangeSummary ? `Range ${weapon.rangeSummary}` : ""].filter(Boolean).join(" - "))}</div>
-                    <ul class="hud-tree-children hud-tree-compact">
-                        <li><span class="hud-tree-key">Active</span><span class="hud-tree-value">${escapeHtml(weapon.activeAttackFormula || "-")}</span></li>
-                        ${weapon.usesAmmo ? `<li><span class="hud-tree-key">Loaded Ammo</span><span class="hud-tree-value">${escapeHtml(weapon.loadedAmmoName ? `${weapon.loadedAmmoName} (${weapon.ammoLoaded})` : "None")}</span></li>` : ""}
-                        ${weapon.usesAmmo && weapon.activeAttackAmmoText ? `<li><span class="hud-tree-key">Allowed Ammo</span><span class="hud-tree-value">${escapeHtml(weapon.activeAttackAmmoText)}</span></li>` : ""}
-                    </ul>
-                    <div class="hud-weapon-controls">
-                        <div class="hud-weapon-control-group">
-                            <div class="hud-weapon-control-label">Profiles</div>
-                            <div class="hud-chip-row">${profileButtons}</div>
-                        </div>
-                        ${weapon.usesAmmo ? `
-                            <div class="hud-weapon-control-group">
-                                <div class="hud-weapon-control-label">Ammo</div>
-                                <div class="hud-chip-row">${ammoButtons}</div>
-                            </div>
-                        ` : ""}
-                    </div>
-                </li>
-            `;
-        })
-        : `<li class="hud-empty-row">No equipped weapons</li>`;
-
-    const inventoryGroups = groupEntries(data.inventory, (item) => {
-        if (item.equipped || item.ready) return "Equipped / Ready";
-        return item.group || "Other Gear";
-    });
-
-    const inventoryRows = buildGroupedTree(inventoryGroups, (item) => {
-        const status = [
-            item.type,
-            item.equipped ? "Equipped" : "",
-            item.ready ? "Ready" : "",
-            item.consumable ? "Usable" : ""
-        ].filter(Boolean);
-
-        return `
-            <li class="hud-tree-item">
-                <div class="hud-row-main">${escapeHtml(item.name)}</div>
-                ${status.length ? `<ul class="hud-tree-children"><li>${escapeHtml(status.join(" - "))}</li></ul>` : ""}
-            </li>
-        `;
-    }, { scroll: true });
-
-    return `
-        <div class="hud-tree-block">
-            <div class="hud-section-title">Equipped Weapons</div>
-            <ul class="hud-list hud-tree-list">${equippedWeaponRows}</ul>
-        </div>
-        <div class="hud-tree-block">
-            <div class="hud-section-title">Inventory</div>
-            <div class="hud-group-stack">${inventoryRows}</div>
-        </div>
-    `;
-}
-
-function buildConditionTree(data) {
-    return buildTreeList(data.conditions, (condition) => `
-        <li class="hud-tree-item">
-            <div class="hud-row-main">${escapeHtml(condition)}</div>
-        </li>
-    `);
-}
-
-function buildOverviewTree(data) {
-    const previewStat = getStatPreview(data);
-    const equippedRows = [];
-    for (const weapon of data.equippedWeapons) {
-        const weaponValue = [
-            weapon.ready ? "Ready" : "Equipped",
-            weapon.rangeSummary ? `R ${weapon.rangeSummary}` : ""
-        ].filter(Boolean).join(" - ");
-        equippedRows.push(`<li><span class="hud-tree-key">${escapeHtml(weapon.name)}</span><span class="hud-tree-value">${escapeHtml(weaponValue)}</span></li>`);
-    }
-    for (const armor of data.equippedArmor) {
-        equippedRows.push(`<li><span class="hud-tree-key">${escapeHtml(armor.name)}</span><span class="hud-tree-value">${escapeHtml(armor.defense || "Equipped")}</span></li>`);
-    }
-
-    const statusRows = data.conditions.map((condition) => `<li><span class="hud-tree-key">${escapeHtml(condition)}</span><span class="hud-tree-value">Active</span></li>`);
-
-    const hpDisplay = formatCurrentMax(data.hitPoints, data.maxHitPoints);
-    const pointRows = data.pointPools.map((resource) => `
-        <li class="hud-point-cell">
-            <span class="hud-tree-key">${escapeHtml(resource.label)}</span>
-            <span class="hud-tree-value">${escapeHtml(resource.display)}</span>
-        </li>
-    `).join("");
-    const riskRows = data.riskAndCritical.map((resource) => `
-        <li><span class="hud-tree-key">${escapeHtml(resource.label)}</span><span class="hud-tree-value">${escapeHtml(resource.display)}</span></li>
-    `).join("");
-    const rangedWeapons = data.equippedWeapons.filter((weapon) => weapon.rangeSummary);
-    const rangeLegend = rangedWeapons.length ? `
-        <div class="hud-tree-block">
-            <div class="hud-section-title">Range Bands</div>
-            <div class="hud-pill-row">
-                <span class="hud-pill"><span class="hud-pill-label">Short</span><span class="hud-pill-value">Normal</span></span>
-                <span class="hud-pill"><span class="hud-pill-label">Long</span><span class="hud-pill-value">Disadvantage</span></span>
-                <span class="hud-pill"><span class="hud-pill-label">Max</span><span class="hud-pill-value">Maneuvers</span></span>
-            </div>
-            <ul class="hud-tree-children hud-tree-compact">
-                ${rangedWeapons.map((weapon) => `<li><span class="hud-tree-key">${escapeHtml(weapon.name)}</span><span class="hud-tree-value">${escapeHtml(weapon.rangeSummary)}</span></li>`).join("")}
-            </ul>
-        </div>
-    ` : "";
-
-    return `
-        <div class="hud-overview-grid">
-            <div class="hud-tree-block hud-overview-block hud-overview-block-hp">
-                <div class="hud-section-title">HP</div>
-                <div class="hud-overview-value">${escapeHtml(hpDisplay || "-")}</div>
-            </div>
-            <div class="hud-tree-block hud-overview-block">
-                <div class="hud-section-title">Points</div>
-                <ul class="hud-tree-children hud-tree-compact hud-points-grid">${pointRows || '<li class="hud-empty-row">None</li>'}</ul>
-            </div>
-            <div class="hud-tree-block hud-overview-block hud-overview-block-risk">
-                <div class="hud-section-title">Risk & Crit</div>
-                <ul class="hud-tree-children hud-tree-compact">${riskRows || '<li class="hud-empty-row">None</li>'}</ul>
-            </div>
-        </div>
-        ${buildStatPreview(previewStat, data.rollContext)}
-        ${rangeLegend}
-        <div class="hud-tree-block">
-            <div class="hud-section-title">Equipped</div>
-            <ul class="hud-tree-children hud-tree-compact">${equippedRows.join("") || '<li class="hud-empty-row">None</li>'}</ul>
-        </div>
-        <div class="hud-tree-block">
-            <div class="hud-section-title">Status</div>
-            <ul class="hud-tree-children hud-tree-compact">${statusRows.join("") || '<li class="hud-empty-row">None</li>'}</ul>
-        </div>
-    `;
-}
-
-function buildCounterRollControls() {
-    const checked = HUD_STATE.counterRollEnabled ? " checked" : "";
-    return `
-        <div class="hud-tree-block hud-counter-roll-bar">
-            <label class="hud-counter-roll-toggle">
-                <input type="checkbox" data-hud-counter-enabled${checked}>
-                <span>Counter Roll</span>
-            </label>
-            <label class="hud-counter-roll-config">
-                <span>Difficulty</span>
-                <input
-                    type="number"
-                    min="1"
-                    max="10"
-                    step="1"
-                    value="${escapeHtml(sanitizeCounterRollDice(HUD_STATE.counterRollDice))}"
-                    data-hud-counter-dice
-                >
-                <span>d6</span>
-            </label>
-        </div>
-    `;
-}
-
-function getCategoryDefinitions(data) {
-    return [
-        { key: "overview", label: "Overview", count: null },
-        { key: "stats", label: "Stats", count: data.stats.length },
-        { key: "inventory", label: "Inventory", count: data.inventory.length },
-        { key: "maneuvers", label: "Maneuvers", count: data.maneuverCount },
-        { key: "skills", label: "Skills", count: data.skills.length },
-        { key: "conditions", label: "Conditions", count: data.conditions.length }
-    ];
-}
-
-function buildCategoryContent(data, activeCategory) {
-    switch (activeCategory) {
-        case "overview":
-            return buildOverviewTree(data);
-        case "stats":
-            return (() => {
-                const previewStat = getStatPreview(data);
-                return `${buildCounterRollControls()}<ul class="hud-list hud-tree-list hud-stat-grid">
-                ${buildTreeList(data.stats, (stat) => `
-                    <li class="hud-tree-item${stat.label === previewStat?.label ? " is-active" : ""}">
-                        <button type="button" class="hud-action-row${stat.label === previewStat?.label ? " is-active" : ""}" data-hud-stat="${escapeHtml(stat.label)}">
-                            <span class="hud-row-main">${escapeHtml(stat.label)}</span>
-                            <span class="hud-tree-value">${escapeHtml(stat.formula)}</span>
-                        </button>
-                    </li>
-                `)}
-            </ul>`;
-            })();
-        case "inventory":
-            return buildInventoryTree(data);
-        case "maneuvers":
-            return (() => {
-                const maneuverGroups = getManeuverGroups(data);
-                if (!maneuverGroups.length) {
-                    return `<div class="hud-empty-row">None</div>`;
-                }
-                const activeGroup = maneuverGroups.some(([label]) => label === HUD_STATE.activeManeuverGroup)
-                    ? HUD_STATE.activeManeuverGroup
-                    : maneuverGroups[0][0];
-                const [, activeEntries] = maneuverGroups.find(([label]) => label === activeGroup) ?? maneuverGroups[0];
-                const groupTabs = maneuverGroups.map(([label, entries]) => `
-                    <button
-                        type="button"
-                        class="hud-subgroup-tab${label === activeGroup ? " is-active" : ""}"
-                        data-hud-maneuver-group="${escapeHtml(label)}"
-                    >
-                        <span>${escapeHtml(label)}</span>
-                        <span class="hud-category-count">${escapeHtml(entries.length)}</span>
-                    </button>
-                `).join("");
-
-                return `
-                    <div class="hud-tree-block hud-sticky-subgroups">
-                        <div class="hud-subgroup-row">${groupTabs}</div>
-                    </div>
-                    <div class="hud-tree-block">
-                        <ul class="hud-list hud-tree-list hud-list-scroll hud-single-scroll">
-                            ${buildTreeList(activeEntries, (maneuver) => `
-                                <li class="hud-tree-item">
-                                    <div class="hud-row-main">${escapeHtml(maneuver.name)}</div>
-                                    <div class="hud-row-sub">${escapeHtml([maneuver.usage, maneuver.type].filter(Boolean).join(" - ") || maneuver.timing || "")}</div>
-                                </li>
-                            `)}
-                        </ul>
-                    </div>
-                `;
-            })();
-        case "skills":
-            return `${buildCounterRollControls()}<ul class="hud-list hud-tree-list hud-list-scroll hud-single-scroll">
-                ${buildTreeList(data.skills, (skill) => `
-                    <li class="hud-tree-item">
-                        <button type="button" class="hud-action-row" data-hud-skill="${escapeHtml(skill.name)}">
-                            <span class="hud-row-main">${escapeHtml(skill.name)}</span>
-                            <span class="hud-row-sub">${escapeHtml([skill.group, skill.linkedStat, `L${skill.currentLevel}`].filter(Boolean).join(" - "))}</span>
-                            ${skill.formula ? `<span class="hud-tree-value">${escapeHtml(skill.formula)}</span>` : ""}
-                        </button>
-                    </li>
-                `)}
-            </ul>`;
-        case "conditions":
-            return `<ul class="hud-list hud-tree-list">${buildConditionTree(data)}</ul>`;
-        default:
-            return buildStatsTree(data);
-    }
-}
-
 function buildHudHtml(data) {
-    const categories = getCategoryDefinitions(data);
-    const activeCategory = categories.some((category) => category.key === HUD_STATE.activeCategory)
-        ? HUD_STATE.activeCategory
-        : categories[0].key;
-    const targetToggle = `
-        <button
-            type="button"
-            class="hud-category-tab hud-icon-tab${isHudTargetModeActive() ? " is-active" : ""}"
-            data-hud-target-toggle
-            title="Target mode"
-            aria-label="Target mode"
-        >
-            <i class="fa-solid fa-bullseye"></i>
-        </button>
-    `;
-    const sideReadyButton = data.isCombatActive ? `
-        <button
-            type="button"
-            class="hud-category-tab"
-            data-hud-side-ready
-            title="Announce that your side is ready"
-            aria-label="Announce that your side is ready"
-        >
-            <span>Side Ready</span>
-        </button>
-    ` : "";
-    const categoryTabs = categories.map((category) => `
-        <button
-            type="button"
-            class="hud-category-tab${category.key === activeCategory ? " is-active" : ""}"
-            data-hud-category="${escapeHtml(category.key)}"
-        >
-            <span>${escapeHtml(category.label)}</span>
-            ${category.count === null ? "" : `<span class="hud-category-count">${escapeHtml(category.count)}</span>`}
-        </button>
-    `).join("");
-
-    return `
-        <section class="hud-shell${HUD_STATE.collapsed ? " is-collapsed" : ""}">
-            <header class="hud-header">
-                <img class="hud-portrait" src="${escapeHtml(data.actorImg)}" alt="${escapeHtml(data.tokenName)}">
-                <div class="hud-header-text">
-                    <div class="hud-title">${escapeHtml(data.tokenName)}</div>
-                    <div class="hud-subtitle">
-                        ${data.isCombatActive ? `Combat round ${escapeHtml(data.round ?? "-")}` : "No active combat"}
-                    </div>
-                </div>
-                <button
-                    type="button"
-                    class="hud-collapse-button"
-                    data-hud-collapse-toggle
-                    title="${HUD_STATE.collapsed ? "Expand HUD" : "Collapse HUD"}"
-                    aria-label="${HUD_STATE.collapsed ? "Expand HUD" : "Collapse HUD"}"
-                >
-                    <i class="fa-solid ${HUD_STATE.collapsed ? "fa-angles-right" : "fa-angles-left"}"></i>
-                </button>
-            </header>
-
-            ${buildReactionPrompt()}
-
-            ${HUD_STATE.collapsed ? "" : `
-            <section class="hud-section">
-                <div class="hud-category-row">${targetToggle}${sideReadyButton}${categoryTabs}</div>
-            </section>
-
-            <section class="hud-section hud-tree-panel">
-                ${buildCategoryContent(data, activeCategory)}
-            </section>
-            `}
-        </section>
-    `;
+    return buildHudHtmlFromModule(data, {
+        HUD_STATE,
+        escapeHtml,
+        buildReactionPrompt,
+        buildDamageTakenPrompt,
+        buildPostManeuverPrompt,
+        getStatPreview,
+        formatCurrentMax,
+        buildStatPreview,
+        sanitizeCounterRollDice,
+        getInventoryFilterOptions,
+        normalizeInventoryFilterValue,
+        matchesInventoryFilter,
+        getAttackDiceTabOptions,
+        formatAttackDiceSelectionLabel,
+        formatSkillD6SelectionLabel,
+    });
 }
-
 function buildEmptyHtml(message = "No token selected") {
-    return `
-        <section class="hud-shell hud-empty-state">
-            <div class="hud-title">1547 HUD</div>
-            <div class="hud-subtitle">${escapeHtml(message)}</div>
-        </section>
-    `;
+    return buildEmptyHtmlFromModule(message, {
+        escapeHtml,
+    });
 }
 
 function getSelectedToken() {
     return canvas?.tokens?.controlled?.[0] ?? null;
+}
+
+function getPrimaryTargetToken() {
+    return Array.from(game.user?.targets ?? [])[0] ?? null;
 }
 
 function ensureHudRoot() {
@@ -1865,127 +1798,58 @@ async function renderHudForSelection() {
     root.dataset.actorId = token.actor.id;
     root.innerHTML = buildHudHtml(summarizeActor(token.actor, token));
     applyHudPlacement(root);
-    renderThreatOverlay(token);
-    for (const button of root.querySelectorAll("[data-hud-category]")) {
-        button.addEventListener("click", (event) => {
-            const category = event.currentTarget.dataset.hudCategory;
-            if (!category || category === HUD_STATE.activeCategory) return;
-            HUD_STATE.activeCategory = category;
-            void renderHudForSelection();
-        });
-    }
-    for (const button of root.querySelectorAll("[data-hud-collapse-toggle]")) {
-        button.addEventListener("click", () => {
-            HUD_STATE.collapsed = !HUD_STATE.collapsed;
-            void renderHudForSelection();
-        });
-    }
-    for (const button of root.querySelectorAll("[data-hud-target-toggle]")) {
-        button.addEventListener("click", () => {
-            toggleHudTargetMode();
-            window.setTimeout(() => {
-                void renderHudForSelection();
-            }, 0);
-        });
-    }
-    for (const button of root.querySelectorAll("[data-hud-side-ready]")) {
-        button.addEventListener("click", async () => {
-            await announceSideReady(token?.actor, token);
-        });
-    }
-    for (const button of root.querySelectorAll("[data-hud-reaction-choice]")) {
-        button.addEventListener("click", (event) => {
-            const choiceId = event.currentTarget.dataset.hudReactionChoice;
-            const reactionWindow = getActiveReactionWindow();
-            if (!reactionWindow || !choiceId) return;
-            reactionWindow.selectReaction(choiceId);
-            clearHudReactionWindow();
-            void renderHudForSelection();
-        });
-    }
-    for (const button of root.querySelectorAll("[data-hud-reaction-pass]")) {
-        button.addEventListener("click", () => {
-            const reactionWindow = getActiveReactionWindow();
-            if (!reactionWindow) return;
-            reactionWindow.passReaction();
-            clearHudReactionWindow();
-            void renderHudForSelection();
-        });
-    }
-    for (const button of root.querySelectorAll("[data-hud-maneuver-group]")) {
-        button.addEventListener("click", (event) => {
-            const group = event.currentTarget.dataset.hudManeuverGroup;
-            if (!group || group === HUD_STATE.activeManeuverGroup) return;
-            HUD_STATE.activeManeuverGroup = group;
-            void renderHudForSelection();
-        });
-    }
-    for (const button of root.querySelectorAll("[data-hud-stat]")) {
-        button.addEventListener("click", async (event) => {
-            const stat = event.currentTarget.dataset.hudStat;
-            if (!stat) return;
-            const context = buildHudActionContext(token?.actor, token);
-            const descriptor = createStatActionDescriptor(context, stat);
-            await runHudAction(descriptor, context);
-            void renderHudForSelection();
-        });
-    }
-    for (const button of root.querySelectorAll("[data-hud-skill]")) {
-        button.addEventListener("click", async (event) => {
-            const skill = event.currentTarget.dataset.hudSkill;
-            if (!skill) return;
-            const context = buildHudActionContext(token?.actor, token);
-            const descriptor = createSkillActionDescriptor(context, skill);
-            await runHudAction(descriptor, context);
-            void renderHudForSelection();
-        });
-    }
-    for (const button of root.querySelectorAll("[data-hud-weapon-profile]")) {
-        button.addEventListener("click", async (event) => {
-            const weaponId = event.currentTarget.dataset.hudWeaponProfile;
-            const profileKey = event.currentTarget.dataset.hudProfileKey;
-            if (!weaponId || !profileKey || !token?.actor) return;
-            const weaponItem = token.actor.items?.get?.(weaponId);
-            if (!weaponItem?.update) return;
-            await weaponItem.update({
-                "system.props.ActiveAttackProfile": profileKey
-            });
-            void renderHudForSelection();
-        });
-    }
-    for (const button of root.querySelectorAll("[data-hud-weapon-ammo]")) {
-        button.addEventListener("click", async (event) => {
-            const weaponId = event.currentTarget.dataset.hudWeaponAmmo;
-            const ammoId = event.currentTarget.dataset.hudAmmoId;
-            const profileId = event.currentTarget.dataset.hudProfileId || null;
-            if (!weaponId || !ammoId || !token?.actor) return;
-            const weaponItem = token.actor.items?.get?.(weaponId);
-            const loadWeaponAmmo = game.modules.get(MODULE_ID)?.api?.combat?.loadWeaponAmmo;
-            if (!weaponItem || typeof loadWeaponAmmo !== "function") return;
-            try {
-                await loadWeaponAmmo({
-                    actor: token.actor,
-                    weapon: weaponItem,
-                    ammoItemId: ammoId,
-                    profileId
-                });
-            } catch (error) {
-                ui.notifications?.warn?.(error?.message || "Could not load ammunition.");
-            }
-            void renderHudForSelection();
-        });
-    }
-    for (const input of root.querySelectorAll("[data-hud-counter-enabled]")) {
-        input.addEventListener("change", (event) => {
-            HUD_STATE.counterRollEnabled = Boolean(event.currentTarget.checked);
-        });
-    }
-    for (const input of root.querySelectorAll("[data-hud-counter-dice]")) {
-        input.addEventListener("change", (event) => {
-            HUD_STATE.counterRollDice = sanitizeCounterRollDice(event.currentTarget.value);
-            event.currentTarget.value = String(HUD_STATE.counterRollDice);
-        });
-    }
+    clearThreatOverlay();
+    bindHudInteractionsFromModule(root, token, {
+        HUD_STATE,
+        ui,
+        renderHudForSelection,
+        announceSideReady,
+        getActiveReactionWindow,
+        getSelectedReactionChoiceId,
+        toggleSelectedReactionChoiceId,
+        clearHudReactionWindow,
+        getActiveDamageTakenWindow,
+        clearHudDamageTakenWindow,
+        getDiceTabAttackSelection,
+        setDiceTabAttackSelectionCount,
+        clearDiceTabAttackSelection,
+        getPendingNextAttackDice,
+        setPendingNextAttackDice,
+        clearPendingNextAttackDice,
+        getDiceTabSkillDice,
+        setDiceTabSkillDice,
+        clearDiceTabSkillDice,
+        getPendingNextSkillDice,
+        setPendingNextSkillDice,
+        clearPendingNextSkillDice,
+        clearIgnoredCostManeuver,
+        clearIgnoredCostManeuvers,
+        setIgnoredCostManeuver,
+        confirmManeuverCostSelection,
+        getActivePostManeuverWindow,
+        toggleSelectedPostManeuver,
+        getSelectedPostManeuverId,
+        normalizePostManeuverChoiceId,
+        advancePostManeuverWindow,
+        clearSelectedFullTurnManeuver,
+        toggleSelectedPreManeuver,
+        clearSelectedPreManeuvers,
+        toggleSelectedFullTurnManeuver,
+        summarizeActor,
+        executeSelectedFullTurnManeuver,
+        buildHudActionContext,
+        createStatActionDescriptor,
+        createSkillActionDescriptor,
+        createWeaponAttackActionDescriptor,
+        runHudAction,
+        executeWeaponReloadAction,
+        executeWeaponReadyAction,
+        executeItemUnequipAction,
+        sanitizeCounterRollDice,
+        Roll,
+        ChatMessage,
+        getAttackDiceTabOptions,
+    });
 }
 
 async function maybeRollCounter(context, label, playerTotal) {
@@ -2006,23 +1870,138 @@ async function maybeRollCounter(context, label, playerTotal) {
     HUD_STATE.counterRollEnabled = false;
 }
 
+const SIDE_READY_CONFIRM_SETTING = "showSideReadyConfirmation";
+
+function getFirstCombatantIndexForSide(combat, sideId) {
+    const turns = Array.isArray(combat?.turns) ? combat.turns : [];
+    return turns.findIndex((combatant) => !combatant?.defeated && resolveCombatantSideId(combatant) === sideId);
+}
+
+function getNextStoredSideTurnState(combat) {
+    const orderedCombatants = getOrderedCombatants(combat).filter((combatant) => !combatant?.defeated);
+    if (!orderedCombatants.length) return null;
+
+    const sideOrder = getResolvedSideOrder(combat, orderedCombatants);
+    if (!sideOrder.length) return null;
+
+    const currentSideId = getActiveSideId(combat, orderedCombatants) || sideOrder[0] || "";
+    const currentIndex = Math.max(0, sideOrder.indexOf(currentSideId));
+
+    for (let offset = 1; offset <= sideOrder.length; offset += 1) {
+        const sideIndex = (currentIndex + offset) % sideOrder.length;
+        const nextSideId = sideOrder[sideIndex];
+        const nextCombatant = orderedCombatants.find((combatant) => resolveCombatantSideId(combatant) === nextSideId) ?? null;
+        const nextTurnIndex = getFirstCombatantIndexForSide(combat, nextSideId);
+        if (!nextCombatant || nextTurnIndex < 0) continue;
+        return {
+            activeSideId: nextSideId,
+            sideLabel: getSideLabel(nextSideId),
+            combatant: nextCombatant,
+            turn: nextTurnIndex,
+            round: sideIndex <= currentIndex ? (Number(combat.round) || 1) + 1 : (Number(combat.round) || 1),
+            wrapped: sideIndex <= currentIndex,
+        };
+    }
+
+    return null;
+}
+
+async function advanceCombatToNextSide(combat) {
+    if (!combat?.update) return null;
+    const nextState = getNextStoredSideTurnState(combat);
+    if (!nextState) return null;
+    await combat.update({
+        round: nextState.round,
+        turn: nextState.turn,
+    });
+    await combat.setFlag(MODULE_ID, "activeSideId", nextState.activeSideId);
+    await combat.setFlag(MODULE_ID, "roundNumber", nextState.round);
+    await persistCombatSideState(combat);
+    return nextState;
+}
+
+async function confirmSideReady(nextState) {
+    const showConfirmation = game.settings.get(MODULE_ID, SIDE_READY_CONFIRM_SETTING) !== false;
+    if (!showConfirmation) return true;
+
+    return await new Promise((resolve) => {
+        let settled = false;
+        const content = "<form class=\"combat-side-ready-confirm\">"
+            + "<div class=\"combat-side-ready-confirm__eyebrow\">Side Transition</div>"
+            + "<div class=\"combat-side-ready-confirm__title\">This ends the turn for the whole side.</div>"
+            + "<div class=\"combat-side-ready-confirm__body\">Any actor on the currently active side will lose the rest of this side activation.</div>"
+            + "<div class=\"combat-side-ready-confirm__next\"><span class=\"combat-side-ready-confirm__next-label\">Next active side</span><strong>" + escapeHtml(nextState?.sideLabel || nextState?.combatant?.name || "Next side") + "</strong></div>"
+            + "<label class=\"combat-side-ready-confirm__toggle\">"
+            + "<input type=\"checkbox\" name=\"hideAgain\" />"
+            + "<span>Do not show again</span>"
+            + "</label>"
+            + "</form>";
+        const dialog = new Dialog({
+            title: "End Whole Side Turn?",
+            content,
+            buttons: {
+                confirm: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: "End Side Turn",
+                    callback: async (html) => {
+                        const hideAgain = html.find('[name="hideAgain"]')[0]?.checked === true;
+                        if (hideAgain) {
+                            await game.settings.set(MODULE_ID, SIDE_READY_CONFIRM_SETTING, false);
+                        }
+                        settled = true;
+                        resolve(true);
+                    },
+                },
+                cancel: {
+                    label: "Cancel",
+                    callback: () => {
+                        settled = true;
+                        resolve(false);
+                    },
+                },
+            },
+            default: "cancel",
+            close: () => {
+                if (!settled) resolve(false);
+            },
+        });
+        dialog.render(true);
+    });
+}
+
 async function announceSideReady(actor, token) {
     if (!game.combat?.started) {
         ui.notifications?.warn?.("Combat is not active.");
         return;
     }
 
+    const nextPreview = getNextStoredSideTurnState(game.combat);
+    if (!nextPreview) {
+        ui.notifications?.warn?.("No next side could be resolved.");
+        return;
+    }
+
+    const confirmed = await confirmSideReady(nextPreview);
+    if (!confirmed) return;
+
     const speaker = ChatMessage.getSpeaker({ actor, token: token?.document });
     const callerName = game.user?.name || "A player";
     const actorName = token?.name || actor?.name || "Selected actor";
     const targetCount = Array.from(game.user?.targets ?? []).length;
     const targetText = targetCount > 0
-        ? `<br>Current targets marked in Foundry: ${escapeHtml(targetCount)}`
+        ? "<br>Current targets marked in Foundry: " + escapeHtml(targetCount)
         : "";
+
+    const nextState = await advanceCombatToNextSide(game.combat);
+    const nextName = nextState?.sideLabel || nextState?.combatant?.name || nextState?.combatant?.actor?.name || "next side";
+    const roundText = nextState?.wrapped ? "<br>Combat advances to a new round." : "";
+    const sideText = nextState
+        ? "<br><strong>Next active side:</strong> " + escapeHtml(nextName)
+        : "<br>No next side could be resolved.";
 
     await ChatMessage.create({
         speaker,
-        content: `<strong>${escapeHtml(callerName)}</strong> calls <strong>Side Ready</strong> for ${escapeHtml(actorName)}.${targetText}`
+        content: "<strong>" + escapeHtml(callerName) + "</strong> calls <strong>Side Ready</strong> for " + escapeHtml(actorName) + "." + targetText + sideText + roundText
     });
 }
 
@@ -2051,6 +2030,11 @@ export function register1547ActorHud() {
         void renderHudForSelection();
         return null;
     });
+    onCombatEvent(COMBAT_EVENTS.DAMAGE_TAKEN_WINDOW_OPENED, (event) => {
+        setHudDamageTakenWindow(event.payload);
+        void renderHudForSelection();
+        return null;
+    });
 
     Hooks.on("controlToken", () => void renderHudForSelection());
     Hooks.on("hoverToken", (token, hovered) => {
@@ -2058,12 +2042,13 @@ export function register1547ActorHud() {
             renderThreatOverlay(token);
             return;
         }
-        const selectedToken = getSelectedToken();
-        if (selectedToken?.id) {
-            renderThreatOverlay(selectedToken);
-            return;
-        }
         clearThreatOverlay();
+    });
+    onCombatEvent(COMBAT_EVENTS.POST_MANEUVER_WINDOW_OPENED, (event) => {
+        clearHudDamageTakenWindow();
+        queuePostManeuverWindow(event.payload);
+        void renderHudForSelection();
+        return null;
     });
     Hooks.on("canvasReady", () => {
         clearThreatOverlay();
@@ -2078,6 +2063,7 @@ export function register1547ActorHud() {
     Hooks.on("updateItem", (item) => rerenderHudIfViewingActor(item.parent?.id));
     Hooks.on("deleteItem", (item) => rerenderHudIfViewingActor(item.parent?.id));
     Hooks.on("updateCombat", () => void renderHudForSelection());
+    Hooks.on("targetToken", () => void renderHudForSelection());
     Hooks.on("renderSceneNavigation", scheduleHudRerender);
     Hooks.on("renderSceneControls", scheduleHudRerender);
     Hooks.on("collapseSidebar", scheduleHudRerender);
@@ -2085,3 +2071,112 @@ export function register1547ActorHud() {
     window.addEventListener("resize", scheduleHudRerender, { passive: true });
     void renderHudForSelection();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
