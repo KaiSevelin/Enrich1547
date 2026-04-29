@@ -11,7 +11,6 @@ const DEFAULT_UNARMED_WEAPON_SOURCE = {
     itemType: "weapon",
     category: "Unarmed",
     equipped: true,
-    ready: true,
     reloadTime: 0,
     reloadProgress: 0,
     traits: ["Disarming", "Control", "Fast"],
@@ -695,7 +694,7 @@ export async function executeSafeCounterattack({
     const reactionWeapon = getActorReactionWeapon(defender);
     const reactionProfile = resolveSelectedWeaponProfile(reactionWeapon, {});
     if (!reactionWeapon || !reactionProfile) {
-        throw new Error(`${defender.name ?? "Defender"} has no weapon ready for a safe counterattack.`);
+        throw new Error(`${defender.name ?? "Defender"} has no equipped weapon for a safe counterattack.`);
     }
 
     const distanceSquares = Number(
@@ -752,6 +751,12 @@ export async function resolveAttackOutcome({
         0,
         normalizedAttackRoll.damage - normalizedDefenseRoll.protection - defenseModifiers.reduceDamageTaken
     );
+    const hitPointUpdate = damageApplied > 0
+        ? await applyDamageToActorHitPoints(pendingAttack.target, damageApplied)
+        : {
+            previousHitPoints: getActorCurrentHitPoints(pendingAttack.target),
+            currentHitPoints: getActorCurrentHitPoints(pendingAttack.target),
+        };
 
     const criticalPoints =
         currentCriticalPoints ??
@@ -765,30 +770,11 @@ export async function resolveAttackOutcome({
         attackRoll: normalizedAttackRoll,
         defenseRoll: normalizedDefenseRoll,
         damageApplied,
+        hitPointUpdate,
         appliedModifiers,
         defenseModifiers,
         defenseFollowUpState,
     });
-
-    const damageTakenWindow = await emitCombatEvent(
-        COMBAT_EVENTS.DAMAGE_TAKEN_WINDOW_OPENED,
-        {
-            pendingAttack,
-            damageApplied,
-            selectedReaction: currentDamageTakenReaction,
-            defenseReaction,
-            appliedModifiers,
-            defenseModifiers,
-            defenseFollowUpState,
-            commitSafeCounterattack() {
-                return executeSafeCounterattack({
-                    pendingAttack,
-                    defenseReaction,
-                    currentDamageTakenReaction,
-                });
-            },
-        }
-    );
 
     const defenderPostOptions = getLegalManeuvers({
         actor: pendingAttack.target,
@@ -815,37 +801,37 @@ export async function resolveAttackOutcome({
         targetConditions: pendingAttack.metadata?.targetConditions,
     });
 
-    const defenderPostWindowPayload = createPostManeuverWindowPayload({
-        side: "defender",
-        actor: pendingAttack.target,
-        target: pendingAttack.actor,
-        pendingAttack,
-        currentCriticalPoints: criticalPoints,
-        legalPostManeuvers: defenderPostOptions,
-        selectedPostManeuver: defenderPostChoice,
-        actorConditions: pendingAttack.metadata?.targetConditions,
-        targetConditions: pendingAttack.metadata?.actorConditions,
-    });
-    const defenderPostWindow = await emitCombatEvent(
-        COMBAT_EVENTS.POST_MANEUVER_WINDOW_OPENED,
-        defenderPostWindowPayload
-    );
+    const pendingPostManeuverWindows = [
+        createPostManeuverWindowPayload({
+            side: "defender",
+            actor: pendingAttack.target,
+            target: pendingAttack.actor,
+            pendingAttack,
+            currentCriticalPoints: criticalPoints,
+            legalPostManeuvers: defenderPostOptions,
+            selectedPostManeuver: defenderPostChoice,
+            actorConditions: pendingAttack.metadata?.targetConditions,
+            targetConditions: pendingAttack.metadata?.actorConditions,
+        }),
+        createPostManeuverWindowPayload({
+            side: "attacker",
+            actor: pendingAttack.actor,
+            target: pendingAttack.target,
+            pendingAttack,
+            currentCriticalPoints: criticalPoints,
+            legalPostManeuvers: attackerPostOptions,
+            selectedPostManeuver: attackerPostChoice,
+            actorConditions: pendingAttack.metadata?.actorConditions,
+            targetConditions: pendingAttack.metadata?.targetConditions,
+        }),
+    ].filter((entry) => entry?.actor);
 
-    const attackerPostWindowPayload = createPostManeuverWindowPayload({
-        side: "attacker",
-        actor: pendingAttack.actor,
-        target: pendingAttack.target,
-        pendingAttack,
-        currentCriticalPoints: criticalPoints,
-        legalPostManeuvers: attackerPostOptions,
-        selectedPostManeuver: attackerPostChoice,
-        actorConditions: pendingAttack.metadata?.actorConditions,
-        targetConditions: pendingAttack.metadata?.targetConditions,
-    });
-    const attackerPostWindow = await emitCombatEvent(
-        COMBAT_EVENTS.POST_MANEUVER_WINDOW_OPENED,
-        attackerPostWindowPayload
-    );
+    const postManeuverWindowEvents = [];
+    for (const postWindow of pendingPostManeuverWindows) {
+        postManeuverWindowEvents.push(
+            await emitCombatEvent(COMBAT_EVENTS.POST_MANEUVER_WINDOW_OPENED, postWindow)
+        );
+    }
 
     if (!pendingAttack.committed) {
         await consumeLoadedAmmo({
@@ -859,6 +845,7 @@ export async function resolveAttackOutcome({
         type: "attack",
         pendingAttack,
         damageApplied,
+        hitPointUpdate,
         appliedModifiers,
         defenseModifiers,
         defenseFollowUpState,
@@ -869,6 +856,7 @@ export async function resolveAttackOutcome({
         attackRoll: normalizedAttackRoll,
         defenseRoll: normalizedDefenseRoll,
         damageApplied,
+        hitPointUpdate,
         currentCriticalPoints: criticalPoints,
         appliedModifiers,
         defenseModifiers,
@@ -877,11 +865,10 @@ export async function resolveAttackOutcome({
         attackerPostOptions,
         events: {
             damageWindow,
-            damageTakenWindow,
-            defenderPostWindow,
-            attackerPostWindow,
             commitEvent,
+            postManeuverWindowEvents,
         },
+        pendingPostManeuverWindows,
     };
 }
 
@@ -1136,7 +1123,6 @@ function buildDefaultUnarmedWeapon() {
     return {
         ...(getStoredDatasetEntry("weaponData", "Unarmed") ?? DEFAULT_UNARMED_WEAPON_SOURCE),
         itemDocument: null,
-        ready: true,
         equipped: true,
         isVirtualDefault: true,
     };
@@ -1222,11 +1208,6 @@ function normalizeWeapon(weapon, actor = null) {
             weapon.usesAmmo ??
             source.usesAmmo ??
             false,
-        ready:
-            props.Ready ??
-            weapon.ready ??
-            source.ready ??
-            false,
         itemDocument: weapon,
     };
 }
@@ -1238,8 +1219,8 @@ function getActorReactionWeapon(actor) {
         .map(normalizeWeapon)
         .filter(Boolean);
 
-    const readyWeapon = weapons.find((weapon) => weapon.ready);
-    if (readyWeapon) return readyWeapon;
+    const equippedWeapon = weapons.find((weapon) => weapon.equipped);
+    if (equippedWeapon) return equippedWeapon;
 
     return weapons[0] ?? normalizeWeapon(null, actor);
 }
@@ -1608,11 +1589,75 @@ async function applyDamageToActorHitPoints(actor, damageApplied) {
     await actor.update({
         "system.props.CurrentHitPoints": currentHitPoints,
     });
+    await syncActorHitPointStates(actor, currentHitPoints);
 
     return {
         previousHitPoints,
         currentHitPoints,
     };
+}
+
+function getStatusEffectDefinitions(keyword) {
+    const normalized = String(keyword ?? "").trim().toLowerCase();
+    const configured = Array.isArray(CONFIG?.statusEffects) ? CONFIG.statusEffects : [];
+    const matches = configured
+        .filter((entry) => {
+            const id = String(entry?.id ?? "").trim().toLowerCase();
+            const name = String(entry?.name ?? entry?.label ?? "").trim().toLowerCase();
+            return id === normalized || name.includes(normalized);
+        })
+        .filter((entry) => String(entry?.id ?? "").trim());
+    if (matches.length) return matches;
+    return [{ id: keyword, name: keyword, label: keyword }];
+}
+
+async function setActorStatusEffect(actor, keyword, active) {
+    const definitions = getStatusEffectDefinitions(keyword);
+    const existingEffects = Array.from(actor?.effects ?? []);
+    const matchingEffectIds = existingEffects
+        .filter((effect) => {
+            const statuses = Array.isArray(effect?.statuses) ? effect.statuses : Array.from(effect?.statuses ?? []);
+            const name = String(effect?.name ?? "").trim().toLowerCase();
+            return definitions.some((entry) => statuses.includes(entry.id) || name === String(entry.name ?? entry.label ?? entry.id).trim().toLowerCase());
+        })
+        .map((effect) => effect.id)
+        .filter(Boolean);
+
+    if (!active) {
+        if (matchingEffectIds.length && typeof actor?.deleteEmbeddedDocuments === "function") {
+            await actor.deleteEmbeddedDocuments("ActiveEffect", matchingEffectIds);
+        }
+        return;
+    }
+
+    if (matchingEffectIds.length || typeof actor?.createEmbeddedDocuments !== "function") {
+        return;
+    }
+
+    const definition = definitions[0];
+    await actor.createEmbeddedDocuments("ActiveEffect", [{
+        name: definition.name ?? definition.label ?? definition.id ?? keyword,
+        img: definition.img ?? "icons/svg/aura.svg",
+        statuses: [definition.id ?? keyword],
+        disabled: false,
+    }]);
+}
+
+async function syncActorHitPointStates(actor, currentHitPoints) {
+    const safeHitPoints = Number(currentHitPoints ?? 0) || 0;
+    const isDead = safeHitPoints <= 0;
+    const isUnconscious = !isDead && safeHitPoints <= 1;
+
+    await setActorStatusEffect(actor, "dead", isDead);
+    await setActorStatusEffect(actor, "defeated", isDead);
+    await setActorStatusEffect(actor, "unconscious", isUnconscious);
+
+    const combatants = Array.from(game?.combat?.combatants ?? []).filter((combatant) => combatant?.actorId === actor?.id);
+    for (const combatant of combatants) {
+        if (combatant?.update) {
+            await combatant.update({ defeated: isDead });
+        }
+    }
 }
 function normalizeRollSummary(roll) {
     const summary = roll ?? {};

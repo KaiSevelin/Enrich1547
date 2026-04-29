@@ -88,23 +88,6 @@
                             "defaultChecked": false
                         },
                         {
-                            "key": "Ready",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 0,
-                            "editRole": 0,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "checkbox",
-                            "size": "full-size",
-                            "label": "Ready:",
-                            "defaultChecked": false
-                        },
-                        {
                             "key": "WeaponType",
                             "colSpan": 1,
                             "rowSpan": 1,
@@ -1096,7 +1079,6 @@
             "Weight": 0.7,
             "Value": 4,
             "Equipped": false,
-            "Ready": false,
             "WeaponType": "Bow",
             "ReloadTime": 0,
             "ReloadProgress": 0,
@@ -1149,7 +1131,6 @@
                 "weight": 0.7,
                 "value": 4,
                 "equipped": false,
-                "ready": false,
                 "reloadTime": 0,
                 "reloadProgress": 0,
                 "traits": [

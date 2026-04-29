@@ -1,4 +1,4 @@
-{
+﻿{
     "_id": "dhSlDvAgvZZc1Xtu",
     "name": "Flail",
     "type": "equippableItem",
@@ -85,23 +85,6 @@
                             "type": "checkbox",
                             "size": "full-size",
                             "label": "Equipped:",
-                            "defaultChecked": false
-                        },
-                        {
-                            "key": "Ready",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 0,
-                            "editRole": 0,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "checkbox",
-                            "size": "full-size",
-                            "label": "Ready:",
                             "defaultChecked": false
                         },
                         {
@@ -1096,7 +1079,6 @@
             "Weight": 1.5,
             "Value": 8,
             "Equipped": false,
-            "Ready": false,
             "WeaponType": "Blunt",
             "ReloadTime": 0,
             "ReloadProgress": 0,
@@ -1149,7 +1131,6 @@
                 "weight": 1.5,
                 "value": 8,
                 "equipped": false,
-                "ready": false,
                 "reloadTime": 0,
                 "reloadProgress": 0,
                 "traits": [

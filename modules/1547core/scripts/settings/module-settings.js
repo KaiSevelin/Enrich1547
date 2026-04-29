@@ -116,7 +116,6 @@ function buildWeaponProps(weapon) {
         Weight: weapon.weight ?? 0,
         Value: weapon.value ?? 0,
         Equipped: Boolean(weapon.equipped),
-        Ready: Boolean(weapon.ready),
         WeaponType: weapon.category ?? "Blade",
         MinReach: weapon.minReach ?? "",
         MaxReach: weapon.maxReach ?? "",

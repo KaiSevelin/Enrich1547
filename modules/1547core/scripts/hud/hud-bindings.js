@@ -10,6 +10,7 @@
         clearHudReactionWindow,
         getActiveDamageTakenWindow,
         clearHudDamageTakenWindow,
+        releaseDeferredPostWindowsIntoHud,
         getDiceTabAttackSelection,
         setDiceTabAttackSelectionCount,
         clearDiceTabAttackSelection,
@@ -60,6 +61,12 @@
             const category = event.currentTarget.dataset.hudCategory;
             if (!category || category === HUD_STATE.activeCategory) return;
             HUD_STATE.activeCategory = category;
+            void renderHudForSelection();
+        });
+    }
+    for (const select of root.querySelectorAll("[data-hud-maneuver-filter]")) {
+        select.addEventListener("change", (event) => {
+            HUD_STATE.maneuverFilter = event.currentTarget.value || "all";
             void renderHudForSelection();
         });
     }
@@ -180,6 +187,7 @@
     for (const button of root.querySelectorAll("[data-hud-damage-taken-close]")) {
         button.addEventListener("click", () => {
             clearHudDamageTakenWindow();
+            releaseDeferredPostWindowsIntoHud?.();
             void renderHudForSelection();
         });
     }
@@ -190,6 +198,7 @@
             try {
                 await damageWindow.commitSafeCounterattack();
                 clearHudDamageTakenWindow();
+                releaseDeferredPostWindowsIntoHud?.();
                 ui.notifications?.info?.("Safe counterattack declared.");
             } catch (error) {
                 ui.notifications?.warn?.(error?.message || "Could not declare a safe counterattack.");
@@ -360,12 +369,12 @@
             void renderHudForSelection();
         });
     }
-    for (const button of root.querySelectorAll("[data-hud-weapon-ready]")) {
+    for (const button of root.querySelectorAll("[data-hud-item-equip]")) {
         button.addEventListener("click", async (event) => {
-            const weaponId = event.currentTarget.dataset.hudWeaponReady;
-            if (!weaponId || !token?.actor) return;
+            const itemId = event.currentTarget.dataset.hudItemEquip;
+            if (!itemId || !token?.actor) return;
             const context = buildHudActionContext(token.actor, token);
-            await executeWeaponReadyAction(weaponId, token.actor, context.summary);
+            await executeWeaponReadyAction(itemId, token.actor, context.summary);
             void renderHudForSelection();
         });
     }

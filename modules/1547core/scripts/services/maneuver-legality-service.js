@@ -151,7 +151,7 @@ export function evaluateManeuverLegality(maneuverInput, context = {}) {
     }
 
     if (!passesWeaponGate(maneuver, context)) {
-        reasons.push("Current weapon does not satisfy maneuver requirements.");
+        reasons.push("Current weapon does not allow this maneuver.");
     }
 
     if (!passesProfileGate(maneuver, context)) {
@@ -399,11 +399,6 @@ function normalizeWeapon(weapon, actor = null) {
             props.Equipped ??
             weapon.equipped ??
             source.equipped ??
-            false,
-        ready:
-            props.Ready ??
-            weapon.ready ??
-            source.ready ??
             false,
     };
 }

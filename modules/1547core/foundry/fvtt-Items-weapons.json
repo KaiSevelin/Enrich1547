@@ -89,23 +89,6 @@
                                 "defaultChecked": false
                             },
                             {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
-                                "defaultChecked": false
-                            },
-                            {
                                 "key": "WeaponType",
                                 "colSpan": 1,
                                 "rowSpan": 1,
@@ -1097,7 +1080,6 @@
                 "Weight": 1.2,
                 "Value": 10,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Blade",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -1154,7 +1136,6 @@
                     "weight": 1.2,
                     "value": 10,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -1281,23 +1262,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -2292,7 +2256,6 @@
                 "Weight": 4.5,
                 "Value": 30,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Firearm",
                 "ReloadTime": 2,
                 "ReloadProgress": 0,
@@ -2348,7 +2311,6 @@
                     "weight": 4.5,
                     "value": 30,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 2,
                     "reloadProgress": 0,
                     "traits": [
@@ -2482,23 +2444,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -3493,7 +3438,6 @@
                 "Weight": 3,
                 "Value": 6,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Polearm",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -3549,7 +3493,6 @@
                     "weight": 3,
                     "value": 6,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -3676,23 +3619,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -4687,7 +4613,6 @@
                 "Weight": 1,
                 "Value": 4,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Shield",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -4743,7 +4668,6 @@
                     "weight": 1,
                     "value": 4,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -4866,23 +4790,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -5877,7 +5784,6 @@
                 "Weight": 3,
                 "Value": 18,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Crossbow",
                 "ReloadTime": 1,
                 "ReloadProgress": 0,
@@ -5933,7 +5839,6 @@
                     "weight": 3,
                     "value": 18,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 1,
                     "reloadProgress": 0,
                     "traits": [
@@ -6067,23 +5972,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -7078,7 +6966,6 @@
                 "Weight": 0.4,
                 "Value": 2,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Knife",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -7134,7 +7021,6 @@
                     "weight": 0.4,
                     "value": 2,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -7260,23 +7146,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -8271,7 +8140,6 @@
                 "Weight": 0.1,
                 "Value": 0.2,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Thrown",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -8327,7 +8195,6 @@
                     "weight": 0.1,
                     "value": 0.2,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -8455,23 +8322,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -9466,7 +9316,6 @@
                 "Weight": 1.3,
                 "Value": 8,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Blade",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -9522,7 +9371,6 @@
                     "weight": 1.3,
                     "value": 8,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -9659,23 +9507,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -10670,7 +10501,6 @@
                 "Weight": 1.5,
                 "Value": 8,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Blunt",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -10726,7 +10556,6 @@
                     "weight": 1.5,
                     "value": 8,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -10851,23 +10680,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -11862,7 +11674,6 @@
                 "Weight": 2.6,
                 "Value": 8,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Polearm",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -11918,7 +11729,6 @@
                     "weight": 2.6,
                     "value": 8,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -12056,23 +11866,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -13067,7 +12860,6 @@
                 "Weight": 3.2,
                 "Value": 10,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Polearm",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -13123,7 +12915,6 @@
                     "weight": 3.2,
                     "value": 10,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -13261,23 +13052,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -14272,7 +14046,6 @@
                 "Weight": 5,
                 "Value": 20,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Firearm",
                 "ReloadTime": 2,
                 "ReloadProgress": 0,
@@ -14328,7 +14101,6 @@
                     "weight": 5,
                     "value": 20,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 2,
                     "reloadProgress": 0,
                     "traits": [
@@ -14462,23 +14234,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -15473,7 +15228,6 @@
                 "Weight": 7,
                 "Value": 45,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Firearm",
                 "ReloadTime": 2,
                 "ReloadProgress": 0,
@@ -15529,7 +15283,6 @@
                     "weight": 7,
                     "value": 45,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 2,
                     "reloadProgress": 0,
                     "traits": [
@@ -15664,23 +15417,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -16675,7 +16411,6 @@
                 "Weight": 0.4,
                 "Value": 2,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Unarmed",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -16731,7 +16466,6 @@
                     "weight": 0.4,
                     "value": 2,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -16857,23 +16591,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -17868,7 +17585,6 @@
                 "Weight": 3,
                 "Value": 8,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Mounted",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -17924,7 +17640,6 @@
                     "weight": 3,
                     "value": 8,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -18052,23 +17767,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -19063,7 +18761,6 @@
                 "Weight": 1.6,
                 "Value": 16,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Blade",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -19120,7 +18817,6 @@
                     "weight": 1.6,
                     "value": 16,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -19259,23 +18955,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -20270,7 +19949,6 @@
                 "Weight": 0.9,
                 "Value": 8,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Bow",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -20326,7 +20004,6 @@
                     "weight": 0.9,
                     "value": 8,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -20459,23 +20136,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -21470,7 +21130,6 @@
                 "Weight": 1.2,
                 "Value": 6,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Blunt",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -21526,7 +21185,6 @@
                     "weight": 1.2,
                     "value": 6,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -21651,23 +21309,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -22662,7 +22303,6 @@
                 "Weight": 2.8,
                 "Value": 4,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Blunt",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -22718,7 +22358,6 @@
                     "weight": 2.8,
                     "value": 4,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -22843,23 +22482,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -23854,7 +23476,6 @@
                 "Weight": 1,
                 "Value": 6,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Blade",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -23910,7 +23531,6 @@
                     "weight": 1,
                     "value": 6,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -24036,23 +23656,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -25047,7 +24650,6 @@
                 "Weight": 1.3,
                 "Value": 8,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Blunt",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -25103,7 +24705,6 @@
                     "weight": 1.3,
                     "value": 8,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -25229,23 +24830,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -26240,7 +25824,6 @@
                 "Weight": 0.6,
                 "Value": 4,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Knife",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -26296,7 +25879,6 @@
                     "weight": 0.6,
                     "value": 4,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -26422,23 +26004,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -27433,7 +26998,6 @@
                 "Weight": 2.8,
                 "Value": 8,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Polearm",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -27489,7 +27053,6 @@
                     "weight": 2.8,
                     "value": 8,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -27615,23 +27178,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -28626,7 +28172,6 @@
                 "Weight": 4,
                 "Value": 3,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Polearm",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -28682,7 +28227,6 @@
                     "weight": 4,
                     "value": 3,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -28810,23 +28354,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -29821,7 +29348,6 @@
                 "Weight": 3,
                 "Value": 12,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Polearm",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -29877,7 +29403,6 @@
                     "weight": 3,
                     "value": 12,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -30015,23 +29540,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -31026,7 +30534,6 @@
                 "Weight": 1.6,
                 "Value": 1,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Polearm",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -31082,7 +30589,6 @@
                     "weight": 1.6,
                     "value": 1,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -31209,23 +30715,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -32220,7 +31709,6 @@
                 "Weight": 1.1,
                 "Value": 14,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Blade",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -32276,7 +31764,6 @@
                     "weight": 1.1,
                     "value": 14,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -32415,23 +31902,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -33426,7 +32896,6 @@
                 "Weight": 0.5,
                 "Value": 3,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Knife",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -33482,7 +32951,6 @@
                     "weight": 0.5,
                     "value": 3,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -33608,23 +33076,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -34619,7 +34070,6 @@
                 "Weight": 3,
                 "Value": 8,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Shield",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -34675,7 +34125,6 @@
                     "weight": 3,
                     "value": 8,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -34798,23 +34247,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -35809,7 +35241,6 @@
                 "Weight": 0.7,
                 "Value": 4,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Bow",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -35865,7 +35296,6 @@
                     "weight": 0.7,
                     "value": 4,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -35997,23 +35427,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -37008,7 +36421,6 @@
                 "Weight": 2.2,
                 "Value": 2,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Polearm",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -37064,7 +36476,6 @@
                     "weight": 2.2,
                     "value": 2,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -37191,23 +36602,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -38202,7 +37596,6 @@
                 "Weight": 0.2,
                 "Value": 1,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Thrown",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -38258,7 +37651,6 @@
                     "weight": 0.2,
                     "value": 1,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -38386,23 +37778,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -39397,7 +38772,6 @@
                 "Weight": 0,
                 "Value": 0,
                 "Equipped": true,
-                "Ready": true,
                 "WeaponType": "Unarmed",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -39453,7 +38827,6 @@
                     "weight": 0,
                     "value": 0,
                     "equipped": true,
-                    "ready": true,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -39579,23 +38952,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -40590,7 +39946,6 @@
                 "Weight": 1.1,
                 "Value": 12,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Bow",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -40646,7 +40001,6 @@
                     "weight": 1.1,
                     "value": 12,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -40779,23 +40133,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -41790,7 +41127,6 @@
                 "Weight": 1.8,
                 "Value": 10,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Blunt",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -41846,7 +41182,6 @@
                     "weight": 1.8,
                     "value": 10,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [
@@ -41971,23 +41306,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -42982,7 +42300,6 @@
                 "Weight": 1.2,
                 "Value": 60,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Firearm",
                 "ReloadTime": 1,
                 "ReloadProgress": 0,
@@ -43038,7 +42355,6 @@
                     "weight": 1.2,
                     "value": 60,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 1,
                     "reloadProgress": 0,
                     "traits": [
@@ -43174,23 +42490,6 @@
                                 "type": "checkbox",
                                 "size": "full-size",
                                 "label": "Equipped:",
-                                "defaultChecked": false
-                            },
-                            {
-                                "key": "Ready",
-                                "colSpan": 1,
-                                "rowSpan": 1,
-                                "cssClass": "",
-                                "role": 0,
-                                "editRole": 0,
-                                "permission": 0,
-                                "tooltip": "",
-                                "visibilityFormula": "",
-                                "editableFormula": "",
-                                "escapeHTML": false,
-                                "type": "checkbox",
-                                "size": "full-size",
-                                "label": "Ready:",
                                 "defaultChecked": false
                             },
                             {
@@ -44185,7 +43484,6 @@
                 "Weight": 2.6,
                 "Value": 24,
                 "Equipped": false,
-                "Ready": false,
                 "WeaponType": "Blade",
                 "ReloadTime": 0,
                 "ReloadProgress": 0,
@@ -44242,7 +43540,6 @@
                     "weight": 2.6,
                     "value": 24,
                     "equipped": false,
-                    "ready": false,
                     "reloadTime": 0,
                     "reloadProgress": 0,
                     "traits": [

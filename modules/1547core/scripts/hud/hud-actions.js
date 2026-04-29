@@ -22,6 +22,8 @@ function getDiceTermCode(dieName) {
     }
 }
 
+const DEFAULT_UNPROTECTED_DEFENSE_DICE = ["Evade", "Evade", "Evade"];
+
 function buildDefenseRollFormula(armorSummary) {
     const defenseDice = Array.isArray(armorSummary?.defenseDice)
         ? armorSummary.defenseDice
@@ -254,67 +256,81 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
             return;
         }
 
-        if (currentSummary.isCombatActive !== true) {
-            const resolveAttackOutcome = combatApi?.resolveAttackOutcome;
-            if (typeof resolveAttackOutcome !== "function") {
-                throw new Error("Combat resolver is not available.");
-            }
-
-            const speaker = ChatMessage.getSpeaker({ actor: context.actor, token: context.token?.document });
-            const attackRollSummary = await rollFormulaToChatAndSummarize({
-                Roll,
-                speaker,
-                formula: attackFormula,
-                flavor: `${descriptor.label}<br>Target: ${escapeHtml(targetActor?.name ?? "Target")}`,
-                game,
-            });
-            if (!attackRollSummary) {
-                throw new Error("Could not read the attack roll result.");
-            }
-
-            const defenderArmor = (targetActor?.items?.contents ?? targetActor?.items ?? [])
-                .map((item) => {
-                    const props = item?.system?.props ?? {};
-                    const sourceData = item?.flags?.["1547Core"]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-                    if (!(Boolean(props.Equipped) || sourceData?.equipped === true)) return null;
-                    const defenseDice = Array.isArray(sourceData?.defenseDice)
-                        ? [...sourceData.defenseDice]
-                        : String(props.Defense ?? "").split(",").map((entry) => entry.trim()).filter(Boolean);
-                    return defenseDice.length ? {
-                        defenseDice,
-                        defense: defenseDice.join(", "),
-                        name: item.name,
-                    } : null;
-                })
-                .filter(Boolean)[0] ?? null;
-
-            const defenseFormula = buildDefenseRollFormula(defenderArmor);
-            const defenderSpeaker = ChatMessage.getSpeaker({ actor: targetActor, token: context.primaryTarget?.document });
-            const defenseRollSummary = defenseFormula
-                ? await rollFormulaToChatAndSummarize({
-                    Roll,
-                    speaker: defenderSpeaker,
-                    formula: defenseFormula,
-                    flavor: `Defense Roll<br>Defender: ${escapeHtml(targetActor?.name ?? "Target")}`,
-                    game,
-                })
-                : null;
-
-            await resolveAttackOutcome({
-                pendingAttack: result.pendingAttack,
-                attackRoll: attackRollSummary,
-                defenseRoll: defenseRollSummary,
-            });
+        const resolveAttackOutcome = combatApi?.resolveAttackOutcome;
+        if (typeof resolveAttackOutcome !== "function") {
+            throw new Error("Combat resolver is not available.");
         }
+
+        const speaker = ChatMessage.getSpeaker({ actor: context.actor, token: context.token?.document });
+        const attackRollSummary = await rollFormulaToChatAndSummarize({
+            Roll,
+            speaker,
+            formula: attackFormula,
+            flavor: `${descriptor.label}<br>Target: ${escapeHtml(targetActor?.name ?? "Target")}`,
+            game,
+        });
+        if (!attackRollSummary) {
+            throw new Error("Could not read the attack roll result.");
+        }
+
+        const defenderArmor = (targetActor?.items?.contents ?? targetActor?.items ?? [])
+            .map((item) => {
+                const props = item?.system?.props ?? {};
+                const sourceData = item?.flags?.["1547Core"]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
+                if (!(
+                    props.Equipped === true
+                    || Number(props.Equipped) === 1
+                    || String(props.Equipped ?? "").trim().toLowerCase() === "true"
+                    || sourceData?.equipped === true
+                )) return null;
+                const defenseDice = Array.isArray(sourceData?.defenseDice)
+                    ? [...sourceData.defenseDice]
+                    : String(props.Defense ?? "").split(",").map((entry) => entry.trim()).filter(Boolean);
+                return defenseDice.length ? {
+                    defenseDice,
+                    defense: defenseDice.join(", "),
+                    name: item.name,
+                } : null;
+            })
+            .filter(Boolean)[0] ?? {
+                defenseDice: [...DEFAULT_UNPROTECTED_DEFENSE_DICE],
+                defense: DEFAULT_UNPROTECTED_DEFENSE_DICE.join(", "),
+                name: "Unprotected",
+            };
+
+        const defenseFormula = buildDefenseRollFormula(defenderArmor);
+        const defenderSpeaker = ChatMessage.getSpeaker({ actor: targetActor, token: context.primaryTarget?.document });
+        const defenseRollSummary = defenseFormula
+            ? await rollFormulaToChatAndSummarize({
+                Roll,
+                speaker: defenderSpeaker,
+                formula: defenseFormula,
+                flavor: `Defense Roll<br>Defender: ${escapeHtml(targetActor?.name ?? "Target")}`,
+                game,
+            })
+            : null;
+
+        const resolvedAttack = await resolveAttackOutcome({
+            pendingAttack: result.pendingAttack,
+            attackRoll: attackRollSummary,
+            defenseRoll: defenseRollSummary,
+        });
+        const attackerName = context.actor?.name ?? "Attacker";
+        const defenderName = targetActor?.name ?? "Target";
+        const hpText = Number.isFinite(Number(resolvedAttack?.hitPointUpdate?.currentHitPoints))
+            ? `<br>HP: ${escapeHtml(String(resolvedAttack.hitPointUpdate.currentHitPoints))}${Number.isFinite(Number(resolvedAttack?.hitPointUpdate?.previousHitPoints)) ? ` / was ${escapeHtml(String(resolvedAttack.hitPointUpdate.previousHitPoints))}` : ""}`
+            : "";
+        await ChatMessage.create({
+            speaker,
+            content: `<strong>Attack Result</strong><br>${escapeHtml(attackerName)} -> ${escapeHtml(defenderName)}<br>Damage: ${escapeHtml(String(resolvedAttack?.attackRoll?.damage ?? 0))}<br>Protection: ${escapeHtml(String(resolvedAttack?.defenseRoll?.protection ?? 0))}<br>Applied: ${escapeHtml(String(resolvedAttack?.damageApplied ?? 0))}<br>Critical: ${escapeHtml(String(resolvedAttack?.currentCriticalPoints ?? 0))}${hpText}`
+        });
 
         await consumePersistentEffectIfPresent(context.actor, "aimed", deps);
         if (Object.keys(getPendingNextAttackDice?.(context.actor?.id) ?? {}).length > 0) {
             clearPendingNextAttackDice?.(context.actor?.id);
         }
         clearActorManeuverSelections(context.actor?.id);
-        ui.notifications?.info?.(currentSummary.isCombatActive === true
-            ? `Attack declared against ${targetActor?.name ?? "target"}.`
-            : `Attack resolved against ${targetActor?.name ?? "target"}.`);
+        ui.notifications?.info?.(`Attack resolved against ${targetActor?.name ?? "target"}.`);
     } catch (error) {
         ui.notifications?.warn?.(error?.message || "Could not declare the attack.");
     }
@@ -439,24 +455,35 @@ export async function executeWeaponReadyAction(weaponId, actor, summary, deps = 
     const { ui, isTruthyLike } = deps;
     const requiresFullTurn = summary?.isCombatActive === true;
     if (requiresFullTurn && !isTruthyLike(summary?.fullTurnAvailable)) {
-        ui.notifications?.warn?.("A full turn is required to ready a weapon.");
+        ui.notifications?.warn?.("A full turn is required to equip an item.");
         return;
     }
 
-    const weaponItem = actor?.items?.get?.(weaponId) ?? null;
-    if (!weaponItem?.update) {
-        ui.notifications?.warn?.("Weapon item could not be resolved.");
+    const item = actor?.items?.get?.(weaponId) ?? null;
+    if (!item?.update) {
+        ui.notifications?.warn?.("Item could not be resolved.");
         return;
     }
 
-    await weaponItem.update({
+    const itemType = item?.flags?.["1547Core"]?.sourceData?.itemType ?? item?.flags?.["1547core"]?.sourceData?.itemType ?? item?.type ?? "";
+    const isWeapon = String(itemType).trim().toLowerCase() === "weapon";
+    if (isWeapon) {
+        const currentlyEquippedWeapons = (actor?.items?.contents ?? actor?.items ?? [])
+            .filter((entry) => entry?.id !== weaponId && entry?.system?.props?.Equipped === true && entry?.update);
+        for (const otherItem of currentlyEquippedWeapons) {
+            await otherItem.update({
+                "system.props.Equipped": false,
+            });
+        }
+    }
+
+    await item.update({
         "system.props.Equipped": true,
-        "system.props.Ready": true
     });
     if (summary?.isCombatActive === true) {
         await consumeHudFullTurn(actor);
     }
-    ui.notifications?.info?.(`Readied ${weaponItem.name}.`);
+    ui.notifications?.info?.(`Equipped ${item.name}.`);
 }
 
 export async function executeItemUnequipAction(itemId, actor, summary, deps = {}) {
@@ -475,7 +502,6 @@ export async function executeItemUnequipAction(itemId, actor, summary, deps = {}
 
     await item.update({
         "system.props.Equipped": false,
-        "system.props.Ready": false
     });
     if (summary?.isCombatActive === true) {
         await consumeHudFullTurn(actor);

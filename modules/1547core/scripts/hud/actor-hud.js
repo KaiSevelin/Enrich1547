@@ -18,6 +18,9 @@ import {
     queuePostManeuverWindow,
     advancePostManeuverWindow,
     clearPostManeuverWindows,
+    setDeferredPostManeuverWindows,
+    releaseDeferredPostManeuverWindows,
+    clearDeferredPostManeuverWindows,
     getSelectedPostManeuverId,
     toggleSelectedPostManeuver,
     getActiveDamageTakenWindow,
@@ -929,7 +932,7 @@ function getWeaponAttackState(weapon, {
             distanceSquares: null
         };
     }
-    if (!weapon.equipped && !weapon.ready) {
+    if (!weapon.equipped) {
         return {
             status: "invalid",
             label: "Not equipped",
@@ -1052,14 +1055,8 @@ function getThreatSource(actor) {
     const weapons = getActorItems(actor).filter(isWeaponItem);
     const nonUnarmed = weapons.filter((item) => !isUnarmedWeapon(item));
     const unarmed = weapons.filter(isUnarmedWeapon);
-    const readyReachWeapon = nonUnarmed.find((item) => Boolean(item?.system?.props?.Ready) && hasReach(item));
-    if (readyReachWeapon) return readyReachWeapon;
-
     const equippedReachWeapon = nonUnarmed.find((item) => Boolean(item?.system?.props?.Equipped) && hasReach(item));
     if (equippedReachWeapon) return equippedReachWeapon;
-
-    const readyUnarmed = unarmed.find((item) => Boolean(item?.system?.props?.Ready) && hasReach(item));
-    if (readyUnarmed) return readyUnarmed;
 
     const equippedUnarmed = unarmed.find((item) => Boolean(item?.system?.props?.Equipped) && hasReach(item));
     if (equippedUnarmed) return equippedUnarmed;
@@ -1090,9 +1087,6 @@ function getThreatSource(actor) {
 
 function getRangedSource(actor) {
     const weapons = getActorItems(actor).filter(isWeaponItem);
-    const readyRangedWeapon = weapons.find((item) => Boolean(item?.system?.props?.Ready) && hasRangeBands(item));
-    if (readyRangedWeapon) return readyRangedWeapon;
-
     const equippedRangedWeapon = weapons.find((item) => Boolean(item?.system?.props?.Equipped) && hasRangeBands(item));
     if (equippedRangedWeapon) return equippedRangedWeapon;
 
@@ -1701,6 +1695,8 @@ function buildHudHtml(data) {
         getInventoryFilterOptions,
         normalizeInventoryFilterValue,
         matchesInventoryFilter,
+        getManeuverFilterOptions,
+        matchesManeuverFilter,
         getAttackDiceTabOptions,
         formatAttackDiceSelectionLabel,
         formatSkillD6SelectionLabel,
@@ -1799,6 +1795,10 @@ async function renderHudForSelection() {
         return;
     }
 
+    if (!getActiveReactionWindow() && !getActiveDamageTakenWindow() && !getActivePostManeuverWindow()) {
+        releaseDeferredPostWindowsIntoHud();
+    }
+
     root.dataset.actorId = token.actor.id;
     root.innerHTML = buildHudHtml(summarizeActor(token.actor, token));
     applyHudPlacement(root);
@@ -1814,6 +1814,7 @@ async function renderHudForSelection() {
         clearHudReactionWindow,
         getActiveDamageTakenWindow,
         clearHudDamageTakenWindow,
+        releaseDeferredPostWindowsIntoHud,
         getDiceTabAttackSelection,
         setDiceTabAttackSelectionCount,
         clearDiceTabAttackSelection,
@@ -2021,6 +2022,14 @@ function scheduleHudRerender() {
     });
 }
 
+function releaseDeferredPostWindowsIntoHud() {
+    const released = releaseDeferredPostManeuverWindows();
+    if (released.length) {
+        clearHudDamageTakenWindow();
+    }
+    return released;
+}
+
 export function register1547ActorHud() {
     ensureHudRoot().innerHTML = buildEmptyHtml("Waiting for selection");
 
@@ -2034,11 +2043,7 @@ export function register1547ActorHud() {
         void renderHudForSelection();
         return null;
     });
-    onCombatEvent(COMBAT_EVENTS.DAMAGE_TAKEN_WINDOW_OPENED, (event) => {
-        setHudDamageTakenWindow(event.payload);
-        void renderHudForSelection();
-        return null;
-    });
+    onCombatEvent(COMBAT_EVENTS.DAMAGE_TAKEN_WINDOW_OPENED, () => null);
 
     Hooks.on("controlToken", () => void renderHudForSelection());
     Hooks.on("hoverToken", (token, hovered) => {
@@ -2068,6 +2073,30 @@ export function register1547ActorHud() {
     Hooks.on("deleteItem", (item) => rerenderHudIfViewingActor(item.parent?.id));
     Hooks.on("updateCombat", () => void renderHudForSelection());
     Hooks.on("targetToken", () => void renderHudForSelection());
+    Hooks.on("updateToken", (document) => {
+        const selectedToken = getSelectedToken();
+        const targetedTokenIds = new Set(Array.from(game.user?.targets ?? []).map((token) => token.document?.id));
+        if (selectedToken?.document?.id === document.id || targetedTokenIds.has(document.id)) {
+            void renderHudForSelection();
+        }
+        if (selectedToken?.document?.id === document.id) {
+            renderThreatOverlay(selectedToken);
+            return;
+        }
+        if (canvas?.tokens?.hover?.document?.id === document.id) {
+            renderThreatOverlay(canvas.tokens.hover);
+        }
+    });
+    Hooks.on("refreshToken", (token) => {
+        const selectedToken = getSelectedToken();
+        const targetedTokenIds = new Set(Array.from(game.user?.targets ?? []).map((entry) => entry.document?.id));
+        if (selectedToken?.id === token?.id || targetedTokenIds.has(token?.document?.id)) {
+            void renderHudForSelection();
+        }
+        if (selectedToken?.id === token?.id || canvas?.tokens?.hover?.id === token?.id) {
+            renderThreatOverlay(token);
+        }
+    });
     Hooks.on("renderSceneNavigation", scheduleHudRerender);
     Hooks.on("renderSceneControls", scheduleHudRerender);
     Hooks.on("collapseSidebar", scheduleHudRerender);

@@ -93,7 +93,10 @@ export function buildDamageTakenPrompt(deps = {}) {
     const summaryParts = [
         "Damage Taken",
         attackerName && defenderName ? `${attackerName} -> ${defenderName}` : (attackerName || defenderName),
-        Number.isFinite(Number(damageWindow.damageApplied)) ? `Damage ${damageWindow.damageApplied}` : ""
+        Number.isFinite(Number(damageWindow.damageApplied)) ? `Damage ${damageWindow.damageApplied}` : "",
+        Number.isFinite(Number(damageWindow.hitPointUpdate?.currentHitPoints))
+            ? `HP ${damageWindow.hitPointUpdate.currentHitPoints}`
+            : ""
     ].filter(Boolean);
 
     const defenseSummary = [

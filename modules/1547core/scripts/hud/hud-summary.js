@@ -133,7 +133,6 @@ function buildDefaultUnarmedWeaponSummary(game, MODULE_ID, getWeaponAttackState,
         id: "__default-unarmed__",
         sourceId: source._id ?? source.id ?? "default-unarmed",
         name: source.name ?? "Unarmed",
-        ready: true,
         equipped: true,
         isVirtualDefault: true,
         itemDocument: null,
@@ -304,7 +303,6 @@ export function summarizeActor(actor, token, deps = {}) {
         const weaponSummary = {
             id: item.id,
             name: item.name,
-            ready: Boolean(itemProps.Ready),
             equipped: Boolean(itemProps.Equipped),
             type: itemProps.WeaponType ?? sourceData.category ?? sourceData.type ?? "",
             minReach: reach.minReach,
@@ -345,7 +343,7 @@ export function summarizeActor(actor, token, deps = {}) {
             attacksRemaining: isCombatActive ? attacksRemaining : null
         });
         return weaponSummary;
-    }).filter((item) => item.equipped || item.ready);
+    }).filter((item) => item.equipped);
 
     if (!equippedWeapons.length) {
         equippedWeapons = [buildDefaultUnarmedWeaponSummary(game, MODULE_ID, getWeaponAttackState, formatRangeSummary, token, primaryTarget, targetedTokens.length, attacksRemaining)];
@@ -368,7 +366,7 @@ export function summarizeActor(actor, token, deps = {}) {
     }
 
     const fullTurnAvailable = getStringProp(props, ["FullTurnAvailable", "fullTurnAvailable"]) || "Unknown";
-    const activeWeaponSummary = equippedWeapons.find((item) => item.ready) ?? equippedWeapons[0] ?? null;
+    const activeWeaponSummary = equippedWeapons[0] ?? null;
     const activeWeaponItem = activeWeaponSummary ? (activeWeaponSummary.itemDocument ?? actor.items?.get?.(activeWeaponSummary.id) ?? activeWeaponSummary) : null;
     const combatApi = game.modules.get(MODULE_ID)?.api?.combat ?? {};
     const evaluateManeuverLegality = combatApi?.evaluateManeuverLegality;
@@ -551,7 +549,6 @@ export function summarizeActor(actor, token, deps = {}) {
             name: item.name,
             group: getPlayerFacingItemGroup(item),
             equipped: Boolean(itemProps.Equipped),
-            ready: Boolean(itemProps.Ready),
             consumable: isConsumableItem(item),
             itemKind: getCsbItemKind(item),
             templateId: item.system?.template ?? "",
@@ -559,8 +556,8 @@ export function summarizeActor(actor, token, deps = {}) {
         };
     });
 
-    const equippedInventory = inventory.filter((item) => item.equipped || item.ready);
-    const stowedInventory = inventory.filter((item) => !item.equipped && !item.ready);
+    const equippedInventory = inventory.filter((item) => item.equipped);
+    const stowedInventory = inventory.filter((item) => !item.equipped);
     const pointPools = [
         { label: "STR", key: "StrengthPoints" },
         { label: "STA", key: "StaminaPoints" },

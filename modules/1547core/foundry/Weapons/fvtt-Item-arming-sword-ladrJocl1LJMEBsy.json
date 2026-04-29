@@ -1,4 +1,4 @@
-{
+﻿{
     "_id": "ladrJocl1LJMEBsy",
     "name": "Arming Sword",
     "type": "equippableItem",
@@ -85,23 +85,6 @@
                             "type": "checkbox",
                             "size": "full-size",
                             "label": "Equipped:",
-                            "defaultChecked": false
-                        },
-                        {
-                            "key": "Ready",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 0,
-                            "editRole": 0,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "checkbox",
-                            "size": "full-size",
-                            "label": "Ready:",
                             "defaultChecked": false
                         },
                         {
@@ -1096,7 +1079,6 @@
             "Weight": 1.2,
             "Value": 10,
             "Equipped": false,
-            "Ready": false,
             "WeaponType": "Blade",
             "ReloadTime": 0,
             "ReloadProgress": 0,
@@ -1150,7 +1132,6 @@
                 "weight": 1.2,
                 "value": 10,
                 "equipped": false,
-                "ready": false,
                 "reloadTime": 0,
                 "reloadProgress": 0,
                 "traits": [

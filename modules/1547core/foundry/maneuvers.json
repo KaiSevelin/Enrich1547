@@ -876,7 +876,7 @@
         ],
         "enabled": false,
         "requirements": {
-            "text": "Any ready weapon",
+            "text": "Any equipped weapon",
             "alternateTriggers": [
                 "threat-zone-left"
             ]

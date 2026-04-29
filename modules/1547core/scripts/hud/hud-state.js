@@ -14,6 +14,7 @@
     selectedFullTurnManeuverIdByActor: {},
     ignoredCostManeuverIdsByActor: {},
     postManeuverQueue: [],
+    deferredPostManeuverWindows: [],
     selectedPostManeuverIdByWindow: {},
     selectedReactionChoiceId: null,
     diceTabAttackSelectionByActor: {},
@@ -290,6 +291,27 @@ export function clearPostManeuverWindows() {
         if (entry?.id) delete HUD_STATE.selectedPostManeuverIdByWindow[entry.id];
     }
     HUD_STATE.postManeuverQueue = [];
+}
+
+export function setDeferredPostManeuverWindows(windows) {
+    HUD_STATE.deferredPostManeuverWindows = Array.isArray(windows)
+        ? windows.filter((entry) => entry?.id)
+        : [];
+}
+
+export function releaseDeferredPostManeuverWindows() {
+    const pending = Array.isArray(HUD_STATE.deferredPostManeuverWindows)
+        ? [...HUD_STATE.deferredPostManeuverWindows]
+        : [];
+    HUD_STATE.deferredPostManeuverWindows = [];
+    for (const windowPayload of pending) {
+        queuePostManeuverWindow(windowPayload);
+    }
+    return pending;
+}
+
+export function clearDeferredPostManeuverWindows() {
+    HUD_STATE.deferredPostManeuverWindows = [];
 }
 
 export function getSelectedPostManeuverId(windowId) {

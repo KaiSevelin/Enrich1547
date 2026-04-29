@@ -1,8 +1,8 @@
-{
+﻿{
     "_id": "uiBd5Tc4WXxGQCFB",
     "name": "Zweihander",
     "type": "equippableItem",
-    "img": "media/home/games/1547/Items/Zweihänder.webp",
+    "img": "media/home/games/1547/Items/ZweihÃ¤nder.webp",
     "system": {
         "body": {
             "contents": [
@@ -85,23 +85,6 @@
                             "type": "checkbox",
                             "size": "full-size",
                             "label": "Equipped:",
-                            "defaultChecked": false
-                        },
-                        {
-                            "key": "Ready",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 0,
-                            "editRole": 0,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "checkbox",
-                            "size": "full-size",
-                            "label": "Ready:",
                             "defaultChecked": false
                         },
                         {
@@ -1096,7 +1079,6 @@
             "Weight": 2.6,
             "Value": 24,
             "Equipped": false,
-            "Ready": false,
             "WeaponType": "Blade",
             "ReloadTime": 0,
             "ReloadProgress": 0,
@@ -1150,7 +1132,6 @@
                 "weight": 2.6,
                 "value": 24,
                 "equipped": false,
-                "ready": false,
                 "reloadTime": 0,
                 "reloadProgress": 0,
                 "traits": [
@@ -1176,7 +1157,7 @@
                     "MeleeWeapon",
                     "Sword"
                 ],
-                "img": "media/home/games/1547/Items/Zweihänder.webp",
+                "img": "media/home/games/1547/Items/ZweihÃ¤nder.webp",
                 "minReach": 2,
                 "maxReach": 2,
                 "usesAmmo": false,
