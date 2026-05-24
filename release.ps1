@@ -10,8 +10,12 @@
     - Zips modules/1547core into 1547core.zip at the repo root, with
       "1547core/" as the zip's top-level folder (matching the existing
       release layout). Includes everything under the module dir.
-    - Commits both files with "release: 1547core <version>" and pushes
-      the current branch. Other working-tree changes are left untouched.
+    - Stages every change under modules/1547core/ AND 1547core.zip so
+      source and zip can't drift. Honors .gitignore (so *.bak files
+      etc. are skipped). Working-tree changes outside the module are
+      left untouched.
+    - Commits with "release: 1547core <version>" and pushes the
+      current branch.
     - Use -SkipPush to commit but defer push, or -NoGit to skip git
       entirely (build-only).
 
@@ -115,19 +119,27 @@ if ($NoGit) {
 
 Push-Location $repoRoot
 try {
-    $manifestRel = 'modules/1547core/module.json'
-    $zipRel      = '1547core.zip'
+    $moduleRel = 'modules/1547core'
+    $zipRel    = '1547core.zip'
 
-    # Stage only the release artifacts; other working-tree changes are left alone.
-    & git add -- $manifestRel $zipRel
+    # Stage the whole module dir (modified + new tracked-eligible files)
+    # plus the zip. Source and zip stay in sync; .gitignore'd files
+    # (e.g. *.bak) are skipped. Changes outside the module are not touched.
+    & git add -- $moduleRel $zipRel
     if ($LASTEXITCODE -ne 0) { throw "git add failed (exit $LASTEXITCODE)" }
 
-    # If nothing staged (e.g. version was unchanged on a previous run), bail gracefully.
-    & git diff --cached --quiet -- $manifestRel $zipRel
+    # If nothing staged (e.g. re-run with no changes), bail gracefully.
+    & git diff --cached --quiet
     if ($LASTEXITCODE -eq 0) {
-        Write-Output "Nothing to commit (release artifacts unchanged)."
+        Write-Output "Nothing to commit (no changes under $moduleRel or in the zip)."
         return
     }
+
+    # Show what we're about to commit so surprises are visible.
+    Write-Output ""
+    Write-Output "Staged for release:"
+    & git diff --cached --name-status
+    Write-Output ""
 
     $commitMsg = "release: 1547core $newVer"
     & git commit -m $commitMsg
