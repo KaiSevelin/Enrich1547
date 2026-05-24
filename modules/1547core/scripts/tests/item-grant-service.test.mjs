@@ -237,4 +237,46 @@ console.log("computeGrantedItemReconciliation...");
     console.log("  ✓ Strips system.container from the granted copy");
 }
 
+{
+    // Auto-equip: items with an Equipped prop (weapons/armor/shields)
+    // should come in equipped so the GM doesn't have to click every one.
+    const equippableSource = {
+        name: "Sword",
+        type: "equippableItem",
+        system: {
+            template: "qZCfLEYQ7egbm1B9",
+            props: { Equipped: false, WeaponType: "Sword" }
+        }
+    };
+    const consumableSource = {
+        name: "Potion",
+        type: "equippableItem",
+        system: {
+            template: "PDxRO5ObvLaThpez",
+            props: { Charges: 3 } // no Equipped prop
+        }
+    };
+
+    const a = actor({
+        items: [
+            changeSet({ id: "cs-1", changeIds: ["ch-eq", "ch-cons"] }),
+            change({ id: "ch-eq", itemRef: "src-sword" }),
+            change({ id: "ch-cons", itemRef: "src-potion" })
+        ]
+    });
+    const r = (id) => {
+        if (id === "src-sword") return JSON.parse(JSON.stringify(equippableSource));
+        if (id === "src-potion") return JSON.parse(JSON.stringify(consumableSource));
+        return null;
+    };
+    const { toCreate } = computeGrantedItemReconciliation(a, r);
+    const sword = toCreate.find((d) => d.name === "Sword");
+    const potion = toCreate.find((d) => d.name === "Potion");
+    assert.strictEqual(sword?.system?.props?.Equipped, true,
+        "Items with an Equipped prop must be equipped on grant");
+    assert.ok(potion && !("Equipped" in potion.system.props),
+        "Items without an Equipped prop must not gain one");
+    console.log("  ✓ Auto-equips items with an Equipped prop; leaves others alone");
+}
+
 console.log("\nAll item-grant-service tests passed.");

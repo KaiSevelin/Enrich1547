@@ -110,6 +110,13 @@ export function computeGrantedItemReconciliation(actor, resolveSource) {
         if (itemData.system && itemData.system.container !== undefined) {
             delete itemData.system.container;
         }
+        // Auto-equip: if the source has an Equipped prop (weapons, armor,
+        // shields, etc.), flip it on so a granted weapon is ready to use
+        // without the GM having to click each one. Items that don't have
+        // the concept (consumables, notes, etc.) are left alone.
+        if (itemData.system?.props && "Equipped" in itemData.system.props) {
+            itemData.system.props.Equipped = true;
+        }
         itemData.flags = itemData.flags ?? {};
         itemData.flags[MODULE_ID] = itemData.flags[MODULE_ID] ?? {};
         itemData.flags[MODULE_ID][FLAG_KEY] = {
