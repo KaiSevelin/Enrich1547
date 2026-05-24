@@ -1,5 +1,7 @@
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
+const REACH_MIGRATION_SETTING = "reachMigrationVersion";
+const REACH_MIGRATION_CURRENT_VERSION = 1;
 
 function parseReachValue(value) {
     if (value === null || value === undefined || value === "") {
@@ -117,9 +119,16 @@ async function migrateCollection(items) {
 }
 
 export async function runReachMigration() {
+    if (!game.user?.isGM) return;
+
+    const appliedVersion = Number(game.settings?.get?.(MODULE_ID, REACH_MIGRATION_SETTING) ?? 0) || 0;
+    if (appliedVersion >= REACH_MIGRATION_CURRENT_VERSION) return;
+
     await migrateCollection(game.items.contents ?? game.items ?? []);
 
     for (const actor of game.actors.contents ?? game.actors ?? []) {
         await migrateCollection(actor.items.contents ?? actor.items ?? []);
     }
+
+    await game.settings?.set?.(MODULE_ID, REACH_MIGRATION_SETTING, REACH_MIGRATION_CURRENT_VERSION);
 }

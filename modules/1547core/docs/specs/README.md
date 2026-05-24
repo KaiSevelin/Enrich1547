@@ -20,6 +20,8 @@ Current documents:
 - `maneuver-legality-and-filtering-spec-v1.md`
 - `maneuver-rules-guide.md`
 - `maneuver-schema-spec-v1.md`
+- `monster-creation-guide.md`
+- `monster-maker-spec-v1.md`
 - `status-effects-guide.md`
 - `state-machine-diagrams.drawio`
 

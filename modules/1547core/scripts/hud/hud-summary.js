@@ -70,7 +70,19 @@ function buildWeaponRollContext(summary, maneuverEffects = {}) {
         addMainDice: Math.max(0, Number(base.addMainDice ?? 0) + Number(maneuverEffects.addMainDice ?? 0)),
         addMultiplierDice: Math.max(0, Number(base.addMultiplierDice ?? 0) + Number(maneuverEffects.addMultiplierDice ?? 0)),
         riskDice: Math.max(0, Number(base.riskDice ?? 0) + Number(maneuverEffects.addRiskDice ?? 0) + Number(maneuverEffects.addDisadvantage ?? 0)),
+        ammoAddDice: Array.isArray(base.ammoAddDice) ? base.ammoAddDice.slice() : []
     };
+}
+
+function getAmmoAddDice(item) {
+    const itemProps = item?.system?.props ?? {};
+    const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
+    if (Array.isArray(sourceData?.addDice)) {
+        return sourceData.addDice.filter((die) => typeof die === "string" && die.trim()).map((die) => die.trim());
+    }
+    const addDiceString = getStringProp(itemProps, ["AddDice", "AddDiceSummary"]);
+    if (!addDiceString) return [];
+    return addDiceString.split(",").map((entry) => String(entry ?? "").trim()).filter(Boolean);
 }
 function getPlayerFacingManeuverReason(reason, maneuver, context = {}) {
     const text = String(reason ?? "").trim();
@@ -300,6 +312,7 @@ export function summarizeActor(actor, token, deps = {}) {
         if (usesAmmo && selectedAmmoId) {
             HUD_STATE.selectedAmmoByWeapon[item.id] = selectedAmmoId;
         }
+        const selectedAmmo = selectedAmmoId ? ammoItems.find((ammo) => ammo.id === selectedAmmoId) ?? null : null;
         const weaponSummary = {
             id: item.id,
             name: item.name,
@@ -313,12 +326,13 @@ export function summarizeActor(actor, token, deps = {}) {
             rangeSummary: formatRangeSummary(rangeBands),
             usesAmmo,
             ammoLoaded: getNumericProp(itemProps, ["AmmoLoaded"]) ?? 0,
-            loadedAmmoId: loadedAmmoId || null,
-            loadedAmmoName: loadedAmmo?.name ?? "",
-            loadedAmmoType: loadedAmmo ? getAmmoType(loadedAmmo) : "",
-            loadedAmmoSummary: loadedAmmo ? getAmmoSummary(loadedAmmo) : "",
-            loadedAmmoQuantity: loadedAmmo ? getAmmoQuantity(loadedAmmo) : 0,
+            loadedAmmoId: selectedAmmo?.id ?? null,
+            loadedAmmoName: selectedAmmo?.name ?? "",
+            loadedAmmoType: selectedAmmo ? getAmmoType(selectedAmmo) : "",
+            loadedAmmoSummary: selectedAmmo ? getAmmoSummary(selectedAmmo) : "",
+            loadedAmmoQuantity: selectedAmmo ? getAmmoQuantity(selectedAmmo) : 0,
             selectedAmmoId,
+            loadedAmmoAddDice: selectedAmmo ? getAmmoAddDice(selectedAmmo) : [],
             attackProfiles,
             activeAttackProfile: activeAttackProfile?.key ?? "Attack",
             activeAttackFormula: activeAttackProfile?.formula ?? "",

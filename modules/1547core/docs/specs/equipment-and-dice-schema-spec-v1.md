@@ -780,6 +780,137 @@ declaration.
 }
 ```
 
+## Schema Versioning And Migration Contract
+
+Every persisted equipment item in v1.1 must carry an explicit `schemaVersion`.
+Weapons, ammunition, and armor share the same schema namespace and versioning
+model.
+
+Migration is explicit and item-local:
+
+- import or content-load detects an older `schemaVersion` and applies the
+  appropriate migration path for that single item
+- each item migrates independently, so one bad item does not block unrelated
+  items
+- recoverable errors should be tolerated and the item should still be written
+  back with as much valid data as possible
+- fatal errors should be rare; only skip the item when it truly cannot be
+  converted safely
+
+Validation and error handling:
+
+- unknown or non-canonical trait names are dropped and logged as errors
+- unsupported dice-family values are dropped and logged as errors
+- no legacy alias map is used; if migration does not convert an old trait,
+  that trait is gone
+- import should preserve as much content as possible while reporting issues in
+  a plain log
+- migration errors are not recorded on the item itself
+
+Dice contract:
+
+- the equipment schema stores canonical dice family names only
+- a separate dice module owns runtime conversion to Foundry roll formulas
+- if imported content contains both canonical dice arrays and legacy runtime
+  roll-formula fields, prefer canonical families and ignore the runtime formula
+- legacy runtime formulas may be converted only when a specific migration rule
+  supports it; otherwise they are logged and dropped
+- do not persist legacy runtime roll formulas in migrated items
+
+Defaults and field creation:
+
+- when a migration introduces a new required field, the migration should auto-fill
+  it when a safe derived or schema-specific default exists
+- if no safe default can be chosen, log the issue and skip the item only when
+  the item is truly invalid
+- the migration should remain forgiving and attempt to write every recoverable
+  field
+
+Recommended migration behavior:
+
+- treat items without `schemaVersion` as legacy input and migrate them into the
+  current `schemaVersion`
+- detect the current item type from `itemType` and apply the correct weapon,
+  ammo, or armor migration rules
+- preserve valid item identifiers and content where possible
+- rewrite migrated items in place; backups are out of scope for v1.1
+
+This contract is intended to make schema evolution explicit, predictable, and
+data-safe while keeping the system tolerant of partially invalid legacy data.
+
+## Dice Pools — Functional Rules
+
+Dice pools in v1.1 are intentionally simple, deterministic, and driven by the
+stored canonical arrays. The runtime must preserve stored ordering and apply a
+small set of deterministic transforms when building the final roll pools.
+
+Rules
+
+- Stored `dice` arrays in attack profiles are authoritative and must not be
+  reordered by runtime rules.
+- Advantage duplicates the first die family in the stored ordered `dice` list
+  and inserts that duplicate at the front of the attacker pool.
+- Ammunition `addDice` are always appended to the attack pool after advantage
+  duplication and base attack dice.
+- Defender pools use the stored `defenseDice` array. If no defense dice are
+  present, the runtime should inject the unarmored fallback `["Evade","Evade","Evade"]`.
+- `Multiplier` dice are retained in the pool but are applied as a post-roll
+  multiplier to aggregated damage results rather than as direct additive faces.
+- When attacker and defender pools differ in length, each side rolls its own
+  pool and the resolution aggregates each side's results independently.
+- Unknown or non-canonical dice families present in stored content are dropped
+  during migration and logged; runtime code should assume migrated content is
+  canonical.
+
+Deterministic conversion
+
+The runtime dice module is responsible for converting canonical family names
+into Foundry custom-dice terms deterministically. Example mapping (v1.1):
+
+```
+Balanced -> 1db
+Grace    -> 1dg
+Heavy    -> 1dh
+Penetration -> 1dp
+Lethality -> 1dl
+Control  -> 1dc
+Armor    -> 1da
+Evade    -> 1de
+Risk     -> 1dr
+Multiplier -> 1dx
+```
+
+Pseudocode
+
+```
+function buildAttackerPool(attackDice, advantage, ammoAddDice) {
+  const pool = attackDice.slice();
+  if (advantage && pool.length > 0) pool.unshift(pool[0]);
+  return pool.concat(ammoAddDice || []);
+}
+
+function buildDefenderPool(defenseDice) {
+  if (!Array.isArray(defenseDice) || defenseDice.length === 0) {
+    return ["Evade","Evade","Evade"];
+  }
+  return defenseDice.slice();
+}
+
+function toFoundryFormula(diceArray) {
+  return diceArray.map(d => mapping[d] ? `1d${mapping[d]}` : '').filter(Boolean).join(' + ');
+}
+```
+
+Acceptance tests for pool-building should verify:
+
+- advantage duplicates the first die and preserves stored order
+- ammo `addDice` are appended
+- multiplier dice remain in the pool but are applied post-roll
+- unknown families are dropped during migration and logged
+
+Place runtime-ready helpers in `scripts/combat/pool-builder.mjs` and unit
+tests in `scripts/tests/pool-building.test.mjs`.
+
 ## Canonical Armor Schema
 
 Recommended armor schema:

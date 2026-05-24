@@ -1,4 +1,5 @@
 ﻿import { COMBAT_EVENTS, onCombatEvent } from "../services/combat-events.js";
+import { buildAttackPool, toFoundryFormula } from "../combat/pool-builder.mjs";
 import {
     HUD_STATE,
     getSelectedPreManeuverIds,
@@ -830,53 +831,35 @@ function getWeaponActiveAttackProfile(item) {
         ?? null;
 }
 
-function getDiceTermCode(dieName) {
-    switch (String(dieName ?? "").trim()) {
-        case "Armor": return "a";
-        case "Balanced": return "b";
-        case "Control": return "c";
-        case "Evade": return "e";
-        case "Finesse":
-        case "Grace": return "g";
-        case "Heavy": return "h";
-        case "Lethality": return "l";
-        case "Penetration": return "p";
-        case "Risk": return "r";
-        case "Multiplier": return "x";
-        default: return "";
-    }
-}
-
 function buildFoundryAttackRollFormula(profile, rollContext = {}) {
     const baseDice = Array.isArray(profile?.dice) ? [...profile.dice] : [];
     if (!baseDice.length) return "";
-    const pool = [...baseDice];
-    const advantageDice = Math.max(0, Number(rollContext?.advantageDice) || 0);
+
+    const advantageCount = Math.max(0, Number(rollContext?.advantageDice) || 0);
     const riskDice = Math.max(0, Number(rollContext?.riskDice) || 0);
     const addMainDice = Math.max(0, Number(rollContext?.addMainDice) || 0);
     const addMultiplierDice = Math.max(0, Number(rollContext?.addMultiplierDice) || 0);
     const extraDiceCounts = rollContext?.extraDiceCounts ?? {};
-    const firstDie = baseDice[0] ?? "";
-    for (let index = 0; index < advantageDice; index += 1) {
-        if (firstDie) pool.push(firstDie);
-    }
-    for (let index = 0; index < addMainDice; index += 1) {
-        if (firstDie) pool.push(firstDie);
-    }
-    for (let index = 0; index < addMultiplierDice; index += 1) {
-        pool.push("Multiplier");
-    }
+    const ammoAddDice = Array.isArray(rollContext?.ammoAddDice) ? rollContext.ammoAddDice : [];
+
+    const extraDice = [];
     for (const option of DICE_TAB_ATTACK_OPTIONS) {
         const count = Math.max(0, Number(extraDiceCounts?.[option.key] ?? 0) || 0);
         for (let index = 0; index < count; index += 1) {
-            pool.push(option.dieName);
+            extraDice.push(option.dieName);
         }
     }
-    for (let index = 0; index < riskDice; index += 1) {
-        pool.push("Risk");
-    }
-    const terms = pool.map((die) => getDiceTermCode(die)).filter(Boolean).map((code) => "1d" + code);
-    return terms.join(" + ");
+
+    const pool = buildAttackPool(baseDice, {
+        advantageCount,
+        addMainDice,
+        addMultiplierDice,
+        addRiskDice: riskDice,
+        extraDice,
+        ammoAddDice
+    });
+
+    return toFoundryFormula(pool);
 }
 
 function getAmmoQuantity(item) {
@@ -908,6 +891,17 @@ function getAmmoSummary(item) {
     const parsedModifiers = parseJsonProp(itemProps.ResultModifiers, null);
     const modifiersSummary = getStringProp(itemProps, ["ResultModifiersSummary"]) || (parsedModifiers ? JSON.stringify(parsedModifiers) : sourceModifiers);
     return [addDiceSummary, tagsSummary, modifiersSummary].filter(Boolean).join(" | ");
+}
+
+function getAmmoAddDice(item) {
+    const itemProps = item?.system?.props ?? {};
+    const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
+    if (Array.isArray(sourceData?.addDice)) {
+        return sourceData.addDice.filter((die) => typeof die === "string" && die.trim()).map((die) => die.trim());
+    }
+    const addDiceString = getStringProp(itemProps, ["AddDice", "AddDiceSummary"]);
+    if (!addDiceString) return [];
+    return addDiceString.split(",").map((entry) => String(entry ?? "").trim()).filter(Boolean);
 }
 
 function getWeaponAttackState(weapon, {
@@ -1806,7 +1800,7 @@ async function renderHudForSelection() {
     bindHudInteractionsFromModule(root, token, {
         HUD_STATE,
         ui,
-        renderHudForSelection,
+        renderHudForSelection: scheduleHudRerender,
         announceSideReady,
         getActiveReactionWindow,
         getSelectedReactionChoiceId,
@@ -2016,8 +2010,13 @@ function rerenderHudIfViewingActor(actorId) {
     void renderHudForSelection();
 }
 
+let hudRerenderScheduled = false;
+
 function scheduleHudRerender() {
+    if (hudRerenderScheduled) return;
+    hudRerenderScheduled = true;
     window.requestAnimationFrame(() => {
+        hudRerenderScheduled = false;
         void renderHudForSelection();
     });
 }

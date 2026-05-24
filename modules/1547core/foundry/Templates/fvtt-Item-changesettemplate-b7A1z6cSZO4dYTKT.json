@@ -1,0 +1,923 @@
+﻿{
+  "name": "ChangeSetTemplate",
+  "type": "_equippableItemTemplate",
+  "_id": "b7A1z6cSZO4dYTKT",
+  "img": "systems/custom-system-builder/img/template-logo.svg",
+  "system": {
+    "body": {
+      "contents": [
+        {
+          "key": "Notes",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "cssClass": "",
+          "role": 0,
+          "editRole": 0,
+          "permission": 0,
+          "tooltip": "Author notes describing what this ChangeSet does and when it should apply.",
+          "visibilityFormula": "",
+          "editableFormula": "",
+          "escapeHTML": false,
+          "type": "textArea",
+          "size": "full-size",
+          "label": "Notes:",
+          "defaultValue": "",
+          "style": "sheet"
+        }
+      ],
+      "key": "custom_body",
+      "type": "panel"
+    },
+    "display": {
+      "width": 600,
+      "height": 600,
+      "fix_size": false,
+      "pp_width": 64,
+      "pp_height": 64
+    },
+    "header": {
+      "contents": [
+        {
+          "key": "MonsterMetadata",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "cssClass": "",
+          "role": 0,
+          "editRole": 0,
+          "permission": 0,
+          "tooltip": "Where in the pipeline this ChangeSet applies, and which actor types it's valid for.",
+          "visibilityFormula": "",
+          "editableFormula": "",
+          "escapeHTML": false,
+          "type": "panel",
+          "contents": [
+            {
+              "key": "Group",
+              "colSpan": 1,
+              "rowSpan": 1,
+              "cssClass": "",
+              "role": 0,
+              "editRole": 0,
+              "permission": 0,
+              "tooltip": "Which slot this ChangeSet fills. Application order: Size > Role > Domain > Motivation > Loadout > Quirk > Boost.",
+              "visibilityFormula": "",
+              "editableFormula": "",
+              "escapeHTML": false,
+              "type": "select",
+              "size": "full-size",
+              "label": "Group:",
+              "defaultValue": "Quirk",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Size", "value": "Size" },
+                { "key": "Role", "value": "Role" },
+                { "key": "Domain", "value": "Domain" },
+                { "key": "Motivation", "value": "Motivation" },
+                { "key": "Loadout", "value": "Loadout" },
+                { "key": "Quirk", "value": "Quirk" },
+                { "key": "Boost", "value": "Boost" }
+              ]
+            },
+            {
+              "key": "ForTypeAny",
+              "colSpan": 1,
+              "rowSpan": 1,
+              "cssClass": "",
+              "role": 0,
+              "editRole": 0,
+              "permission": 0,
+              "tooltip": "When checked, this ChangeSet can be applied to actors of any TypeDropdown value. Uncheck to restrict to specific types below.",
+              "visibilityFormula": "",
+              "editableFormula": "",
+              "escapeHTML": false,
+              "type": "checkbox",
+              "size": "full-size",
+              "label": "Applies to any type:",
+              "defaultChecked": true
+            },
+            {
+              "key": "ForTypeSelector",
+              "colSpan": 1,
+              "rowSpan": 1,
+              "cssClass": "",
+              "role": 0,
+              "editRole": 0,
+              "permission": 0,
+              "tooltip": "Tick the TypeDropdown values this ChangeSet applies to. At least one must be ticked.",
+              "visibilityFormula": "not(ForTypeAny)",
+              "editableFormula": "",
+              "escapeHTML": false,
+              "type": "panel",
+              "contents": [
+                { "key": "ForType_Player",     "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 0, "editRole": 0, "permission": 0, "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false, "type": "checkbox", "size": "full-size", "label": "Player",       "defaultChecked": false },
+                { "key": "ForType_Spirit",     "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 0, "editRole": 0, "permission": 0, "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false, "type": "checkbox", "size": "full-size", "label": "Spirit",       "defaultChecked": false },
+                { "key": "ForType_HiddenFolk", "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 0, "editRole": 0, "permission": 0, "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false, "type": "checkbox", "size": "full-size", "label": "Hidden Folk",  "defaultChecked": false },
+                { "key": "ForType_TheUnseen",  "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 0, "editRole": 0, "permission": 0, "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false, "type": "checkbox", "size": "full-size", "label": "The Unseen",   "defaultChecked": false },
+                { "key": "ForType_Beast",      "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 0, "editRole": 0, "permission": 0, "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false, "type": "checkbox", "size": "full-size", "label": "Beast",        "defaultChecked": false },
+                { "key": "ForType_Undead",     "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 0, "editRole": 0, "permission": 0, "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false, "type": "checkbox", "size": "full-size", "label": "Undead",       "defaultChecked": false },
+                { "key": "ForType_Colossal",   "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 0, "editRole": 0, "permission": 0, "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false, "type": "checkbox", "size": "full-size", "label": "Colossal",     "defaultChecked": false },
+                { "key": "ForType_Cursed",     "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 0, "editRole": 0, "permission": 0, "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false, "type": "checkbox", "size": "full-size", "label": "Cursed",       "defaultChecked": false },
+                { "key": "ForType_Unnatural",  "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 0, "editRole": 0, "permission": 0, "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false, "type": "checkbox", "size": "full-size", "label": "Unnatural",    "defaultChecked": false },
+                { "key": "ForType_Construct",  "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 0, "editRole": 0, "permission": 0, "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false, "type": "checkbox", "size": "full-size", "label": "Construct",    "defaultChecked": false },
+                { "key": "ForType_Zone",       "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 0, "editRole": 0, "permission": 0, "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false, "type": "checkbox", "size": "full-size", "label": "Zone",         "defaultChecked": false },
+                { "key": "ForType_People",     "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 0, "editRole": 0, "permission": 0, "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false, "type": "checkbox", "size": "full-size", "label": "People",       "defaultChecked": false }
+              ],
+              "flow": "grid-3",
+              "align": "left",
+              "verticalAlign": "top",
+              "collapsible": false,
+              "defaultCollapsed": false,
+              "title": "Restrict to types",
+              "titleStyle": "default"
+            }
+          ],
+          "flow": "vertical",
+          "align": "left",
+          "verticalAlign": "top",
+          "collapsible": false,
+          "defaultCollapsed": false,
+          "title": "Set metadata",
+          "titleStyle": "default"
+        },
+        {
+          "key": "RequirementsDisplayer",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "cssClass": "",
+          "role": 0,
+          "editRole": 0,
+          "permission": 0,
+          "tooltip": "",
+          "visibilityFormula": "",
+          "editableFormula": "",
+          "escapeHTML": false,
+          "type": "itemContainer",
+          "contents": [],
+          "rowLayout": [],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "",
+          "title": "",
+          "hideEmpty": false,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "headDisplay": true,
+          "showCreate": false,
+          "defaultTemplate": "L4ujYgqhGBGcoo2P",
+          "createItemDialogShowTemplateList": false,
+          "showDelete": true,
+          "statusIcon": false,
+          "nameAlign": "left",
+          "nameLabel": "Name",
+          "templateFilter": [
+            "L4ujYgqhGBGcoo2P"
+          ],
+          "itemFilterFormula": "",
+          "sortPredicates": []
+        },
+        {
+          "key": "ChangeDisplayer",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "cssClass": "",
+          "role": 0,
+          "editRole": 0,
+          "permission": 0,
+          "tooltip": "",
+          "visibilityFormula": "",
+          "editableFormula": "",
+          "escapeHTML": false,
+          "type": "itemContainer",
+          "contents": [],
+          "rowLayout": [],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "",
+          "title": "",
+          "hideEmpty": false,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "headDisplay": true,
+          "showCreate": false,
+          "defaultTemplate": "WsrkfjBmudnIhvEK",
+          "createItemDialogShowTemplateList": false,
+          "showDelete": true,
+          "statusIcon": false,
+          "nameAlign": "left",
+          "nameLabel": "Name",
+          "templateFilter": [
+            "WsrkfjBmudnIhvEK"
+          ],
+          "itemFilterFormula": "",
+          "sortPredicates": []
+        }
+      ],
+      "key": "custom_header",
+      "type": "panel"
+    },
+    "hidden": [],
+    "modifiers": [],
+    "templateSystemUniqueVersion": 1298903635,
+    "uniqueId": "b7A1z6cSZO4dYTKT"
+  },
+  "effects": [],
+  "folder": null,
+  "flags": {
+    "custom-system-builder": {
+      "version": "5.2.0",
+      "templateHistory": [
+        [
+          {
+            "kind": "A",
+            "path": [
+              "header",
+              "contents"
+            ],
+            "index": 0,
+            "item": {
+              "kind": "N",
+              "rhs": {
+                "key": "RequirementsDisplayer",
+                "colSpan": 1,
+                "rowSpan": 1,
+                "cssClass": "",
+                "role": 0,
+                "editRole": 0,
+                "permission": 0,
+                "tooltip": "",
+                "visibilityFormula": "",
+                "editableFormula": "",
+                "escapeHTML": false,
+                "type": "itemContainer",
+                "contents": [],
+                "rowLayout": [],
+                "head": false,
+                "deleteWarning": false,
+                "labelWhenEmpty": "",
+                "title": "",
+                "hideEmpty": false,
+                "hiddenColumns": [],
+                "sortOption": "manual",
+                "headDisplay": true,
+                "showCreate": false,
+                "defaultTemplate": "L4ujYgqhGBGcoo2P",
+                "createItemDialogShowTemplateList": false,
+                "showDelete": true,
+                "statusIcon": false,
+                "nameAlign": "left",
+                "nameLabel": "Name",
+                "templateFilter": [
+                  "L4ujYgqhGBGcoo2P"
+                ],
+                "itemFilterFormula": "",
+                "sortPredicates": []
+              }
+            }
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "colSpan"
+            ],
+            "rhs": 1
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "rowSpan"
+            ],
+            "rhs": 1
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "cssClass"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "role"
+            ],
+            "rhs": 0
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "editRole"
+            ],
+            "rhs": 0
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "permission"
+            ],
+            "rhs": 0
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "tooltip"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "visibilityFormula"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "editableFormula"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "escapeHTML"
+            ],
+            "rhs": false
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "flow"
+            ],
+            "rhs": "vertical"
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "align"
+            ],
+            "rhs": "center"
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "verticalAlign"
+            ],
+            "rhs": "top"
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "collapsible"
+            ],
+            "rhs": false
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "defaultCollapsed"
+            ],
+            "rhs": true
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "title"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "titleStyle"
+            ],
+            "rhs": "default"
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "colSpan"
+            ],
+            "rhs": 1
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "rowSpan"
+            ],
+            "rhs": 1
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "cssClass"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "role"
+            ],
+            "rhs": 0
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "editRole"
+            ],
+            "rhs": 0
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "permission"
+            ],
+            "rhs": 0
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "tooltip"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "visibilityFormula"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "editableFormula"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "escapeHTML"
+            ],
+            "rhs": false
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "flow"
+            ],
+            "rhs": "vertical"
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "align"
+            ],
+            "rhs": "center"
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "verticalAlign"
+            ],
+            "rhs": "top"
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "collapsible"
+            ],
+            "rhs": false
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "defaultCollapsed"
+            ],
+            "rhs": true
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "title"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "titleStyle"
+            ],
+            "rhs": "default"
+          }
+        ],
+        [
+          {
+            "kind": "A",
+            "path": [
+              "header",
+              "contents"
+            ],
+            "index": 1,
+            "item": {
+              "kind": "N",
+              "rhs": {
+                "key": "ChangeDisplayer",
+                "colSpan": 1,
+                "rowSpan": 1,
+                "cssClass": "",
+                "role": 0,
+                "editRole": 0,
+                "permission": 0,
+                "tooltip": "",
+                "visibilityFormula": "",
+                "editableFormula": "",
+                "escapeHTML": false,
+                "type": "itemContainer",
+                "contents": [],
+                "rowLayout": [],
+                "head": false,
+                "deleteWarning": false,
+                "labelWhenEmpty": "",
+                "title": "",
+                "hideEmpty": false,
+                "hiddenColumns": [],
+                "sortOption": "manual",
+                "headDisplay": true,
+                "showCreate": false,
+                "defaultTemplate": "WsrkfjBmudnIhvEK",
+                "createItemDialogShowTemplateList": false,
+                "showDelete": true,
+                "statusIcon": false,
+                "nameAlign": "left",
+                "nameLabel": "Name",
+                "templateFilter": [
+                  "WsrkfjBmudnIhvEK"
+                ],
+                "itemFilterFormula": "",
+                "sortPredicates": []
+              }
+            }
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "contents",
+              0,
+              "createItemDialogTitle"
+            ]
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "contents",
+              0,
+              "createItemDialogButton"
+            ]
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "contents",
+              0,
+              "newItemDefaultName"
+            ]
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "colSpan"
+            ],
+            "rhs": 1
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "rowSpan"
+            ],
+            "rhs": 1
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "cssClass"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "role"
+            ],
+            "rhs": 0
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "editRole"
+            ],
+            "rhs": 0
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "permission"
+            ],
+            "rhs": 0
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "tooltip"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "visibilityFormula"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "editableFormula"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "escapeHTML"
+            ],
+            "rhs": false
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "flow"
+            ],
+            "rhs": "vertical"
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "align"
+            ],
+            "rhs": "center"
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "verticalAlign"
+            ],
+            "rhs": "top"
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "collapsible"
+            ],
+            "rhs": false
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "defaultCollapsed"
+            ],
+            "rhs": true
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "title"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "header",
+              "titleStyle"
+            ],
+            "rhs": "default"
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "colSpan"
+            ],
+            "rhs": 1
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "rowSpan"
+            ],
+            "rhs": 1
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "cssClass"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "role"
+            ],
+            "rhs": 0
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "editRole"
+            ],
+            "rhs": 0
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "permission"
+            ],
+            "rhs": 0
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "tooltip"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "visibilityFormula"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "editableFormula"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "escapeHTML"
+            ],
+            "rhs": false
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "flow"
+            ],
+            "rhs": "vertical"
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "align"
+            ],
+            "rhs": "center"
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "verticalAlign"
+            ],
+            "rhs": "top"
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "collapsible"
+            ],
+            "rhs": false
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "defaultCollapsed"
+            ],
+            "rhs": true
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "title"
+            ],
+            "rhs": ""
+          },
+          {
+            "kind": "N",
+            "path": [
+              "body",
+              "titleStyle"
+            ],
+            "rhs": "default"
+          }
+        ]
+      ],
+      "templateHistoryRedo": []
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": {
+      "worldId": "labgame-0940e6bc",
+      "uuid": "Item.b7A1z6cSZO4dYTKT",
+      "coreVersion": "13.351",
+      "systemId": "custom-system-builder",
+      "systemVersion": "5.2.0"
+    },
+    "coreVersion": "13.351",
+    "systemId": "custom-system-builder",
+    "systemVersion": "5.2.0",
+    "createdTime": 1779514128713,
+    "modifiedTime": 1779514321546,
+    "lastModifiedBy": "HqdAsTDFzg3TzYAq"
+  },
+  "items": [],
+  "ownership": {
+    "default": 0
+  }
+}

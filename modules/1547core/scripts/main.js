@@ -41,6 +41,31 @@ Hooks.once("init", () => {
         () => import("./services/combat-resolver-service.js"),
         (module) => module.registerCombatResolverService()
     );
+    void runImportedModuleStep(
+        "registerBoostService",
+        () => import("./services/boost-service.js"),
+        (module) => module.registerBoostService()
+    );
+    void runImportedModuleStep(
+        "registerCompositionService",
+        () => import("./services/composition-service.mjs"),
+        (module) => module.registerCompositionService()
+    );
+    void runImportedModuleStep(
+        "registerChangeSetDropHook",
+        () => import("./services/changeset-drop-hook.js"),
+        (module) => module.registerChangeSetDropHook()
+    );
+    void runImportedModuleStep(
+        "registerItemGrantService",
+        () => import("./services/item-grant-service.js"),
+        (module) => module.registerItemGrantService()
+    );
+    void runImportedModuleStep(
+        "registerRollTableResolutionService",
+        () => import("./services/rolltable-resolution-service.js"),
+        (module) => module.registerRollTableResolutionService()
+    );
 });
 
 Hooks.once("ready", () => {
@@ -50,9 +75,19 @@ Hooks.once("ready", () => {
         (module) => void module.runReachMigration()
     );
     void runImportedModuleStep(
+        "runSchemaMigrations",
+        () => import("./migrations/schema-migration.js"),
+        (module) => module.runSchemaMigrations()
+    );
+    void runImportedModuleStep(
         "register1547ActorHud",
         () => import("./hud/actor-hud.js"),
         (module) => module.register1547ActorHud()
+    );
+    void runImportedModuleStep(
+        "registerTierDisplay",
+        () => import("./services/tier-display-service.js"),
+        (module) => module.registerTierDisplay()
     );
     void runImportedModuleStep(
         "register1547CombatTrackerSideGroups",

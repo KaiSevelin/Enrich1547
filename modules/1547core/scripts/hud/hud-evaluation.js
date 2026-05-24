@@ -228,7 +228,11 @@ function evaluateWeaponAttackAction(descriptor, context, deps = {}) {
     }
 
     const maneuverEffects = summarizeManeuverEffects(context.summary.selectedPreManeuvers);
-    const effectiveWeaponRollContext = buildWeaponRollContext(context.summary, maneuverEffects);
+    const baseWeaponRollContext = buildWeaponRollContext(context.summary, maneuverEffects);
+    const effectiveWeaponRollContext = {
+        ...baseWeaponRollContext,
+        ammoAddDice: Array.isArray(weapon.loadedAmmoAddDice) ? weapon.loadedAmmoAddDice : []
+    };
     const attackState = getWeaponAttackState(weapon, {
         token: context.token,
         primaryTarget: context.primaryTarget,

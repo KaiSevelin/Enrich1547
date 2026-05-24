@@ -422,6 +422,14 @@ export function register1547ModuleSettings() {
         default: ""
     });
 
+    game.settings.register(MODULE_ID, "reachMigrationVersion", {
+        name: "Reach Migration Version",
+        scope: "world",
+        config: false,
+        type: Number,
+        default: 0
+    });
+
     game.settings.register(MODULE_ID, "reactionWindowSeconds", {
         name: "Reaction Window Seconds",
         hint: "How many seconds a reaction window stays open before it automatically passes.",
@@ -443,6 +451,15 @@ export function register1547ModuleSettings() {
         config: true,
         type: Boolean,
         default: true
+    });
+
+    game.settings.register(MODULE_ID, "boostRollTableUuid", {
+        name: "Boost Roll Table UUID",
+        hint: "Foundry UUID of the Roll Table used to randomly pick boost ChangeSets when a monster's Boost button is pressed. Example: RollTable.abc1234567890def or worlds/<world>/<id>.",
+        scope: "world",
+        config: true,
+        type: String,
+        default: ""
     });
 
     const moduleSetupFormType = createModuleSetupFormApplicationClass();

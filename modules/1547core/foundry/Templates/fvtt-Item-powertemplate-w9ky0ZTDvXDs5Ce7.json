@@ -1,0 +1,56 @@
+{
+  "name": "PowerTemplate",
+  "type": "_equippableItemTemplate",
+  "_id": "w9ky0ZTDvXDs5Ce7",
+  "img": "icons/svg/aura.svg",
+  "system": {
+    "body": {
+      "contents": [],
+      "key": "custom_body",
+      "type": "panel"
+    },
+    "display": {
+      "width": 600,
+      "height": 600,
+      "fix_size": false,
+      "pp_width": 64,
+      "pp_height": 64
+    },
+    "header": {
+      "contents": [],
+      "key": "custom_header",
+      "type": "panel"
+    },
+    "hidden": [],
+    "modifiers": [],
+    "uniqueId": "w9ky0ZTDvXDs5Ce7"
+  },
+  "effects": [],
+  "folder": null,
+  "flags": {
+    "custom-system-builder": {
+      "version": "5.2.0"
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": {
+      "worldId": "labgame-0940e6bc",
+      "uuid": "Item.w9ky0ZTDvXDs5Ce7",
+      "coreVersion": "13.351",
+      "systemId": "custom-system-builder",
+      "systemVersion": "5.2.0"
+    },
+    "coreVersion": "13.351",
+    "systemId": "custom-system-builder",
+    "systemVersion": "5.2.0",
+    "createdTime": 1773131455676,
+    "modifiedTime": 1775991820510,
+    "lastModifiedBy": "HqdAsTDFzg3TzYAq"
+  },
+  "items": [],
+  "ownership": {
+    "default": 0
+  }
+}

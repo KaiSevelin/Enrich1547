@@ -12,6 +12,7 @@ const HUD_ACTIONS_FILE = path.join(ROOT, "scripts", "hud", "hud-actions.js");
 const failures = [];
 const passes = [];
 const skips = [];
+const warnings = [];
 
 function pass(message) {
   passes.push(message);
@@ -23,6 +24,10 @@ function fail(message) {
 
 function skip(message) {
   skips.push(message);
+}
+
+function warn(message) {
+  warnings.push(message);
 }
 
 function assert(condition, message) {
@@ -257,14 +262,58 @@ function checkCsbTraitFormula() {
   assert(!templateText.includes('Traits_Tactical ? "Traits_Tactical," : "",\n)'), "Weapon template trait formula has no trailing comma before closing concat");
 }
 
+function checkCrossFileDuplicateFunctions() {
+  const jsFiles = walkFiles(SCRIPTS_DIR, (file) => file.endsWith(".js"));
+  const declarationPatterns = [
+    /(?:^|\n)function\s+([A-Za-z_$][\w$]*)\s*\(/g,
+    /(?:^|\n)async\s+function\s+([A-Za-z_$][\w$]*)\s*\(/g,
+    /(?:^|\n)export\s+function\s+([A-Za-z_$][\w$]*)\s*\(/g,
+    /(?:^|\n)export\s+async\s+function\s+([A-Za-z_$][\w$]*)\s*\(/g,
+  ];
+
+  const nameToFiles = new Map();
+  for (const file of jsFiles) {
+    const source = fs.readFileSync(file, "utf8");
+    const relative = path.relative(ROOT, file);
+    const namesInFile = new Set();
+    for (const pattern of declarationPatterns) {
+      for (const match of source.matchAll(pattern)) {
+        namesInFile.add(match[1]);
+      }
+    }
+    for (const name of namesInFile) {
+      if (!nameToFiles.has(name)) nameToFiles.set(name, []);
+      nameToFiles.get(name).push(relative);
+    }
+  }
+
+  const duplicates = [];
+  for (const [name, files] of nameToFiles.entries()) {
+    if (files.length < 2) continue;
+    duplicates.push({ name, files });
+  }
+
+  if (!duplicates.length) {
+    pass("No cross-file duplicate function declarations");
+    return;
+  }
+
+  duplicates.sort((a, b) => a.name.localeCompare(b.name));
+  for (const entry of duplicates) {
+    warn(`Cross-file duplicate function: ${entry.name} in ${entry.files.join(", ")}`);
+  }
+}
+
 checkModuleJson();
 checkJavaScriptSyntax();
 checkHudStructure();
 checkCsbTraitFormula();
 checkDuplicateFunctionDefinitions();
+checkCrossFileDuplicateFunctions();
 
 for (const message of passes) console.log(`PASS ${message}`);
 for (const message of skips) console.log(`SKIP ${message}`);
+for (const message of warnings) console.warn(`WARN ${message}`);
 for (const message of failures) console.error(`FAIL ${message}`);
 
 if (failures.length) {
@@ -272,6 +321,7 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`\nValidation passed: ${passes.length} checks, ${skips.length} skipped`);
+const warningSuffix = warnings.length ? `, ${warnings.length} warning(s)` : "";
+console.log(`\nValidation passed: ${passes.length} checks, ${skips.length} skipped${warningSuffix}`);
 
 

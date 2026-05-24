@@ -1,5 +1,6 @@
 ﻿import { COMBAT_EVENTS, emitCombatEvent, onCombatEvent } from "./combat-events.js";
 import { evaluateManeuverLegality, getLegalManeuvers } from "./maneuver-legality-service.js";
+import { buildDefenderPool } from "../combat/pool-builder.mjs";
 
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
@@ -1553,7 +1554,8 @@ function actorHasEquippedArmor(actor) {
 
 function buildDefaultDefenseRollSummary(pendingAttack) {
     const armor = buildDefaultUnprotectedArmor();
-    const evadeDice = Array.isArray(armor.defenseDice) ? armor.defenseDice.filter((die) => String(die ?? "").trim().toLowerCase() === "evade").length : 3;
+    const defenseDice = buildDefenderPool(Array.isArray(armor.defenseDice) ? armor.defenseDice : undefined);
+    const evadeDice = defenseDice.filter((die) => String(die ?? "").trim().toLowerCase() === "evade").length;
     return {
         damage: 0,
         protection: evadeDice,

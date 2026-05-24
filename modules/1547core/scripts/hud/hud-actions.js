@@ -1,35 +1,15 @@
-﻿function consumePersistentEffectIfPresent(actor, effectType, deps = {}) {
+﻿import { buildDefenderPool, toFoundryFormula } from "../combat/pool-builder.mjs";
+
+function consumePersistentEffectIfPresent(actor, effectType, deps = {}) {
     const { MODULE_ID, game } = deps;
     const consumer = game?.modules?.get?.(MODULE_ID)?.api?.combat?.consumePersistentEffect;
     if (typeof consumer !== "function") return Promise.resolve(false);
     return consumer(actor, effectType);
 }
 
-function getDiceTermCode(dieName) {
-    switch (String(dieName ?? "").trim()) {
-        case "Armor": return "a";
-        case "Balanced": return "b";
-        case "Control": return "c";
-        case "Evade": return "e";
-        case "Finesse":
-        case "Grace": return "g";
-        case "Heavy": return "h";
-        case "Lethality": return "l";
-        case "Penetration": return "p";
-        case "Risk": return "r";
-        case "Multiplier": return "x";
-        default: return "";
-    }
-}
-
-const DEFAULT_UNPROTECTED_DEFENSE_DICE = ["Evade", "Evade", "Evade"];
-
 function buildDefenseRollFormula(armorSummary) {
-    const defenseDice = Array.isArray(armorSummary?.defenseDice)
-        ? armorSummary.defenseDice
-        : String(armorSummary?.defense ?? "").split(",").map((entry) => entry.trim()).filter(Boolean);
-    const terms = defenseDice.map(getDiceTermCode).filter(Boolean).map((code) => `1d${code}`);
-    return terms.join(" + ");
+    const pool = buildDefenderPool(Array.isArray(armorSummary?.defenseDice) ? armorSummary.defenseDice : undefined);
+    return toFoundryFormula(pool);
 }
 
 function extractDice1547Totals(game, message) {
@@ -180,7 +160,11 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
         return;
     }
     const currentManeuverEffects = summarizeManeuverEffects(currentSummary.selectedPreManeuvers);
-    const effectiveWeaponRollContext = buildWeaponRollContext(currentSummary, currentManeuverEffects);
+    const baseWeaponRollContext = buildWeaponRollContext(currentSummary, currentManeuverEffects);
+    const effectiveWeaponRollContext = {
+        ...baseWeaponRollContext,
+        ammoAddDice: Array.isArray(currentWeapon?.loadedAmmoAddDice) ? currentWeapon.loadedAmmoAddDice : []
+    };
     const attackFormula = buildFoundryAttackRollFormula(currentWeapon?.activeAttackProfileData, effectiveWeaponRollContext) || "";
 
     if (!context.primaryTarget) {
@@ -293,8 +277,8 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
                 } : null;
             })
             .filter(Boolean)[0] ?? {
-                defenseDice: [...DEFAULT_UNPROTECTED_DEFENSE_DICE],
-                defense: DEFAULT_UNPROTECTED_DEFENSE_DICE.join(", "),
+                defenseDice: buildDefenderPool(undefined),
+                defense: buildDefenderPool(undefined).join(", "),
                 name: "Unprotected",
             };
 
