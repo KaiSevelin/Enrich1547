@@ -3,11 +3,19 @@ import assert from "assert";
 /**
  * Test suite for item-grant-service.js
  *
- * Covers the pure diff function computeGrantedItemReconciliation:
+ * Fixtures mirror real CSB data shape:
+ *   - ChangeSets and Changes both live on actor.items (siblings)
+ *   - ChangeSet references its child Changes via
+ *     system.props.ChangeDisplayer: { "<changeId>": { name, id, uuid } }
+ *   - Item refs (ItemGrantRef) use the same object-keyed shape:
+ *     { "<sourceItemId>": { name, id, uuid } }
+ *
+ * Covers the pure diff computeGrantedItemReconciliation:
  *   - Creates items for new ItemGrant Changes
  *   - Deletes items whose source Change/ChangeSet was removed
  *   - Stable when target matches existing (no churn)
- *   - Skips RollTable mode and grants with no ItemGrantRef
+ *   - Skips RollTable mode without cache, blank refs, non-ItemGrant kinds
+ *   - Reports unresolved sources separately
  */
 
 if (typeof globalThis.game === "undefined") globalThis.game = { modules: { get: () => ({ api: {} }) } };
@@ -18,6 +26,11 @@ const { computeGrantedItemReconciliation } = await import("../services/item-gran
 const CHANGESET_ID = "b7A1z6cSZO4dYTKT";
 const CHANGE_ID = "WsrkfjBmudnIhvEK";
 
+// Build a CSB-shaped object-keyed ref: { "<id>": { name, id, uuid } }
+function ref(id) {
+    return id ? { [id]: { name: id, id, uuid: `Item.${id}` } } : {};
+}
+
 function change({ id, kind = "ItemGrant", mode = "Direct", itemRef, cachedSourceItemId }) {
     return {
         id,
@@ -26,7 +39,7 @@ function change({ id, kind = "ItemGrant", mode = "Direct", itemRef, cachedSource
             props: {
                 Kind: kind,
                 ItemGrantMode: mode,
-                ItemGrantRef: itemRef ? [itemRef] : []
+                ItemGrantRef: ref(itemRef)
             }
         },
         flags: cachedSourceItemId
@@ -35,11 +48,17 @@ function change({ id, kind = "ItemGrant", mode = "Direct", itemRef, cachedSource
     };
 }
 
-function changeSet({ id, changes = [] }) {
+function changeSet({ id, changeIds = [] }) {
+    const changeDisplayer = {};
+    for (const cid of changeIds) {
+        changeDisplayer[cid] = { name: cid, id: cid, uuid: `Item.${cid}` };
+    }
     return {
         id,
-        system: { template: CHANGESET_ID, props: { Group: "Loadout", ForTypeAny: true } },
-        items: changes
+        system: {
+            template: CHANGESET_ID,
+            props: { Group: "Loadout", ForTypeAny: true, ChangeDisplayer: changeDisplayer }
+        }
     };
 }
 
@@ -51,28 +70,31 @@ function grantedItem({ id, changeSetId, changeId, name = "Granted" }) {
     };
 }
 
+function makeItemsCollection(items) {
+    const map = new Map(items.map((i) => [i.id, i]));
+    return {
+        get: (id) => map.get(id),
+        filter: (pred) => Array.from(map.values()).filter(pred),
+        [Symbol.iterator]: () => map.values()
+    };
+}
+
 function actor({ items = [] } = {}) {
-    return { documentName: "Actor", items };
+    return { documentName: "Actor", items: makeItemsCollection(items) };
 }
 
 const sourceLibrary = {
     "source-claws": { name: "Claws", system: { props: { damage: "1d6" } } },
     "source-bite": { name: "Bite", system: { props: { damage: "1d8" } } }
 };
-const resolve = (id) => sourceLibrary[id] ? { ...sourceLibrary[id] } : null;
+const resolve = (id) => (sourceLibrary[id] ? { ...sourceLibrary[id] } : null);
 
 console.log("computeGrantedItemReconciliation...");
 
 {
-    const a = actor({
-        items: [
-            changeSet({
-                id: "cs-1",
-                changes: [change({ id: "ch-1", itemRef: "source-claws" })]
-            })
-        ]
-    });
-    const { toCreate, toDelete } = computeGrantedItemReconciliation(a, resolve);
+    const ch = change({ id: "ch-1", itemRef: "source-claws" });
+    const a = actor({ items: [changeSet({ id: "cs-1", changeIds: ["ch-1"] }), ch] });
+    const { toCreate, toDelete, unresolved } = computeGrantedItemReconciliation(a, resolve);
     assert.strictEqual(toDelete.length, 0);
     assert.strictEqual(toCreate.length, 1);
     assert.strictEqual(toCreate[0].name, "Claws");
@@ -81,16 +103,16 @@ console.log("computeGrantedItemReconciliation...");
         changeId: "ch-1"
     });
     assert.strictEqual(toCreate[0]._id, undefined);
+    assert.deepStrictEqual(unresolved, []);
     console.log("  ✓ Creates missing granted item, stamps grantedBy flag, strips _id");
 }
 
 {
+    const ch = change({ id: "ch-1", itemRef: "source-claws" });
     const a = actor({
         items: [
-            changeSet({
-                id: "cs-1",
-                changes: [change({ id: "ch-1", itemRef: "source-claws" })]
-            }),
+            changeSet({ id: "cs-1", changeIds: ["ch-1"] }),
+            ch,
             grantedItem({ id: "claws-instance", changeSetId: "cs-1", changeId: "ch-1", name: "Claws" })
         ]
     });
@@ -113,9 +135,11 @@ console.log("computeGrantedItemReconciliation...");
 }
 
 {
+    const ch = change({ id: "ch-1", itemRef: "source-claws" });
     const a = actor({
         items: [
-            changeSet({ id: "cs-1", changes: [change({ id: "ch-1", itemRef: "source-claws" })] }),
+            changeSet({ id: "cs-1", changeIds: ["ch-1"] }),
+            ch,
             grantedItem({ id: "claws-instance", changeSetId: "cs-1", changeId: "ch-1", name: "Claws" }),
             grantedItem({ id: "stale-bite", changeSetId: "cs-1", changeId: "ch-removed", name: "Bite" })
         ]
@@ -127,19 +151,14 @@ console.log("computeGrantedItemReconciliation...");
 }
 
 {
-    const a = actor({
-        items: [
-            changeSet({
-                id: "cs-1",
-                changes: [
-                    change({ id: "ch-1", itemRef: "source-claws" }),
-                    change({ id: "ch-2", mode: "RollTable", itemRef: "source-bite" }),
-                    change({ id: "ch-3", itemRef: undefined }),
-                    change({ id: "ch-4", kind: "Stat", itemRef: "source-bite" })
-                ]
-            })
-        ]
-    });
+    const items = [
+        changeSet({ id: "cs-1", changeIds: ["ch-1", "ch-2", "ch-3", "ch-4"] }),
+        change({ id: "ch-1", itemRef: "source-claws" }),
+        change({ id: "ch-2", mode: "RollTable", itemRef: "source-bite" }),
+        change({ id: "ch-3", itemRef: undefined }),
+        change({ id: "ch-4", kind: "Stat", itemRef: "source-bite" })
+    ];
+    const a = actor({ items });
     const { toCreate, toDelete } = computeGrantedItemReconciliation(a, resolve);
     assert.strictEqual(toCreate.length, 1);
     assert.strictEqual(toCreate[0].name, "Claws");
@@ -148,24 +167,25 @@ console.log("computeGrantedItemReconciliation...");
 }
 
 {
-    const a = actor({
-        items: [
-            changeSet({ id: "cs-1", changes: [change({ id: "ch-1", itemRef: "source-missing" })] })
-        ]
-    });
-    const { toCreate, toDelete } = computeGrantedItemReconciliation(a, resolve);
+    const ch = change({ id: "ch-1", itemRef: "source-missing" });
+    const a = actor({ items: [changeSet({ id: "cs-1", changeIds: ["ch-1"] }), ch] });
+    const { toCreate, toDelete, unresolved } = computeGrantedItemReconciliation(a, resolve);
     assert.deepStrictEqual(toCreate, []);
     assert.deepStrictEqual(toDelete, []);
-    console.log("  ✓ Silently skips when source item is unresolvable");
+    assert.strictEqual(unresolved.length, 1);
+    assert.strictEqual(unresolved[0].sourceItemId, "source-missing");
+    assert.strictEqual(unresolved[0].changeSetId, "cs-1");
+    console.log("  ✓ Reports unresolved sources (not silently dropped)");
 }
 
 {
-    const a = actor({
-        items: [
-            changeSet({ id: "cs-1", changes: [change({ id: "ch-1", itemRef: "source-claws" })] }),
-            changeSet({ id: "cs-2", changes: [change({ id: "ch-1", itemRef: "source-claws" })] })
-        ]
-    });
+    const items = [
+        changeSet({ id: "cs-1", changeIds: ["ch-cs1"] }),
+        changeSet({ id: "cs-2", changeIds: ["ch-cs2"] }),
+        change({ id: "ch-cs1", itemRef: "source-claws" }),
+        change({ id: "ch-cs2", itemRef: "source-claws" })
+    ];
+    const a = actor({ items });
     const { toCreate } = computeGrantedItemReconciliation(a, resolve);
     assert.strictEqual(toCreate.length, 2);
     const grantSources = toCreate.map((d) => d.flags["1547core"].grantedBy.changeSetId).sort();
@@ -174,14 +194,8 @@ console.log("computeGrantedItemReconciliation...");
 }
 
 {
-    const a = actor({
-        items: [
-            changeSet({
-                id: "cs-1",
-                changes: [change({ id: "ch-1", mode: "RollTable", cachedSourceItemId: "source-bite" })]
-            })
-        ]
-    });
+    const ch = change({ id: "ch-1", mode: "RollTable", cachedSourceItemId: "source-bite" });
+    const a = actor({ items: [changeSet({ id: "cs-1", changeIds: ["ch-1"] }), ch] });
     const { toCreate, toDelete } = computeGrantedItemReconciliation(a, resolve);
     assert.deepStrictEqual(toDelete, []);
     assert.strictEqual(toCreate.length, 1);
@@ -191,14 +205,8 @@ console.log("computeGrantedItemReconciliation...");
 }
 
 {
-    const a = actor({
-        items: [
-            changeSet({
-                id: "cs-1",
-                changes: [change({ id: "ch-1", mode: "RollTable" /* no cached result yet */ })]
-            })
-        ]
-    });
+    const ch = change({ id: "ch-1", mode: "RollTable" /* no cached result yet */ });
+    const a = actor({ items: [changeSet({ id: "cs-1", changeIds: ["ch-1"] }), ch] });
     const { toCreate, toDelete } = computeGrantedItemReconciliation(a, resolve);
     assert.deepStrictEqual(toCreate, []);
     assert.deepStrictEqual(toDelete, []);

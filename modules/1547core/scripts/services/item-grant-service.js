@@ -18,9 +18,12 @@
  * GM-only and gated by an options flag to prevent self-trigger recursion.
  */
 
+import { getContainerChildItems, firstRefId } from "./csb-container-helpers.mjs";
+
 const MODULE_ID = "1547core";
 const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
 const CHANGE_TEMPLATE_ID = "WsrkfjBmudnIhvEK";
+const CHANGE_CONTAINER_KEY = "ChangeDisplayer";
 const FLAG_KEY = "grantedBy";
 const RECONCILE_GUARD = "_1547core_reconciling";
 
@@ -55,14 +58,14 @@ export function computeGrantedItemReconciliation(actor, resolveSource) {
     const items = Array.from(actor?.items ?? []);
 
     for (const set of items.filter(isChangeSet)) {
-        const childChanges = Array.from(set.items ?? []).filter(isChange);
+        const childChanges = getContainerChildItems(set, actor, CHANGE_CONTAINER_KEY, CHANGE_TEMPLATE_ID);
         for (const change of childChanges) {
             const props = change.system?.props ?? {};
             if (props.Kind !== "ItemGrant") continue;
             const mode = String(props.ItemGrantMode ?? "Direct").trim();
             let sourceItemId = null;
             if (mode === "Direct") {
-                sourceItemId = props.ItemGrantRef?.[0] ?? null;
+                sourceItemId = firstRefId(props.ItemGrantRef);
             } else if (mode === "RollTable") {
                 sourceItemId = change.flags?.[MODULE_ID]?.rolledResult?.sourceItemId ?? null;
             }
@@ -88,10 +91,14 @@ export function computeGrantedItemReconciliation(actor, resolveSource) {
     }
 
     const toCreate = [];
+    const unresolved = [];
     for (const [key, target] of targetGrants) {
         if (existingGranted.has(key)) continue;
         const sourceData = resolveSource(target.sourceItemId);
-        if (!sourceData) continue;
+        if (!sourceData) {
+            unresolved.push(target);
+            continue;
+        }
         const itemData = JSON.parse(JSON.stringify(sourceData));
         delete itemData._id;
         itemData.flags = itemData.flags ?? {};
@@ -103,12 +110,13 @@ export function computeGrantedItemReconciliation(actor, resolveSource) {
         toCreate.push(itemData);
     }
 
-    return { toCreate, toDelete };
+    return { toCreate, toDelete, unresolved };
 }
 
 function defaultResolveSource(id) {
-    const source = globalThis.game?.items?.get?.(id);
-    return source ? source.toObject() : null;
+    if (!id) return null;
+    const worldItem = globalThis.game?.items?.get?.(id);
+    return worldItem ? worldItem.toObject() : null;
 }
 
 /**
@@ -120,7 +128,14 @@ export async function reconcileGrantedItems(actor, { resolveSource = defaultReso
     if (actor.type === "_template") return;
     if (!globalThis.game?.user?.isGM) return;
 
-    const { toCreate, toDelete } = computeGrantedItemReconciliation(actor, resolveSource);
+    const { toCreate, toDelete, unresolved } = computeGrantedItemReconciliation(actor, resolveSource);
+
+    if (unresolved?.length) {
+        for (const u of unresolved) {
+            console.warn(`${MODULE_ID} | ItemGrant source not resolvable: actor=${actor.name} changeSet=${u.changeSetId} change=${u.changeId} sourceItemId=${u.sourceItemId}`);
+        }
+    }
+
     if (toDelete.length === 0 && toCreate.length === 0) return;
 
     const options = { [RECONCILE_GUARD]: true };
@@ -134,22 +149,16 @@ export async function reconcileGrantedItems(actor, { resolveSource = defaultReso
 
 function shouldTriggerReconcile(item, options) {
     if (options?.[RECONCILE_GUARD]) return false;
-    if (!item?.parent || item.parent.documentName !== "Actor") return false;
-    if (isChangeSet(item)) return true;
-    // A Change item nested inside a ChangeSet: reconcile when the parent set's
-    // children change. The Change's parent in CSB is the ChangeSet item; its
-    // grandparent is the actor.
-    const grandparent = item.parent?.parent;
-    if (isChange(item) && grandparent?.documentName === "Actor") return true;
-    // Granted items themselves changing should not trigger reconcile (would
-    // loop on our own creates/deletes; guard above handles the immediate case).
-    return false;
+    // Both ChangeSets and Changes live directly on the actor (CSB does not
+    // nest Item-in-Item). Trigger when either kind is created / updated /
+    // deleted on an actor. Granted items themselves are guarded by
+    // RECONCILE_GUARD above.
+    if (item?.parent?.documentName !== "Actor") return false;
+    return isChangeSet(item) || isChange(item);
 }
 
 function actorFromItem(item) {
-    if (item?.parent?.documentName === "Actor") return item.parent;
-    if (item?.parent?.parent?.documentName === "Actor") return item.parent.parent;
-    return null;
+    return item?.parent?.documentName === "Actor" ? item.parent : null;
 }
 
 export function registerItemGrantService() {

@@ -13,9 +13,17 @@
  *   applyChange(actor, change)          — apply a single change to effective state
  */
 
+import { getContainerChildItems, firstRefId } from "./csb-container-helpers.mjs";
+
 const MODULE_ID = "1547core";
 const CACHE_KEY = "_1547core_effectiveCache";
 const APPLIED_CHANGES_KEY = "_1547core_appliedChanges";
+
+const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
+const CHANGE_TEMPLATE_ID = "WsrkfjBmudnIhvEK";
+const REQUIREMENT_TEMPLATE_ID = "L4ujYgqhGBGcoo2P";
+const CHANGE_CONTAINER_KEY = "ChangeDisplayer";
+const REQUIREMENT_CONTAINER_KEY = "RequirementsDisplayer";
 
 const PIPELINE_ORDER = ["Size", "Role", "Domain", "Motivation", "Loadout", "Quirk", "Boost"];
 
@@ -104,7 +112,7 @@ function evaluatePrimaryStatAtLeast(actor, requirement, cumulativeState) {
 }
 
 function evaluateHasSkill(actor, requirement, cumulativeState) {
-    const skillRefId = requirement.system?.props?.RequirementSkillRef?.[0];
+    const skillRefId = firstRefId(requirement.system?.props?.RequirementSkillRef);
     const minLevel = Number(requirement.system?.props?.SkillMinLevel ?? 0) || 0;
 
     if (!skillRefId) return false;
@@ -224,7 +232,7 @@ function applyPrimaryStatChange(actor, change, cumulativeState) {
 }
 
 function applySkillChange(actor, change, cumulativeState) {
-    const skillRefId = change.system?.props?.SkillRef?.[0];
+    const skillRefId = firstRefId(change.system?.props?.SkillRef);
     const delta = Number(change.system?.props?.SkillDelta ?? 0) || 0;
 
     if (!skillRefId) return;
@@ -287,7 +295,7 @@ function applyItemGrantChange(actor, change, cumulativeState) {
     const grantMode = String(change.system?.props?.ItemGrantMode ?? "Direct").trim();
 
     if (grantMode === "Direct") {
-        const itemRefId = change.system?.props?.ItemGrantRef?.[0];
+        const itemRefId = firstRefId(change.system?.props?.ItemGrantRef);
         if (itemRefId) {
             cumulativeState.grantedItems = cumulativeState.grantedItems ?? [];
             cumulativeState.grantedItems.push(itemRefId);
@@ -347,11 +355,15 @@ function isChangeSetApplicableToActorType(changeSet, actor) {
 function isChangeSetApplicable(changeSet, actor, cumulativeState) {
     if (!isChangeSetApplicableToActorType(changeSet, actor)) return false;
 
-    // Evaluate all Requirements; they must all be satisfied (AND logic)
-    const requirements = changeSet.items?.filter((item) => {
-        const template = item.system?.template ?? item.system?.templateSystemUniqueVersion;
-        return template === "L4ujYgqhGBGcoo2P";
-    }) ?? [];
+    // Evaluate all Requirements; they must all be satisfied (AND logic).
+    // Requirements live as actor-owned items linked via the ChangeSet's
+    // RequirementsDisplayer container.
+    const requirements = getContainerChildItems(
+        changeSet,
+        actor,
+        REQUIREMENT_CONTAINER_KEY,
+        REQUIREMENT_TEMPLATE_ID
+    );
 
     for (const requirement of requirements) {
         if (!evaluateRequirement(actor, requirement, cumulativeState)) {
@@ -386,7 +398,7 @@ function deriveEffectiveActorState(actor) {
     for (const group of PIPELINE_ORDER) {
         const groupChangeSets = actor.items?.filter((item) => {
             const template = item.system?.template ?? item.system?.templateSystemUniqueVersion;
-            return template === "b7A1z6cSZO4dYTKT" && String(item.system?.props?.Group ?? "").trim() === group;
+            return template === CHANGESET_TEMPLATE_ID && String(item.system?.props?.Group ?? "").trim() === group;
         }) ?? [];
 
         for (const changeSet of groupChangeSets) {
@@ -394,11 +406,15 @@ function deriveEffectiveActorState(actor) {
                 // Mark this group slot as filled
                 cumulativeState.applicableChangeSets[group] = changeSet.id;
 
-                // Apply all Changes within the set
-                const changes = changeSet.items?.filter((item) => {
-                    const template = item.system?.template ?? item.system?.templateSystemUniqueVersion;
-                    return template === "WsrkfjBmudnIhvEK";
-                }) ?? [];
+                // Apply all Changes within the set. Changes live as
+                // actor-owned items linked via the ChangeSet's
+                // ChangeDisplayer container.
+                const changes = getContainerChildItems(
+                    changeSet,
+                    actor,
+                    CHANGE_CONTAINER_KEY,
+                    CHANGE_TEMPLATE_ID
+                );
 
                 for (const change of changes) {
                     applyChange(actor, change, cumulativeState);

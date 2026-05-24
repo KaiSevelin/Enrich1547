@@ -24,9 +24,12 @@
  * namespace so we never write into CSB's flag bucket.
  */
 
+import { getContainerChildItems } from "./csb-container-helpers.mjs";
+
 const MODULE_ID = "1547core";
 const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
 const CHANGE_TEMPLATE_ID = "WsrkfjBmudnIhvEK";
+const CHANGE_CONTAINER_KEY = "ChangeDisplayer";
 const ROLLED_FLAG = "rolledResult";
 const RESOLVE_GUARD = "_1547core_rollingTables";
 
@@ -61,7 +64,8 @@ export function getCachedRoll(change) {
 export function findChangesNeedingRoll(actor) {
     const result = [];
     for (const set of Array.from(actor?.items ?? []).filter(isChangeSet)) {
-        for (const change of Array.from(set.items ?? []).filter(isChange)) {
+        const changes = getContainerChildItems(set, actor, CHANGE_CONTAINER_KEY, CHANGE_TEMPLATE_ID);
+        for (const change of changes) {
             const target = getRollTableTarget(change);
             if (!target) continue;
             const cached = getCachedRoll(change);
@@ -115,8 +119,7 @@ export async function rollChangeTables(actor) {
     inFlight.add(actor);
     try {
         for (const target of needed) {
-            const set = actor.items.get(target.changeSetId);
-            const change = set?.items?.get?.(target.changeId);
+            const change = actor.items.get(target.changeId);
             if (!change) continue;
 
             const rolled = await rollOnce(target.uuid);
@@ -142,17 +145,15 @@ export async function rollChangeTables(actor) {
 
 function shouldTrigger(item, options) {
     if (options?.[RESOLVE_GUARD]) return false;
-    if (!item?.parent || item.parent.documentName !== "Actor") {
-        // Change nested inside a ChangeSet has actor as grandparent
-        if (item?.parent?.parent?.documentName !== "Actor") return false;
-    }
+    // CSB stores Changes as actor-owned items (siblings of the ChangeSet),
+    // not nested inside the ChangeSet. Both kinds therefore have the actor
+    // as their direct parent.
+    if (item?.parent?.documentName !== "Actor") return false;
     return isChangeSet(item) || isChange(item);
 }
 
 function actorFromItem(item) {
-    if (item?.parent?.documentName === "Actor") return item.parent;
-    if (item?.parent?.parent?.documentName === "Actor") return item.parent.parent;
-    return null;
+    return item?.parent?.documentName === "Actor" ? item.parent : null;
 }
 
 export function registerRollTableResolutionService() {

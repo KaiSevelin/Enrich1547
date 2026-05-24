@@ -13,10 +13,12 @@
  */
 
 import { evaluateRequirement, getEffectiveActorCached } from "./composition-service.mjs";
+import { getContainerChildItems } from "./csb-container-helpers.mjs";
 
 const MODULE_ID = "1547core";
 const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
 const REQUIREMENT_TEMPLATE_ID = "L4ujYgqhGBGcoo2P";
+const REQUIREMENT_CONTAINER_KEY = "RequirementsDisplayer";
 const SINGLETON_GROUPS = new Set(["Size", "Role", "Domain"]);
 
 function isChangeSet(item) {
@@ -148,7 +150,7 @@ export function validateMonster(actor) {
 
     const state = getEffectiveActorCached(actor) ?? {};
     for (const set of changeSets) {
-        const requirements = set.items?.filter(isRequirement) ?? [];
+        const requirements = getContainerChildItems(set, actor, REQUIREMENT_CONTAINER_KEY, REQUIREMENT_TEMPLATE_ID);
         for (const req of requirements) {
             if (!evaluateRequirement(actor, req, state)) {
                 const predicateType = req.system?.props?.PredicateType ?? "?";

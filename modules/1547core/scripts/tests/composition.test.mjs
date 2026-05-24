@@ -341,10 +341,61 @@ console.log("\nTesting cache invalidation...");
 
 {
     const actor = createMockActor();
-    
+
     invalidateEffectiveActorCache(actor);
     assert.strictEqual(actor._1547core_effectiveCache, undefined);
     console.log("✓ Cache invalidation");
+}
+
+// ============================================================================
+// End-to-end pipeline (real CSB data shape)
+// ============================================================================
+
+console.log("\nTesting full pipeline with real CSB data shape...");
+
+{
+    // Regression for the "set.items is undefined" bug. In real Foundry, both
+    // ChangeSets and Changes live as actor-owned items; the parent set links
+    // to its children via system.props.ChangeDisplayer = { "<childId>": {...} }.
+
+    function makeItemsCollection(items) {
+        const map = new Map(items.map((i) => [i.id, i]));
+        return {
+            get: (id) => map.get(id),
+            filter: (pred) => Array.from(map.values()).filter(pred),
+            [Symbol.iterator]: () => map.values()
+        };
+    }
+
+    const sizeSet = {
+        id: "cs-size",
+        system: {
+            template: "b7A1z6cSZO4dYTKT",
+            props: {
+                Group: "Size",
+                ForTypeAny: true,
+                ChangeDisplayer: { "ch-hp": { id: "ch-hp" } }
+            }
+        }
+    };
+    const hpChange = {
+        id: "ch-hp",
+        system: {
+            template: "WsrkfjBmudnIhvEK",
+            props: { Kind: "Stat", StatTarget: "HP", StatOp: "Add", StatValue: 7 }
+        }
+    };
+    const a = {
+        id: "actor-pipeline",
+        system: { props: { TypeDropdown: "Beast", HP: 10 } },
+        items: makeItemsCollection([sizeSet, hpChange]),
+        _stats: { modifiedTime: 1 }
+    };
+
+    const state = getEffectiveActorCached(a);
+    assert.strictEqual(state.effectiveProps.HP, 17,
+        "Pipeline walker must find Change items via ChangeDisplayer linkage, not via set.items");
+    console.log("✓ Pipeline resolves child Changes via ChangeDisplayer (regression test)");
 }
 
 // ============================================================================
