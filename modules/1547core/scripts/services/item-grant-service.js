@@ -122,18 +122,24 @@ export function computeGrantedItemReconciliation(actor, resolveSource) {
     return { toCreate, toDelete, unresolved };
 }
 
-function defaultResolveSource(id) {
+function defaultResolveSource(id, actor) {
     if (!id) return null;
+    // Check the reconciling actor's own items FIRST. CSB's drop handler
+    // creates the source item directly on the open actor (as a
+    // container-scoped "ghost") when you drag into an ItemGrantRef
+    // field, so the id usually only resolves here. This also covers
+    // token-actor cases where `game.actors` doesn't enumerate the
+    // synthetic actor we're reconciling for.
+    const ownOnActor = actor?.items?.get?.(id);
+    if (ownOnActor) return ownOnActor.toObject();
+    // Then world items
     const worldItem = globalThis.game?.items?.get?.(id);
     if (worldItem) return worldItem.toObject();
-    // CSB's drop handler can produce a ref whose id points at an
-    // actor-owned item (e.g. when dragging into an ItemGrantRef field
-    // triggers a copy onto the open actor). Fall back to scanning every
-    // actor so the grant still resolves.
+    // Last resort: scan every world actor
     const actors = globalThis.game?.actors;
     if (actors) {
-        for (const actor of actors) {
-            const owned = actor.items?.get?.(id);
+        for (const other of actors) {
+            const owned = other.items?.get?.(id);
             if (owned) return owned.toObject();
         }
     }
@@ -144,9 +150,13 @@ function defaultResolveSource(id) {
  * Reconcile granted items on an actor. GM-only; no-op for non-GMs and for
  * `_template` actors.
  */
-export async function reconcileGrantedItems(actor, { resolveSource = defaultResolveSource } = {}) {
+export async function reconcileGrantedItems(actor, { resolveSource } = {}) {
     if (!actor || actor.documentName !== "Actor") return;
     if (actor.type === "_template") return;
+    // Bind the actor into the default resolver so it can check the
+    // reconciling actor's own items (where CSB's drop handler places
+    // the source).
+    if (!resolveSource) resolveSource = (id) => defaultResolveSource(id, actor);
     if (!globalThis.game?.user?.isGM) return;
 
     const { toCreate, toDelete, unresolved } = computeGrantedItemReconciliation(actor, resolveSource);
