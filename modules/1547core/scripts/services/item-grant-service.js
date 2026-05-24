@@ -116,7 +116,19 @@ export function computeGrantedItemReconciliation(actor, resolveSource) {
 function defaultResolveSource(id) {
     if (!id) return null;
     const worldItem = globalThis.game?.items?.get?.(id);
-    return worldItem ? worldItem.toObject() : null;
+    if (worldItem) return worldItem.toObject();
+    // CSB's drop handler can produce a ref whose id points at an
+    // actor-owned item (e.g. when dragging into an ItemGrantRef field
+    // triggers a copy onto the open actor). Fall back to scanning every
+    // actor so the grant still resolves.
+    const actors = globalThis.game?.actors;
+    if (actors) {
+        for (const actor of actors) {
+            const owned = actor.items?.get?.(id);
+            if (owned) return owned.toObject();
+        }
+    }
+    return null;
 }
 
 /**
