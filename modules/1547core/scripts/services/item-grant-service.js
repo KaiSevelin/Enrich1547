@@ -101,6 +101,15 @@ export function computeGrantedItemReconciliation(actor, resolveSource) {
         }
         const itemData = JSON.parse(JSON.stringify(sourceData));
         delete itemData._id;
+        // CSB uses system.container as a back-pointer that scopes the
+        // item to a parent itemContainer (e.g. an ItemGrantRef field).
+        // When that's set, the item only renders inside that container,
+        // not in the actor's main inventory panels (Weapons / Armor /
+        // etc.). Strip it so the granted copy is a free-floating
+        // inventory item.
+        if (itemData.system && itemData.system.container !== undefined) {
+            delete itemData.system.container;
+        }
         itemData.flags = itemData.flags ?? {};
         itemData.flags[MODULE_ID] = itemData.flags[MODULE_ID] ?? {};
         itemData.flags[MODULE_ID][FLAG_KEY] = {

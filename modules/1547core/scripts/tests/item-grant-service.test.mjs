@@ -213,4 +213,28 @@ console.log("computeGrantedItemReconciliation...");
     console.log("  ✓ RollTable mode without cache is a no-op (waits for resolution)");
 }
 
+{
+    // Regression: CSB stores system.container as a back-pointer that
+    // scopes an item to a parent itemContainer (e.g. an ItemGrantRef
+    // field). When present it suppresses the item from inventory panels.
+    // The reconciler must strip it so the grant becomes free-floating.
+    const containerScoped = {
+        name: "Container-scoped Source",
+        system: {
+            template: "qZCfLEYQ7egbm1B9",
+            container: "some-other-change-id",
+            props: { damage: "1d8" }
+        }
+    };
+    const resolveContainerScoped = () => ({ ...containerScoped, system: { ...containerScoped.system } });
+
+    const ch = change({ id: "ch-1", itemRef: "anything" });
+    const a = actor({ items: [changeSet({ id: "cs-1", changeIds: ["ch-1"] }), ch] });
+    const { toCreate } = computeGrantedItemReconciliation(a, resolveContainerScoped);
+    assert.strictEqual(toCreate.length, 1);
+    assert.strictEqual(toCreate[0].system.container, undefined,
+        "Granted item must have system.container stripped so it renders in inventory panels");
+    console.log("  ✓ Strips system.container from the granted copy");
+}
+
 console.log("\nAll item-grant-service tests passed.");
