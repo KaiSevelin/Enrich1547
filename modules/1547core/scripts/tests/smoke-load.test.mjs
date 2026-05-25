@@ -76,6 +76,7 @@ const COMBAT_FILES = [
     "reaction-candidates.mjs",
     "maneuver-state.mjs",
     "attack-lifecycle.mjs",
+    "lifecycle-flow.mjs",
 ];
 
 console.log("smoke-load: services/...");

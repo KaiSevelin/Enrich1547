@@ -158,6 +158,35 @@ export function normalizeRollSummary(roll) {
     };
 }
 
+/**
+ * Apply the roll's multiplier to damage / protection / crit. Returns
+ * the input unchanged when multiplier is missing or non-positive.
+ * (Note: differs from a naïve `damage *= multiplier` — protection and
+ * crit also scale.)
+ */
+export function applyMultiplier(roll) {
+    const multiplier = Number.isFinite(roll?.multiplier) && roll.multiplier > 0
+        ? roll.multiplier
+        : 1;
+    return {
+        ...roll,
+        damage: (roll?.damage ?? 0) * multiplier,
+        protection: (roll?.protection ?? 0) * multiplier,
+        crit: (roll?.crit ?? 0) * multiplier,
+    };
+}
+
+/**
+ * Walk an emitted event's `results` array and return the first entry
+ * whose value carries a `reaction` or `trigger` flag. Used to detect
+ * that a reaction-service handler claimed the event.
+ */
+export function findReactionResolution(event) {
+    return event?.results?.find(
+        (entry) => entry?.value?.reaction || entry?.value?.trigger
+    )?.value ?? null;
+}
+
 // ──────────────────────────────────────────────────────── Pending-attack tag ──
 
 export const PENDING_ATTACK_KIND = "1547core.pendingAttack";

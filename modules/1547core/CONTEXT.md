@@ -41,6 +41,25 @@ These describe how the code is shaped, not what it represents.
   new kinds require an update to the dispatcher AND to ADR-0002.
   Currently in use: every `plan*` export across
   `combat/{ammo-state,persistent-effects,hp-state,maneuver-state,attack-lifecycle}.mjs`.
+- **Phased function** — async function exported from a "flow" module
+  (e.g. `combat/lifecycle-flow.mjs`) with signature `(opts, run)`. The
+  function looks imperative — it awaits, branches on responses, can
+  throw — but it never touches Foundry directly. Instead it `await`s
+  `run({phase, patches?, event?})` at each cancellable-event boundary
+  and receives `{response?}` back. Used when emit→inspect→branch
+  semantics make the patch-returner pattern unworkable. Composable:
+  one phased function calls another by passing the same `run` through.
+  See ADR-0003.
+- **Phase** — a single `{phase, patches?, event?}` bundle a phased
+  function asks the runner to process. Patches are applied in order
+  first; then the event (if present) is emitted; then `{response}`
+  comes back. The `phase` name is debug/test-inspection only — the
+  runner doesn't dispatch on it.
+- **Effect runner** — the orchestrator-side function
+  `runPhases({phase, patches, event}) → {response?}` that bridges the
+  phased function (pure-ish control flow over data) and Foundry
+  (`applyPatch` + `emitCombatEvent`). Lives in
+  `services/combat-resolver-service.js`.
 - **Lifecycle event** — a `COMBAT_EVENTS.*` payload returned by the
   attack lifecycle in `{ events: [{ type, payload }, ...] }`. The
   orchestrator emits them via `emitCombatEvent`. Lifecycle never touches

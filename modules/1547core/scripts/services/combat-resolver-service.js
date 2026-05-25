@@ -7,47 +7,28 @@ import {
     resolveSelectedWeaponProfile,
 } from "../combat/normalisation.mjs";
 import {
-    getAllowedAmmoTypes,
-    validateAmmoCompatibility,
-    resolveLoadedAmmoForAttack,
     planLoadWeaponAmmo,
     planSpendLoadedAmmo,
-    planConsumeLoadedAmmo,
 } from "../combat/ammo-state.mjs";
 import {
     getActivePersistentEffects as getActivePersistentEffectsPure,
     planConsumePersistentEffect,
 } from "../combat/persistent-effects.mjs";
 import {
-    getActorCurrentHitPoints,
-    planApplyDamage,
-} from "../combat/hp-state.mjs";
-import {
     resolveThreatReactionActor,
-    buildOverwatchReactionCandidate,
     buildAttackReactionCandidates as buildAttackReactionCandidatesPure,
     buildThreatReactionCandidates as buildThreatReactionCandidatesPure,
 } from "../combat/reaction-candidates.mjs";
 import {
-    buildCommittedManeuverRecord,
-    planSpendActorManeuverCost,
-    planAppendCommittedManeuverState,
-} from "../combat/maneuver-state.mjs";
+    declareAttackPhased,
+    declareMovementPhased,
+    executeResolvedReactionPhased,
+    executeSafeCounterattackPhased,
+    resolveAttackOutcomePhased,
+} from "../combat/lifecycle-flow.mjs";
 import {
-    createsSafeAttack,
-    summarizeEffectData,
-    mergeModifierSummaries,
-    mergeManeuverEffects,
-    normalizeDefenseModifiers,
-    normalizeAppliedAttackModifiers,
-    collectReservedCosts,
-    normalizeRollSummary,
-    isPendingAttack,
-    actorHasEquippedArmor,
-    PENDING_ATTACK_KIND,
     buildPendingAttack as buildPendingAttackPure,
     buildPendingMove as buildPendingMovePure,
-    planApplyDefenseFollowUpState,
     planCommitPostManeuver,
     planCommitFullTurnManeuver,
 } from "../combat/attack-lifecycle.mjs";
@@ -179,93 +160,43 @@ export async function commitPostManeuver(options = {}) {
     return { ...result, commitEvent };
 }
 
-export async function declareAttack(options = {}) {
-    const pendingAttack = buildPendingAttack(options);
-    if (pendingAttack.target) {
-        await consumePersistentEffect(pendingAttack.target, "overwatch");
-    }
+// ─── Effect runner per ADR-0003 ────────────────────────────────────────────
+//
+// Drives a phased function across patch + event boundaries. The
+// phased function (in combat/lifecycle-flow.mjs) calls `runPhases`
+// at each cancellable-event boundary; this implementation applies
+// patches via the dispatcher, emits the event (if any), and returns
+// the response. Throws propagate unchanged.
 
-    const event = await emitCombatEvent(COMBAT_EVENTS.ATTACK_DECLARED, pendingAttack);
-
-    const declarationCommitted = !event.cancelled || event.reason === "reaction-triggered";
-    if (declarationCommitted && !pendingAttack.committed) {
-        await consumeLoadedAmmo({
-            actor: pendingAttack.actor,
-            weapon: pendingAttack.weapon,
-            loadedAmmo: pendingAttack.loadedAmmo,
-        });
-        pendingAttack.committed = true;
-    }
-
-    return {
-        pendingAttack,
-        event,
-        cancelled: event.cancelled,
-        reactionResolution: findReactionResolution(event),
-    };
+async function runPhases({ phase, patches = [], event = null } = {}) {
+    if (patches.length) await applyPatches(patches);
+    if (!event) return {};
+    const response = await emitCombatEvent(event.type, event.payload);
+    return { response };
 }
 
-export async function declareMovement({
-    threatEvents = [],
-    ...options
-} = {}) {
-    const pendingMove = buildPendingMove(options);
-    const movementEvent = await emitCombatEvent(COMBAT_EVENTS.MOVEMENT_STARTED, pendingMove);
-    const reactionResolutions = [];
+// Thin orchestrator wrappers binding the runner + Foundry-glue deps.
+// Public API shape preserved exactly.
 
-    for (const threatEvent of threatEvents) {
-        const threatPayload = {
-            ...pendingMove,
-            ...threatEvent,
-            mover: pendingMove.actor,
-            path: pendingMove.path,
-        };
-        if (!threatPayload.reactor) {
-            threatPayload.reactor = resolveThreatReactionActor(threatPayload);
-        }
-        if (!Array.isArray(threatPayload.reactionCandidates) || !threatPayload.reactionCandidates.length) {
-            threatPayload.reactionCandidates = buildThreatReactionCandidates(threatPayload);
-        }
-        const enteredEvent = await emitCombatEvent(COMBAT_EVENTS.THREAT_ZONE_ENTERED, threatPayload);
-        const resolution = findReactionResolution(enteredEvent);
-        if (resolution) {
-            reactionResolutions.push(resolution);
-        }
-    }
+export async function declareAttack(options = {}) {
+    return declareAttackPhased({
+        ...options,
+        normalizeWeapon,
+        buildAttackReactionCandidates,
+    }, runPhases);
+}
 
-    return {
-        pendingMove,
-        event: movementEvent,
-        reactionResolutions,
-    };
+export async function declareMovement(options = {}) {
+    return declareMovementPhased({
+        ...options,
+        buildThreatReactionCandidates,
+    }, runPhases);
 }
 
 async function executeResolvedReaction(resolution) {
-    const reaction = resolution?.reaction ?? null;
-    const effect = reaction?.effectData ?? {};
-    if (!effect.createFreeSafeAttack && !effect.createFreeSafeCounterattack) return null;
-
-    const actor = reaction?.actor ?? resolution?.actor ?? null;
-    const target = reaction?.target ?? resolution?.target ?? null;
-    const weapon = reaction?.weapon ?? null;
-    const profile = reaction?.profile ?? null;
-    if (!actor || !target || !weapon || !profile) return null;
-
-    const sourcePayload = resolution?.sourceEvent?.payload ?? {};
-    const distanceSquares = Number(sourcePayload.distanceSquares ?? sourcePayload.rangeSquares);
-
-    return declareAttack({
-        actor,
-        target,
-        targets: [target],
-        weapon: weapon.itemDocument ?? weapon,
-        profile,
-        forceSafeAttack: true,
-        extraEffectData: effect,
-        generatedByReaction: reaction.generatedByPersistentEffect ?? reaction.sourceManeuverName ?? reaction.name ?? "reaction",
-        distanceSquares: Number.isFinite(distanceSquares) ? distanceSquares : null,
-        actorConditions: sourcePayload.actorConditions,
-        targetConditions: sourcePayload.targetConditions,
+    return executeResolvedReactionPhased(resolution, runPhases, {
+        normalizeWeapon,
+        buildAttackReactionCandidates,
     });
 }
 // ─── Reaction-candidate orchestrators ─────────────────────────────────────
@@ -311,29 +242,57 @@ function buildAttackReactionCandidates({
 }
 
 
-function createPostManeuverWindowPayload({
-    side,
-    actor,
-    target,
-    pendingAttack,
-    currentCriticalPoints,
-    legalPostManeuvers,
-    selectedPostManeuver = null,
-    actorConditions = [],
-    targetConditions = [],
-} = {}) {
-    const selected = normalizeManeuver(selectedPostManeuver);
-    return {
-        id: `post-${side}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+// createPostManeuverWindowPayload moved into resolveAttackOutcomePhased
+// (data half) + decoratePostManeuverWindow below (closure half).
+// applyDefenseFollowUpState absorbed into resolveAttackOutcomePhased.
+
+export async function executeSafeCounterattack(options = {}) {
+    return executeSafeCounterattackPhased({
+        ...options,
+        getActorReactionWeapon,
+        normalizeWeapon,
+        buildAttackReactionCandidates,
+    }, runPhases);
+}
+export async function resolveAttackOutcome(options = {}) {
+    const result = await resolveAttackOutcomePhased({
+        ...options,
+        buildDefaultDefenseRollSummary,
+    }, runPhases);
+
+    // Decorate the data-only post-window payloads with the closure
+    // callbacks the HUD consumer expects. The phased function returns
+    // these as plain data so it stays pure of orchestrator concerns.
+    result.pendingPostManeuverWindows = result.pendingPostManeuverWindows.map(decoratePostManeuverWindow);
+
+    // Sync combatant.defeated separately — it's not a patch kind, and
+    // a combatant lives on game.combat, not on the actor. The phased
+    // function surfaces hitPointUpdate.isDead so we know what to set.
+    const isDead = result.hitPointUpdate?.isDead === true;
+    const targetActor = result.pendingAttack?.target ?? null;
+    if (targetActor?.id) {
+        const combatants = Array.from(game?.combat?.combatants ?? [])
+            .filter((c) => c?.actorId === targetActor.id);
+        for (const combatant of combatants) {
+            if (combatant?.update) await combatant.update({ defeated: isDead });
+        }
+    }
+
+    return result;
+}
+
+function decoratePostManeuverWindow(window) {
+    const {
         side,
         actor,
         target,
         pendingAttack,
         currentCriticalPoints,
-        legalPostManeuvers: Array.isArray(legalPostManeuvers) ? legalPostManeuvers : [],
-        selectedPostManeuver: selected,
         actorConditions,
         targetConditions,
+    } = window;
+    return {
+        ...window,
         async commitPostManeuver(selection) {
             return commitPostManeuver({
                 actor,
@@ -349,215 +308,6 @@ function createPostManeuverWindowPayload({
         passPostManeuver() {
             return null;
         },
-    };
-}
-
-// Thin wrapper around planApplyDefenseFollowUpState (combat/attack-lifecycle.mjs).
-// Preserves the original API: returns `{}` when nothing was locked,
-// otherwise `{ lockedParryingWeaponUntil: <string> }`.
-async function applyDefenseFollowUpState(pendingAttack, defenseModifiers) {
-    const { patches, result } = planApplyDefenseFollowUpState(pendingAttack, defenseModifiers);
-    if (!patches.length) return {};
-    await applyPatches(patches);
-    return { lockedParryingWeaponUntil: result.lockedParryingWeaponUntil ?? null };
-}
-export async function executeSafeCounterattack({
-    pendingAttack,
-    defenseReaction = null,
-    currentDamageTakenReaction = null,
-} = {}) {
-    const defender = pendingAttack?.target ?? null;
-    const attacker = pendingAttack?.actor ?? null;
-    if (!defender || !attacker) {
-        throw new Error("Safe counterattack is missing a defender or attacker.");
-    }
-
-    const defenseModifiers = normalizeDefenseModifiers({
-        defenseReaction,
-        damageTakenReaction: currentDamageTakenReaction,
-    });
-    if (!defenseModifiers.safeCounterattack) {
-        throw new Error("No safe counterattack is available.");
-    }
-
-    const reactionWeapon = getActorReactionWeapon(defender);
-    const reactionProfile = resolveSelectedWeaponProfile(reactionWeapon, {});
-    if (!reactionWeapon || !reactionProfile) {
-        throw new Error(`${defender.name ?? "Defender"} has no equipped weapon for a safe counterattack.`);
-    }
-
-    const distanceSquares = Number(
-        pendingAttack?.metadata?.distanceSquares ??
-        pendingAttack?.metadata?.rangeSquares
-    );
-
-    return declareAttack({
-        actor: defender,
-        target: attacker,
-        targets: [attacker],
-        weapon: reactionWeapon.itemDocument ?? reactionWeapon,
-        profile: reactionProfile,
-        forceSafeAttack: true,
-        extraEffectData: { createFreeSafeCounterattack: true },
-        generatedByReaction: currentDamageTakenReaction?.name ?? defenseReaction?.name ?? "safe-counterattack",
-        distanceSquares: Number.isFinite(distanceSquares) ? distanceSquares : null,
-        actorConditions: pendingAttack?.metadata?.targetConditions,
-        targetConditions: pendingAttack?.metadata?.actorConditions,
-    });
-}
-export async function resolveAttackOutcome({
-    pendingAttack,
-    attackRoll,
-    defenseRoll,
-    defenseReaction = null,
-    defenderPostChoice = null,
-    attackerPostChoice = null,
-    currentCriticalPoints = null,
-    currentDamageTakenReaction = null,
-} = {}) {
-    if (!pendingAttack) throw new Error("Missing pending attack.");
-    if (!isPendingAttack(pendingAttack)) {
-        throw new Error("Pending attack must be created through buildPendingAttack.");
-    }
-
-    const appliedModifiers = normalizeAppliedAttackModifiers(pendingAttack?.mergedModifiers ?? {});
-    const defenseModifiers = normalizeDefenseModifiers({
-        defenseReaction,
-        damageTakenReaction: currentDamageTakenReaction,
-    });
-    const normalizedAttackRoll = {
-        ...applyMultiplier(normalizeRollSummary(attackRoll)),
-        appliedModifiers,
-    };
-    const fallbackDefenseRoll = defenseRoll ?? (!actorHasEquippedArmor(pendingAttack?.target) ? buildDefaultDefenseRollSummary(pendingAttack) : null);
-    const baseDefenseRoll = applyMultiplier(normalizeRollSummary(fallbackDefenseRoll));
-    const normalizedDefenseRoll = {
-        ...baseDefenseRoll,
-        protection: baseDefenseRoll.protection + defenseModifiers.addArmorDice,
-        appliedModifiers: defenseModifiers,
-    };
-    const damageApplied = Math.max(
-        0,
-        normalizedAttackRoll.damage - normalizedDefenseRoll.protection - defenseModifiers.reduceDamageTaken
-    );
-    const hitPointUpdate = damageApplied > 0
-        ? await applyDamageToActorHitPoints(pendingAttack.target, damageApplied)
-        : {
-            previousHitPoints: getActorCurrentHitPoints(pendingAttack.target),
-            currentHitPoints: getActorCurrentHitPoints(pendingAttack.target),
-        };
-
-    const criticalPoints =
-        currentCriticalPoints ??
-        Math.max(0, normalizedAttackRoll.crit) +
-            Math.max(0, normalizedDefenseRoll.crit);
-
-    const defenseFollowUpState = await applyDefenseFollowUpState(pendingAttack, defenseModifiers);
-
-    const damageWindow = await emitCombatEvent(COMBAT_EVENTS.DAMAGE_APPLIED, {
-        pendingAttack,
-        attackRoll: normalizedAttackRoll,
-        defenseRoll: normalizedDefenseRoll,
-        damageApplied,
-        hitPointUpdate,
-        appliedModifiers,
-        defenseModifiers,
-        defenseFollowUpState,
-    });
-
-    const defenderPostOptions = getLegalManeuvers({
-        actor: pendingAttack.target,
-        maneuvers: pendingAttack.target ? undefined : [],
-        weapon: pendingAttack.weapon,
-        profile: pendingAttack.profile,
-        target: pendingAttack.actor,
-        timingType: "post",
-        triggerType: "post-attack",
-        currentCriticalPoints: criticalPoints,
-        actorConditions: pendingAttack.metadata?.targetConditions,
-        targetConditions: pendingAttack.metadata?.actorConditions,
-    });
-
-    const attackerPostOptions = getLegalManeuvers({
-        actor: pendingAttack.actor,
-        weapon: pendingAttack.weapon,
-        profile: pendingAttack.profile,
-        target: pendingAttack.target,
-        timingType: "post",
-        triggerType: "post-attack",
-        currentCriticalPoints: criticalPoints,
-        actorConditions: pendingAttack.metadata?.actorConditions,
-        targetConditions: pendingAttack.metadata?.targetConditions,
-    });
-
-    const pendingPostManeuverWindows = [
-        createPostManeuverWindowPayload({
-            side: "defender",
-            actor: pendingAttack.target,
-            target: pendingAttack.actor,
-            pendingAttack,
-            currentCriticalPoints: criticalPoints,
-            legalPostManeuvers: defenderPostOptions,
-            selectedPostManeuver: defenderPostChoice,
-            actorConditions: pendingAttack.metadata?.targetConditions,
-            targetConditions: pendingAttack.metadata?.actorConditions,
-        }),
-        createPostManeuverWindowPayload({
-            side: "attacker",
-            actor: pendingAttack.actor,
-            target: pendingAttack.target,
-            pendingAttack,
-            currentCriticalPoints: criticalPoints,
-            legalPostManeuvers: attackerPostOptions,
-            selectedPostManeuver: attackerPostChoice,
-            actorConditions: pendingAttack.metadata?.actorConditions,
-            targetConditions: pendingAttack.metadata?.targetConditions,
-        }),
-    ].filter((entry) => entry?.actor);
-
-    const postManeuverWindowEvents = [];
-    for (const postWindow of pendingPostManeuverWindows) {
-        postManeuverWindowEvents.push(
-            await emitCombatEvent(COMBAT_EVENTS.POST_MANEUVER_WINDOW_OPENED, postWindow)
-        );
-    }
-
-    if (!pendingAttack.committed) {
-        await consumeLoadedAmmo({
-            actor: pendingAttack.actor,
-            weapon: pendingAttack.weapon,
-            loadedAmmo: pendingAttack.loadedAmmo,
-        });
-        pendingAttack.committed = true;
-    }
-    const commitEvent = await emitCombatEvent(COMBAT_EVENTS.ACTION_COMMITTED, {
-        type: "attack",
-        pendingAttack,
-        damageApplied,
-        hitPointUpdate,
-        appliedModifiers,
-        defenseModifiers,
-        defenseFollowUpState,
-    });
-
-    return {
-        pendingAttack,
-        attackRoll: normalizedAttackRoll,
-        defenseRoll: normalizedDefenseRoll,
-        damageApplied,
-        hitPointUpdate,
-        currentCriticalPoints: criticalPoints,
-        appliedModifiers,
-        defenseModifiers,
-        defenseFollowUpState,
-        defenderPostOptions,
-        attackerPostOptions,
-        events: {
-            damageWindow,
-            commitEvent,
-            postManeuverWindowEvents,
-        },
-        pendingPostManeuverWindows,
     };
 }
 
@@ -641,12 +391,9 @@ function isWeaponSource(source) {
  * Orchestrator-side wrapper for the consume planner. Used by
  * lifecycle functions inside this file (resolveAttackOutcome,
  * commitFullTurnManeuver) that need to consume ammo as a side effect.
+ * Replaced by planConsumeLoadedAmmo called directly from the phased
+ * functions in combat/lifecycle-flow.mjs.
  */
-async function consumeLoadedAmmo({ actor, weapon, loadedAmmo }) {
-    const { patches, result } = planConsumeLoadedAmmo({ actor, weapon, loadedAmmo });
-    await applyPatches(patches);
-    return result;
-}
 
 // ────────────────────────────────────────────────── Patch dispatch ──
 //
@@ -730,25 +477,10 @@ function buildDefaultDefenseRollSummary(pendingAttack) {
     };
 }
 
-/**
- * Orchestrator wrapper: plan the HP+status patches, dispatch them,
- * then sync combatant.defeated (different document collection).
- */
-async function applyDamageToActorHitPoints(actor, damageApplied) {
-    const { patches, result } = planApplyDamage(actor, damageApplied);
-    await applyPatches(patches);
-
-    const combatants = Array.from(game?.combat?.combatants ?? [])
-        .filter((combatant) => combatant?.actorId === actor?.id);
-    for (const combatant of combatants) {
-        if (combatant?.update) await combatant.update({ defeated: result.isDead });
-    }
-
-    return {
-        previousHitPoints: result.previousHitPoints,
-        currentHitPoints: result.currentHitPoints,
-    };
-}
+// applyDamageToActorHitPoints absorbed into resolveAttackOutcomePhased.
+// The combatant.defeated sync (different doc collection from the patch
+// dispatcher) now lives in the orchestrator's resolveAttackOutcome
+// wrapper, fed by hitPointUpdate.isDead returned from the phased fn.
 
 function getStatusEffectDefinitions(keyword) {
     const normalized = String(keyword ?? "").trim().toLowerCase();
@@ -796,24 +528,7 @@ async function setActorStatusEffect(actor, keyword, active) {
     }]);
 }
 
-function applyMultiplier(roll) {
-    const multiplier = Number.isFinite(roll.multiplier) && roll.multiplier > 0
-        ? roll.multiplier
-        : 1;
-
-    return {
-        ...roll,
-        damage: roll.damage * multiplier,
-        protection: roll.protection * multiplier,
-        crit: roll.crit * multiplier,
-    };
-}
-
-function findReactionResolution(event) {
-    return event?.results?.find(
-        (entry) => entry?.value?.reaction || entry?.value?.trigger
-    )?.value ?? null;
-}
+// applyMultiplier + findReactionResolution moved to combat/attack-lifecycle.mjs.
 
 // firstFiniteNumber / hasUsableRangeBands / inferWeaponAttackType /
 // buildAttackProfilesFromWeaponProps / ACTIVE_ATTACK_PROFILE_KEYS
