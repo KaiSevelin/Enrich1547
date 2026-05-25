@@ -20,7 +20,13 @@
  * only.
  */
 
-import { isTruthyLike, normalizeManeuver } from "./normalisation.mjs";
+import {
+    isTruthyLike,
+    normalizeManeuver,
+    resolveSelectedWeaponProfile,
+} from "./normalisation.mjs";
+import { resolveLoadedAmmoForAttack } from "./ammo-state.mjs";
+import { getLegalManeuvers, evaluateManeuverLegality } from "./maneuver-legality.mjs";
 
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
@@ -148,6 +154,171 @@ export const PENDING_ATTACK_KIND = "1547core.pendingAttack";
 
 export function isPendingAttack(value) {
     return value?.kind === PENDING_ATTACK_KIND;
+}
+
+// ─────────────────────────────────────────────── Pending-attack / move builders ──
+//
+// Both are pure: no async, no mutation, no event emission. They DO accept
+// two injected dependencies (per Fork 1A live-doc descriptors + the
+// orchestrator owning the unarmed-weapon fallback):
+//
+//   normalizeWeapon(weapon, actor)              -> normalized weapon (with
+//                                                  unarmed default when needed)
+//   buildAttackReactionCandidates({ attacker, defender, pendingWeapon,
+//                                   pendingProfile, context })
+//                                              -> reaction candidate list
+//
+// The orchestrator's combat-resolver-service.js wraps these and injects
+// its own normalize-with-fallback + reaction-candidate resolver.
+
+export function buildPendingAttack({
+    actor,
+    target = null,
+    targets = null,
+    weapon,
+    profileId = null,
+    profile = null,
+    selectedPreManeuvers = [],
+    forceSafeAttack = false,
+    extraEffectData = null,
+    generatedByReaction = null,
+    normalizeWeapon,
+    buildAttackReactionCandidates,
+    ...context
+} = {}) {
+    if (!actor) throw new Error("Missing actor.");
+    if (typeof normalizeWeapon !== "function") throw new Error("buildPendingAttack: missing normalizeWeapon dep.");
+    if (typeof buildAttackReactionCandidates !== "function") throw new Error("buildPendingAttack: missing buildAttackReactionCandidates dep.");
+
+    const normalizedWeapon = normalizeWeapon(weapon, actor);
+    if (!normalizedWeapon) throw new Error("Missing weapon.");
+
+    const selectedProfile = resolveSelectedWeaponProfile(normalizedWeapon, { profile, profileId });
+    if (!selectedProfile) {
+        throw new Error(`${normalizedWeapon.name} does not have a legal attack profile.`);
+    }
+
+    const ammoState = resolveLoadedAmmoForAttack({
+        actor,
+        weapon: normalizedWeapon,
+        profile: selectedProfile,
+    });
+
+    const legalPreManeuvers = getLegalManeuvers({
+        actor,
+        weapon: normalizedWeapon,
+        profile: selectedProfile,
+        target,
+        targets,
+        timingType: "pre",
+        triggerType: "attack-declared",
+        ...context,
+    });
+
+    const selected = selectedPreManeuvers
+        .map(normalizeManeuver)
+        .filter(Boolean);
+    const extraModifiers = summarizeEffectData(extraEffectData);
+
+    const selectedEvaluations = selected.map((maneuver) =>
+        evaluateManeuverLegality(maneuver, {
+            actor,
+            weapon: normalizedWeapon,
+            profile: selectedProfile,
+            target,
+            targets,
+            timingType: "pre",
+            triggerType: "attack-declared",
+            ...context,
+        })
+    );
+
+    const illegalSelections = selectedEvaluations.filter((entry) => !entry.legal);
+    if (illegalSelections.length) {
+        const summary = illegalSelections
+            .map((entry) => `${entry.maneuver?.name}: ${entry.reasons.join(" ")}`)
+            .join("; ");
+        throw new Error(`Illegal pre-maneuver selection. ${summary}`);
+    }
+
+    return {
+        kind: PENDING_ATTACK_KIND,
+        actor,
+        target,
+        targets: Array.isArray(targets) && targets.length ? targets : [target].filter(Boolean),
+        weapon: normalizedWeapon,
+        profile: selectedProfile,
+        loadedAmmo: ammoState.loadedAmmo,
+        triggerType: "attack-declared",
+        safeAttack:
+            selected.some((maneuver) => createsSafeAttack(maneuver))
+            || forceSafeAttack
+            || extraModifiers.safeAttack,
+        selectedPreManeuvers: selected,
+        legalPreManeuvers,
+        reactionCandidates: buildAttackReactionCandidates({
+            attacker: actor,
+            defender: target,
+            pendingWeapon: normalizedWeapon,
+            pendingProfile: selectedProfile,
+            context,
+        }),
+        reservedCosts: collectReservedCosts(selected),
+        mergedModifiers: mergeModifierSummaries(mergeManeuverEffects(selected), extraModifiers),
+        metadata: {
+            ...context,
+            generatedByReaction,
+        },
+        committed: false,
+    };
+}
+
+export function buildPendingMove({
+    actor,
+    path = [],
+    selectedPreManeuvers = [],
+    forceSafeAttack = false,
+    extraEffectData = null,
+    generatedByReaction = null,
+    ...context
+} = {}) {
+    if (!actor) throw new Error("Missing actor.");
+
+    const selected = selectedPreManeuvers
+        .map(normalizeManeuver)
+        .filter(Boolean);
+    const extraModifiers = summarizeEffectData(extraEffectData);
+
+    const selectedEvaluations = selected.map((maneuver) =>
+        evaluateManeuverLegality(maneuver, {
+            actor,
+            timingType: "pre",
+            triggerType: "move-declared",
+            ...context,
+        })
+    );
+
+    const illegalSelections = selectedEvaluations.filter((entry) => !entry.legal);
+    if (illegalSelections.length) {
+        const summary = illegalSelections
+            .map((entry) => `${entry.maneuver?.name}: ${entry.reasons.join(" ")}`)
+            .join("; ");
+        throw new Error(`Illegal movement pre-maneuver selection. ${summary}`);
+    }
+
+    return {
+        actor,
+        path: Array.isArray(path) ? path : [],
+        triggerType: "move-declared",
+        selectedPreManeuvers: selected,
+        reservedCosts: collectReservedCosts(selected),
+        mergedModifiers: mergeModifierSummaries(mergeManeuverEffects(selected), extraModifiers),
+        metadata: {
+            ...context,
+            generatedByReaction,
+        },
+        committed: false,
+    };
 }
 
 // ─────────────────────────────────────────────────────────── Misc actor probes ──

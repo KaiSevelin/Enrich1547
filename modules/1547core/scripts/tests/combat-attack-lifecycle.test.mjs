@@ -239,4 +239,118 @@ console.log("\nmaneuver-state.planAppendCommittedManeuverState...");
     console.log("  ✓ no patches when record has no id");
 }
 
+// ────────────────────────────────────────── buildPendingAttack ──
+
+console.log("\nattack-lifecycle.buildPendingAttack (with injected deps)...");
+
+function fakeWeapon({ id = "w1", name = "Sword", attackType = "melee" } = {}) {
+    return {
+        id, _id: id, name,
+        attackProfiles: [{ id: "default", name: "Default", attackType, dice: ["Heavy"], allowedAmmoTypes: [] }],
+        activeAttackProfileKey: "Attack",
+        usesAmmo: false,
+        loadedAmmoId: null,
+        ammoType: "", ammoCapacity: 0, ammoLoaded: 0,
+        equipped: true,
+    };
+}
+function fakeActor({ id = "a1", name = "Hero" } = {}) {
+    return {
+        id, name,
+        items: { get: () => null, contents: [] },
+        system: { props: {} },
+        flags: {},
+    };
+}
+
+{
+    // Happy path
+    const weapon = fakeWeapon();
+    const actor = fakeActor();
+    const target = fakeActor({ id: "t1", name: "Goblin" });
+
+    const pa = al.buildPendingAttack({
+        actor,
+        target,
+        weapon,
+        normalizeWeapon: (w, a) => w,  // already normalised in fixture
+        buildAttackReactionCandidates: () => [{ id: "react-1", name: "Parry" }],
+    });
+
+    assert.strictEqual(pa.kind, al.PENDING_ATTACK_KIND);
+    assert.strictEqual(pa.actor, actor);
+    assert.strictEqual(pa.target, target);
+    assert.strictEqual(pa.weapon, weapon);
+    assert.strictEqual(pa.profile.id, "default");
+    assert.strictEqual(pa.safeAttack, false);
+    assert.strictEqual(pa.committed, false);
+    assert.deepStrictEqual(pa.reactionCandidates, [{ id: "react-1", name: "Parry" }]);
+    console.log("  ✓ happy path: returns PendingAttack with PENDING_ATTACK_KIND tag + injected reactionCandidates");
+}
+
+{
+    // Missing deps throw clearly
+    assert.throws(
+        () => al.buildPendingAttack({ actor: fakeActor(), weapon: fakeWeapon() }),
+        /missing normalizeWeapon dep/
+    );
+    assert.throws(
+        () => al.buildPendingAttack({
+            actor: fakeActor(),
+            weapon: fakeWeapon(),
+            normalizeWeapon: (w) => w,
+        }),
+        /missing buildAttackReactionCandidates dep/
+    );
+    console.log("  ✓ missing deps throw explicit errors");
+}
+
+{
+    // forceSafeAttack flips the descriptor
+    const pa = al.buildPendingAttack({
+        actor: fakeActor(),
+        weapon: fakeWeapon(),
+        forceSafeAttack: true,
+        normalizeWeapon: (w) => w,
+        buildAttackReactionCandidates: () => [],
+    });
+    assert.strictEqual(pa.safeAttack, true);
+    console.log("  ✓ forceSafeAttack propagates to descriptor");
+}
+
+{
+    // No-profile weapon throws
+    const wpn = { id: "w", name: "Useless", attackProfiles: [] };
+    assert.throws(
+        () => al.buildPendingAttack({
+            actor: fakeActor(),
+            weapon: wpn,
+            normalizeWeapon: (w) => w,
+            buildAttackReactionCandidates: () => [],
+        }),
+        /does not have a legal attack profile/
+    );
+    console.log("  ✓ weapon with no profiles throws");
+}
+
+console.log("\nattack-lifecycle.buildPendingMove...");
+{
+    const actor = fakeActor();
+    const pm = al.buildPendingMove({
+        actor,
+        path: [[0, 0], [1, 0]],
+    });
+    assert.strictEqual(pm.actor, actor);
+    assert.strictEqual(pm.triggerType, "move-declared");
+    assert.deepStrictEqual(pm.path, [[0, 0], [1, 0]]);
+    assert.deepStrictEqual(pm.selectedPreManeuvers, []);
+    assert.strictEqual(pm.committed, false);
+    console.log("  ✓ basic move descriptor");
+}
+
+{
+    assert.throws(() => al.buildPendingMove({}), /Missing actor/);
+    console.log("  ✓ throws without actor");
+}
+
 console.log("\nAll attack-lifecycle + maneuver-state tests passed.");

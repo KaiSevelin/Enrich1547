@@ -56,6 +56,8 @@ import {
     isPendingAttack,
     actorHasEquippedArmor,
     PENDING_ATTACK_KIND,
+    buildPendingAttack as buildPendingAttackPure,
+    buildPendingMove as buildPendingMovePure,
 } from "../combat/attack-lifecycle.mjs";
 
 const MODULE_ID = "1547core";
@@ -132,150 +134,21 @@ export function registerCombatResolverService() {
     };
 }
 
-export function buildPendingAttack({
-    actor,
-    target = null,
-    targets = null,
-    weapon,
-    profileId = null,
-    profile = null,
-    selectedPreManeuvers = [],
-    forceSafeAttack = false,
-    extraEffectData = null,
-    generatedByReaction = null,
-    ...context
-} = {}) {
-    const normalizedWeapon = normalizeWeapon(weapon, actor);
-    if (!actor) throw new Error("Missing actor.");
-    if (!normalizedWeapon) throw new Error("Missing weapon.");
-
-    const selectedProfile = resolveSelectedWeaponProfile(normalizedWeapon, {
-        profile,
-        profileId,
+// Thin wrappers around the pure builders in combat/attack-lifecycle.mjs.
+// The pure versions require two Foundry-side helpers as deps:
+//   - normalizeWeapon (with unarmed-default fallback, defined below)
+//   - buildAttackReactionCandidates (resolves reaction weapon via
+//     getActorReactionWeapon, defined below)
+export function buildPendingAttack(options = {}) {
+    return buildPendingAttackPure({
+        ...options,
+        normalizeWeapon,
+        buildAttackReactionCandidates,
     });
-
-    if (!selectedProfile) {
-        throw new Error(`${normalizedWeapon.name} does not have a legal attack profile.`);
-    }
-
-    const ammoState = resolveLoadedAmmoForAttack({
-        actor,
-        weapon: normalizedWeapon,
-        profile: selectedProfile,
-    });
-
-    const legalPreManeuvers = getLegalManeuvers({
-        actor,
-        weapon: normalizedWeapon,
-        profile: selectedProfile,
-        target,
-        targets,
-        timingType: "pre",
-        triggerType: "attack-declared",
-        ...context,
-    });
-
-    const selected = selectedPreManeuvers
-        .map(normalizeManeuver)
-        .filter(Boolean);
-    const extraModifiers = summarizeEffectData(extraEffectData);
-
-    const selectedEvaluations = selected.map((maneuver) =>
-        evaluateManeuverLegality(maneuver, {
-            actor,
-            weapon: normalizedWeapon,
-            profile: selectedProfile,
-            target,
-            targets,
-            timingType: "pre",
-            triggerType: "attack-declared",
-            ...context,
-        })
-    );
-
-    const illegalSelections = selectedEvaluations.filter((entry) => !entry.legal);
-    if (illegalSelections.length) {
-        const summary = illegalSelections
-            .map((entry) => `${entry.maneuver?.name}: ${entry.reasons.join(" ")}`)
-            .join("; ");
-        throw new Error(`Illegal pre-maneuver selection. ${summary}`);
-    }
-
-    return {
-        kind: PENDING_ATTACK_KIND,
-        actor,
-        target,
-        targets: Array.isArray(targets) && targets.length ? targets : [target].filter(Boolean),
-        weapon: normalizedWeapon,
-        profile: selectedProfile,
-        loadedAmmo: ammoState.loadedAmmo,
-        triggerType: "attack-declared",
-        safeAttack: selected.some((maneuver) => createsSafeAttack(maneuver)) || forceSafeAttack || extraModifiers.safeAttack,
-        selectedPreManeuvers: selected,
-        legalPreManeuvers,
-        reactionCandidates: buildAttackReactionCandidates({
-            attacker: actor,
-            defender: target,
-            pendingWeapon: normalizedWeapon,
-            pendingProfile: selectedProfile,
-            context,
-        }),
-        reservedCosts: collectReservedCosts(selected),
-        mergedModifiers: mergeModifierSummaries(mergeManeuverEffects(selected), extraModifiers),
-        metadata: {
-            ...context,
-            generatedByReaction,
-        },
-        committed: false,
-    };
 }
 
-export function buildPendingMove({
-    actor,
-    path = [],
-    selectedPreManeuvers = [],
-    forceSafeAttack = false,
-    extraEffectData = null,
-    generatedByReaction = null,
-    ...context
-} = {}) {
-    if (!actor) throw new Error("Missing actor.");
-
-    const selected = selectedPreManeuvers
-        .map(normalizeManeuver)
-        .filter(Boolean);
-    const extraModifiers = summarizeEffectData(extraEffectData);
-
-    const selectedEvaluations = selected.map((maneuver) =>
-        evaluateManeuverLegality(maneuver, {
-            actor,
-            timingType: "pre",
-            triggerType: "move-declared",
-            ...context,
-        })
-    );
-
-    const illegalSelections = selectedEvaluations.filter((entry) => !entry.legal);
-    if (illegalSelections.length) {
-        const summary = illegalSelections
-            .map((entry) => `${entry.maneuver?.name}: ${entry.reasons.join(" ")}`)
-            .join("; ");
-        throw new Error(`Illegal movement pre-maneuver selection. ${summary}`);
-    }
-
-    return {
-        actor,
-        path: Array.isArray(path) ? path : [],
-        triggerType: "move-declared",
-        selectedPreManeuvers: selected,
-        reservedCosts: collectReservedCosts(selected),
-        mergedModifiers: mergeModifierSummaries(mergeManeuverEffects(selected), extraModifiers),
-        metadata: {
-            ...context,
-            generatedByReaction,
-        },
-        committed: false,
-    };
+export function buildPendingMove(options = {}) {
+    return buildPendingMovePure(options);
 }
 
 
