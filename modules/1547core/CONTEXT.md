@@ -36,9 +36,11 @@ These describe how the code is shaped, not what it represents.
   mutation. Shape: `{ kind: "actor.update" | "item.update" |
   "actor.setFlag" | "actor.statusEffect", ...args }`. Produced by
   patch-returner modules; applied by the orchestrator's
-  `applyPatch(patch)` dispatcher. First patch-returner shipped:
-  `combat/ammo-state.mjs` (see `services/combat-resolver-service.js`
-  for the dispatcher).
+  `applyPatch(patch)` dispatcher in
+  `services/combat-resolver-service.js`. The patch shape is closed —
+  new kinds require an update to the dispatcher AND to ADR-0002.
+  Currently in use: every `plan*` export across
+  `combat/{ammo-state,persistent-effects,hp-state,maneuver-state,attack-lifecycle}.mjs`.
 - **Lifecycle event** — a `COMBAT_EVENTS.*` payload returned by the
   attack lifecycle in `{ events: [{ type, payload }, ...] }`. The
   orchestrator emits them via `emitCombatEvent`. Lifecycle never touches
@@ -87,12 +89,14 @@ Authored against `docs/specs/combat-spec-v2.md`,
   pre-maneuvers, legal pre-maneuvers, reaction candidates, modifier
   summary, reserved costs. Flag kind:
   `"1547core.pendingAttack"`.
-- **Attack lifecycle** — pure-compute flow from `buildPendingAttack`
-  through `resolveAttackOutcome` and `commitPostManeuver`. Returns
-  events + patches; never touches Foundry directly. (Lives in
-  `services/combat-resolver-service.js` today; carve-up to
-  `combat/attack-lifecycle.mjs` is planned — see
-  architecture-review-2026-05-25.)
+- **Attack lifecycle** — the pure-compute flow that produces
+  PendingAttack descriptors, evaluates outcomes, and plans the patches +
+  events needed to commit a turn. Lives in
+  `combat/attack-lifecycle.mjs` (~550 lines, pure: no `game.*`,
+  no `Hooks`, no `async`). The orchestrator in
+  `services/combat-resolver-service.js` wraps it and applies the
+  returned patches / emits the returned events. See ADR-0002 for the
+  full carve-up.
 - **Pool** — array of dice tokens (e.g. `["Heavy", "Heavy",
   "Penetration"]`) built per attacker and defender. Built in
   `combat/pool-builder.mjs`; resolved against opposing pool in
@@ -105,10 +109,37 @@ Authored against `docs/specs/combat-spec-v2.md`,
   (`ATTACK_DECLARED`/`THREAT_ZONE_ENTERED`); waits for actor selection
   with a timeout. Lives in `services/reaction-service.js`.
 - **Persistent effect** — actor-flag–tracked status that fires per
-  trigger (overwatch is the canonical example). Read/consume API on
-  the combat-resolver service.
+  trigger (overwatch is the canonical example). Read via
+  `combat/persistent-effects.mjs#getActivePersistentEffects`; consume
+  via `planConsumePersistentEffect` (patch-returner).
 - **Safe attack** — counter-attack window that follows a successful
   defensive reaction. Free of normal action-economy cost.
+
+### Combat module layout (post-ADR-0002)
+
+Pure / patch-returner modules under `scripts/combat/`:
+
+| Module | Role |
+|---|---|
+| `normalisation.mjs` | Canonical descriptor shape for weapons / ammo / armor / maneuvers + range-band math + ref / parser utilities. |
+| `maneuver-legality.mjs` | 9-gate legality evaluator. `getLegalManeuvers`, `evaluateManeuverLegality`. |
+| `ammo-state.mjs` | Pure helpers (`resolveLoadedAmmoForAttack`, `validateAmmoCompatibility`, `getAllowedAmmoTypes`) + patch-returners (`planLoadWeaponAmmo`, `planSpendLoadedAmmo`, `planConsumeLoadedAmmo`). |
+| `persistent-effects.mjs` | `getActivePersistentEffects` + `planConsumePersistentEffect`. |
+| `hp-state.mjs` | `getActorCurrentHitPoints` + `planApplyDamage` (HP patch + 3 status-effect patches). |
+| `reaction-candidates.mjs` | Pure builders for threat / overwatch / attack reaction candidates. |
+| `maneuver-state.mjs` | `buildCommittedManeuverRecord` (pure) + `planSpendActorManeuverCost` + `planAppendCommittedManeuverState`. |
+| `attack-lifecycle.mjs` | Pure attack-lifecycle: `buildPendingAttack`, `buildPendingMove`, `planApplyDefenseFollowUpState`, `planCommitPostManeuver`, `planCommitFullTurnManeuver`, plus all modifier-summary helpers, `actorHasEquippedArmor`, `PENDING_ATTACK_KIND`, `isPendingAttack`, `normalizeRollSummary`. |
+| `resolver.mjs` | Pure damage math (existed pre-carve-up). |
+| `pool-builder.mjs` | Pure dice-pool construction (existed pre-carve-up). |
+
+Orchestrator in `services/`:
+
+| Module | Role |
+|---|---|
+| `combat-resolver-service.js` | Foundry-glue orchestrator (~900 lines): patch dispatcher, public combat API, hook registration, `normalizeWeapon` unarmed-fallback wrapper, status-effect mutator, and the imperative event flows (`declareAttack`, `declareMovement`, `resolveAttackOutcome`, `executeResolvedReaction`, `executeSafeCounterattack`) that have cancellable-event semantics making them unsuitable for the patch-returner pattern. |
+| `combat-events.js` | Thin enum + wrapper over `event-bus.js`. |
+| `event-bus.js` | Generic priority-ordered pub/sub. |
+| `reaction-service.js` | Reaction-window orchestration. Listens on combat events; opens windows; emits `REACTION_RESOLVED`. |
 
 ## Subsystem-specific terms
 
