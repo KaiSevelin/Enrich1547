@@ -493,7 +493,11 @@ async function upsertWorldItems(docs) {
     }
 
     if (toUpdate.length > 0) {
-        await Item.updateDocuments(toUpdate);
+        // recursive:false → Foundry force-replaces `system` instead of
+        // recursive-merging it. Required when an item's CSB template
+        // differs between the source data and the existing world item
+        // (Foundry sees that as a type change and refuses a merge).
+        await Item.updateDocuments(toUpdate, { recursive: false });
     }
 
     return {
@@ -528,7 +532,8 @@ async function upsertWorldActors(docs) {
     }
 
     if (toUpdate.length > 0) {
-        await Actor.updateDocuments(toUpdate);
+        // recursive:false — see comment in upsertWorldItems above.
+        await Actor.updateDocuments(toUpdate, { recursive: false });
     }
 
     return {
