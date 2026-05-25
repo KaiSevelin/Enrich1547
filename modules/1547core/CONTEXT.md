@@ -36,7 +36,9 @@ These describe how the code is shaped, not what it represents.
   mutation. Shape: `{ kind: "actor.update" | "item.update" |
   "actor.setFlag" | "actor.statusEffect", ...args }`. Produced by
   patch-returner modules; applied by the orchestrator's
-  `applyPatch(patch)` dispatcher.
+  `applyPatch(patch)` dispatcher. First patch-returner shipped:
+  `combat/ammo-state.mjs` (see `services/combat-resolver-service.js`
+  for the dispatcher).
 - **Lifecycle event** — a `COMBAT_EVENTS.*` payload returned by the
   attack lifecycle in `{ events: [{ type, payload }, ...] }`. The
   orchestrator emits them via `emitCombatEvent`. Lifecycle never touches

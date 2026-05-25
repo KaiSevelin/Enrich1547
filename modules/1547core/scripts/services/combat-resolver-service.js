@@ -16,6 +16,14 @@ import {
     normalizeAmmoItem,
     normalizeWeapon as normalizeWeaponPure,
 } from "../combat/normalisation.mjs";
+import {
+    getAllowedAmmoTypes,
+    validateAmmoCompatibility,
+    resolveLoadedAmmoForAttack,
+    planLoadWeaponAmmo,
+    planSpendLoadedAmmo,
+    planConsumeLoadedAmmo,
+} from "../combat/ammo-state.mjs";
 
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
@@ -888,90 +896,23 @@ export async function resolveAttackOutcome({
     };
 }
 
-export async function loadWeaponAmmo({
-    actor,
-    weapon,
-    ammoItem,
-    ammoItemId = null,
-    profile = null,
-    profileId = null,
-} = {}) {
-    const normalizedWeapon = normalizeWeapon(weapon, actor);
-    if (!actor) throw new Error("Missing actor.");
-    if (!normalizedWeapon) throw new Error("Missing weapon.");
+// ─────────────────────────────────────── Ammo orchestrators (patch dispatch) ──
+//
+// These functions preserve the existing public API shape — same inputs,
+// same return values, still async — but delegate computation to the
+// pure planners in combat/ammo-state.mjs and apply the returned patches
+// here. The pure planners can be unit-tested with literal fixtures.
 
-    const selectedProfile = resolveSelectedWeaponProfile(normalizedWeapon, {
-        profile,
-        profileId,
-    });
-
-    const resolvedAmmo = normalizeAmmoItem(ammoItem ?? actor?.items?.get?.(ammoItemId) ?? null);
-    if (!resolvedAmmo) throw new Error("Missing ammunition.");
-
-    const validation = validateAmmoCompatibility({
-        actor,
-        weapon: normalizedWeapon,
-        profile: selectedProfile,
-        ammo: resolvedAmmo,
-        requireQuantity: true,
-    });
-
-    if (!validation.valid) {
-        throw new Error(validation.reason);
-    }
-
-    const weaponItem = normalizedWeapon.itemDocument;
-    const ammoDocument = resolvedAmmo.itemDocument ?? actor?.items?.get?.(resolvedAmmo._id) ?? null;
-    if (!weaponItem?.update) {
-        throw new Error("Weapon item is not an updatable actor item.");
-    }
-    if (!ammoDocument?.update) {
-        throw new Error("Ammunition item is not an updatable actor item.");
-    }
-
-    const currentQuantity = firstFiniteNumber([
-        ammoDocument.system?.props?.Quantity,
-        resolvedAmmo.quantity,
-    ]) ?? 0;
-    if (currentQuantity < 1) {
-        throw new Error(`${resolvedAmmo.name || "Ammunition"} is out of ammunition.`);
-    }
-
-    const nextQuantity = Math.max(0, currentQuantity - 1);
-    const nextLoaded = Math.min(Math.max(1, normalizedWeapon.ammoCapacity ?? 1), 1);
-
-    await ammoDocument.update({
-        "system.props.Quantity": nextQuantity,
-    });
-
-    await weaponItem.update({
-        "system.props.LoadedAmmoId": resolvedAmmo._id,
-        "system.props.AmmoLoaded": nextLoaded,
-    });
-
-    return {
-        weaponId: normalizedWeapon._id,
-        loadedAmmoId: resolvedAmmo._id,
-        ammoLoaded: nextLoaded,
-        remainingQuantity: nextQuantity,
-    };
+export async function loadWeaponAmmo(options = {}) {
+    const { patches, result } = planLoadWeaponAmmo(options);
+    await applyPatches(patches);
+    return result;
 }
 
-export async function spendLoadedAmmo({ actor, weapon, loadedAmmo = null } = {}) {
-    const normalizedWeapon = normalizeWeapon(weapon, actor);
-    if (!normalizedWeapon) return null;
-
-    const resolvedLoadedAmmo = loadedAmmo ?? normalizeAmmoItem(
-        actor?.items?.get?.(normalizedWeapon.loadedAmmoId ?? "")
-        ?? weapon?.parent?.items?.get?.(normalizedWeapon.loadedAmmoId ?? "")
-        ?? null
-    );
-
-    return consumeLoadedAmmo({
-        actor,
-        weapon: normalizedWeapon,
-        loadedAmmo: resolvedLoadedAmmo,
-    });
+export async function spendLoadedAmmo(options = {}) {
+    const { patches, result } = planSpendLoadedAmmo(options);
+    await applyPatches(patches);
+    return result;
 }
 
 export async function swapLoadedAmmo(options = {}) {
@@ -1051,116 +992,63 @@ function getProfileFromActiveKey(attackProfiles, activeKey) {
     return attackProfiles[profileIndex] ?? null;
 }
 
-function resolveLoadedAmmoForAttack({ actor, weapon, profile }) {
-    if (!weapon?.usesAmmo) {
-        return {
-            loadedAmmo: null,
-            allowedAmmoTypes: getAllowedAmmoTypes(weapon, profile),
-        };
-    }
-
-    const loadedAmmoId = String(weapon.loadedAmmoId ?? "").trim();
-    if (!loadedAmmoId) {
-        throw new Error(`${weapon.name} requires loaded ammunition.`);
-    }
-
-    const ammoItem = actor?.items?.get?.(loadedAmmoId) ?? null;
-    const loadedAmmo = normalizeAmmoItem(ammoItem);
-    if (!loadedAmmo) {
-        throw new Error(`${weapon.name} does not have a valid loaded ammunition item.`);
-    }
-
-    const validation = validateAmmoCompatibility({
-        actor,
-        weapon,
-        profile,
-        ammo: loadedAmmo,
-        requireQuantity: false,
-    });
-
-    if (!validation.valid) {
-        throw new Error(validation.reason);
-    }
-
-    return {
-        loadedAmmo,
-        allowedAmmoTypes: validation.allowedAmmoTypes,
-    };
-}
-
-function validateAmmoCompatibility({ weapon, profile, ammo, requireQuantity = true }) {
-    const allowedAmmoTypes = getAllowedAmmoTypes(weapon, profile);
-    if (!ammo) {
-        return {
-            valid: false,
-            reason: `${weapon?.name ?? "Weapon"} is missing ammunition.`,
-            allowedAmmoTypes,
-        };
-    }
-
-    if (requireQuantity && (ammo.quantity ?? 0) < 1) {
-        return {
-            valid: false,
-            reason: `${ammo.name || "Loaded ammunition"} is out of ammunition.`,
-            allowedAmmoTypes,
-        };
-    }
-
-    if (!allowedAmmoTypes.length) {
-        return {
-            valid: false,
-            reason: `${weapon?.name ?? "Weapon"} does not define any compatible ammunition types.`,
-            allowedAmmoTypes,
-        };
-    }
-
-    if (!allowedAmmoTypes.includes(ammo.ammoType)) {
-        return {
-            valid: false,
-            reason: `${ammo.name || "Loaded ammunition"} is not compatible with ${weapon?.name ?? "this weapon"}.`,
-            allowedAmmoTypes,
-        };
-    }
-
-    return {
-        valid: true,
-        reason: "",
-        allowedAmmoTypes,
-    };
-}
-
-function getAllowedAmmoTypes(weapon, profile) {
-    const profileAllowed = Array.isArray(profile?.allowedAmmoTypes)
-        ? profile.allowedAmmoTypes.filter(Boolean)
-        : [];
-    if (profileAllowed.length) return profileAllowed;
-
-    const weaponAmmoType = String(weapon?.ammoType ?? "").trim();
-    return weaponAmmoType ? [weaponAmmoType] : [];
-}
-
+/**
+ * Orchestrator-side wrapper for the consume planner. Used by
+ * lifecycle functions inside this file (resolveAttackOutcome,
+ * commitFullTurnManeuver) that need to consume ammo as a side effect.
+ */
 async function consumeLoadedAmmo({ actor, weapon, loadedAmmo }) {
-    if (!weapon?.usesAmmo) return null;
+    const { patches, result } = planConsumeLoadedAmmo({ actor, weapon, loadedAmmo });
+    await applyPatches(patches);
+    return result;
+}
 
-    const weaponItem = weapon.itemDocument ?? actor?.items?.get?.(weapon._id) ?? null;
-    if (!weaponItem?.update) return null;
+// ────────────────────────────────────────────────── Patch dispatch ──
+//
+// Patch-returner modules (ammo-state.mjs, future ammo/hp/persistent-
+// effects modules) return arrays of patch descriptors. This dispatcher
+// is the single place that translates them into Foundry mutations.
+// Per CONTEXT.md + ADR-0001, patch shape is a discriminated union:
+//
+//   { kind: "actor.update",       actorId, data }
+//   { kind: "item.update",        actorId, itemId, data }
+//   { kind: "actor.setFlag",      actorId, scope, key, value }
+//   { kind: "actor.statusEffect", actorId, keyword, active }
+//
+// Only "item.update" is consumed today (by ammo-state); the others are
+// in the shape contract so later patch-returner modules slot in.
 
-    const currentLoaded = firstFiniteNumber([
-        weaponItem.system?.props?.AmmoLoaded,
-        weapon.ammoLoaded,
-    ]) ?? 0;
-    const nextLoaded = Math.max(0, currentLoaded - 1);
+async function applyPatch(patch) {
+    if (!patch || !patch.kind) return;
+    switch (patch.kind) {
+        case "actor.update": {
+            const actor = game.actors?.get?.(patch.actorId);
+            if (actor?.update) await actor.update(patch.data);
+            return;
+        }
+        case "item.update": {
+            const actor = game.actors?.get?.(patch.actorId);
+            const item = actor?.items?.get?.(patch.itemId);
+            if (item?.update) await item.update(patch.data);
+            return;
+        }
+        case "actor.setFlag": {
+            const actor = game.actors?.get?.(patch.actorId);
+            if (actor?.setFlag) await actor.setFlag(patch.scope, patch.key, patch.value);
+            return;
+        }
+        case "actor.statusEffect": {
+            const actor = game.actors?.get?.(patch.actorId);
+            if (actor) await setActorStatusEffect(actor, patch.keyword, patch.active);
+            return;
+        }
+        default:
+            console.warn(`${MODULE_ID} | applyPatch: unknown patch kind "${patch.kind}"`);
+    }
+}
 
-    await weaponItem.update({
-        "system.props.AmmoLoaded": nextLoaded,
-        "system.props.LoadedAmmoId": nextLoaded > 0 ? (loadedAmmo?._id ?? "") : "",
-    });
-
-    return {
-        ammoItemId: loadedAmmo?._id ?? null,
-        remainingQuantity: loadedAmmo?.quantity ?? null,
-        ammoLoaded: nextLoaded,
-    };
+async function applyPatches(patches = []) {
+    for (const patch of patches) await applyPatch(patch);
 }
 
 async function spendActorManeuverCost(actor, maneuver) {
