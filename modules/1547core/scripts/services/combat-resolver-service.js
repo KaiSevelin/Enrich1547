@@ -15,6 +15,7 @@ import {
     normalizeManeuver,
     normalizeAmmoItem,
     normalizeWeapon as normalizeWeaponPure,
+    resolveSelectedWeaponProfile,
 } from "../combat/normalisation.mjs";
 import {
     getAllowedAmmoTypes,
@@ -24,6 +25,20 @@ import {
     planSpendLoadedAmmo,
     planConsumeLoadedAmmo,
 } from "../combat/ammo-state.mjs";
+import {
+    getActivePersistentEffects as getActivePersistentEffectsPure,
+    planConsumePersistentEffect,
+} from "../combat/persistent-effects.mjs";
+import {
+    getActorCurrentHitPoints,
+    planApplyDamage,
+} from "../combat/hp-state.mjs";
+import {
+    resolveThreatReactionActor,
+    buildOverwatchReactionCandidate,
+    buildAttackReactionCandidates as buildAttackReactionCandidatesPure,
+    buildThreatReactionCandidates as buildThreatReactionCandidatesPure,
+} from "../combat/reaction-candidates.mjs";
 
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
@@ -246,37 +261,16 @@ export function buildPendingMove({
 }
 
 
-export function getActivePersistentEffects(actor, {
-    isCombatActive = false,
-    fullTurnAvailable = false,
-} = {}) {
-    const active = Array.isArray(actor?.flags?.[MODULE_ID]?.activeFullTurnManeuvers)
-        ? actor.flags[MODULE_ID].activeFullTurnManeuvers
-        : [];
+// ─── Persistent effects (thin wrappers around combat/persistent-effects.mjs) ──
 
-    return active.filter((entry) => {
-        const effectType = String(entry?.createsPersistentEffect ?? "").trim();
-        if (!effectType) return false;
-        const duration = String(entry?.duration ?? "").trim().toLowerCase();
-        if (isCombatActive && fullTurnAvailable && ["until-side-active-again", "until-side-active-again-or-consumed"].includes(duration)) {
-            return false;
-        }
-        return true;
-    });
+export function getActivePersistentEffects(actor, options = {}) {
+    return getActivePersistentEffectsPure(actor, options);
 }
 
 export async function consumePersistentEffect(actor, effectType) {
-    const normalizedType = String(effectType ?? "").trim();
-    if (!actor?.update || !normalizedType) return false;
-    const currentFlags = actor.flags?.[MODULE_ID] ?? {};
-    const active = Array.isArray(currentFlags.activeFullTurnManeuvers) ? currentFlags.activeFullTurnManeuvers : [];
-    const targetIndex = active.findIndex((entry) => String(entry?.createsPersistentEffect ?? "").trim() === normalizedType);
-    if (targetIndex < 0) return false;
-    const nextActive = [...active.slice(0, targetIndex), ...active.slice(targetIndex + 1)];
-    await actor.update({
-        [`flags.${MODULE_ID}.activeFullTurnManeuvers`]: nextActive,
-    });
-    return true;
+    const { patches, result } = planConsumePersistentEffect(actor, effectType);
+    await applyPatches(patches);
+    return result.consumed;
 }export async function commitFullTurnManeuver({
     actor,
     maneuver,
@@ -496,113 +490,25 @@ async function executeResolvedReaction(resolution) {
         targetConditions: sourcePayload.targetConditions,
     });
 }
+// ─── Reaction-candidate orchestrators ─────────────────────────────────────
+//
+// The pure builders in combat/reaction-candidates.mjs require pre-resolved
+// reactionWeapon / reactionProfile / activePersistentEffects. These tiny
+// wrappers do the Foundry-side resolution then delegate.
+
 function buildThreatReactionCandidates(threatPayload = {}) {
     const reactor = resolveThreatReactionActor(threatPayload);
     if (!reactor) return [];
-
     const reactionWeapon = getActorReactionWeapon(reactor);
     const reactionProfile = resolveSelectedWeaponProfile(reactionWeapon, {});
-    const mover = threatPayload.mover ?? null;
-    const distanceSquares = Number(threatPayload.distanceSquares ?? threatPayload.rangeSquares);
-
-    const candidates = getLegalManeuvers({
-        actor: reactor,
-        weapon: reactionWeapon,
-        profile: reactionProfile,
-        target: mover,
-        targets: mover ? [mover] : [],
-        timingType: "reaction",
-        triggerType: "threat-zone-entered",
-        distanceSquares,
-        rangeSquares: distanceSquares,
-        actorConditions: threatPayload.actorConditions,
-        targetConditions: threatPayload.targetConditions,
-    });
-
-    const overwatchCandidate = buildOverwatchReactionCandidate({
+    const activePersistentEffects = getActivePersistentEffects(reactor, {});
+    return buildThreatReactionCandidatesPure({
+        threatPayload,
         reactor,
-        mover,
         reactionWeapon,
         reactionProfile,
-        threatPayload,
+        activePersistentEffects,
     });
-
-    if (overwatchCandidate) {
-        candidates.push(overwatchCandidate);
-    }
-
-    return candidates;
-}
-
-function resolveThreatReactionActor(threatPayload = {}) {
-    const moverId = threatPayload.mover?.id ?? null;
-    const explicitCandidates = [
-        threatPayload.reactor,
-        threatPayload.reactingActor,
-        threatPayload.threatActor,
-        threatPayload.zoneOwner,
-        threatPayload.owner,
-        threatPayload.sourceActor,
-        threatPayload.token?.actor ?? null,
-    ].filter(Boolean);
-
-    for (const candidate of explicitCandidates) {
-        if (!candidate) continue;
-        if (moverId && candidate.id === moverId) continue;
-        return candidate;
-    }
-
-    if (threatPayload.actor && (!moverId || threatPayload.actor.id !== moverId)) {
-        return threatPayload.actor;
-    }
-
-    return null;
-}
-
-function buildOverwatchReactionCandidate({
-    reactor,
-    mover,
-    reactionWeapon,
-    reactionProfile,
-    threatPayload = {},
-} = {}) {
-    if (!reactor || !mover) return null;
-
-    const activeOverwatch = getActivePersistentEffects(reactor, {}).find((entry) => String(entry?.createsPersistentEffect ?? "").trim() === "overwatch");
-    if (!activeOverwatch) return null;
-    if (!reactionWeapon || !reactionProfile) return null;
-
-    const profileType = String(reactionProfile.attackType ?? "").trim().toLowerCase();
-    if (!["ranged", "thrown"].includes(profileType)) return null;
-
-    const distanceSquares = Number(threatPayload.distanceSquares ?? threatPayload.rangeSquares);
-    if (Number.isFinite(distanceSquares)) {
-        const withinMax = Number.isFinite(Number(reactionWeapon.maxRange)) ? distanceSquares <= Number(reactionWeapon.maxRange) : true;
-        if (!withinMax) return null;
-    }
-
-    return {
-        id: `overwatch:${reactor.id}:${reactionWeapon._id ?? reactionWeapon.id ?? reactionWeapon.name}`,
-        name: "Overwatch Attack",
-        type: "reaction",
-        usage: "Persistent effect",
-        triggerType: "threat-zone-entered",
-        generatedByPersistentEffect: "overwatch",
-        sourceManeuverName: activeOverwatch.name ?? "Overwatch",
-        actor: reactor,
-        target: mover,
-        weapon: reactionWeapon,
-        profile: reactionProfile,
-        effectData: {
-            ...(activeOverwatch.effectData ?? {}),
-            createFreeSafeAttack: true,
-            addMainDice: Math.max(1, Number(activeOverwatch.effectData?.addMainDice ?? 1) || 1),
-        },
-        reasons: [],
-        legal: true,
-        CostType: null,
-        CostAmount: 0,
-    };
 }
 
 function buildAttackReactionCandidates({
@@ -613,25 +519,16 @@ function buildAttackReactionCandidates({
     context = {},
 } = {}) {
     if (!defender) return [];
-
     const reactionWeapon = getActorReactionWeapon(defender);
     const reactionProfile = resolveSelectedWeaponProfile(reactionWeapon, {});
-
-    return getLegalManeuvers({
-        actor: defender,
-        weapon: reactionWeapon,
-        profile: reactionProfile,
-        target: attacker,
-        timingType: "reaction",
-        triggerType: "attack-declared",
-        distanceSquares: context.distanceSquares,
-        rangeSquares: context.rangeSquares,
-        actorConditions: context.targetConditions,
-        targetConditions: context.actorConditions,
-        incomingAttack: {
-            weapon: pendingWeapon,
-            profile: pendingProfile,
-        },
+    return buildAttackReactionCandidatesPure({
+        attacker,
+        defender,
+        pendingWeapon,
+        pendingProfile,
+        reactionWeapon,
+        reactionProfile,
+        context,
     });
 }
 
@@ -971,26 +868,6 @@ function isWeaponSource(source) {
     return source.folder === "Weapons";
 }
 
-function resolveSelectedWeaponProfile(weapon, { profile = null, profileId = null } = {}) {
-    if (profile) return profile;
-
-    const attackProfiles = Array.isArray(weapon?.attackProfiles) ? weapon.attackProfiles : [];
-    if (!attackProfiles.length) return null;
-
-    if (profileId) {
-        const explicitProfile = attackProfiles.find((entry) => entry?.id === profileId);
-        if (explicitProfile) return explicitProfile;
-    }
-
-    const activeProfile = getProfileFromActiveKey(attackProfiles, weapon?.activeAttackProfileKey);
-    return activeProfile ?? attackProfiles[0] ?? null;
-}
-
-function getProfileFromActiveKey(attackProfiles, activeKey) {
-    const profileIndex = ACTIVE_ATTACK_PROFILE_KEYS.indexOf(String(activeKey ?? "").trim());
-    if (profileIndex < 0) return null;
-    return attackProfiles[profileIndex] ?? null;
-}
 
 /**
  * Orchestrator-side wrapper for the consume planner. Used by
@@ -1221,34 +1098,23 @@ function buildDefaultDefenseRollSummary(pendingAttack) {
     };
 }
 
-function getActorCurrentHitPoints(actor) {
-    const props = actor?.system?.props ?? {};
-    return firstFiniteNumber([
-        props?.CurrentHitPoints,
-        props?.HitPoints,
-        props?.HP,
-        props?.CurrentHP,
-    ]) ?? 0;
-}
-
+/**
+ * Orchestrator wrapper: plan the HP+status patches, dispatch them,
+ * then sync combatant.defeated (different document collection).
+ */
 async function applyDamageToActorHitPoints(actor, damageApplied) {
-    if (!actor?.update) {
-        return {
-            previousHitPoints: null,
-            currentHitPoints: null,
-        };
+    const { patches, result } = planApplyDamage(actor, damageApplied);
+    await applyPatches(patches);
+
+    const combatants = Array.from(game?.combat?.combatants ?? [])
+        .filter((combatant) => combatant?.actorId === actor?.id);
+    for (const combatant of combatants) {
+        if (combatant?.update) await combatant.update({ defeated: result.isDead });
     }
 
-    const previousHitPoints = getActorCurrentHitPoints(actor);
-    const currentHitPoints = Math.max(0, previousHitPoints - Math.max(0, Number(damageApplied) || 0));
-    await actor.update({
-        "system.props.CurrentHitPoints": currentHitPoints,
-    });
-    await syncActorHitPointStates(actor, currentHitPoints);
-
     return {
-        previousHitPoints,
-        currentHitPoints,
+        previousHitPoints: result.previousHitPoints,
+        currentHitPoints: result.currentHitPoints,
     };
 }
 
@@ -1298,22 +1164,6 @@ async function setActorStatusEffect(actor, keyword, active) {
     }]);
 }
 
-async function syncActorHitPointStates(actor, currentHitPoints) {
-    const safeHitPoints = Number(currentHitPoints ?? 0) || 0;
-    const isDead = safeHitPoints <= 0;
-    const isUnconscious = !isDead && safeHitPoints <= 1;
-
-    await setActorStatusEffect(actor, "dead", isDead);
-    await setActorStatusEffect(actor, "defeated", isDead);
-    await setActorStatusEffect(actor, "unconscious", isUnconscious);
-
-    const combatants = Array.from(game?.combat?.combatants ?? []).filter((combatant) => combatant?.actorId === actor?.id);
-    for (const combatant of combatants) {
-        if (combatant?.update) {
-            await combatant.update({ defeated: isDead });
-        }
-    }
-}
 function normalizeRollSummary(roll) {
     const summary = roll ?? {};
     return {

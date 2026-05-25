@@ -78,6 +78,23 @@ export function inferWeaponAttackType(source = {}, props = {}, sourceProfile = n
     return "melee";
 }
 
+/**
+ * Pick the active attack profile for a normalised weapon. Returns the
+ * explicitly-passed profile, an id match, the active-key slot's profile,
+ * or the first profile. `null` when the weapon has no profiles at all.
+ */
+export function resolveSelectedWeaponProfile(weapon, { profile = null, profileId = null } = {}) {
+    if (profile) return profile;
+    const attackProfiles = Array.isArray(weapon?.attackProfiles) ? weapon.attackProfiles : [];
+    if (!attackProfiles.length) return null;
+    if (profileId) {
+        const explicit = attackProfiles.find((entry) => entry?.id === profileId);
+        if (explicit) return explicit;
+    }
+    const idx = ACTIVE_ATTACK_PROFILE_KEYS.indexOf(String(weapon?.activeAttackProfileKey ?? "").trim());
+    return (idx >= 0 ? attackProfiles[idx] : null) ?? attackProfiles[0] ?? null;
+}
+
 export function buildAttackProfilesFromWeaponProps(source = {}, props = {}) {
     const sourceProfiles = Array.isArray(source?.attackProfiles) ? source.attackProfiles : [];
     return ACTIVE_ATTACK_PROFILE_KEYS.map((key, index) => {
