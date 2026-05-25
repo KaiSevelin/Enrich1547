@@ -33,7 +33,7 @@ Hooks.once("init", () => {
     );
     void runImportedModuleStep(
         "registerManeuverLegalityService",
-        () => import("./services/maneuver-legality-service.js"),
+        () => import("./combat/maneuver-legality.mjs"),
         (module) => module.registerManeuverLegalityService()
     );
     void runImportedModuleStep(

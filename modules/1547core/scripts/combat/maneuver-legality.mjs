@@ -4,7 +4,7 @@
     normalizeAmmoItem,
     normalizeArmor,
     isTruthyLike,
-} from "../combat/normalisation.mjs";
+} from "./normalisation.mjs";
 
 // firstFiniteNumber stays local here because it filters negative values
 // (Number.isFinite && >= 0); combat/normalisation.mjs exports a variant

@@ -98,7 +98,7 @@ Authored against `docs/specs/combat-spec-v2.md`,
 - **Maneuver** — ability used during combat with a timing
   (`pre`/`reaction`/`post`/`full-turn`), trigger, resource cost,
   weapon/armor/range gates. Legal subset evaluated by
-  `services/maneuver-legality-service.js` against a context.
+  `combat/maneuver-legality.mjs` against a context.
 - **Reaction window** — opened by combat events
   (`ATTACK_DECLARED`/`THREAT_ZONE_ENTERED`); waits for actor selection
   with a timeout. Lives in `services/reaction-service.js`.

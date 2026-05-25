@@ -6,7 +6,7 @@ import assert from "assert";
  * The module is pure (no Foundry globals, no game.*, no Hooks), so these
  * tests are literal fixture-driven. The aim is to lock in the canonical
  * descriptor shapes that combat-resolver-service and
- * maneuver-legality-service both consume, so a future tweak in one can't
+ * combat/maneuver-legality.mjs both consume, so a future tweak in one can't
  * silently break the other.
  */
 

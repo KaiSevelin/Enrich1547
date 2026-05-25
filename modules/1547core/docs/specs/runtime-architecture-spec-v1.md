@@ -236,7 +236,7 @@ It should be treated as authoritative for committed combat transitions.
 
 It should avoid taking on HUD-specific concerns.
 
-### [maneuver-legality-service.js](/c:/temp/Enrich%201547/modules/1547core/scripts/services/maneuver-legality-service.js)
+### [combat/maneuver-legality.mjs](/c:/temp/Enrich%201547/modules/1547core/scripts/combat/maneuver-legality.mjs)
 
 This service owns maneuver legality evaluation.
 

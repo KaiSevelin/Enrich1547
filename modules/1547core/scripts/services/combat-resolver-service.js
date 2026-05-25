@@ -1,5 +1,5 @@
 ﻿import { COMBAT_EVENTS, emitCombatEvent, onCombatEvent } from "./combat-events.js";
-import { evaluateManeuverLegality, getLegalManeuvers } from "./maneuver-legality-service.js";
+import { evaluateManeuverLegality, getLegalManeuvers } from "../combat/maneuver-legality.mjs";
 import { buildDefenderPool } from "../combat/pool-builder.mjs";
 import {
     parseJsonString,

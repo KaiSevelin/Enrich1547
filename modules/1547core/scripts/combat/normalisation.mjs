@@ -10,10 +10,12 @@
  * range-band math that joins them.
  *
  * Replaces duplicated copies that previously lived in both
- * combat-resolver-service.js and maneuver-legality-service.js. Where the
- * two old copies differed in field set, this module takes the SUPERSET
- * so both callers get the richer descriptor (extra fields are harmless
- * for callers that don't read them).
+ * combat-resolver-service.js and (the original)
+ * services/maneuver-legality-service.js (since moved to
+ * combat/maneuver-legality.mjs). Where the two old copies differed in
+ * field set, this module takes the SUPERSET so both callers get the
+ * richer descriptor (extra fields are harmless for callers that don't
+ * read them).
  *
  * Where the two old copies differed in null-handling (normalizeWeapon),
  * this module follows the legality-service contract: returns `null` for
