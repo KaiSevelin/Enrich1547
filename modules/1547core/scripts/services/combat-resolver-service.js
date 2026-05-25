@@ -2,18 +2,7 @@
 import { evaluateManeuverLegality, getLegalManeuvers } from "../combat/maneuver-legality.mjs";
 import { buildDefenderPool } from "../combat/pool-builder.mjs";
 import {
-    parseJsonString,
-    parseCommaList,
-    isTruthyLike,
-    firstFiniteNumber,
-    hasUsableRangeBands,
-    inferWeaponAttackType,
-    buildAttackProfilesFromWeaponProps,
-    resolveAmmoRangeSpec,
-    normalizeRangeBands,
-    applyAmmoRangeEffects,
     normalizeManeuver,
-    normalizeAmmoItem,
     normalizeWeapon as normalizeWeaponPure,
     resolveSelectedWeaponProfile,
 } from "../combat/normalisation.mjs";
@@ -826,54 +815,12 @@ function findReactionResolution(event) {
     )?.value ?? null;
 }
 
-function firstFiniteNumber(values) {
-    for (const value of values) {
-        const numeric = Number(value);
-        if (Number.isFinite(numeric) && numeric >= 0) return numeric;
-    }
-    return null;
-}
-
-const ACTIVE_ATTACK_PROFILE_KEYS = ["Attack", "AttackB", "AttackC"];
-
-function hasUsableRangeBands(rangeBands = {}) {
-    return [rangeBands.shortRange, rangeBands.longRange, rangeBands.maxRange]
-        .some((value) => Number.isFinite(Number(value)) && Number(value) > 0);
-}
-
-function inferWeaponAttackType(source = {}, props = {}, sourceProfile = null) {
-    const explicitType = String(sourceProfile?.attackType ?? "").trim().toLowerCase();
-    if (explicitType) return explicitType;
-
-    const groups = Array.isArray(source?.groups) ? source.groups.map((entry) => String(entry ?? "").trim().toLowerCase()) : [];
-    const category = String(source?.category ?? props?.WeaponType ?? "").trim().toLowerCase();
-    const usesAmmo = isTruthyLike(props?.UsesAmmo) || source?.usesAmmo === true;
-
-    if (category === "thrown" || groups.includes("thrownweapon")) return "thrown";
-    if (usesAmmo || groups.includes("rangedweapon") || ["bow", "crossbow", "firearm"].includes(category)) return "ranged";
-    return "melee";
-}
-
-function buildAttackProfilesFromWeaponProps(source = {}, props = {}) {
-    const sourceProfiles = Array.isArray(source?.attackProfiles) ? source.attackProfiles : [];
-    return ACTIVE_ATTACK_PROFILE_KEYS.map((key, index) => {
-        const formula = String(props?.[key] ?? "").trim();
-        if (!formula) return null;
-        const sourceProfile = sourceProfiles[index] ?? null;
-        const allowedAmmoText = String(props?.[key + "Ammo"] ?? "").trim();
-        return {
-            id: sourceProfile?.id ?? (index === 0 ? "default" : key.toLowerCase()),
-            name: sourceProfile?.name ?? (index === 0 ? "Default" : "Alternative " + index),
-            attackType: inferWeaponAttackType(source, props, sourceProfile),
-            dice: Array.isArray(sourceProfile?.dice) ? [...sourceProfile.dice] : [],
-            tags: Array.isArray(sourceProfile?.tags) ? [...sourceProfile.tags] : [],
-            allowedAmmoTypes: Array.isArray(sourceProfile?.allowedAmmoTypes)
-                ? [...sourceProfile.allowedAmmoTypes]
-                : (allowedAmmoText ? allowedAmmoText.split(",").map((entry) => entry.trim()).filter(Boolean) : []),
-            targetCount: Number(sourceProfile?.targetCount ?? 1) || 1,
-        };
-    }).filter(Boolean);
-}
+// firstFiniteNumber / hasUsableRangeBands / inferWeaponAttackType /
+// buildAttackProfilesFromWeaponProps / ACTIVE_ATTACK_PROFILE_KEYS
+// used to live here but are now in combat/normalisation.mjs. They
+// were dead duplicates that lingered after the step-1 carve-up;
+// combined with the new imports they cause a "already declared"
+// SyntaxError under live module loading. Removed.
 
 
 
