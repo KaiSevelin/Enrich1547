@@ -58,6 +58,9 @@ import {
     PENDING_ATTACK_KIND,
     buildPendingAttack as buildPendingAttackPure,
     buildPendingMove as buildPendingMovePure,
+    planApplyDefenseFollowUpState,
+    planCommitPostManeuver,
+    planCommitFullTurnManeuver,
 } from "../combat/attack-lifecycle.mjs";
 
 const MODULE_ID = "1547core";
@@ -162,134 +165,29 @@ export async function consumePersistentEffect(actor, effectType) {
     const { patches, result } = planConsumePersistentEffect(actor, effectType);
     await applyPatches(patches);
     return result.consumed;
-}export async function commitFullTurnManeuver({
-    actor,
-    maneuver,
-    weapon = null,
-    profile = null,
-    profileId = null,
-    target = null,
-    targets = null,
-    reservedResources = {},
-    usedManeuvers = [],
-    hasVisibleAlly = false,
-    actorConditions = [],
-    targetConditions = [],
-    distanceSquares = null,
-    rangeSquares = null,
-    currentCriticalPoints = null,
-    metadata = {},
-} = {}) {
-    const selectedManeuver = normalizeManeuver(maneuver);
-    if (!actor) throw new Error("Missing actor.");
-    if (!selectedManeuver) throw new Error("Missing maneuver.");
-
-    const normalizedWeapon = normalizeWeapon(weapon, actor);
-    const selectedProfile = resolveSelectedWeaponProfile(normalizedWeapon, {
-        profile,
-        profileId,
+}
+// Thin orchestrator wrapper. Pure compute → patches → events.
+export async function commitFullTurnManeuver(options = {}) {
+    const { patches, events, result } = planCommitFullTurnManeuver({
+        ...options,
+        normalizeWeapon,
     });
-
-    const evaluation = evaluateManeuverLegality(selectedManeuver, {
-        actor,
-        weapon: normalizedWeapon,
-        profile: selectedProfile,
-        target,
-        targets,
-        timingType: "full-turn",
-        triggerType: "full-turn-activation",
-        fullTurnAvailable: metadata.fullTurnAvailable,
-        reservedResources,
-        usedManeuvers,
-        hasVisibleAlly,
-        actorConditions,
-        targetConditions,
-        distanceSquares,
-        rangeSquares,
-        currentCriticalPoints,
-    });
-
-    if (!evaluation.legal) {
-        throw new Error(evaluation.reasons?.[0] || "This full-turn maneuver is not currently legal.");
+    await applyPatches(patches);
+    let commitEvent = null;
+    for (const evt of events) {
+        commitEvent = await emitCombatEvent(evt.type, evt.payload);
     }
-
-    await spendActorManeuverCost(actor, selectedManeuver);
-
-    if (metadata.isCombatActive === true) {
-        await actor.update({
-            "system.props.FullTurnAvailable": false
-        });
-    }
-
-    const record = buildCommittedManeuverRecord(selectedManeuver);
-    await appendCommittedManeuverState(actor, record);
-
-    const commitEvent = await emitCombatEvent(COMBAT_EVENTS.ACTION_COMMITTED, {
-        type: "full-turn",
-        actor,
-        maneuver: selectedManeuver,
-        weapon: normalizedWeapon,
-        profile: selectedProfile,
-        target,
-        targets,
-        metadata,
-        record,
-    });
-
-    return {
-        maneuver: selectedManeuver,
-        record,
-        commitEvent,
-    };
+    return { ...result, commitEvent };
 }
 
-export async function commitPostManeuver({
-    actor,
-    maneuver,
-    pendingAttack,
-    side = "attacker",
-    target = null,
-    currentCriticalPoints = null,
-    actorConditions = [],
-    targetConditions = [],
-} = {}) {
-    const selectedManeuver = normalizeManeuver(maneuver);
-    if (!actor) throw new Error("Missing actor.");
-    if (!selectedManeuver) throw new Error("Missing maneuver.");
-    if (!pendingAttack) throw new Error("Missing pending attack.");
-
-    const evaluation = evaluateManeuverLegality(selectedManeuver, {
-        actor,
-        weapon: pendingAttack.weapon,
-        profile: pendingAttack.profile,
-        target,
-        timingType: "post",
-        triggerType: "post-attack",
-        currentCriticalPoints,
-        actorConditions,
-        targetConditions,
-    });
-
-    if (!evaluation.legal) {
-        throw new Error(evaluation.reasons?.[0] || "This post maneuver is not currently legal.");
+export async function commitPostManeuver(options = {}) {
+    const { patches, events, result } = planCommitPostManeuver(options);
+    await applyPatches(patches);
+    let commitEvent = null;
+    for (const evt of events) {
+        commitEvent = await emitCombatEvent(evt.type, evt.payload);
     }
-
-    await spendActorManeuverCost(actor, selectedManeuver);
-
-    const commitEvent = await emitCombatEvent(COMBAT_EVENTS.ACTION_COMMITTED, {
-        type: "post-maneuver",
-        side,
-        actor,
-        target,
-        pendingAttack,
-        maneuver: selectedManeuver,
-        currentCriticalPoints,
-    });
-
-    return {
-        maneuver: selectedManeuver,
-        commitEvent,
-    };
+    return { ...result, commitEvent };
 }
 
 export async function declareAttack(options = {}) {
@@ -465,24 +363,14 @@ function createPostManeuverWindowPayload({
     };
 }
 
+// Thin wrapper around planApplyDefenseFollowUpState (combat/attack-lifecycle.mjs).
+// Preserves the original API: returns `{}` when nothing was locked,
+// otherwise `{ lockedParryingWeaponUntil: <string> }`.
 async function applyDefenseFollowUpState(pendingAttack, defenseModifiers) {
-    const defender = pendingAttack?.target ?? null;
-    if (!defender?.update) return {};
-
-    const updates = {};
-    const lockedUntil = String(defenseModifiers?.lockParryingWeaponUntil ?? "").trim();
-    if (lockedUntil) {
-        updates[`flags.${MODULE_ID}.defenseState`] = {
-            lockedParryingWeaponUntil: lockedUntil,
-            updatedAt: Date.now(),
-        };
-    }
-
-    if (!Object.keys(updates).length) return {};
-    await defender.update(updates);
-    return {
-        lockedParryingWeaponUntil: lockedUntil || null,
-    };
+    const { patches, result } = planApplyDefenseFollowUpState(pendingAttack, defenseModifiers);
+    if (!patches.length) return {};
+    await applyPatches(patches);
+    return { lockedParryingWeaponUntil: result.lockedParryingWeaponUntil ?? null };
 }
 export async function executeSafeCounterattack({
     pendingAttack,

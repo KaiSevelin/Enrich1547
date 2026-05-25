@@ -353,4 +353,152 @@ console.log("\nattack-lifecycle.buildPendingMove...");
     console.log("  ✓ throws without actor");
 }
 
+// ────────────────────────────────────────── planApplyDefenseFollowUpState ──
+
+console.log("\nattack-lifecycle.planApplyDefenseFollowUpState...");
+
+{
+    const out = al.planApplyDefenseFollowUpState(
+        { target: { id: "d1" } },
+        { lockParryingWeaponUntil: "endOfTurn" }
+    );
+    assert.strictEqual(out.patches.length, 1);
+    assert.strictEqual(out.patches[0].kind, "actor.update");
+    assert.strictEqual(out.patches[0].actorId, "d1");
+    assert.strictEqual(
+        out.patches[0].data["flags.1547core.defenseState"].lockedParryingWeaponUntil,
+        "endOfTurn"
+    );
+    assert.ok(typeof out.patches[0].data["flags.1547core.defenseState"].updatedAt === "number");
+    assert.strictEqual(out.result.lockedParryingWeaponUntil, "endOfTurn");
+    console.log("  ✓ produces an actor.update patch with the lock + timestamp");
+}
+
+{
+    const out = al.planApplyDefenseFollowUpState({ target: { id: "d1" } }, {});
+    assert.deepStrictEqual(out, { patches: [], result: {} },
+        "no lock specified: no patches");
+    console.log("  ✓ no lock: no patches");
+}
+
+{
+    const out = al.planApplyDefenseFollowUpState({ target: null }, { lockParryingWeaponUntil: "endOfTurn" });
+    assert.deepStrictEqual(out, { patches: [], result: {} },
+        "no defender: defensive no-op");
+    console.log("  ✓ no defender: defensive no-op");
+}
+
+// ────────────────────────────────────────── planCommitPostManeuver ──
+
+console.log("\nattack-lifecycle.planCommitPostManeuver...");
+
+{
+    // Build a maneuver that passes legality (the simplest: no constraints)
+    const maneuver = { _id: "m-post", name: "Riposte", type: "post", triggerType: "post-attack" };
+    const actor = fakeActor();
+    const target = fakeActor({ id: "t1" });
+    const pendingAttack = {
+        kind: al.PENDING_ATTACK_KIND,
+        actor, target,
+        weapon: fakeWeapon(),
+        profile: { id: "default", attackType: "melee" },
+    };
+
+    const out = al.planCommitPostManeuver({
+        actor, maneuver, pendingAttack, side: "defender", target,
+    });
+
+    assert.strictEqual(out.result.maneuver.id, "m-post");
+    assert.strictEqual(out.events.length, 1);
+    assert.strictEqual(out.events[0].type, "combat:action-committed");
+    assert.strictEqual(out.events[0].payload.type, "post-maneuver");
+    assert.strictEqual(out.events[0].payload.side, "defender");
+    console.log("  ✓ returns ACTION_COMMITTED event + maneuver result");
+}
+
+{
+    assert.throws(
+        () => al.planCommitPostManeuver({ actor: fakeActor(), maneuver: null }),
+        /Missing maneuver/
+    );
+    assert.throws(
+        () => al.planCommitPostManeuver({ actor: null, maneuver: { name: "m" } }),
+        /Missing actor/
+    );
+    console.log("  ✓ throws on missing actor / maneuver / pendingAttack");
+}
+
+// ────────────────────────────────────────── planCommitFullTurnManeuver ──
+
+console.log("\nattack-lifecycle.planCommitFullTurnManeuver...");
+
+{
+    const maneuver = {
+        _id: "m-ft",
+        name: "Charge",
+        type: "full-turn",
+        triggerType: "full-turn-activation",
+        CostType: "StaminaPoints",
+        CostAmount: 2,
+        effectData: { duration: "until-consumed" },
+    };
+    const actor = {
+        id: "a-ft",
+        name: "Hero",
+        items: { get: () => null, contents: [] },
+        system: { props: { StaminaPoints: 5 } },
+        flags: { "1547core": { activeFullTurnManeuvers: [] } },
+    };
+
+    const out = al.planCommitFullTurnManeuver({
+        actor,
+        maneuver,
+        metadata: { fullTurnAvailable: true, isCombatActive: true },
+        normalizeWeapon: () => null,  // no weapon needed for this maneuver
+    });
+
+    // Expect: cost patch + FullTurnAvailable patch + append-record patch
+    assert.strictEqual(out.patches.length, 3);
+    assert.strictEqual(out.patches[0].data["system.props.StaminaPoints"], 3, "cost spend");
+    assert.strictEqual(out.patches[1].data["system.props.FullTurnAvailable"], false, "FullTurnAvailable flipped");
+    assert.ok(out.patches[2].data["flags.1547core.activeFullTurnManeuvers"], "record appended");
+
+    assert.strictEqual(out.events.length, 1);
+    assert.strictEqual(out.events[0].type, "combat:action-committed");
+    assert.strictEqual(out.events[0].payload.type, "full-turn");
+    assert.strictEqual(out.events[0].payload.record.id, "m-ft");
+    assert.strictEqual(out.result.maneuver.id, "m-ft");
+    console.log("  ✓ produces 3 patches (cost + FullTurnAvailable + append) + ACTION_COMMITTED event");
+}
+
+{
+    // isCombatActive: false → no FullTurnAvailable patch
+    const maneuver = {
+        _id: "m-ft", name: "Charge", type: "full-turn", triggerType: "full-turn-activation",
+    };
+    const actor = {
+        id: "a-ft",
+        items: { get: () => null, contents: [] },
+        system: { props: {} },
+        flags: {},
+    };
+    const out = al.planCommitFullTurnManeuver({
+        actor, maneuver,
+        metadata: { fullTurnAvailable: true, isCombatActive: false },
+        normalizeWeapon: () => null,
+    });
+    // No cost, no FullTurnAvailable patch, but the append record patch
+    assert.strictEqual(out.patches.length, 1);
+    assert.ok(out.patches[0].data["flags.1547core.activeFullTurnManeuvers"]);
+    console.log("  ✓ isCombatActive:false: skips the FullTurnAvailable patch");
+}
+
+{
+    assert.throws(
+        () => al.planCommitFullTurnManeuver({ actor: fakeActor(), maneuver: { name: "m" } }),
+        /missing normalizeWeapon dep/
+    );
+    console.log("  ✓ throws on missing normalizeWeapon dep");
+}
+
 console.log("\nAll attack-lifecycle + maneuver-state tests passed.");

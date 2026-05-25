@@ -27,6 +27,16 @@ import {
 } from "./normalisation.mjs";
 import { resolveLoadedAmmoForAttack } from "./ammo-state.mjs";
 import { getLegalManeuvers, evaluateManeuverLegality } from "./maneuver-legality.mjs";
+import {
+    buildCommittedManeuverRecord,
+    planSpendActorManeuverCost,
+    planAppendCommittedManeuverState,
+} from "./maneuver-state.mjs";
+// COMBAT_EVENTS is a pure enum — importing it doesn't drag in any
+// Foundry deps. The orchestrator does the actual emitCombatEvent call.
+import { COMBAT_EVENTS } from "../services/combat-events.js";
+
+const MODULE_ID_LOWER = "1547core";
 
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
@@ -347,4 +357,196 @@ export function actorHasEquippedArmor(actor) {
         const equipped = isTruthyLike(props?.Equipped) || sourceData?.equipped === true;
         return isArmor && equipped;
     });
+}
+
+// ─────────────────────────────────────────── Defense follow-up state ──
+
+/**
+ * Compute the actor.update patch needed to record any defense-reaction
+ * follow-up state (currently: parrying-weapon lock). Returns
+ * `{ patches: [], result: {} }` when there's nothing to record.
+ */
+export function planApplyDefenseFollowUpState(pendingAttack, defenseModifiers) {
+    const defender = pendingAttack?.target ?? null;
+    if (!defender?.id) return { patches: [], result: {} };
+
+    const lockedUntil = String(defenseModifiers?.lockParryingWeaponUntil ?? "").trim();
+    if (!lockedUntil) return { patches: [], result: {} };
+
+    return {
+        patches: [
+            {
+                kind: "actor.update",
+                actorId: defender.id,
+                data: {
+                    [`flags.${MODULE_ID_LOWER}.defenseState`]: {
+                        lockedParryingWeaponUntil: lockedUntil,
+                        updatedAt: Date.now(),
+                    },
+                },
+            },
+        ],
+        result: { lockedParryingWeaponUntil: lockedUntil },
+    };
+}
+
+// ──────────────────────────────────────────── Maneuver commits ──
+//
+// The two commit* planners return `{ patches, events, result }`. Each
+// emits a single ACTION_COMMITTED event at the end of the patches;
+// the orchestrator wrapper applies patches first, then emits and
+// attaches the response to `result.commitEvent`.
+
+/**
+ * Plan the patches + ACTION_COMMITTED event for a post-attack maneuver.
+ * Throws on missing actor/maneuver/pendingAttack, or on legality
+ * failure (preserves the original strict behaviour).
+ */
+export function planCommitPostManeuver({
+    actor,
+    maneuver,
+    pendingAttack,
+    side = "attacker",
+    target = null,
+    currentCriticalPoints = null,
+    actorConditions = [],
+    targetConditions = [],
+} = {}) {
+    const selectedManeuver = normalizeManeuver(maneuver);
+    if (!actor) throw new Error("Missing actor.");
+    if (!selectedManeuver) throw new Error("Missing maneuver.");
+    if (!pendingAttack) throw new Error("Missing pending attack.");
+
+    const evaluation = evaluateManeuverLegality(selectedManeuver, {
+        actor,
+        weapon: pendingAttack.weapon,
+        profile: pendingAttack.profile,
+        target,
+        timingType: "post",
+        triggerType: "post-attack",
+        currentCriticalPoints,
+        actorConditions,
+        targetConditions,
+    });
+
+    if (!evaluation.legal) {
+        throw new Error(evaluation.reasons?.[0] || "This post maneuver is not currently legal.");
+    }
+
+    const { patches: costPatches } = planSpendActorManeuverCost(actor, selectedManeuver);
+
+    return {
+        patches: costPatches,
+        events: [
+            {
+                type: COMBAT_EVENTS.ACTION_COMMITTED,
+                payload: {
+                    type: "post-maneuver",
+                    side,
+                    actor,
+                    target,
+                    pendingAttack,
+                    maneuver: selectedManeuver,
+                    currentCriticalPoints,
+                },
+            },
+        ],
+        result: { maneuver: selectedManeuver },
+    };
+}
+
+/**
+ * Plan the patches + ACTION_COMMITTED event for a full-turn maneuver
+ * commit. The DI'd normalizeWeapon dep is the orchestrator's
+ * unarmed-fallback wrapper.
+ */
+export function planCommitFullTurnManeuver({
+    actor,
+    maneuver,
+    weapon = null,
+    profile = null,
+    profileId = null,
+    target = null,
+    targets = null,
+    reservedResources = {},
+    usedManeuvers = [],
+    hasVisibleAlly = false,
+    actorConditions = [],
+    targetConditions = [],
+    distanceSquares = null,
+    rangeSquares = null,
+    currentCriticalPoints = null,
+    metadata = {},
+    normalizeWeapon,
+} = {}) {
+    const selectedManeuver = normalizeManeuver(maneuver);
+    if (!actor) throw new Error("Missing actor.");
+    if (!selectedManeuver) throw new Error("Missing maneuver.");
+    if (typeof normalizeWeapon !== "function") {
+        throw new Error("planCommitFullTurnManeuver: missing normalizeWeapon dep.");
+    }
+
+    const normalizedWeapon = normalizeWeapon(weapon, actor);
+    const selectedProfile = resolveSelectedWeaponProfile(normalizedWeapon, {
+        profile,
+        profileId,
+    });
+
+    const evaluation = evaluateManeuverLegality(selectedManeuver, {
+        actor,
+        weapon: normalizedWeapon,
+        profile: selectedProfile,
+        target,
+        targets,
+        timingType: "full-turn",
+        triggerType: "full-turn-activation",
+        fullTurnAvailable: metadata.fullTurnAvailable,
+        reservedResources,
+        usedManeuvers,
+        hasVisibleAlly,
+        actorConditions,
+        targetConditions,
+        distanceSquares,
+        rangeSquares,
+        currentCriticalPoints,
+    });
+
+    if (!evaluation.legal) {
+        throw new Error(evaluation.reasons?.[0] || "This full-turn maneuver is not currently legal.");
+    }
+
+    const { patches: costPatches } = planSpendActorManeuverCost(actor, selectedManeuver);
+    const record = buildCommittedManeuverRecord(selectedManeuver);
+    const { patches: appendPatches } = planAppendCommittedManeuverState(actor, record);
+
+    const patches = [...costPatches];
+    if (metadata.isCombatActive === true && actor?.id) {
+        patches.push({
+            kind: "actor.update",
+            actorId: actor.id,
+            data: { "system.props.FullTurnAvailable": false },
+        });
+    }
+    patches.push(...appendPatches);
+
+    return {
+        patches,
+        events: [
+            {
+                type: COMBAT_EVENTS.ACTION_COMMITTED,
+                payload: {
+                    type: "full-turn",
+                    actor,
+                    maneuver: selectedManeuver,
+                    weapon: normalizedWeapon,
+                    profile: selectedProfile,
+                    target,
+                    targets,
+                    metadata,
+                    record,
+                },
+            },
+        ],
+        result: { maneuver: selectedManeuver, record },
+    };
 }
