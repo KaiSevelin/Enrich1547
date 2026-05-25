@@ -39,10 +39,28 @@ import {
     buildAttackReactionCandidates as buildAttackReactionCandidatesPure,
     buildThreatReactionCandidates as buildThreatReactionCandidatesPure,
 } from "../combat/reaction-candidates.mjs";
+import {
+    buildCommittedManeuverRecord,
+    planSpendActorManeuverCost,
+    planAppendCommittedManeuverState,
+} from "../combat/maneuver-state.mjs";
+import {
+    createsSafeAttack,
+    summarizeEffectData,
+    mergeModifierSummaries,
+    mergeManeuverEffects,
+    normalizeDefenseModifiers,
+    normalizeAppliedAttackModifiers,
+    collectReservedCosts,
+    normalizeRollSummary,
+    isPendingAttack,
+    actorHasEquippedArmor,
+    PENDING_ATTACK_KIND,
+} from "../combat/attack-lifecycle.mjs";
 
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
-const PENDING_ATTACK_KIND = "1547core.pendingAttack";
+// PENDING_ATTACK_KIND now lives in combat/attack-lifecycle.mjs and is re-imported above.
 const DEFAULT_UNARMED_WEAPON_SOURCE = {
     _id: "j2xrFYjojE9yUPYc",
     id: "j2xrFYjojE9yUPYc",
@@ -928,159 +946,23 @@ async function applyPatches(patches = []) {
     for (const patch of patches) await applyPatch(patch);
 }
 
+// Thin wrappers around the patch-returners in combat/maneuver-state.mjs.
 async function spendActorManeuverCost(actor, maneuver) {
-    const costType = String(maneuver?.CostType ?? "").trim();
-    const costAmount = Math.max(0, Number(maneuver?.CostAmount ?? 0) || 0);
-    if (!actor?.update || !costType || costType === "null" || costAmount <= 0) return null;
-
-    const currentValue = firstFiniteNumber([
-        actor.system?.props?.[costType],
-        actor.system?.[costType],
-    ]) ?? 0;
-    const nextValue = Math.max(0, currentValue - costAmount);
-    await actor.update({
-        [`system.props.${costType}`]: nextValue,
-    });
-    return {
-        costType,
-        previousValue: currentValue,
-        nextValue,
-        costAmount,
-    };
-}
-
-function buildCommittedManeuverRecord(maneuver) {
-    return {
-        id: maneuver?._id ?? maneuver?.id ?? maneuver?.name ?? null,
-        name: maneuver?.name ?? "Maneuver",
-        type: maneuver?.type ?? "full-turn",
-        triggerType: maneuver?.triggerType ?? "full-turn-activation",
-        committedAt: Date.now(),
-        duration: maneuver?.effectData?.duration ?? null,
-        createsPersistentEffect: maneuver?.effectData?.createsPersistentEffect ?? null,
-        effectData: maneuver?.effectData ?? {},
-    };
+    const { patches, result } = planSpendActorManeuverCost(actor, maneuver);
+    await applyPatches(patches);
+    return result;
 }
 
 async function appendCommittedManeuverState(actor, record) {
-    if (!actor?.update || !record?.id) return;
-    const currentFlags = actor.flags?.[MODULE_ID] ?? {};
-    const activeFullTurnManeuvers = Array.isArray(currentFlags.activeFullTurnManeuvers) ? currentFlags.activeFullTurnManeuvers : [];
-    const nextActive = [...activeFullTurnManeuvers.filter((entry) => entry?.id !== record.id), record];
-    await actor.update({
-        [`flags.${MODULE_ID}.activeFullTurnManeuvers`]: nextActive,
-    });
-}
-function createsSafeAttack(maneuver) {
-    const effect = maneuver?.effectData ?? {};
-    return Boolean(
-        effect.createFreeSafeAttack ||
-        effect.createSecondSafeAttack ||
-        effect.createFreeSafeCounterattack ||
-        effect.ifEscapeSucceedsCreateFreeSafeAttack
-    );
+    const { patches } = planAppendCommittedManeuverState(actor, record);
+    await applyPatches(patches);
 }
 
-function collectReservedCosts(maneuvers) {
-    return maneuvers
-        .filter((maneuver) => maneuver?.CostType && maneuver.CostType !== "null")
-        .map((maneuver) => ({
-            maneuverId: maneuver._id ?? maneuver.id ?? maneuver.name,
-            costType: maneuver.CostType,
-            costAmount: Number(maneuver.CostAmount ?? 0),
-        }));
-}
-
-function summarizeEffectData(effect = {}) {
-    return {
-        addMainDice: Number(effect?.addMainDice ?? 0) || 0,
-        addDisadvantage: Number(effect?.addDisadvantage ?? 0) || 0,
-        addMultiplierDice: Number(effect?.addMultiplierDice ?? 0) || 0,
-        addRiskDice: Number(effect?.addRiskDice ?? 0) || 0,
-        addMoveSquares: Number(effect?.addMoveSquares ?? 0) || 0,
-        safeAttack: Boolean(
-            effect?.createFreeSafeAttack ||
-            effect?.createSecondSafeAttack ||
-            effect?.createFreeSafeCounterattack ||
-            effect?.ifEscapeSucceedsCreateFreeSafeAttack
-        ),
-    };
-}
-
-function mergeModifierSummaries(baseSummary = {}, extraSummary = {}) {
-    return {
-        addMainDice: Number(baseSummary.addMainDice ?? 0) + Number(extraSummary.addMainDice ?? 0),
-        addDisadvantage: Number(baseSummary.addDisadvantage ?? 0) + Number(extraSummary.addDisadvantage ?? 0),
-        addMultiplierDice: Number(baseSummary.addMultiplierDice ?? 0) + Number(extraSummary.addMultiplierDice ?? 0),
-        addRiskDice: Number(baseSummary.addRiskDice ?? 0) + Number(extraSummary.addRiskDice ?? 0),
-        addMoveSquares: Number(baseSummary.addMoveSquares ?? 0) + Number(extraSummary.addMoveSquares ?? 0),
-        safeAttack: Boolean(baseSummary.safeAttack || extraSummary.safeAttack),
-    };
-}
-function mergeManeuverEffects(maneuvers) {
-    return maneuvers.reduce(
-        (summary, maneuver) => {
-            const effect = maneuver?.effectData ?? {};
-            summary.addMainDice += Number(effect.addMainDice ?? 0);
-            summary.addDisadvantage += Number(effect.addDisadvantage ?? 0);
-            summary.addMultiplierDice += Number(effect.addMultiplierDice ?? 0);
-            summary.addRiskDice += Number(effect.addRiskDice ?? 0);
-            summary.addMoveSquares += Number(effect.addMoveSquares ?? 0);
-            summary.safeAttack = summary.safeAttack || createsSafeAttack(maneuver);
-            return summary;
-        },
-        {
-            addMainDice: 0,
-            addDisadvantage: 0,
-            addMultiplierDice: 0,
-            addRiskDice: 0,
-            addMoveSquares: 0,
-            safeAttack: false,
-        }
-    );
-}
-
-function normalizeDefenseModifiers({ defenseReaction = null, damageTakenReaction = null } = {}) {
-    const sources = [defenseReaction, damageTakenReaction].filter(Boolean);
-    return sources.reduce((summary, source) => {
-        const effect = source?.effectData ?? {};
-        summary.addArmorDice += Number(effect.addArmorDice ?? 0) || 0;
-        summary.reduceDamageTaken += Number(effect.reduceDamageTaken ?? 0) || 0;
-        summary.lockParryingWeaponUntil = summary.lockParryingWeaponUntil || String(effect.lockParryingWeaponUntil ?? "").trim() || null;
-        summary.safeCounterattack = summary.safeCounterattack || Boolean(effect.createFreeSafeCounterattack);
-        return summary;
-    }, {
-        addArmorDice: 0,
-        reduceDamageTaken: 0,
-        lockParryingWeaponUntil: null,
-        safeCounterattack: false,
-    });
-}
-function normalizeAppliedAttackModifiers(modifiers = {}) {
-    return {
-        addMainDice: Number(modifiers?.addMainDice ?? 0) || 0,
-        addDisadvantage: Number(modifiers?.addDisadvantage ?? 0) || 0,
-        addMultiplierDice: Number(modifiers?.addMultiplierDice ?? 0) || 0,
-        addRiskDice: Number(modifiers?.addRiskDice ?? 0) || 0,
-        addMoveSquares: Number(modifiers?.addMoveSquares ?? 0) || 0,
-        safeAttack: Boolean(modifiers?.safeAttack),
-    };
-}
-
-function actorHasEquippedArmor(actor) {
-    const items = actor?.items?.contents ?? actor?.items ?? [];
-    return Array.from(items).some((item) => {
-        const props = item?.system?.props ?? {};
-        const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-        const isArmor = sourceData?.itemType === "armor"
-            || item?.system?.template === "uLlgZXz3GlXPFtsj"
-            || item?.type === "armor"
-            || Object.prototype.hasOwnProperty.call(props, "ArmorType")
-            || Object.prototype.hasOwnProperty.call(props, "Defense");
-        const equipped = isTruthyLike(props?.Equipped) || sourceData?.equipped === true;
-        return isArmor && equipped;
-    });
-}
+// buildCommittedManeuverRecord moved to combat/maneuver-state.mjs
+// appendCommittedManeuverState replaced by planAppendCommittedManeuverState + applyPatches at call sites
+// Pure helpers (createsSafeAttack, collectReservedCosts, summarizeEffectData, mergeModifierSummaries,
+//   mergeManeuverEffects, normalizeDefenseModifiers, normalizeAppliedAttackModifiers, actorHasEquippedArmor)
+//   moved to combat/attack-lifecycle.mjs — all imported at the top of this file.
 
 function buildDefaultDefenseRollSummary(pendingAttack) {
     const armor = buildDefaultUnprotectedArmor();
@@ -1164,17 +1046,6 @@ async function setActorStatusEffect(actor, keyword, active) {
     }]);
 }
 
-function normalizeRollSummary(roll) {
-    const summary = roll ?? {};
-    return {
-        damage: Number(summary.damage ?? 0),
-        protection: Number(summary.protection ?? 0),
-        crit: Number(summary.crit ?? 0),
-        fumble: Number(summary.fumble ?? 0),
-        multiplier: Number(summary.multiplier ?? 1),
-    };
-}
-
 function applyMultiplier(roll) {
     const multiplier = Number.isFinite(roll.multiplier) && roll.multiplier > 0
         ? roll.multiplier
@@ -1192,10 +1063,6 @@ function findReactionResolution(event) {
     return event?.results?.find(
         (entry) => entry?.value?.reaction || entry?.value?.trigger
     )?.value ?? null;
-}
-
-function isPendingAttack(value) {
-    return value?.kind === PENDING_ATTACK_KIND;
 }
 
 function firstFiniteNumber(values) {
