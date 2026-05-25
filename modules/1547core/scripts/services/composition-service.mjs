@@ -152,9 +152,6 @@ export function applyChange(actor, change, cumulativeState = {}) {
         case "Text":
             applyTextChange(actor, change, cumulativeState);
             break;
-        case "Image":
-            applyImageChange(actor, change, cumulativeState);
-            break;
         case "ItemGrant":
             applyItemGrantChange(actor, change, cumulativeState);
             break;
@@ -267,30 +264,6 @@ function applyTextChange(actor, change, cumulativeState) {
     }
 }
 
-function applyImageChange(actor, change, cumulativeState) {
-    const imageTarget = String(change.system?.props?.ImageTarget ?? "").trim() || "img";
-    const imageMode = String(change.system?.props?.ImageMode ?? "Direct").trim();
-
-    if (imageMode === "Direct") {
-        const imagePath = String(change.system?.props?.ImageValue ?? "").trim();
-        if (imagePath) {
-            cumulativeState.imageFields = cumulativeState.imageFields ?? {};
-            cumulativeState.imageFields[imageTarget] = imagePath;
-        }
-    } else if (imageMode === "RollTable") {
-        const cachedPath = change.flags?.[MODULE_ID]?.rolledResult?.imagePath;
-        if (cachedPath) {
-            cumulativeState.imageFields = cumulativeState.imageFields ?? {};
-            cumulativeState.imageFields[imageTarget] = cachedPath;
-            return;
-        }
-        // No cached roll yet — rolltable-resolution-service will populate it
-        // and re-derivation will pick it up.
-        cumulativeState.pendingRollTableImages = cumulativeState.pendingRollTableImages ?? {};
-        cumulativeState.pendingRollTableImages[imageTarget] = String(change.system?.props?.ImageRollTable ?? "").trim();
-    }
-}
-
 function applyItemGrantChange(actor, change, cumulativeState) {
     const grantMode = String(change.system?.props?.ItemGrantMode ?? "Direct").trim();
 
@@ -384,11 +357,9 @@ function deriveEffectiveActorState(actor) {
         effectiveProps: Object.assign({}, actor.system?.props ?? {}),
         effectivePrimaryStats: Object.assign({}, actor.system?.props ?? {}),
         textFields: {},
-        imageFields: {},
         skillDeltas: {},
         grantedItems: [],
         pendingRollTableItems: [],
-        pendingRollTableImages: {},
         appliedTags: new Set(),
         appliedTraits: [],
         applicableChangeSets: {}

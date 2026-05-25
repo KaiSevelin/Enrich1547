@@ -573,6 +573,282 @@
                                                                           "name":  "Biography"
                                                                       },
                                                                       {
+                                                                          "key":  "FolkloreTab",
+                                                                          "colSpan":  1,
+                                                                          "rowSpan":  1,
+                                                                          "cssClass":  "",
+                                                                          "role":  0,
+                                                                          "editRole":  0,
+                                                                          "permission":  0,
+                                                                          "tooltip":  "Show monster movement, tags, and traits",
+                                                                          "visibilityFormula":  "",
+                                                                          "editableFormula":  "",
+                                                                          "escapeHTML":  false,
+                                                                          "type":  "tab",
+                                                                          "contents":  [
+                                                                                           {
+                                                                                               "key":  "ActorTagTable",
+                                                                                               "colSpan":  1,
+                                                                                               "rowSpan":  1,
+                                                                                               "cssClass":  "",
+                                                                                               "role":  0,
+                                                                                               "editRole":  0,
+                                                                                               "permission":  0,
+                                                                                               "tooltip":  "Automation-facing monster tags. Do not use movement modes as tags.",
+                                                                                               "visibilityFormula":  "",
+                                                                                               "editableFormula":  "",
+                                                                                               "escapeHTML":  false,
+                                                                                               "type":  "dynamicTable",
+                                                                                               "contents":  [
+
+                                                                                                            ],
+                                                                                               "rowLayout":  [
+                                                                                                                 {
+                                                                                                                     "key":  "ActorTag",
+                                                                                                                     "colSpan":  1,
+                                                                                                                     "rowSpan":  1,
+                                                                                                                     "cssClass":  "",
+                                                                                                                     "role":  0,
+                                                                                                                     "editRole":  0,
+                                                                                                                     "permission":  0,
+                                                                                                                     "tooltip":  "Use only canonical monster tags.",
+                                                                                                                     "visibilityFormula":  "",
+                                                                                                                     "editableFormula":  "",
+                                                                                                                     "escapeHTML":  false,
+                                                                                                                     "type":  "select",
+                                                                                                                     "size":  "full-size",
+                                                                                                                     "label":  "Tag:",
+                                                                                                                     "defaultValue":  "",
+                                                                                                                     "selectedOptionType":  "custom",
+                                                                                                                     "options":  [
+                                                                                                                                     {
+                                                                                                                                         "key":  "",
+                                                                                                                                         "value":  ""
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "Amphibious",
+                                                                                                                                         "value":  "Amphibious"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "BarrowBound",
+                                                                                                                                         "value":  "BarrowBound"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "BlessedVulnerable",
+                                                                                                                                         "value":  "BlessedVulnerable"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "ColdIronVulnerable",
+                                                                                                                                         "value":  "ColdIronVulnerable"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "DreamIntrusion",
+                                                                                                                                         "value":  "DreamIntrusion"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "FearAura",
+                                                                                                                                         "value":  "FearAura"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "FireVulnerable",
+                                                                                                                                         "value":  "FireVulnerable"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "Glamour",
+                                                                                                                                         "value":  "Glamour"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "HearthBound",
+                                                                                                                                         "value":  "HearthBound"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "ImmuneMissiles",
+                                                                                                                                         "value":  "ImmuneMissiles"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "ImmuneNormalWeapons",
+                                                                                                                                         "value":  "ImmuneNormalWeapons"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "Incorporeal",
+                                                                                                                                         "value":  "Incorporeal"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "NameBound",
+                                                                                                                                         "value":  "NameBound"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "NoBleeding",
+                                                                                                                                         "value":  "NoBleeding"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "NoPoison",
+                                                                                                                                         "value":  "NoPoison"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "OfferingBound",
+                                                                                                                                         "value":  "OfferingBound"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "OathBound",
+                                                                                                                                         "value":  "OathBound"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "Regeneration",
+                                                                                                                                         "value":  "Regeneration"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "ResistNormalWeapons",
+                                                                                                                                         "value":  "ResistNormalWeapons"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "SeeInvisible",
+                                                                                                                                         "value":  "SeeInvisible"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "SenseLiving",
+                                                                                                                                         "value":  "SenseLiving"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "SilverVulnerable",
+                                                                                                                                         "value":  "SilverVulnerable"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "SunlightSensitive",
+                                                                                                                                         "value":  "SunlightSensitive"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "ThresholdAware",
+                                                                                                                                         "value":  "ThresholdAware"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "ThresholdBound",
+                                                                                                                                         "value":  "ThresholdBound"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "UnsettlingPresence",
+                                                                                                                                         "value":  "UnsettlingPresence"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "key":  "WaterBound",
+                                                                                                                                         "value":  "WaterBound"
+                                                                                                                                     }
+                                                                                                                                 ]
+                                                                                                                 }
+                                                                                                             ],
+                                                                                               "head":  false,
+                                                                                               "deleteWarning":  false,
+                                                                                               "labelWhenEmpty":  "",
+                                                                                               "predefinedLines":  [
+
+                                                                                                                   ],
+                                                                                               "canPlayerAdd":  true,
+                                                                                               "hiddenColumns":  [
+
+                                                                                                                 ],
+                                                                                               "sortOption":  "manual",
+                                                                                               "sortPredicates":  [
+
+                                                                                                                  ],
+                                                                                               "title":  "Automation Tags"
+                                                                                           },
+                                                                                           {
+                                                                                               "key":  "BaseTraitTable",
+                                                                                               "colSpan":  1,
+                                                                                               "rowSpan":  1,
+                                                                                               "cssClass":  "",
+                                                                                               "role":  0,
+                                                                                               "editRole":  0,
+                                                                                               "permission":  0,
+                                                                                               "tooltip":  "Author-facing trait text for persistent creature abilities.",
+                                                                                               "visibilityFormula":  "",
+                                                                                               "editableFormula":  "",
+                                                                                               "escapeHTML":  false,
+                                                                                               "type":  "dynamicTable",
+                                                                                               "contents":  [
+
+                                                                                                            ],
+                                                                                               "rowLayout":  [
+                                                                                                                 {
+                                                                                                                     "key":  "TraitName",
+                                                                                                                     "colSpan":  1,
+                                                                                                                     "rowSpan":  1,
+                                                                                                                     "cssClass":  "",
+                                                                                                                     "role":  0,
+                                                                                                                     "editRole":  0,
+                                                                                                                     "permission":  0,
+                                                                                                                     "tooltip":  "",
+                                                                                                                     "visibilityFormula":  "",
+                                                                                                                     "editableFormula":  "",
+                                                                                                                     "escapeHTML":  false,
+                                                                                                                     "type":  "textField",
+                                                                                                                     "size":  "full-size",
+                                                                                                                     "label":  "Trait Name:",
+                                                                                                                     "defaultValue":  "",
+                                                                                                                     "charList":  "",
+                                                                                                                     "maxLength":  null,
+                                                                                                                     "autocomplete":  "",
+                                                                                                                     "align":  "left",
+                                                                                                                     "colName":  "TraitName",
+                                                                                                                     "readonlyPredefined":  false
+                                                                                                                 },
+                                                                                                                 {
+                                                                                                                     "key":  "TraitDescription",
+                                                                                                                     "colSpan":  2,
+                                                                                                                     "rowSpan":  1,
+                                                                                                                     "cssClass":  "",
+                                                                                                                     "role":  0,
+                                                                                                                     "editRole":  0,
+                                                                                                                     "permission":  0,
+                                                                                                                     "tooltip":  "",
+                                                                                                                     "visibilityFormula":  "",
+                                                                                                                     "editableFormula":  "",
+                                                                                                                     "escapeHTML":  false,
+                                                                                                                     "type":  "textArea",
+                                                                                                                     "size":  "full-size",
+                                                                                                                     "label":  "Description",
+                                                                                                                     "defaultValue":  "",
+                                                                                                                     "style":  "sheet"
+                                                                                                                 }
+                                                                                                             ],
+                                                                                               "head":  false,
+                                                                                               "deleteWarning":  false,
+                                                                                               "labelWhenEmpty":  "",
+                                                                                               "predefinedLines":  [
+
+                                                                                                                   ],
+                                                                                               "canPlayerAdd":  true,
+                                                                                               "hiddenColumns":  [
+
+                                                                                                                 ],
+                                                                                               "sortOption":  "manual",
+                                                                                               "sortPredicates":  [
+
+                                                                                                                  ],
+                                                                                               "title":  "Base Traits"
+                                                                                           },
+                                                                                           {
+                                                                                               "key":  "FolkloreAuthoringNotes",
+                                                                                               "colSpan":  1,
+                                                                                               "rowSpan":  1,
+                                                                                               "cssClass":  "",
+                                                                                               "role":  0,
+                                                                                               "editRole":  0,
+                                                                                               "permission":  0,
+                                                                                               "tooltip":  "Movement modes belong in MoveGround/MoveFly/etc. Use tags only from the canonical catalog.",
+                                                                                               "visibilityFormula":  "",
+                                                                                               "editableFormula":  "",
+                                                                                               "escapeHTML":  false,
+                                                                                               "type":  "textArea",
+                                                                                               "size":  "full-size",
+                                                                                               "label":  "Authoring Notes",
+                                                                                               "defaultValue":  "",
+                                                                                               "style":  "sheet"
+                                                                                           }
+                                                                                       ],
+                                                                          "name":  "Folklore"
+                                                                      },
+                                                                      {
                                                                           "key":  "ActiveEffectsTab",
                                                                           "colSpan":  1,
                                                                           "rowSpan":  1,
@@ -1380,6 +1656,179 @@
                                                        "collapsible":  false,
                                                        "defaultCollapsed":  false,
                                                        "title":  "",
+                                                       "titleStyle":  "default"
+                                                   },
+                                                   {
+                                                       "key":  "MovementPanel",
+                                                       "colSpan":  1,
+                                                       "rowSpan":  1,
+                                                       "cssClass":  "",
+                                                       "role":  0,
+                                                       "editRole":  0,
+                                                       "permission":  0,
+                                                       "tooltip":  "",
+                                                       "visibilityFormula":  "",
+                                                       "editableFormula":  "",
+                                                       "escapeHTML":  false,
+                                                       "type":  "panel",
+                                                       "contents":  [
+                                                                        {
+                                                                            "key":  "MovementRemaining",
+                                                                            "colSpan":  1,
+                                                                            "rowSpan":  1,
+                                                                            "cssClass":  "",
+                                                                            "role":  0,
+                                                                            "editRole":  0,
+                                                                            "permission":  0,
+                                                                            "tooltip":  "",
+                                                                            "visibilityFormula":  "",
+                                                                            "editableFormula":  "",
+                                                                            "escapeHTML":  false,
+                                                                            "type":  "numberField",
+                                                                            "size":  "full-size",
+                                                                            "label":  "Move Remaining",
+                                                                            "defaultValue":  "${MoveGround}$",
+                                                                            "allowDecimal":  false,
+                                                                            "minVal":  "0",
+                                                                            "maxVal":  "20",
+                                                                            "allowRelative":  true,
+                                                                            "showControls":  true,
+                                                                            "controlsStyle":  "hover",
+                                                                            "controlsCustomIncrements":  "",
+                                                                            "inputStyle":  "text"
+                                                                        },
+                                                                        {
+                                                                            "key":  "MoveGround",
+                                                                            "colSpan":  1,
+                                                                            "rowSpan":  1,
+                                                                            "cssClass":  "",
+                                                                            "role":  0,
+                                                                            "editRole":  0,
+                                                                            "permission":  0,
+                                                                            "tooltip":  "",
+                                                                            "visibilityFormula":  "",
+                                                                            "editableFormula":  "",
+                                                                            "escapeHTML":  false,
+                                                                            "type":  "numberField",
+                                                                            "size":  "full-size",
+                                                                            "label":  "Move Ground",
+                                                                            "defaultValue":  "4",
+                                                                            "allowDecimal":  false,
+                                                                            "minVal":  "0",
+                                                                            "maxVal":  "20",
+                                                                            "allowRelative":  false,
+                                                                            "showControls":  true,
+                                                                            "controlsStyle":  "hover",
+                                                                            "controlsCustomIncrements":  "",
+                                                                            "inputStyle":  "text"
+                                                                        },
+                                                                        {
+                                                                            "key":  "MoveFly",
+                                                                            "colSpan":  1,
+                                                                            "rowSpan":  1,
+                                                                            "cssClass":  "",
+                                                                            "role":  0,
+                                                                            "editRole":  0,
+                                                                            "permission":  0,
+                                                                            "tooltip":  "",
+                                                                            "visibilityFormula":  "",
+                                                                            "editableFormula":  "",
+                                                                            "escapeHTML":  false,
+                                                                            "type":  "numberField",
+                                                                            "size":  "full-size",
+                                                                            "label":  "Move Fly",
+                                                                            "defaultValue":  "0",
+                                                                            "allowDecimal":  false,
+                                                                            "minVal":  "0",
+                                                                            "maxVal":  "20",
+                                                                            "allowRelative":  false,
+                                                                            "showControls":  true,
+                                                                            "controlsStyle":  "hover",
+                                                                            "controlsCustomIncrements":  "",
+                                                                            "inputStyle":  "text"
+                                                                        },
+                                                                        {
+                                                                            "key":  "MoveSwim",
+                                                                            "colSpan":  1,
+                                                                            "rowSpan":  1,
+                                                                            "cssClass":  "",
+                                                                            "role":  0,
+                                                                            "editRole":  0,
+                                                                            "permission":  0,
+                                                                            "tooltip":  "",
+                                                                            "visibilityFormula":  "",
+                                                                            "editableFormula":  "",
+                                                                            "escapeHTML":  false,
+                                                                            "type":  "numberField",
+                                                                            "size":  "full-size",
+                                                                            "label":  "Move Swim",
+                                                                            "defaultValue":  "0",
+                                                                            "allowDecimal":  false,
+                                                                            "minVal":  "0",
+                                                                            "maxVal":  "20",
+                                                                            "allowRelative":  false,
+                                                                            "showControls":  true,
+                                                                            "controlsStyle":  "hover",
+                                                                            "controlsCustomIncrements":  "",
+                                                                            "inputStyle":  "text"
+                                                                        },
+                                                                        {
+                                                                            "key":  "MoveBurrow",
+                                                                            "colSpan":  1,
+                                                                            "rowSpan":  1,
+                                                                            "cssClass":  "",
+                                                                            "role":  0,
+                                                                            "editRole":  0,
+                                                                            "permission":  0,
+                                                                            "tooltip":  "",
+                                                                            "visibilityFormula":  "",
+                                                                            "editableFormula":  "",
+                                                                            "escapeHTML":  false,
+                                                                            "type":  "numberField",
+                                                                            "size":  "full-size",
+                                                                            "label":  "Move Burrow",
+                                                                            "defaultValue":  "0",
+                                                                            "allowDecimal":  false,
+                                                                            "minVal":  "0",
+                                                                            "maxVal":  "20",
+                                                                            "allowRelative":  false,
+                                                                            "showControls":  true,
+                                                                            "controlsStyle":  "hover",
+                                                                            "controlsCustomIncrements":  "",
+                                                                            "inputStyle":  "text"
+                                                                        },
+                                                                        {
+                                                                            "key":  "MoveClimb",
+                                                                            "colSpan":  1,
+                                                                            "rowSpan":  1,
+                                                                            "cssClass":  "",
+                                                                            "role":  0,
+                                                                            "editRole":  0,
+                                                                            "permission":  0,
+                                                                            "tooltip":  "",
+                                                                            "visibilityFormula":  "",
+                                                                            "editableFormula":  "",
+                                                                            "escapeHTML":  false,
+                                                                            "type":  "numberField",
+                                                                            "size":  "full-size",
+                                                                            "label":  "Move Climb",
+                                                                            "defaultValue":  "0",
+                                                                            "allowDecimal":  false,
+                                                                            "minVal":  "0",
+                                                                            "maxVal":  "20",
+                                                                            "allowRelative":  false,
+                                                                            "showControls":  true,
+                                                                            "controlsStyle":  "hover",
+                                                                            "controlsCustomIncrements":  "",
+                                                                            "inputStyle":  "text"
+                                                                        }
+                                                                    ],
+                                                       "flow":  "grid-3",
+                                                       "align":  "left",
+                                                       "verticalAlign":  "top",
+                                                       "collapsible":  true,
+                                                       "defaultCollapsed":  false,
+                                                       "title":  "Movement",
                                                        "titleStyle":  "default"
                                                    },
                                                    {

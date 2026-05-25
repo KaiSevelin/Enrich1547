@@ -52,6 +52,11 @@ Hooks.once("init", () => {
         (module) => module.registerCompositionService()
     );
     void runImportedModuleStep(
+        "registerMonsterImageResolverService",
+        () => import("./services/monster-image-resolver-service.js"),
+        (module) => module.registerMonsterImageResolverService()
+    );
+    void runImportedModuleStep(
         "registerChangeSetDropHook",
         () => import("./services/changeset-drop-hook.js"),
         (module) => module.registerChangeSetDropHook()
@@ -105,4 +110,3 @@ Hooks.once("ready", () => {
         (module) => module.register1547DialogHooks()
     );
 });
-

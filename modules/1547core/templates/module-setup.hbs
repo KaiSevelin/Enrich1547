@@ -26,14 +26,36 @@
     </div>
 
     <div class="form-group">
+      <label>Stored Monsters</label>
+      <div>{{storedMonsterCount}}</div>
+    </div>
+
+    <div class="form-group">
+      <label>Stored Change Sets</label>
+      <div>{{storedChangeSetCount}}</div>
+    </div>
+
+    <div class="form-group">
+      <label>Stored Changes</label>
+      <div>{{storedChangeCount}}</div>
+    </div>
+
+    <div class="form-group">
+      <label>Stored Requirements</label>
+      <div>{{storedRequirementCount}}</div>
+    </div>
+
+    <div class="form-group">
       <label>Last Setup</label>
       <div>{{#if lastDataSetupAt}}{{lastDataSetupAt}}{{else}}Not run yet{{/if}}</div>
     </div>
 
     <p class="notes">
-      Setup Data loads the module's maneuver, weapon, armor, and ammunition
-      datasets into world settings, writes the live item templates, and
-      immediately syncs matching world items from that source data.
+      Setup Data loads the module's maneuver, weapon, armor, ammunition,
+      monster, change set, change, and requirement datasets into world
+      settings, writes the live templates, creates the managed Actor and Item
+      folder structure, and immediately syncs matching world documents from
+      that source data.
     </p>
   </section>
 

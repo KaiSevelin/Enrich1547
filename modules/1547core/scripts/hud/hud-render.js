@@ -454,6 +454,7 @@ function getCategoryDefinitions(data) {
         { key: "dice", label: "Dice", count: null, icon: "fa-dice-d20" },
         { key: "overview", label: "Overview", count: null },
         { key: "stats", label: "Stats", count: data.stats.length },
+        { key: "powers", label: "Powers", count: data.powers.length, icon: "fa-wand-sparkles" },
         {
             key: "equipped",
             label: "Equipped",
@@ -487,6 +488,18 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
             })();
         case "equipped":
             return buildEquippedTree(data, deps);
+        case "powers":
+            return `<ul class="hud-list hud-tree-list hud-list-scroll hud-single-scroll">
+                ${buildTreeList(data.powers, (power) => `
+                    <li class="hud-tree-item">
+                        <button type="button" class="hud-action-row" data-hud-open-item="${escapeHtml(power.id)}">
+                            <span class="hud-row-main">${escapeHtml(power.name)}</span>
+                            ${power.description ? `<span class="hud-row-sub">${escapeHtml(power.description)}</span>` : ""}
+                            <span class="hud-tree-value">Open</span>
+                        </button>
+                    </li>
+                `)}
+            </ul>`;
         case "inventory":
             return buildInventoryTree(data, deps);
         case "maneuvers":

@@ -1,12 +1,52 @@
 ﻿const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
 const TEMPLATE_FILES = {
+    actorTemplate: "fvtt-Actor-1547-Tgs09eTiTp63Cp7u.json",
     maneuver: "fvtt-Item-maneuvertemplate-4owc4YQBlp94GbGs.json",
     weapon: "fvtt-Item-weapontemplate-qZCfLEYQ7egbm1B9.json",
     armor: "fvtt-Item-armor-uLlgZXz3GlXPFtsj.json",
-    ammo: "fvtt-Item-unequippabletemplate-389uqkKKn8M1SKux.json"
+    ammo: "fvtt-Item-unequippabletemplate-woHyeHPKKdo4JDJd.json",
+    power: "fvtt-Item-powertemplate-w9ky0ZTDvXDs5Ce7.json",
+    spell: "fvtt-Item-spelltemplate-2kiWw3Cv5Zk1lZxn.json",
+    pact: "fvtt-Item-pacttemplate-HPYYc2P0Ouagicmr.json",
+    recipe: "fvtt-Item-recipetemplate-Qv6pN2Lm8R4tY1Ks.json",
+    usageEffect: "fvtt-Item-usageeffecttemplate-mwPqEYUoOfzXpyT9.json",
+    changeSet: "fvtt-Item-changesettemplate-b7A1z6cSZO4dYTKT.json",
+    change: "fvtt-Item-changetemplate-WsrkfjBmudnIhvEK.json",
+    requirement: "fvtt-Item-requirementtemplate-L4ujYgqhGBGcoo2P.json"
 };
 const VALID_FOUNDRY_ID = /^[A-Za-z0-9]{16}$/;
+const ACTOR_TYPES = [
+    "Player",
+    "Spirit",
+    "HiddenFolk",
+    "TheUnseen",
+    "Beast",
+    "Undead",
+    "Colossal",
+    "Cursed",
+    "Unnatural",
+    "Construct",
+    "Zone",
+    "People"
+];
+const CHANGE_SET_GROUPS = ["Domain", "Size", "Role", "Motivation", "Loadout", "Quirk", "Boost"];
+const CHANGE_FOLDER_LABELS = {
+    Stat: "Stat (Numeric)",
+    PrimaryStat: "Primary Stat",
+    Skill: "Skill",
+    Text: "Text",
+    ItemGrant: "Item Grant",
+    Tag: "Tag",
+    Trait: "Trait"
+};
+const REQUIREMENT_FOLDER_LABELS = {
+    GroupPresent: "Group",
+    HasTag: "Tag",
+    StatAtLeast: "Stat",
+    PrimaryStatAtLeast: "Primary Stat",
+    HasSkill: "Skill"
+};
 
 function getModuleBasePath() {
     const modulePath = game.modules.get(MODULE_ID)?.path ?? game.modules.get(SOURCE_FLAG_SCOPE)?.path ?? "";
@@ -39,7 +79,7 @@ function deriveFoundryIdFromText(text) {
     return output;
 }
 
-function normalizeSourceEntry(source, kind) {
+function normalizeSourceEntry(source, kind, documentType = "Item") {
     const normalized = foundry.utils.deepClone(source);
     let nextId = normalized._id;
     const uuidSuffix = typeof normalized.uuid === "string" ? normalized.uuid.split(".").pop() : "";
@@ -56,8 +96,24 @@ function normalizeSourceEntry(source, kind) {
 
     normalized._id = nextId;
     normalized.id = nextId;
-    normalized.uuid = `Item.${nextId}`;
+    normalized.uuid = `${documentType}.${nextId}`;
     return normalized;
+}
+
+function mergeDefinedProps(baseProps, overrideProps) {
+    const merged = { ...(baseProps ?? {}) };
+    for (const [key, value] of Object.entries(overrideProps ?? {})) {
+        if (value !== undefined) {
+            merged[key] = value;
+        }
+    }
+    return merged;
+}
+
+function normalizeTypeList(values) {
+    if (Array.isArray(values)) return values.map((entry) => String(entry ?? "").trim()).filter(Boolean);
+    if (typeof values === "string" && values.trim()) return [values.trim()];
+    return [];
 }
 
 function cloneTemplateSystem(template) {
@@ -282,11 +338,77 @@ function buildManeuverProps(maneuver) {
     };
 }
 
-function makeItemDoc(source, template, img, propsBuilder, folderId) {
+function buildChangeSetProps(changeSet) {
+    const allowedTypes = new Set(normalizeTypeList(changeSet.appliesTo ?? changeSet.forTypes));
+    const props = {
+        Notes: changeSet.notes ?? "",
+        Group: changeSet.group ?? changeSet.system?.props?.Group ?? "",
+        ForTypeAny: changeSet.forTypeAny ?? allowedTypes.size === 0,
+        RequirementsDisplayer: changeSet.requirementsDisplayer ?? changeSet.system?.props?.RequirementsDisplayer ?? {},
+        ChangeDisplayer: changeSet.changeDisplayer ?? changeSet.system?.props?.ChangeDisplayer ?? {}
+    };
+
+    for (const actorType of ACTOR_TYPES) {
+        props[`ForType_${actorType}`] = allowedTypes.has(actorType) || changeSet[`ForType_${actorType}`] === true;
+    }
+
+    return mergeDefinedProps(props, changeSet.props ?? changeSet.system?.props);
+}
+
+function buildChangeProps(change) {
+    const props = {
+        Kind: change.kind ?? change.system?.props?.Kind ?? "",
+        Notes: change.notes ?? "",
+        StatTarget: change.statTarget ?? "",
+        StatOp: change.statOp ?? "Add",
+        StatValue: change.statValue ?? 0,
+        PrimaryStatTarget: change.primaryStatTarget ?? "",
+        PrimaryStatOp: change.primaryStatOp ?? "Step",
+        PrimaryStatSteps: change.primaryStatSteps ?? 0,
+        PrimaryStatSetDice: change.primaryStatSetDice ?? 1,
+        PrimaryStatSetMod: change.primaryStatSetMod ?? 0,
+        SkillRef: change.skillRef ?? [],
+        SkillDelta: change.skillDelta ?? 0,
+        TextTarget: change.textTarget ?? "",
+        TextOp: change.textOp ?? "Append",
+        TextValue: change.textValue ?? "",
+        ItemGrantMode: change.itemGrantMode ?? "Direct",
+        ItemGrantRef: change.itemGrantRef ?? [],
+        ItemGrantRollTable: change.itemGrantRollTable ?? "",
+        TagName: change.tagName ?? "",
+        TraitName: change.traitName ?? "",
+        TraitDescription: change.traitDescription ?? "",
+        DurationValue: change.durationValue ?? 0,
+        DurationUnit: change.durationUnit ?? "Permanent"
+    };
+
+    return mergeDefinedProps(props, change.props ?? change.system?.props);
+}
+
+function buildRequirementProps(requirement) {
+    const props = {
+        PredicateType: requirement.predicateType ?? requirement.system?.props?.PredicateType ?? "",
+        Negate: requirement.negate ?? false,
+        Notes: requirement.notes ?? "",
+        GroupTarget: requirement.groupTarget ?? "",
+        TagName: requirement.tagName ?? "",
+        StatTarget: requirement.statTarget ?? "",
+        StatThreshold: requirement.statThreshold ?? 0,
+        PrimaryStatRequirementTarget: requirement.primaryStatRequirementTarget ?? "",
+        PrimaryStatRequirementDice: requirement.primaryStatRequirementDice ?? 1,
+        PrimaryStatRequirementMod: requirement.primaryStatRequirementMod ?? 0,
+        RequirementSkillRef: requirement.requirementSkillRef ?? [],
+        SkillMinLevel: requirement.skillMinLevel ?? 0
+    };
+
+    return mergeDefinedProps(props, requirement.props ?? requirement.system?.props);
+}
+
+function makeItemDoc(source, template, img, propsBuilder, folderId, folderHint = null) {
     return {
         _id: source._id,
         name: source.name,
-        type: "equippableItem",
+        type: template.type,
         img,
         system: {
             ...cloneTemplateSystem(template),
@@ -299,12 +421,34 @@ function makeItemDoc(source, template, img, propsBuilder, folderId) {
                 version: template.flags?.["custom-system-builder"]?.version ?? "5.2.0"
             },
             [SOURCE_FLAG_SCOPE]: {
-                folderHint: source.folder ?? null,
+                folderHint: folderHint ?? source.folder ?? null,
                 sourceData: source
             }
         },
         items: [],
         ownership: { default: 0 }
+    };
+}
+
+function makeActorDoc(source, folderId, folderHint = null) {
+    return {
+        _id: source._id,
+        name: source.name,
+        type: source.type ?? "character",
+        img: source.img ?? "icons/svg/mystery-man.svg",
+        system: foundry.utils.deepClone(source.system ?? {}),
+        prototypeToken: foundry.utils.deepClone(source.prototypeToken ?? {}),
+        effects: foundry.utils.deepClone(source.effects ?? []),
+        folder: folderId ?? null,
+        flags: {
+            ...(foundry.utils.deepClone(source.flags ?? {})),
+            [SOURCE_FLAG_SCOPE]: {
+                folderHint: folderHint ?? source.folder ?? null,
+                sourceData: source
+            }
+        },
+        items: foundry.utils.deepClone(source.items ?? []),
+        ownership: foundry.utils.deepClone(source.ownership ?? { default: 0 })
     };
 }
 
@@ -358,8 +502,43 @@ async function upsertWorldItems(docs) {
     };
 }
 
+async function upsertWorldActors(docs) {
+    const sourceIds = new Set(docs.map((doc) => doc._id));
+    const existingById = new Map(
+        game.actors.filter((actor) => sourceIds.has(actor.id)).map((actor) => [actor.id, actor])
+    );
+
+    const toCreate = [];
+    const toUpdate = [];
+
+    for (const doc of docs) {
+        const existing = existingById.get(doc._id);
+        if (existing) {
+            toUpdate.push({
+                ...doc,
+                _id: existing.id
+            });
+        } else {
+            toCreate.push(doc);
+        }
+    }
+
+    if (toCreate.length > 0) {
+        await Actor.createDocuments(toCreate);
+    }
+
+    if (toUpdate.length > 0) {
+        await Actor.updateDocuments(toUpdate);
+    }
+
+    return {
+        created: toCreate.length,
+        updated: toUpdate.length
+    };
+}
+
 async function pruneManagedFolderItems({ folderId, validIds, templateId, folderHint }) {
-    if (!folderId || !(validIds instanceof Set) || validIds.size === 0) {
+    if (!folderId || !(validIds instanceof Set)) {
         return { removed: 0 };
     }
 
@@ -376,6 +555,27 @@ async function pruneManagedFolderItems({ folderId, validIds, templateId, folderH
 
     if (staleIds.length > 0) {
         await Item.deleteDocuments(staleIds);
+    }
+
+    return { removed: staleIds.length };
+}
+
+async function pruneManagedFolderActors({ folderId, validIds, folderHint }) {
+    if (!folderId || !(validIds instanceof Set)) {
+        return { removed: 0 };
+    }
+
+    const staleIds = game.actors
+        .filter((actor) => actor.folder?.id === folderId)
+        .filter((actor) => {
+            const sourceFlag = actor.flags?.[SOURCE_FLAG_SCOPE] ?? {};
+            const actorFolderHint = sourceFlag.folderHint ?? sourceFlag.sourceData?.folder ?? null;
+            return actorFolderHint === folderHint && !validIds.has(actor.id);
+        })
+        .map((actor) => actor.id);
+
+    if (staleIds.length > 0) {
+        await Actor.deleteDocuments(staleIds);
     }
 
     return { removed: staleIds.length };
@@ -408,6 +608,38 @@ export function register1547ModuleSettings() {
 
     game.settings.register(MODULE_ID, "ammoData", {
         name: "Ammunition Data",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: []
+    });
+
+    game.settings.register(MODULE_ID, "monsterData", {
+        name: "Monster Data",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: []
+    });
+
+    game.settings.register(MODULE_ID, "changeSetData", {
+        name: "Change Set Data",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: []
+    });
+
+    game.settings.register(MODULE_ID, "changeData", {
+        name: "Change Data",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: []
+    });
+
+    game.settings.register(MODULE_ID, "requirementData", {
+        name: "Requirement Data",
         scope: "world",
         config: false,
         type: Object,
@@ -502,6 +734,10 @@ function createModuleSetupFormApplicationClass() {
             const storedWeapons = game.settings.get(MODULE_ID, "weaponData") ?? [];
             const storedArmors = game.settings.get(MODULE_ID, "armorData") ?? [];
             const storedAmmunition = game.settings.get(MODULE_ID, "ammoData") ?? [];
+            const storedMonsters = game.settings.get(MODULE_ID, "monsterData") ?? [];
+            const storedChangeSets = game.settings.get(MODULE_ID, "changeSetData") ?? [];
+            const storedChanges = game.settings.get(MODULE_ID, "changeData") ?? [];
+            const storedRequirements = game.settings.get(MODULE_ID, "requirementData") ?? [];
             const lastDataSetupAt = game.settings.get(MODULE_ID, "lastDataSetupAt") || "";
 
             return {
@@ -510,6 +746,10 @@ function createModuleSetupFormApplicationClass() {
                 storedWeaponCount: Array.isArray(storedWeapons) ? storedWeapons.length : 0,
                 storedArmorCount: Array.isArray(storedArmors) ? storedArmors.length : 0,
                 storedAmmoCount: Array.isArray(storedAmmunition) ? storedAmmunition.length : 0,
+                storedMonsterCount: Array.isArray(storedMonsters) ? storedMonsters.length : 0,
+                storedChangeSetCount: Array.isArray(storedChangeSets) ? storedChangeSets.length : 0,
+                storedChangeCount: Array.isArray(storedChanges) ? storedChanges.length : 0,
+                storedRequirementCount: Array.isArray(storedRequirements) ? storedRequirements.length : 0,
                 lastDataSetupAt
             };
         }
@@ -529,12 +769,30 @@ function createModuleSetupFormApplicationClass() {
 
         async #setupData() {
             try {
-                const { maneuvers, weapons, armors, ammunition } = await this.#loadSourceBackedData();
+                const {
+                    maneuvers,
+                    weapons,
+                    armors,
+                    ammunition,
+                    monsters,
+                    changeSets,
+                    changes,
+                    requirements
+                } = await this.#loadSourceBackedData();
 
-                await this.#importItemsFromData({ maneuvers, weapons, armors, ammunition });
+                await this.#importItemsFromData({
+                    maneuvers,
+                    weapons,
+                    armors,
+                    ammunition,
+                    monsters,
+                    changeSets,
+                    changes,
+                    requirements
+                });
 
                 ui.notifications.info(
-                    `1547 Core: stored and synced ${maneuvers.length} maneuvers, ${weapons.length} weapons, ${armors.length} armors, and ${ammunition.length} ammunition items from source data.`
+                    `1547 Core: stored and synced ${maneuvers.length} maneuvers, ${weapons.length} weapons, ${armors.length} armors, ${ammunition.length} ammunition items, ${monsters.length} monsters, ${changeSets.length} change sets, ${changes.length} changes, and ${requirements.length} requirements from source data.`
                 );
                 this.render(false);
             } catch (error) {
@@ -545,7 +803,7 @@ function createModuleSetupFormApplicationClass() {
 
         async #loadDataset(fileName) {
             const versionTag = encodeURIComponent(game.modules.get(MODULE_ID)?.version ?? Date.now());
-            const response = await fetch(`${getModuleBasePath()}/foundry/${fileName}?v=${versionTag}`, { cache: "no-store" });
+            const response = await fetch(`${getModuleBasePath()}/foundry/Templates/${fileName}?v=${versionTag}`, { cache: "no-store" });
             if (!response.ok) {
                 throw new Error(`Failed to load ${fileName} (${response.status})`);
             }
@@ -560,7 +818,7 @@ function createModuleSetupFormApplicationClass() {
 
         async #loadTemplate(fileName) {
             const versionTag = encodeURIComponent(game.modules.get(MODULE_ID)?.version ?? Date.now());
-            const response = await fetch(`${getModuleBasePath()}/foundry/${fileName}?v=${versionTag}`, { cache: "no-store" });
+            const response = await fetch(`${getModuleBasePath()}/foundry/Templates/${fileName}?v=${versionTag}`, { cache: "no-store" });
             if (!response.ok) {
                 throw new Error(`Failed to load ${fileName} (${response.status})`);
             }
@@ -569,11 +827,15 @@ function createModuleSetupFormApplicationClass() {
         }
 
         async #loadSourceBackedData() {
-            const [maneuvers, weapons, armors, ammunition] = await Promise.all([
+            const [maneuvers, weapons, armors, ammunition, monsters, changeSets, changes, requirements] = await Promise.all([
                 this.#loadDataset("maneuvers.json"),
                 this.#loadDataset("weapons.json"),
                 this.#loadDataset("armors.json"),
-                this.#loadDataset("ammunition.json")
+                this.#loadDataset("ammunition.json"),
+                this.#loadDataset("monsters.json"),
+                this.#loadDataset("changesets.json"),
+                this.#loadDataset("changes.json"),
+                this.#loadDataset("requirements.json")
             ]);
 
             await Promise.all([
@@ -581,101 +843,278 @@ function createModuleSetupFormApplicationClass() {
                 game.settings.set(MODULE_ID, "weaponData", weapons),
                 game.settings.set(MODULE_ID, "armorData", armors),
                 game.settings.set(MODULE_ID, "ammoData", ammunition),
+                game.settings.set(MODULE_ID, "monsterData", monsters),
+                game.settings.set(MODULE_ID, "changeSetData", changeSets),
+                game.settings.set(MODULE_ID, "changeData", changes),
+                game.settings.set(MODULE_ID, "requirementData", requirements),
                 game.settings.set(MODULE_ID, "lastDataSetupAt", new Date().toISOString())
             ]);
 
-            return { maneuvers, weapons, armors, ammunition };
+            return { maneuvers, weapons, armors, ammunition, monsters, changeSets, changes, requirements };
         }
 
-        async #getOrCreateFolder(folderName) {
-            let folder = game.folders?.find((entry) => entry.type === "Item" && entry.name === folderName);
+        async #getOrCreateFolder({ folderName, type, parentId = null, color = "#7a7a7a" }) {
+            let folder = game.folders?.find((entry) =>
+                entry.type === type
+                && entry.name === folderName
+                && (entry.folder?.id ?? entry.folder ?? null) === parentId
+            );
             if (!folder) {
                 folder = await Folder.create({
                     name: folderName,
-                    type: "Item",
-                    color: "#7a7a7a"
+                    type,
+                    color,
+                    folder: parentId
                 });
             }
 
             return folder;
         }
 
-        async #importItemsFromData({ maneuvers, weapons, armors, ammunition }) {
-            const [maneuverTemplate, weaponTemplate, armorTemplate, ammoTemplate] = await Promise.all([
+        async #buildManagedFolderTree() {
+            const monstersFolder = await this.#getOrCreateFolder({ folderName: "Monsters", type: "Actor", color: "#516d5b" });
+            const maneuverFolder = await this.#getOrCreateFolder({ folderName: "Maneuvers", type: "Item" });
+            const weaponFolder = await this.#getOrCreateFolder({ folderName: "Weapons", type: "Item" });
+            const armorFolder = await this.#getOrCreateFolder({ folderName: "Armor", type: "Item" });
+            const ammoFolder = await this.#getOrCreateFolder({ folderName: "Ammunition", type: "Item" });
+            const changeSetsFolder = await this.#getOrCreateFolder({ folderName: "Change Sets", type: "Item", color: "#6d5b51" });
+            const changesFolder = await this.#getOrCreateFolder({ folderName: "Changes", type: "Item", color: "#6d6551" });
+            const requirementsFolder = await this.#getOrCreateFolder({ folderName: "Requirements", type: "Item", color: "#5b5b6d" });
+
+            const changeSetGroupFolders = {};
+            for (const groupName of CHANGE_SET_GROUPS) {
+                changeSetGroupFolders[groupName] = await this.#getOrCreateFolder({
+                    folderName: groupName,
+                    type: "Item",
+                    parentId: changeSetsFolder.id,
+                    color: "#6d5b51"
+                });
+            }
+
+            const changeTypeFolders = {};
+            for (const [kind, label] of Object.entries(CHANGE_FOLDER_LABELS)) {
+                changeTypeFolders[kind] = await this.#getOrCreateFolder({
+                    folderName: label,
+                    type: "Item",
+                    parentId: changesFolder.id,
+                    color: "#6d6551"
+                });
+            }
+
+            const requirementTypeFolders = {};
+            for (const [predicate, label] of Object.entries(REQUIREMENT_FOLDER_LABELS)) {
+                requirementTypeFolders[predicate] = await this.#getOrCreateFolder({
+                    folderName: label,
+                    type: "Item",
+                    parentId: requirementsFolder.id,
+                    color: "#5b5b6d"
+                });
+            }
+
+            return {
+                monstersFolder,
+                maneuverFolder,
+                weaponFolder,
+                armorFolder,
+                ammoFolder,
+                changeSetsFolder,
+                changesFolder,
+                requirementsFolder,
+                changeSetGroupFolders,
+                changeTypeFolders,
+                requirementTypeFolders
+            };
+        }
+
+        async #importItemsFromData({ maneuvers, weapons, armors, ammunition, monsters, changeSets, changes, requirements }) {
+            const [actorTemplate, maneuverTemplate, weaponTemplate, armorTemplate, ammoTemplate, powerTemplate, spellTemplate, pactTemplate, recipeTemplate, usageEffectTemplate, changeSetTemplate, changeTemplate, requirementTemplate] = await Promise.all([
+                this.#loadTemplate(TEMPLATE_FILES.actorTemplate),
                 this.#loadTemplate(TEMPLATE_FILES.maneuver),
                 this.#loadTemplate(TEMPLATE_FILES.weapon),
                 this.#loadTemplate(TEMPLATE_FILES.armor),
-                this.#loadTemplate(TEMPLATE_FILES.ammo)
+                this.#loadTemplate(TEMPLATE_FILES.ammo),
+                this.#loadTemplate(TEMPLATE_FILES.power),
+                this.#loadTemplate(TEMPLATE_FILES.spell),
+                this.#loadTemplate(TEMPLATE_FILES.pact),
+                this.#loadTemplate(TEMPLATE_FILES.recipe),
+                this.#loadTemplate(TEMPLATE_FILES.usageEffect),
+                this.#loadTemplate(TEMPLATE_FILES.changeSet),
+                this.#loadTemplate(TEMPLATE_FILES.change),
+                this.#loadTemplate(TEMPLATE_FILES.requirement)
             ]);
 
             await upsertWorldItems([
                 makeTemplateDoc(weaponTemplate),
                 makeTemplateDoc(armorTemplate),
                 makeTemplateDoc(maneuverTemplate),
-                makeTemplateDoc(ammoTemplate)
+                makeTemplateDoc(ammoTemplate),
+                makeTemplateDoc(powerTemplate),
+                makeTemplateDoc(spellTemplate),
+                makeTemplateDoc(pactTemplate),
+                makeTemplateDoc(recipeTemplate),
+                makeTemplateDoc(usageEffectTemplate),
+                makeTemplateDoc(changeSetTemplate),
+                makeTemplateDoc(changeTemplate),
+                makeTemplateDoc(requirementTemplate)
             ]);
 
-            const [maneuverFolder, weaponFolder, armorFolder, ammoFolder] = await Promise.all([
-                this.#getOrCreateFolder("Maneuvers"),
-                this.#getOrCreateFolder("Weapons"),
-                this.#getOrCreateFolder("Armor"),
-                this.#getOrCreateFolder("Ammunition")
-            ]);
+            const folders = await this.#buildManagedFolderTree();
 
             const maneuverDocs = maneuvers.map((maneuver) =>
-                makeItemDoc(normalizeSourceEntry(maneuver, "maneuver"), maneuverTemplate, maneuver.img ?? maneuverTemplate.img ?? "icons/svg/combat.svg", buildManeuverProps, maneuverFolder.id)
+                makeItemDoc(normalizeSourceEntry(maneuver, "maneuver"), maneuverTemplate, maneuver.img ?? maneuverTemplate.img ?? "icons/svg/combat.svg", buildManeuverProps, folders.maneuverFolder.id, "Maneuvers")
             );
             const weaponDocs = weapons.map((weapon) =>
-                makeItemDoc(normalizeSourceEntry(weapon, "weapon"), weaponTemplate, weapon.img ?? weaponTemplate.img ?? "icons/svg/sword.svg", buildWeaponProps, weaponFolder.id)
+                makeItemDoc(normalizeSourceEntry(weapon, "weapon"), weaponTemplate, weapon.img ?? weaponTemplate.img ?? "icons/svg/sword.svg", buildWeaponProps, folders.weaponFolder.id, "Weapons")
             );
             const armorDocs = armors.map((armor) =>
-                makeItemDoc(normalizeSourceEntry(armor, "armor"), armorTemplate, armor.img ?? armorTemplate.img ?? "icons/svg/holy-shield.svg", buildArmorProps, armorFolder.id)
+                makeItemDoc(normalizeSourceEntry(armor, "armor"), armorTemplate, armor.img ?? armorTemplate.img ?? "icons/svg/holy-shield.svg", buildArmorProps, folders.armorFolder.id, "Armor")
             );
             const ammoDocs = ammunition.map((ammo) =>
-                makeItemDoc(normalizeSourceEntry(ammo, "ammo"), ammoTemplate, ammo.img ?? ammoTemplate.img ?? "icons/svg/item-bag.svg", buildAmmoProps, ammoFolder.id)
+                makeItemDoc(normalizeSourceEntry(ammo, "ammo"), ammoTemplate, ammo.img ?? ammoTemplate.img ?? "icons/svg/item-bag.svg", buildAmmoProps, folders.ammoFolder.id, "Ammunition")
+            );
+            const changeSetDocs = changeSets.map((changeSet) => {
+                const normalized = normalizeSourceEntry(changeSet, "changeset");
+                const group = normalized.group ?? normalized.system?.props?.Group ?? "";
+                const folder = folders.changeSetGroupFolders[group] ?? folders.changeSetsFolder;
+                return makeItemDoc(
+                    normalized,
+                    changeSetTemplate,
+                    normalized.img ?? changeSetTemplate.img ?? "icons/svg/item-bag.svg",
+                    buildChangeSetProps,
+                    folder.id,
+                    group || "Change Sets"
+                );
+            });
+            const changeDocs = changes.map((change) => {
+                const normalized = normalizeSourceEntry(change, "change");
+                const kind = normalized.kind ?? normalized.system?.props?.Kind ?? "";
+                const folder = folders.changeTypeFolders[kind] ?? folders.changesFolder;
+                return makeItemDoc(
+                    normalized,
+                    changeTemplate,
+                    normalized.img ?? changeTemplate.img ?? "icons/svg/item-bag.svg",
+                    buildChangeProps,
+                    folder.id,
+                    CHANGE_FOLDER_LABELS[kind] ?? "Changes"
+                );
+            });
+            const requirementDocs = requirements.map((requirement) => {
+                const normalized = normalizeSourceEntry(requirement, "requirement");
+                const predicate = normalized.predicateType ?? normalized.system?.props?.PredicateType ?? "";
+                const folder = folders.requirementTypeFolders[predicate] ?? folders.requirementsFolder;
+                return makeItemDoc(
+                    normalized,
+                    requirementTemplate,
+                    normalized.img ?? requirementTemplate.img ?? "icons/svg/item-bag.svg",
+                    buildRequirementProps,
+                    folder.id,
+                    REQUIREMENT_FOLDER_LABELS[predicate] ?? "Requirements"
+                );
+            });
+            const monsterDocs = monsters.map((monster) =>
+                makeActorDoc(normalizeSourceEntry(monster, "monster", "Actor"), folders.monstersFolder.id, "Monsters")
             );
 
             await pruneManagedFolderItems({
-                folderId: maneuverFolder.id,
+                folderId: folders.maneuverFolder.id,
                 validIds: new Set(maneuverDocs.map((doc) => doc._id)),
                 templateId: maneuverTemplate._id,
                 folderHint: "Maneuvers"
             });
             await pruneManagedFolderItems({
-                folderId: weaponFolder.id,
+                folderId: folders.weaponFolder.id,
                 validIds: new Set(weaponDocs.map((doc) => doc._id)),
                 templateId: weaponTemplate._id,
                 folderHint: "Weapons"
             });
             await pruneManagedFolderItems({
-                folderId: armorFolder.id,
+                folderId: folders.armorFolder.id,
                 validIds: new Set(armorDocs.map((doc) => doc._id)),
                 templateId: armorTemplate._id,
                 folderHint: "Armor"
             });
             await pruneManagedFolderItems({
-                folderId: ammoFolder.id,
+                folderId: folders.ammoFolder.id,
                 validIds: new Set(ammoDocs.map((doc) => doc._id)),
                 templateId: ammoTemplate._id,
                 folderHint: "Ammunition"
+            });
+            for (const groupName of CHANGE_SET_GROUPS) {
+                const folder = folders.changeSetGroupFolders[groupName];
+                await pruneManagedFolderItems({
+                    folderId: folder.id,
+                    validIds: new Set(changeSetDocs.filter((doc) => doc.folder === folder.id).map((doc) => doc._id)),
+                    templateId: changeSetTemplate._id,
+                    folderHint: groupName
+                });
+            }
+            await pruneManagedFolderItems({
+                folderId: folders.changeSetsFolder.id,
+                validIds: new Set(changeSetDocs.filter((doc) => doc.folder === folders.changeSetsFolder.id).map((doc) => doc._id)),
+                templateId: changeSetTemplate._id,
+                folderHint: "Change Sets"
+            });
+            for (const [kind, label] of Object.entries(CHANGE_FOLDER_LABELS)) {
+                const folder = folders.changeTypeFolders[kind];
+                await pruneManagedFolderItems({
+                    folderId: folder.id,
+                    validIds: new Set(changeDocs.filter((doc) => doc.folder === folder.id).map((doc) => doc._id)),
+                    templateId: changeTemplate._id,
+                    folderHint: label
+                });
+            }
+            await pruneManagedFolderItems({
+                folderId: folders.changesFolder.id,
+                validIds: new Set(changeDocs.filter((doc) => doc.folder === folders.changesFolder.id).map((doc) => doc._id)),
+                templateId: changeTemplate._id,
+                folderHint: "Changes"
+            });
+            for (const [predicate, label] of Object.entries(REQUIREMENT_FOLDER_LABELS)) {
+                const folder = folders.requirementTypeFolders[predicate];
+                await pruneManagedFolderItems({
+                    folderId: folder.id,
+                    validIds: new Set(requirementDocs.filter((doc) => doc.folder === folder.id).map((doc) => doc._id)),
+                    templateId: requirementTemplate._id,
+                    folderHint: label
+                });
+            }
+            await pruneManagedFolderItems({
+                folderId: folders.requirementsFolder.id,
+                validIds: new Set(requirementDocs.filter((doc) => doc.folder === folders.requirementsFolder.id).map((doc) => doc._id)),
+                templateId: requirementTemplate._id,
+                folderHint: "Requirements"
+            });
+            await pruneManagedFolderActors({
+                folderId: folders.monstersFolder.id,
+                validIds: new Set(monsterDocs.map((doc) => doc._id)),
+                folderHint: "Monsters"
             });
 
             const docs = [
                 ...maneuverDocs,
                 ...weaponDocs,
                 ...armorDocs,
-                ...ammoDocs
+                ...ammoDocs,
+                ...changeSetDocs,
+                ...changeDocs,
+                ...requirementDocs
             ];
-            const result = await upsertWorldItems(docs);
+            const [itemResult, actorResult] = await Promise.all([
+                upsertWorldItems(docs),
+                upsertWorldActors([
+                    makeActorDoc(actorTemplate, null, "Actor Template"),
+                    ...monsterDocs
+                ])
+            ]);
 
             return {
-                total: docs.length,
-                created: result.created,
-                updated: result.updated
+                totalItems: docs.length,
+                totalActors: monsterDocs.length,
+                createdItems: itemResult.created,
+                updatedItems: itemResult.updated,
+                createdActors: actorResult.created,
+                updatedActors: actorResult.updated
             };
         }
     };
 }
-
-
-

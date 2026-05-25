@@ -5,19 +5,328 @@
   "img": "icons/svg/mage-shield.svg",
   "system": {
     "body": {
-      "contents": [],
+      "contents": [
+        {
+          "key": "TermsPanel",
+          "type": "panel",
+          "title": "Terms",
+          "titleStyle": "default",
+          "flow": "vertical",
+          "align": "left",
+          "verticalAlign": "top",
+          "collapsible": false,
+          "defaultCollapsed": false,
+          "contents": [
+            {
+              "key": "BoonText",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Boon:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "PriceText",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Price:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "ObligationText",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Obligation:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "FulfillmentText",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Fulfillment:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "BreakText",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Broken When:",
+              "defaultValue": "",
+              "style": "sheet"
+            }
+          ]
+        },
+        {
+          "key": "GrantedPowers",
+          "type": "itemContainer",
+          "contents": [],
+          "rowLayout": [],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "",
+          "title": "Granted Powers",
+          "hideEmpty": false,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "headDisplay": true,
+          "showCreate": true,
+          "defaultTemplate": "w9ky0ZTDvXDs5Ce7",
+          "createItemDialogShowTemplateList": false,
+          "showDelete": true,
+          "statusIcon": false,
+          "nameAlign": "left",
+          "nameLabel": "Power",
+          "templateFilter": [
+            "w9ky0ZTDvXDs5Ce7"
+          ],
+          "itemFilterFormula": "",
+          "sortPredicates": []
+        },
+        {
+          "key": "BoonEffects",
+          "type": "itemContainer",
+          "contents": [],
+          "rowLayout": [],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "",
+          "title": "Boon Effects",
+          "hideEmpty": false,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "headDisplay": true,
+          "showCreate": true,
+          "defaultTemplate": "mwPqEYUoOfzXpyT9",
+          "createItemDialogShowTemplateList": false,
+          "showDelete": true,
+          "statusIcon": false,
+          "nameAlign": "left",
+          "nameLabel": "Effect",
+          "templateFilter": [
+            "mwPqEYUoOfzXpyT9"
+          ],
+          "itemFilterFormula": "",
+          "sortPredicates": []
+        },
+        {
+          "key": "PriceEffects",
+          "type": "itemContainer",
+          "contents": [],
+          "rowLayout": [],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "",
+          "title": "Price Effects",
+          "hideEmpty": false,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "headDisplay": true,
+          "showCreate": true,
+          "defaultTemplate": "mwPqEYUoOfzXpyT9",
+          "createItemDialogShowTemplateList": false,
+          "showDelete": true,
+          "statusIcon": false,
+          "nameAlign": "left",
+          "nameLabel": "Effect",
+          "templateFilter": [
+            "mwPqEYUoOfzXpyT9"
+          ],
+          "itemFilterFormula": "",
+          "sortPredicates": []
+        },
+        {
+          "key": "StrainEffects",
+          "type": "itemContainer",
+          "contents": [],
+          "rowLayout": [],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "",
+          "title": "Strain Effects",
+          "hideEmpty": false,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "headDisplay": true,
+          "showCreate": true,
+          "defaultTemplate": "mwPqEYUoOfzXpyT9",
+          "createItemDialogShowTemplateList": false,
+          "showDelete": true,
+          "statusIcon": false,
+          "nameAlign": "left",
+          "nameLabel": "Effect",
+          "templateFilter": [
+            "mwPqEYUoOfzXpyT9"
+          ],
+          "itemFilterFormula": "",
+          "sortPredicates": []
+        },
+        {
+          "key": "BrokenEffects",
+          "type": "itemContainer",
+          "contents": [],
+          "rowLayout": [],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "",
+          "title": "Broken Effects",
+          "hideEmpty": false,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "headDisplay": true,
+          "showCreate": true,
+          "defaultTemplate": "mwPqEYUoOfzXpyT9",
+          "createItemDialogShowTemplateList": false,
+          "showDelete": true,
+          "statusIcon": false,
+          "nameAlign": "left",
+          "nameLabel": "Effect",
+          "templateFilter": [
+            "mwPqEYUoOfzXpyT9"
+          ],
+          "itemFilterFormula": "",
+          "sortPredicates": []
+        },
+        {
+          "key": "StatusPanel",
+          "type": "panel",
+          "title": "Status States",
+          "titleStyle": "default",
+          "flow": "vertical",
+          "align": "left",
+          "verticalAlign": "top",
+          "collapsible": false,
+          "defaultCollapsed": false,
+          "contents": [
+            {
+              "key": "DormantState",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Dormant:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "ActiveState",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Active:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "StrainedState",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Strained:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "BrokenState",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Broken:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "FulfilledState",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Fulfilled:",
+              "defaultValue": "",
+              "style": "sheet"
+            }
+          ]
+        }
+      ],
       "key": "custom_body",
       "type": "panel"
     },
     "display": {
-      "width": 600,
-      "height": 600,
+      "width": 760,
+      "height": 840,
       "fix_size": false,
       "pp_width": 64,
       "pp_height": 64
     },
     "header": {
-      "contents": [],
+      "contents": [
+        {
+          "key": "Description",
+          "type": "textArea",
+          "size": "full-size",
+          "label": "",
+          "defaultValue": "",
+          "style": "sheet"
+        },
+        {
+          "key": "PactIdentityPanel",
+          "type": "panel",
+          "flow": "grid-2",
+          "title": "Identity",
+          "titleStyle": "default",
+          "align": "left",
+          "verticalAlign": "top",
+          "collapsible": false,
+          "defaultCollapsed": false,
+          "contents": [
+            {
+              "key": "PactType",
+              "type": "select",
+              "size": "full-size",
+              "label": "Pact Type:",
+              "defaultValue": "Magic Oath",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Devil's Bargain", "value": "Devil's Bargain" },
+                { "key": "Spirit Guardian", "value": "Spirit Guardian" },
+                { "key": "Familiar Bond", "value": "Familiar Bond" },
+                { "key": "Supernatural Oath", "value": "Supernatural Oath" },
+                { "key": "Human Oath", "value": "Human Oath" },
+                { "key": "Magic Oath", "value": "Magic Oath" },
+                { "key": "Blood Pact", "value": "Blood Pact" },
+                { "key": "Fortune Pact", "value": "Fortune Pact" },
+                { "key": "Pact of Mercy", "value": "Pact of Mercy" },
+                { "key": "Devil's Errand", "value": "Devil's Errand" },
+                { "key": "Other", "value": "Other" }
+              ]
+            },
+            {
+              "key": "Patron",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Patron:",
+              "defaultValue": ""
+            },
+            {
+              "key": "CurrentStatus",
+              "type": "select",
+              "size": "full-size",
+              "label": "Current Status:",
+              "defaultValue": "Dormant",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Dormant", "value": "Dormant" },
+                { "key": "Active", "value": "Active" },
+                { "key": "Strained", "value": "Strained" },
+                { "key": "Broken", "value": "Broken" },
+                { "key": "Fulfilled", "value": "Fulfilled" }
+              ]
+            },
+            {
+              "key": "Tension",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Tension:",
+              "defaultValue": ""
+            }
+          ]
+        }
+      ],
       "key": "custom_header",
       "type": "panel"
     },
@@ -31,23 +340,6 @@
     "custom-system-builder": {
       "version": "5.2.0"
     }
-  },
-  "_stats": {
-    "compendiumSource": null,
-    "duplicateSource": null,
-    "exportSource": {
-      "worldId": "labgame-0940e6bc",
-      "uuid": "Item.HPYYc2P0Ouagicmr",
-      "coreVersion": "13.351",
-      "systemId": "custom-system-builder",
-      "systemVersion": "5.2.0"
-    },
-    "coreVersion": "13.351",
-    "systemId": "custom-system-builder",
-    "systemVersion": "5.2.0",
-    "createdTime": 1773131398067,
-    "modifiedTime": 1775991812409,
-    "lastModifiedBy": "HqdAsTDFzg3TzYAq"
   },
   "items": [],
   "ownership": {

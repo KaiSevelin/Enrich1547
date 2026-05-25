@@ -5,19 +5,266 @@
   "img": "icons/svg/aura.svg",
   "system": {
     "body": {
-      "contents": [],
+      "contents": [
+        {
+          "key": "PowerEffects",
+          "type": "itemContainer",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "contents": [],
+          "rowLayout": [],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "",
+          "title": "Power Effects",
+          "hideEmpty": false,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "headDisplay": true,
+          "showCreate": true,
+          "defaultTemplate": "mwPqEYUoOfzXpyT9",
+          "createItemDialogShowTemplateList": false,
+          "showDelete": true,
+          "statusIcon": false,
+          "nameAlign": "left",
+          "nameLabel": "Name",
+          "templateFilter": [
+            "mwPqEYUoOfzXpyT9"
+          ],
+          "itemFilterFormula": "",
+          "sortPredicates": []
+        },
+        {
+          "key": "GrantedSpells",
+          "type": "itemContainer",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "contents": [],
+          "rowLayout": [],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "",
+          "title": "Granted Spells",
+          "hideEmpty": false,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "headDisplay": true,
+          "showCreate": true,
+          "defaultTemplate": "2kiWw3Cv5Zk1lZxn",
+          "createItemDialogShowTemplateList": false,
+          "showDelete": true,
+          "statusIcon": false,
+          "nameAlign": "left",
+          "nameLabel": "Spell",
+          "templateFilter": [
+            "2kiWw3Cv5Zk1lZxn"
+          ],
+          "itemFilterFormula": "",
+          "sortPredicates": []
+        },
+        {
+          "key": "TriggerTable",
+          "type": "dynamicTable",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "contents": [],
+          "rowLayout": [
+            {
+              "key": "TriggerType",
+              "type": "select",
+              "size": "full-size",
+              "defaultValue": "Passive",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Passive", "value": "Passive" },
+                { "key": "Daily", "value": "Daily" },
+                { "key": "Weekly", "value": "Weekly" },
+                { "key": "Stress", "value": "Stress" },
+                { "key": "Sleep", "value": "Sleep" },
+                { "key": "Prayer", "value": "Prayer" },
+                { "key": "Injury", "value": "Injury" },
+                { "key": "Contact", "value": "Contact" },
+                { "key": "Presence", "value": "Presence" },
+                { "key": "Voluntary", "value": "Voluntary" },
+                { "key": "Scene", "value": "Scene" }
+              ],
+              "colName": "Trigger"
+            },
+            {
+              "key": "TriggerCondition",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "",
+              "colName": "Condition"
+            },
+            {
+              "key": "TriggerResponse",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "",
+              "colName": "Response"
+            }
+          ],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "",
+          "predefinedLines": [],
+          "canPlayerAdd": true,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "sortPredicates": []
+        },
+        {
+          "key": "PowerNotesPanel",
+          "type": "panel",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "flow": "vertical",
+          "title": "Power Notes",
+          "titleStyle": "default",
+          "align": "left",
+          "verticalAlign": "top",
+          "collapsible": false,
+          "defaultCollapsed": false,
+          "contents": [
+            {
+              "key": "RemovalConditions",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Removal / End:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "InheritanceNotes",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Inheritance / Transfer:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "SocialConsequences",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Social Consequences:",
+              "defaultValue": "",
+              "style": "sheet"
+            }
+          ]
+        }
+      ],
       "key": "custom_body",
       "type": "panel"
     },
     "display": {
-      "width": 600,
-      "height": 600,
+      "width": 700,
+      "height": 760,
       "fix_size": false,
       "pp_width": 64,
       "pp_height": 64
     },
     "header": {
-      "contents": [],
+      "contents": [
+        {
+          "key": "Description",
+          "type": "textArea",
+          "size": "full-size",
+          "label": "",
+          "defaultValue": "",
+          "style": "sheet"
+        },
+        {
+          "key": "PowerIdentityPanel",
+          "type": "panel",
+          "flow": "grid-2",
+          "title": "Identity",
+          "titleStyle": "default",
+          "align": "left",
+          "verticalAlign": "top",
+          "collapsible": false,
+          "defaultCollapsed": false,
+          "contents": [
+            {
+              "key": "PowerType",
+              "type": "select",
+              "size": "full-size",
+              "label": "Type:",
+              "defaultValue": "Blessing",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Blessing", "value": "Blessing" },
+                { "key": "Curse", "value": "Curse" },
+                { "key": "Miracle", "value": "Miracle" },
+                { "key": "Mark", "value": "Mark" },
+                { "key": "Mutation", "value": "Mutation" },
+                { "key": "Favor", "value": "Favor" }
+              ]
+            },
+            {
+              "key": "PowerSource",
+              "type": "select",
+              "size": "full-size",
+              "label": "Source:",
+              "defaultValue": "Ritual",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Bloodline", "value": "Bloodline" },
+                { "key": "Faith", "value": "Faith" },
+                { "key": "Pagan", "value": "Pagan" },
+                { "key": "Ritual", "value": "Ritual" },
+                { "key": "Zone", "value": "Zone" },
+                { "key": "Pact", "value": "Pact" },
+                { "key": "Supernatural", "value": "Supernatural" },
+                { "key": "Unknown", "value": "Unknown" }
+              ]
+            },
+            {
+              "key": "Severity",
+              "type": "select",
+              "size": "full-size",
+              "label": "Severity:",
+              "defaultValue": "Minor",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Minor", "value": "Minor" },
+                { "key": "Major", "value": "Major" },
+                { "key": "Mixed", "value": "Mixed" }
+              ]
+            },
+            {
+              "key": "SocialStatus",
+              "type": "select",
+              "size": "full-size",
+              "label": "Public Standing:",
+              "defaultValue": "Suspect",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Accepted", "value": "Accepted" },
+                { "key": "Hidden", "value": "Hidden" },
+                { "key": "Suspect", "value": "Suspect" },
+                { "key": "Heretical", "value": "Heretical" },
+                { "key": "Revered", "value": "Revered" },
+                { "key": "Feared", "value": "Feared" }
+              ]
+            },
+            {
+              "key": "VisibleTell",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Visible Tell:",
+              "defaultValue": ""
+            },
+            {
+              "key": "PowerScope",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Scope:",
+              "defaultValue": ""
+            }
+          ]
+        }
+      ],
       "key": "custom_header",
       "type": "panel"
     },
@@ -31,23 +278,6 @@
     "custom-system-builder": {
       "version": "5.2.0"
     }
-  },
-  "_stats": {
-    "compendiumSource": null,
-    "duplicateSource": null,
-    "exportSource": {
-      "worldId": "labgame-0940e6bc",
-      "uuid": "Item.w9ky0ZTDvXDs5Ce7",
-      "coreVersion": "13.351",
-      "systemId": "custom-system-builder",
-      "systemVersion": "5.2.0"
-    },
-    "coreVersion": "13.351",
-    "systemId": "custom-system-builder",
-    "systemVersion": "5.2.0",
-    "createdTime": 1773131455676,
-    "modifiedTime": 1775991820510,
-    "lastModifiedBy": "HqdAsTDFzg3TzYAq"
   },
   "items": [],
   "ownership": {

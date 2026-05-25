@@ -50,6 +50,19 @@
         getAttackDiceTabOptions,
     } = deps;
 
+    for (const button of root.querySelectorAll("[data-hud-open-item]")) {
+        button.addEventListener("click", () => {
+            const itemId = button.dataset.hudOpenItem;
+            if (!token?.actor || !itemId) return;
+            const item = token.actor.items?.get?.(itemId) ?? null;
+            if (!item?.sheet?.render) {
+                ui.notifications?.warn?.("Item could not be opened.");
+                return;
+            }
+            item.sheet.render(true);
+        });
+    }
+
     for (const select of root.querySelectorAll("[data-hud-inventory-filter]")) {
         select.addEventListener("change", (event) => {
             HUD_STATE.inventoryFilter = event.currentTarget.value || "all";

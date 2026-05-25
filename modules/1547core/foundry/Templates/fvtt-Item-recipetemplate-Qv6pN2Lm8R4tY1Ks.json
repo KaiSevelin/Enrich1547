@@ -1,0 +1,285 @@
+{
+  "name": "RecipeTemplate",
+  "type": "_equippableItemTemplate",
+  "_id": "Qv6pN2Lm8R4tY1Ks",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "body": {
+      "contents": [
+        {
+          "key": "RitualStepsTable",
+          "type": "dynamicTable",
+          "contents": [],
+          "rowLayout": [
+            {
+              "key": "StepType",
+              "type": "select",
+              "size": "full-size",
+              "defaultValue": "Material",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Material", "value": "Material" },
+                { "key": "Verbal", "value": "Verbal" },
+                { "key": "Gesture", "value": "Gesture" },
+                { "key": "Diagram", "value": "Diagram" },
+                { "key": "Offering", "value": "Offering" },
+                { "key": "Invocation", "value": "Invocation" },
+                { "key": "Dance", "value": "Dance" },
+                { "key": "Craft", "value": "Craft" },
+                { "key": "Timing", "value": "Timing" },
+                { "key": "Vigil", "value": "Vigil" },
+                { "key": "Sacrifice", "value": "Sacrifice" },
+                { "key": "Defense", "value": "Defense" },
+                { "key": "Purification", "value": "Purification" },
+                { "key": "Social", "value": "Social" },
+                { "key": "Random", "value": "Random" }
+              ],
+              "colName": "Step Type"
+            },
+            {
+              "key": "StepText",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "",
+              "colName": "Step"
+            },
+            {
+              "key": "SkillCheck",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "",
+              "colName": "Check"
+            },
+            {
+              "key": "Difficulty",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "",
+              "colName": "Difficulty"
+            },
+            {
+              "key": "Required",
+              "type": "checkbox",
+              "size": "full-size",
+              "label": "Required",
+              "defaultChecked": true,
+              "colName": "Required"
+            },
+            {
+              "key": "FailureConsequence",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "",
+              "colName": "Failure Consequence"
+            }
+          ],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "",
+          "predefinedLines": [],
+          "canPlayerAdd": true,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "sortPredicates": []
+        },
+        {
+          "key": "RandomStepPoolTable",
+          "type": "dynamicTable",
+          "contents": [],
+          "rowLayout": [
+            {
+              "key": "PoolStepType",
+              "type": "select",
+              "size": "full-size",
+              "defaultValue": "Random",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Random", "value": "Random" },
+                { "key": "Material", "value": "Material" },
+                { "key": "Verbal", "value": "Verbal" },
+                { "key": "Diagram", "value": "Diagram" },
+                { "key": "Timing", "value": "Timing" },
+                { "key": "Defense", "value": "Defense" },
+                { "key": "Offering", "value": "Offering" }
+              ],
+              "colName": "Pool Type"
+            },
+            {
+              "key": "PoolStepText",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "",
+              "colName": "Possible Step"
+            },
+            {
+              "key": "PoolSkillCheck",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "",
+              "colName": "Check"
+            },
+            {
+              "key": "PoolDifficulty",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "",
+              "colName": "Difficulty"
+            },
+            {
+              "key": "PoolNotes",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "",
+              "colName": "Notes"
+            }
+          ],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "",
+          "predefinedLines": [],
+          "canPlayerAdd": true,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "sortPredicates": []
+        },
+        {
+          "key": "RecipeNotesPanel",
+          "type": "panel",
+          "title": "Recipe Notes",
+          "titleStyle": "default",
+          "flow": "vertical",
+          "align": "left",
+          "verticalAlign": "top",
+          "collapsible": false,
+          "defaultCollapsed": false,
+          "contents": [
+            {
+              "key": "TimingConstraint",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Timing / Constellation:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "ContactRestriction",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Contact Restriction:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "WitnessRequirement",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Witnesses / Helpers:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "OutcomeModifier",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Outcome Modifier:",
+              "defaultValue": "",
+              "style": "sheet"
+            }
+          ]
+        }
+      ],
+      "key": "custom_body",
+      "type": "panel"
+    },
+    "display": {
+      "width": 760,
+      "height": 840,
+      "fix_size": false,
+      "pp_width": 64,
+      "pp_height": 64
+    },
+    "header": {
+      "contents": [
+        {
+          "key": "Description",
+          "type": "textArea",
+          "size": "full-size",
+          "label": "",
+          "defaultValue": "",
+          "style": "sheet"
+        },
+        {
+          "key": "RecipeIdentityPanel",
+          "type": "panel",
+          "flow": "grid-2",
+          "title": "Recipe Identity",
+          "titleStyle": "default",
+          "align": "left",
+          "verticalAlign": "top",
+          "collapsible": false,
+          "defaultCollapsed": false,
+          "contents": [
+            {
+              "key": "Tradition",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Tradition:",
+              "defaultValue": ""
+            },
+            {
+              "key": "RecipeLineage",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Lineage / Source:",
+              "defaultValue": ""
+            },
+            {
+              "key": "Reliability",
+              "type": "select",
+              "size": "full-size",
+              "label": "Reliability:",
+              "defaultValue": "Standard",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Unsafe", "value": "Unsafe" },
+                { "key": "Standard", "value": "Standard" },
+                { "key": "Reliable", "value": "Reliable" },
+                { "key": "Exacting", "value": "Exacting" }
+              ]
+            },
+            {
+              "key": "ComplexityAdjustment",
+              "type": "numberField",
+              "size": "full-size",
+              "label": "Complexity Adj.:",
+              "defaultValue": "0",
+              "allowDecimal": false,
+              "minVal": "-5",
+              "maxVal": "5",
+              "allowRelative": false,
+              "showControls": true,
+              "controlsStyle": "hover",
+              "inputStyle": "text"
+            }
+          ]
+        }
+      ],
+      "key": "custom_header",
+      "type": "panel"
+    },
+    "hidden": [],
+    "modifiers": [],
+    "uniqueId": "Qv6pN2Lm8R4tY1Ks"
+  },
+  "effects": [],
+  "folder": null,
+  "flags": {
+    "custom-system-builder": {
+      "version": "5.2.0"
+    }
+  },
+  "items": [],
+  "ownership": {
+    "default": 0
+  }
+}

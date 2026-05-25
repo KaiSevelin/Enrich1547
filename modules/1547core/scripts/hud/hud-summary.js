@@ -211,6 +211,18 @@ function buildDefaultUnprotectedArmorSummary(game, MODULE_ID) {
     };
 }
 
+function resolveActorPortrait(actor, token, MODULE_ID, game) {
+    const tokenImage = token?.document?.texture?.src;
+    if (tokenImage) return tokenImage;
+
+    const resolver = game.modules.get(MODULE_ID)?.api?.imageResolver?.resolveMonsterImage;
+    if (typeof resolver === "function") {
+        return resolver(actor);
+    }
+
+    return actor?.img || "icons/svg/mystery-man.svg";
+}
+
 
 export function summarizeActor(actor, token, deps = {}) {
     const {
@@ -279,6 +291,7 @@ export function summarizeActor(actor, token, deps = {}) {
     const armorItems = items.filter(isArmorItem);
     const ammoItems = items.filter(isAmmoItem);
     const maneuverItems = items.filter((item) => getCsbItemKind(item) === "maneuver");
+    const powerItems = items.filter((item) => getCsbItemKind(item) === "power");
     const skillItems = items.filter((item) => getCsbItemKind(item) === "skill");
     const inventoryItems = items.filter((item) => {
         const kind = getCsbItemKind(item);
@@ -572,6 +585,20 @@ export function summarizeActor(actor, token, deps = {}) {
 
     const equippedInventory = inventory.filter((item) => item.equipped);
     const stowedInventory = inventory.filter((item) => !item.equipped);
+    const powers = powerItems.map((item) => {
+        const itemProps = item.system?.props ?? {};
+        const sourceData = item.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item.flags?.[MODULE_ID]?.sourceData ?? {};
+        const rawDescription = String(itemProps.Description ?? sourceData.description ?? sourceData.Description ?? "").trim();
+        const description = rawDescription
+            ? rawDescription.split(/\r?\n/).map((line) => line.trim()).filter(Boolean)[0] ?? ""
+            : "";
+        return {
+            id: item.id,
+            name: item.name,
+            description,
+            itemKind: "power"
+        };
+    });
     const pointPools = [
         { label: "STR", key: "StrengthPoints" },
         { label: "STA", key: "StaminaPoints" },
@@ -717,7 +744,7 @@ export function summarizeActor(actor, token, deps = {}) {
         actorId: actor.id,
         actorName: actor.name,
         tokenName: token?.name ?? actor.name,
-        actorImg: token?.document?.texture?.src || actor.img || "icons/svg/mystery-man.svg",
+        actorImg: resolveActorPortrait(actor, token, MODULE_ID, game),
         hitPoints: hitPointSummary.current,
         maxHitPoints: hitPointSummary.max,
         movement: getNumericProp(props, ["MovementRemaining", "MoveRemaining", "movementRemaining"]),
@@ -744,6 +771,7 @@ export function summarizeActor(actor, token, deps = {}) {
         targetConditions,
         hasVisibleAlly,
         skills,
+        powers,
         inventory: stowedInventory,
         equippedInventory,
         maneuverCount: maneuvers.length + fullTurnManeuvers.length,

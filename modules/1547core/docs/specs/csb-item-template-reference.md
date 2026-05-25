@@ -14,6 +14,7 @@ when working with 1547 Core items backed by Custom System Builder templates.
 - `Item.HkiFlUWUkUycJdBZ`: Magic item
 - `Item.HPYYc2P0Ouagicmr`: Pact
 - `Item.w9ky0ZTDvXDs5Ce7`: Power
+- `Item.Qv6pN2Lm8R4tY1Ks`: Recipe
 - `Item.BbwVnEJobtCR5oOf`: Skill
 - `Item.2kiWw3Cv5Zk1lZxn`: Spell
 - `Item.389uqkKKn8M1SKux`: Unequippable item

@@ -2,17 +2,15 @@
  * RollTable resolution service for the monster-maker.
  *
  * When a ChangeSet attached to an actor contains Changes with
- * `ImageMode == "RollTable"` or `ItemGrantMode == "RollTable"`, the table
- * is rolled exactly once and the result is cached on the Change item as a
- * Foundry flag. Subsequent derivations read the cache; the roll is not
- * repeated. Removing the parent ChangeSet discards the cache by virtue of
- * the Change being deleted with it.
+ * `ItemGrantMode == "RollTable"`, the table is rolled exactly once and the
+ * result is cached on the Change item as a Foundry flag. Subsequent
+ * derivations read the cache; the roll is not repeated. Removing the parent
+ * ChangeSet discards the cache by virtue of the Change being deleted with it.
  *
  * Cache shape (on each Change item):
  *   flags["1547core"].rolledResult = {
  *     tableUuid: string,         // the source table; used to detect retargets
  *     rolledAt: number,          // ms timestamp
- *     imagePath?: string,        // for Image mode
  *     sourceItemId?: string      // for ItemGrant mode
  *   }
  *
@@ -42,10 +40,6 @@ function isChange(item) {
 
 function getRollTableTarget(change) {
     const props = change?.system?.props ?? {};
-    if (props.Kind === "Image" && String(props.ImageMode ?? "").trim() === "RollTable") {
-        const uuid = String(props.ImageRollTable ?? "").trim();
-        return uuid ? { kind: "Image", uuid } : null;
-    }
     if (props.Kind === "ItemGrant" && String(props.ItemGrantMode ?? "").trim() === "RollTable") {
         const uuid = String(props.ItemGrantRollTable ?? "").trim();
         return uuid ? { kind: "ItemGrant", uuid } : null;
@@ -126,15 +120,9 @@ export async function rollChangeTables(actor) {
             if (!rolled) continue;
 
             const payload = { tableUuid: target.uuid, rolledAt: Date.now() };
-            if (target.kind === "Image") {
-                const imagePath = rolled.text || (await resolveResultToItem(rolled))?.img;
-                if (!imagePath) continue;
-                payload.imagePath = imagePath;
-            } else {
-                const itemDoc = await resolveResultToItem(rolled);
-                if (!itemDoc) continue;
-                payload.sourceItemId = itemDoc.id;
-            }
+            const itemDoc = await resolveResultToItem(rolled);
+            if (!itemDoc) continue;
+            payload.sourceItemId = itemDoc.id;
 
             await change.setFlag(MODULE_ID, ROLLED_FLAG, payload);
         }

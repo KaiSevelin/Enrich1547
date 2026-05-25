@@ -5,7 +5,7 @@ import assert from "assert";
  * 
  * Tests:
  *   - Requirement evaluation (GroupPresent, HasTag, StatAtLeast, PrimaryStatAtLeast, HasSkill)
- *   - Change application (Stat, PrimaryStat, Skill, Text, Image, ItemGrant, Tag, Trait)
+ *   - Change application (Stat, PrimaryStat, Skill, Text, ItemGrant, Tag, Trait)
  *   - Pipeline order (Size > Role > Domain > Motivation > Loadout > Quirk > Boost)
  *   - Cache invalidation
  */

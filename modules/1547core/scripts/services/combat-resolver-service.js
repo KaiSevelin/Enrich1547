@@ -1,6 +1,21 @@
 ﻿import { COMBAT_EVENTS, emitCombatEvent, onCombatEvent } from "./combat-events.js";
 import { evaluateManeuverLegality, getLegalManeuvers } from "./maneuver-legality-service.js";
 import { buildDefenderPool } from "../combat/pool-builder.mjs";
+import {
+    parseJsonString,
+    parseCommaList,
+    isTruthyLike,
+    firstFiniteNumber,
+    hasUsableRangeBands,
+    inferWeaponAttackType,
+    buildAttackProfilesFromWeaponProps,
+    resolveAmmoRangeSpec,
+    normalizeRangeBands,
+    applyAmmoRangeEffects,
+    normalizeManeuver,
+    normalizeAmmoItem,
+    normalizeWeapon as normalizeWeaponPure,
+} from "../combat/normalisation.mjs";
 
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
@@ -963,157 +978,6 @@ export async function swapLoadedAmmo(options = {}) {
     return loadWeaponAmmo(options);
 }
 
-function parseJsonString(value, fallback = null) {
-    if (typeof value !== "string" || value.trim() === "") return fallback;
-    try {
-        return JSON.parse(value);
-    } catch {
-        return fallback;
-    }
-}
-
-function parseCommaList(value) {
-    if (Array.isArray(value)) return value.filter(Boolean);
-    if (typeof value !== "string") return [];
-    return value.split(",").map((entry) => entry.trim()).filter(Boolean);
-}
-
-function isTruthyLike(value) {
-    if (typeof value === "boolean") return value;
-    if (typeof value === "number") return value > 0;
-    const normalized = String(value ?? "").trim().toLowerCase();
-    return ["true", "yes", "y", "1", "override"].includes(normalized);
-}
-function resolveAmmoRangeSpec(source = {}, props = {}) {
-    const sourceRange = source?.range;
-    const propRange = parseJsonString(props?.Range, null);
-    const explicitRange = (
-        props?.RangeShort !== undefined
-        || props?.RangeMedium !== undefined
-        || props?.RangeLong !== undefined
-    )
-        ? {
-            mode: isTruthyLike(props?.RangeModeOverride) ? "override" : "modify",
-            shortRange: Number(props?.RangeShort),
-            longRange: Number(props?.RangeMedium),
-            maxRange: Number(props?.RangeLong)
-        }
-        : null;
-    const legacyOverride = source?.rangeOverride ?? parseJsonString(props?.RangeOverride, null);
-    const legacyModifier = source?.rangeModifier ?? parseJsonString(props?.RangeModifier, null);
-
-    const range = sourceRange ?? explicitRange ?? propRange;
-    if (range && typeof range === "object") {
-        const mode = String(range.mode ?? "modify").trim().toLowerCase();
-        return {
-            mode: mode === "override" ? "override" : "modify",
-            shortRange: Number(range.shortRange),
-            longRange: Number(range.longRange),
-            maxRange: Number(range.maxRange)
-        };
-    }
-
-    if (legacyOverride && typeof legacyOverride === "object") {
-        return {
-            mode: "override",
-            shortRange: Number(legacyOverride.shortRange),
-            longRange: Number(legacyOverride.longRange),
-            maxRange: Number(legacyOverride.maxRange)
-        };
-    }
-
-    if (legacyModifier && typeof legacyModifier === "object") {
-        return {
-            mode: "modify",
-            shortRange: Number(legacyModifier.shortRange),
-            longRange: Number(legacyModifier.longRange),
-            maxRange: Number(legacyModifier.maxRange)
-        };
-    }
-
-    return null;
-}
-
-function parseManeuverDocumentJson(value, fallback = null) {
-    if (typeof value !== "string" || value.trim() === "") return fallback;
-    try {
-        return JSON.parse(value);
-    } catch {
-        return fallback;
-    }
-}
-
-function normalizeManeuver(maneuver) {
-    if (!maneuver) return null;
-    const source = maneuver.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? maneuver.flags?.[MODULE_ID]?.sourceData ?? maneuver ?? {};
-    const props = maneuver.system?.props ?? {};
-    const rawTiming = source.type ?? source.timing ?? props.Type ?? props.Timing ?? source.usage ?? props.Usage ?? "";
-    const rawTrigger = source.triggerType ?? props.TriggerType ?? props.Trigger ?? "";
-    const sourceRequirements = source.requirements ?? {};
-    const parsedEffectData = parseManeuverDocumentJson(props.EffectData, null);
-    const parsedUsageLimit = parseManeuverDocumentJson(props.UsageLimitData, null);
-    const maxUses = Number(props.UsageLimit);
-    return {
-        ...source,
-        _id: source._id ?? source.id ?? maneuver.id ?? maneuver._id ?? null,
-        id: source.id ?? source._id ?? maneuver.id ?? maneuver._id ?? null,
-        name: source.name ?? maneuver.name ?? "",
-        folder: source.folder ?? maneuver.folder?.name ?? maneuver.folder ?? "Maneuvers",
-        type: String(rawTiming ?? "").trim().toLowerCase(),
-        triggerType: String(rawTrigger ?? "").trim().toLowerCase(),
-        CostType: source.CostType ?? props.CostType ?? null,
-        CostAmount: source.CostAmount ?? (Number.isFinite(Number(props.CostAmount)) ? Number(props.CostAmount) : 0),
-        requirements: {
-            ...sourceRequirements,
-            skill: sourceRequirements.skill ?? (String(props.SkillRequirement ?? "").trim() || undefined),
-            text: sourceRequirements.text ?? (String(props.RequirementText ?? "").trim() || ""),
-            targetText: sourceRequirements.targetText ?? (String(props.TargetRequirement ?? "").trim() || undefined),
-            requiredWeaponTags: Array.isArray(sourceRequirements.requiredWeaponTags)
-                ? sourceRequirements.requiredWeaponTags
-                : String(props.RequiredWeaponTags ?? "").split(",").map((entry) => entry.trim()).filter(Boolean),
-            excludedWeaponTags: Array.isArray(sourceRequirements.excludedWeaponTags)
-                ? sourceRequirements.excludedWeaponTags
-                : String(props.ExcludedWeaponTags ?? "").split(",").map((entry) => entry.trim()).filter(Boolean),
-        },
-        effectData: source.effectData ?? parsedEffectData ?? {},
-        usageLimit: source.usageLimit ?? parsedUsageLimit ?? (Number.isFinite(maxUses) ? { maxUses } : {}),
-        tags: Array.isArray(source.tags) ? source.tags : String(props.Tags ?? "").split(",").map((entry) => entry.trim()).filter(Boolean),
-    };
-}
-
-function normalizeRangeBands(rangeBands) {
-    let shortRange = firstFiniteNumber([rangeBands.shortRange]);
-    let longRange = firstFiniteNumber([rangeBands.longRange]);
-    let maxRange = firstFiniteNumber([rangeBands.maxRange]);
-    shortRange = shortRange == null ? null : Math.max(0, shortRange);
-    longRange = longRange == null ? null : Math.max(0, longRange);
-    maxRange = maxRange == null ? null : Math.max(0, maxRange);
-    if (shortRange != null && longRange != null && longRange < shortRange) longRange = shortRange;
-    if (longRange != null && maxRange != null && maxRange < longRange) maxRange = longRange;
-    if (longRange == null && shortRange != null) longRange = shortRange;
-    if (maxRange == null && longRange != null) maxRange = longRange;
-    return { shortRange, longRange, maxRange };
-}
-
-function applyAmmoRangeEffects(rangeBands, ammo) {
-    const range = ammo?.range ?? null;
-    if (range && typeof range === "object") {
-        if (range.mode === "override") {
-            return normalizeRangeBands({
-                shortRange: range.shortRange,
-                longRange: range.longRange,
-                maxRange: range.maxRange
-            });
-        }
-        return normalizeRangeBands({
-            shortRange: (rangeBands.shortRange ?? 0) + (Number(range.shortRange) || 0),
-            longRange: (rangeBands.longRange ?? rangeBands.shortRange ?? 0) + (Number(range.longRange) || 0),
-            maxRange: (rangeBands.maxRange ?? rangeBands.longRange ?? 0) + (Number(range.maxRange) || 0)
-        });
-    }
-    return normalizeRangeBands(rangeBands);
-}
-
 function getStoredDatasetEntry(settingKey, name) {
     const dataset = game?.settings?.get?.(MODULE_ID, settingKey) ?? [];
     if (!Array.isArray(dataset)) return null;
@@ -1137,87 +1001,21 @@ function buildDefaultUnprotectedArmor() {
     };
 }
 
+/**
+ * Foundry-side wrapper around the pure normalizeWeapon. Falls back to
+ * the unarmed default when no weapon is provided; this fallback depends
+ * on game.settings (via getStoredDatasetEntry), so it stays here rather
+ * than in the pure normalisation module.
+ */
 function normalizeWeapon(weapon, actor = null) {
-    if (!weapon) return buildDefaultUnarmedWeapon();
-    const source = weapon.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? weapon.flags?.[MODULE_ID]?.sourceData ?? weapon;
-    const props = weapon.system?.props ?? {};
-    const loadedAmmoId = String(
-        props.LoadedAmmoId ??
-        weapon.loadedAmmoId ??
-        source.loadedAmmoId ??
-        ""
-    ).trim() || null;
-    const loadedAmmoItem = loadedAmmoId ? (actor?.items?.get?.(loadedAmmoId) ?? weapon.parent?.items?.get?.(loadedAmmoId) ?? null) : null;
-    const loadedAmmo = normalizeAmmoItem(loadedAmmoItem);
-    const propRangeBands = {
-        shortRange: firstFiniteNumber([props.ShortRange]),
-        longRange: firstFiniteNumber([props.LongRange]),
-        maxRange: firstFiniteNumber([props.MaxRange])
-    };
-    const sourceRangeBands = {
-        shortRange: firstFiniteNumber([weapon.shortRange, source.shortRange]),
-        longRange: firstFiniteNumber([weapon.longRange, source.longRange]),
-        maxRange: firstFiniteNumber([weapon.maxRange, source.maxRange])
-    };
-    const baseRangeBands = hasUsableRangeBands(propRangeBands)
-        ? propRangeBands
-        : (hasUsableRangeBands(sourceRangeBands) ? sourceRangeBands : {
-            shortRange: null,
-            longRange: null,
-            maxRange: null
-        });
-    const effectiveRangeBands = applyAmmoRangeEffects(baseRangeBands, loadedAmmo);
-    const attackProfiles = Array.isArray(source.attackProfiles) && source.attackProfiles.length
-        ? source.attackProfiles
-        : buildAttackProfilesFromWeaponProps(source, props);
-    return {
-        ...source,
-        _id: weapon.id ?? weapon._id ?? source._id ?? null,
-        name: source.name ?? weapon.name ?? "",
-        attackProfiles,
-        ammoType:
-            props.AmmoType ??
-            weapon.ammoType ??
-            source.ammoType ??
-            "",
-        ammoCapacity:
-            firstFiniteNumber([
-                props.AmmoCapacity,
-                weapon.ammoCapacity,
-                source.ammoCapacity,
-            ]) ?? 0,
-        ammoLoaded:
-            firstFiniteNumber([
-                props.AmmoLoaded,
-                weapon.ammoLoaded,
-                source.ammoLoaded,
-            ]) ?? 0,
-        activeAttackProfileKey:
-            String(
-                props.ActiveAttackProfile ??
-                weapon.activeAttackProfile ??
-                source.activeAttackProfile ??
-                ""
-            ).trim() || "Attack",
-        loadedAmmoId,
-        loadedAmmo,
-        shortRange: effectiveRangeBands.shortRange,
-        longRange: effectiveRangeBands.longRange,
-        maxRange: effectiveRangeBands.maxRange,
-        usesAmmo:
-            props.UsesAmmo ??
-            weapon.usesAmmo ??
-            source.usesAmmo ??
-            false,
-        itemDocument: weapon,
-    };
+    return normalizeWeaponPure(weapon, actor) ?? buildDefaultUnarmedWeapon();
 }
 
 function getActorReactionWeapon(actor) {
     const items = actor?.items?.contents ?? actor?.items ?? [];
     const weapons = items
         .filter((item) => isWeaponSource(item.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item.flags?.[MODULE_ID]?.sourceData ?? item))
-        .map(normalizeWeapon)
+        .map((item) => normalizeWeapon(item, actor))
         .filter(Boolean);
 
     const equippedWeapon = weapons.find((weapon) => weapon.equipped);
@@ -1230,39 +1028,6 @@ function isWeaponSource(source) {
     if (!source) return false;
     if (source.itemType === "weapon") return true;
     return source.folder === "Weapons";
-}
-
-function normalizeAmmoItem(ammo) {
-    if (!ammo) return null;
-    const source = ammo.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? ammo.flags?.[MODULE_ID]?.sourceData ?? ammo;
-    const props = ammo.system?.props ?? {};
-    return {
-        ...source,
-        _id: ammo.id ?? ammo._id ?? source._id ?? null,
-        name: source.name ?? ammo.name ?? "",
-        ammoType:
-            props.AmmoType ??
-            ammo.ammoType ??
-            source.ammoType ??
-            "",
-        quantity:
-            firstFiniteNumber([
-                props.Quantity,
-                ammo.quantity,
-                source.quantity,
-            ]) ?? 0,
-        addDice: Array.isArray(source.addDice) && source.addDice.length
-            ? source.addDice
-            : parseCommaList(props.AddDiceSummary ?? props.AddDice),
-        tags: Array.isArray(source.tags) && source.tags.length
-            ? source.tags
-            : parseCommaList(props.TagsSummary ?? props.Tags),
-        resultModifiers: Array.isArray(source.resultModifiers) && source.resultModifiers.length
-            ? source.resultModifiers
-            : (parseJsonString(props.ResultModifiers, []) ?? []),
-        range: resolveAmmoRangeSpec(source, props),
-        itemDocument: ammo,
-    };
 }
 
 function resolveSelectedWeaponProfile(weapon, { profile = null, profileId = null } = {}) {

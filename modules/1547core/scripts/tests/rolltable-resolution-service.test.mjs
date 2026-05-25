@@ -6,9 +6,9 @@ import assert from "assert";
  * Fixtures mirror real CSB data shape: Changes live on actor.items, the
  * ChangeSet references them via system.props.ChangeDisplayer: { "<id>": {...} }.
  *
- * Covers findChangesNeedingRoll: identifies Image/ItemGrant RollTable-mode
- * Changes whose cache is missing or stale, ignores Direct mode and
- * non-RollTable kinds, and respects matching cache.
+ * Covers findChangesNeedingRoll: identifies ItemGrant RollTable-mode Changes
+ * whose cache is missing or stale, ignores Direct mode and non-RollTable
+ * kinds, and respects matching cache.
  */
 
 if (typeof globalThis.game === "undefined") globalThis.game = { modules: { get: () => ({ api: {} }) } };
@@ -58,24 +58,6 @@ console.log("findChangesNeedingRoll...");
     const a = actor({
         items: [
             changeSet({ id: "cs-1", changeIds: ["ch-1"] }),
-            change({ id: "ch-1", kind: "Image", props: { ImageMode: "RollTable", ImageRollTable: "RollTable.abc" } })
-        ]
-    });
-    const needed = findChangesNeedingRoll(a);
-    assert.strictEqual(needed.length, 1);
-    assert.deepStrictEqual(needed[0], {
-        changeSetId: "cs-1",
-        changeId: "ch-1",
-        kind: "Image",
-        uuid: "RollTable.abc"
-    });
-    console.log("  ✓ Identifies Image RollTable change needing roll");
-}
-
-{
-    const a = actor({
-        items: [
-            changeSet({ id: "cs-1", changeIds: ["ch-1"] }),
             change({ id: "ch-1", kind: "ItemGrant", props: { ItemGrantMode: "RollTable", ItemGrantRollTable: "RollTable.xyz" } })
         ]
     });
@@ -83,7 +65,7 @@ console.log("findChangesNeedingRoll...");
     assert.strictEqual(needed.length, 1);
     assert.strictEqual(needed[0].kind, "ItemGrant");
     assert.strictEqual(needed[0].uuid, "RollTable.xyz");
-    console.log("  ✓ Identifies ItemGrant RollTable change needing roll");
+    console.log("  + Identifies ItemGrant RollTable change needing roll");
 }
 
 {
@@ -99,7 +81,7 @@ console.log("findChangesNeedingRoll...");
         ]
     });
     assert.deepStrictEqual(findChangesNeedingRoll(a), []);
-    console.log("  ✓ Skips Changes whose cache matches the target table");
+    console.log("  + Skips Changes whose cache matches the target table");
 }
 
 {
@@ -117,46 +99,44 @@ console.log("findChangesNeedingRoll...");
     const needed = findChangesNeedingRoll(a);
     assert.strictEqual(needed.length, 1);
     assert.strictEqual(needed[0].uuid, "RollTable.new");
-    console.log("  ✓ Re-rolls when table UUID has been retargeted");
+    console.log("  + Re-rolls when table UUID has been retargeted");
 }
 
 {
     const a = actor({
         items: [
-            changeSet({ id: "cs-1", changeIds: ["ch-direct", "ch-image-direct", "ch-stat", "ch-blank"] }),
+            changeSet({ id: "cs-1", changeIds: ["ch-direct", "ch-stat", "ch-blank"] }),
             change({ id: "ch-direct", kind: "ItemGrant", props: { ItemGrantMode: "Direct", ItemGrantRef: { "source-1": { id: "source-1" } } } }),
-            change({ id: "ch-image-direct", kind: "Image", props: { ImageMode: "Direct", ImageValue: "/path.png" } }),
             change({ id: "ch-stat", kind: "Stat" }),
             change({ id: "ch-blank", kind: "ItemGrant", props: { ItemGrantMode: "RollTable", ItemGrantRollTable: "" } })
         ]
     });
     assert.deepStrictEqual(findChangesNeedingRoll(a), []);
-    console.log("  ✓ Ignores Direct mode, non-target kinds, and blank UUIDs");
+    console.log("  + Ignores Direct mode, non-target kinds, and blank UUIDs");
 }
 
 {
     const a = actor({
         items: [
-            changeSet({ id: "cs-1", changeIds: ["ch-1", "ch-2"] }),
+            changeSet({ id: "cs-1", changeIds: ["ch-2"] }),
             changeSet({ id: "cs-2", changeIds: ["ch-3"] }),
-            change({ id: "ch-1", kind: "Image", props: { ImageMode: "RollTable", ImageRollTable: "Table.a" } }),
             change({ id: "ch-2", kind: "ItemGrant", props: { ItemGrantMode: "RollTable", ItemGrantRollTable: "Table.b" } }),
             change({ id: "ch-3", kind: "ItemGrant", props: { ItemGrantMode: "RollTable", ItemGrantRollTable: "Table.c" } })
         ]
     });
     const needed = findChangesNeedingRoll(a);
-    assert.strictEqual(needed.length, 3);
+    assert.strictEqual(needed.length, 2);
     const keys = needed.map((n) => `${n.changeSetId}:${n.changeId}`).sort();
-    assert.deepStrictEqual(keys, ["cs-1:ch-1", "cs-1:ch-2", "cs-2:ch-3"]);
-    console.log("  ✓ Walks all ChangeSets and all child Changes");
+    assert.deepStrictEqual(keys, ["cs-1:ch-2", "cs-2:ch-3"]);
+    console.log("  + Walks all ChangeSets and all child Changes");
 }
 
 console.log("\ngetCachedRoll...");
 {
-    const c = change({ id: "ch-1", kind: "Image", cached: { tableUuid: "T", rolledAt: 5, imagePath: "/p.png" } });
-    assert.deepStrictEqual(getCachedRoll(c), { tableUuid: "T", rolledAt: 5, imagePath: "/p.png" });
-    assert.strictEqual(getCachedRoll(change({ id: "ch-2", kind: "Image" })), null);
-    console.log("  ✓ Reads cache flag, returns null when absent");
+    const c = change({ id: "ch-1", kind: "ItemGrant", cached: { tableUuid: "T", rolledAt: 5, sourceItemId: "item-1" } });
+    assert.deepStrictEqual(getCachedRoll(c), { tableUuid: "T", rolledAt: 5, sourceItemId: "item-1" });
+    assert.strictEqual(getCachedRoll(change({ id: "ch-2", kind: "ItemGrant" })), null);
+    console.log("  + Reads cache flag, returns null when absent");
 }
 
 console.log("\nAll rolltable-resolution-service tests passed.");

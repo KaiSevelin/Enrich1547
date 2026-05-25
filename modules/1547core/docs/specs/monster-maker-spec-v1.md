@@ -64,7 +64,7 @@ actual.*
 | Field | Type | Visibility | Notes |
 |---|---|---|---|
 | `_id` | identifier | always | `WsrkfjBmudnIhvEK` |
-| `Kind` | select | always | `Stat`, `PrimaryStat`, `Skill`, `Text`, `Image`, `ItemGrant`, `Tag`, `Trait` |
+| `Kind` | select | always | `Stat`, `PrimaryStat`, `Skill`, `Text`, `ItemGrant`, `Tag`, `Trait` |
 | `Notes` | textArea | always | Author comment |
 | `StatTarget`, `StatOp`, `StatValue` | text + select + numberField | `equalText(Kind, 'Stat')` | StatOp ∈ `Add`, `Multiply`, `Override` |
 | `PrimaryStatTarget`, `PrimaryStatOp` | select × 2 | `equalText(Kind, 'PrimaryStat')` | Target ∈ 7 primary stats; Op ∈ `Step`, `Set` |
@@ -72,9 +72,6 @@ actual.*
 | `PrimaryStatSetDice`, `PrimaryStatSetMod` | numberField × 2 | `equalText(PrimaryStatOp, 'Set')` | Dice ≥ 1, Mod 0–3 |
 | `SkillRef`, `SkillDelta` | itemContainer (skill-filtered) + numberField | `equalText(Kind, 'Skill')` | Delta signed |
 | `TextTarget`, `TextOp`, `TextValue` | text + select + textArea | `equalText(Kind, 'Text')` | Op ∈ `Append`, `Prepend`, `Replace` |
-| `ImageTarget`, `ImageMode` | text + select | `equalText(Kind, 'Image')` | Mode ∈ `Direct`, `RollTable` |
-| `ImageValue` | text | `equalText(ImageMode, 'Direct')` | Image path |
-| `ImageRollTable` | text | `equalText(ImageMode, 'RollTable')` | RollTable UUID |
 | `ItemGrantMode` | select | `equalText(Kind, 'ItemGrant')` | `Direct` or `RollTable` |
 | `ItemGrantRef` | itemContainer (broadly filtered) | `equalText(ItemGrantMode, 'Direct')` | Drop the item |
 | `ItemGrantRollTable` | text | `equalText(ItemGrantMode, 'RollTable')` | RollTable UUID |
@@ -186,6 +183,23 @@ the combat resolver, not by ChangeSets.
   Changes during derivation.
 - Traits: `actor.system.props.Traits` as `Array<{name, description}>`.
 
+### Monster portraits
+
+Monster portraits are derived outside the Change pipeline. `Image` is no
+longer a Change kind.
+
+The image resolver reads the final composed actor context and returns the
+portrait to display. Current precedence:
+
+1. explicit actor-level override (if any)
+2. future portrait/theme keys derived from composition state
+3. the actor's authored base `img`
+4. Foundry fallback `icons/svg/mystery-man.svg`
+
+Current implementation keeps only step 3 and 4 active, which means removing
+the `Image` Change kind is safe today while leaving room for type-aware
+resolution later.
+
 ### Boost-derived tier
 
 Tier is not a stored field. It is computed as
@@ -221,8 +235,6 @@ and dispatches by `Kind`:
 - `PrimaryStat` → advance/set on Stats_{Name}Dice/Mod
 - `Skill` → find/create skill item on actor, adjust Level by `SkillDelta`
 - `Text` → state.props[TextTarget] mutated by `TextOp` with `TextValue`
-- `Image` → state.props[ImageTarget] (or actor.img) set to `ImageValue` (or
-  the cached rolled value when `ImageMode == RollTable`)
 - `ItemGrant` → copy item onto actor (when permanent) or attach proxy
 - `Tag` → state.tags.add(TagName)
 - `Trait` → state.traits.push({name, description})
@@ -260,16 +272,16 @@ Registered in `scripts/settings/module-settings.js`:
 |---|---|---|---|---|
 | `boostRollTableUuid` | world | yes | `""` | Foundry UUID of the RollTable rolled by Boost button |
 
-## RollTable Mode for Image and ItemGrant Changes
+## RollTable Mode for ItemGrant Changes
 
-When a Change has `ImageMode == "RollTable"` or `ItemGrantMode == "RollTable"`,
-the field referenced is a Foundry RollTable UUID. The actual image path or
-item document is resolved at **placement time** — when the parent ChangeSet
-item is added to an actor (`createItem` hook).
+When a Change has `ItemGrantMode == "RollTable"`, the field referenced is a
+Foundry RollTable UUID. The actual item document is resolved at **placement
+time** — when the parent ChangeSet item is added to an actor (`createItem`
+hook).
 
 The rolled result is cached on the Change item so subsequent derives do
 not re-roll. Cache location:
-`item.flags["1547core"].rolledResult = { tableUuid, rolledAt, imagePath?, sourceItemId? }`.
+`item.flags["1547core"].rolledResult = { tableUuid, rolledAt, sourceItemId? }`.
 The `tableUuid` field allows the resolver to detect retargets (author
 changed the RollTable reference) and re-roll only then.
 
@@ -328,6 +340,8 @@ The combat engine reads `actual.*`.
 ## Cross-references
 
 - `monster-creation-guide.md` — the designer-facing companion to this spec.
+- `monster-image-resolver-spec-v1.md` — portrait derivation rules for composed
+  monsters.
 - `equipment-and-dice-schema-spec-v1.md` — for weapon/ammo/armor data
   consumed by ItemGrant Changes.
 - `combat-rules-guide.md` — for action economy, dice pools, and where
@@ -352,7 +366,7 @@ Implemented:
 - `boostRollTableUuid` world setting.
 - Derive pipeline in `services/composition-service.mjs`: walks pipeline
   order, evaluates all five Requirement predicate types, dispatches all
-  eight Change kinds into `cumulativeState`, caches by
+  seven Change kinds into `cumulativeState`, caches by
   `actor._stats?.modifiedTime`, invalidates on createItem / updateItem /
   deleteItem.
 - preCreateItem drop hook in `services/changeset-drop-hook.js` plus
@@ -364,10 +378,13 @@ Implemented:
   Reversible — removing a ChangeSet (or just one Change) deletes the
   matching tagged items.
 - RollTable resolution in `services/rolltable-resolution-service.js`:
-  rolls Image and ItemGrant RollTable Changes once at placement time,
+  rolls ItemGrant RollTable Changes once at placement time,
   caches results at `flags["1547core"].rolledResult`, re-rolls when the
   target table UUID changes. composition-service and item-grant-service
   consume the cache.
+- Image resolver in `services/monster-image-resolver-service.js`: portraits
+  are derived from actor context and currently default to the actor's base
+  image, rather than being granted by Change items.
 - Tier display in `services/tier-display-service.js`: injects a "Tier: N"
   badge into the actor sheet's BoostControls panel via `renderActorSheet`,
   counting Boost-group ChangeSets.
