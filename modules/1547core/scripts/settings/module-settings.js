@@ -869,6 +869,22 @@ function createModuleSetupFormApplicationClass() {
             return { maneuvers, weapons, armors, ammunition, monsters, changeSets, changes, requirements };
         }
 
+        /**
+         * Move a root-level folder under a new parent. No-op when the
+         * folder doesn't exist or is already correctly parented. Used
+         * to migrate pre-0.2.4 setups whose kind folders were created
+         * at the world root.
+         */
+        async #reparentRootFolder(folderName, type, newParentId) {
+            const folder = game.folders?.find((entry) =>
+                entry.type === type
+                && entry.name === folderName
+                && (entry.folder?.id ?? entry.folder ?? null) === null
+            );
+            if (!folder || !newParentId || folder.id === newParentId) return;
+            await folder.update({ folder: newParentId });
+        }
+
         async #getOrCreateFolder({ folderName, type, parentId = null, color = "#7a7a7a" }) {
             let folder = game.folders?.find((entry) =>
                 entry.type === type
@@ -888,14 +904,40 @@ function createModuleSetupFormApplicationClass() {
         }
 
         async #buildManagedFolderTree() {
-            const monstersFolder = await this.#getOrCreateFolder({ folderName: "Monsters", type: "Actor", color: "#516d5b" });
-            const maneuverFolder = await this.#getOrCreateFolder({ folderName: "Maneuvers", type: "Item" });
-            const weaponFolder = await this.#getOrCreateFolder({ folderName: "Weapons", type: "Item" });
-            const armorFolder = await this.#getOrCreateFolder({ folderName: "Armor", type: "Item" });
-            const ammoFolder = await this.#getOrCreateFolder({ folderName: "Ammunition", type: "Item" });
-            const changeSetsFolder = await this.#getOrCreateFolder({ folderName: "Change Sets", type: "Item", color: "#6d5b51" });
-            const changesFolder = await this.#getOrCreateFolder({ folderName: "Changes", type: "Item", color: "#6d6551" });
-            const requirementsFolder = await this.#getOrCreateFolder({ folderName: "Requirements", type: "Item", color: "#5b5b6d" });
+            // Top-level namespace folders (one per document collection
+            // — Foundry folders are typed and can't cross-parent).
+            // Every kind-specific folder below lives inside one of these.
+            const coreItemFolder = await this.#getOrCreateFolder({
+                folderName: "1547 Core",
+                type: "Item",
+                color: "#445566"
+            });
+            const coreActorFolder = await this.#getOrCreateFolder({
+                folderName: "1547 Core",
+                type: "Actor",
+                color: "#445566"
+            });
+
+            // Migrate any pre-0.2.4 root-level kind folders into the
+            // new core namespace. Idempotent: skips folders already
+            // under the right parent or missing entirely.
+            await this.#reparentRootFolder("Maneuvers", "Item", coreItemFolder.id);
+            await this.#reparentRootFolder("Weapons", "Item", coreItemFolder.id);
+            await this.#reparentRootFolder("Armor", "Item", coreItemFolder.id);
+            await this.#reparentRootFolder("Ammunition", "Item", coreItemFolder.id);
+            await this.#reparentRootFolder("Change Sets", "Item", coreItemFolder.id);
+            await this.#reparentRootFolder("Changes", "Item", coreItemFolder.id);
+            await this.#reparentRootFolder("Requirements", "Item", coreItemFolder.id);
+            await this.#reparentRootFolder("Monsters", "Actor", coreActorFolder.id);
+
+            const monstersFolder = await this.#getOrCreateFolder({ folderName: "Monsters", type: "Actor", parentId: coreActorFolder.id, color: "#516d5b" });
+            const maneuverFolder = await this.#getOrCreateFolder({ folderName: "Maneuvers", type: "Item", parentId: coreItemFolder.id });
+            const weaponFolder = await this.#getOrCreateFolder({ folderName: "Weapons", type: "Item", parentId: coreItemFolder.id });
+            const armorFolder = await this.#getOrCreateFolder({ folderName: "Armor", type: "Item", parentId: coreItemFolder.id });
+            const ammoFolder = await this.#getOrCreateFolder({ folderName: "Ammunition", type: "Item", parentId: coreItemFolder.id });
+            const changeSetsFolder = await this.#getOrCreateFolder({ folderName: "Change Sets", type: "Item", parentId: coreItemFolder.id, color: "#6d5b51" });
+            const changesFolder = await this.#getOrCreateFolder({ folderName: "Changes", type: "Item", parentId: coreItemFolder.id, color: "#6d6551" });
+            const requirementsFolder = await this.#getOrCreateFolder({ folderName: "Requirements", type: "Item", parentId: coreItemFolder.id, color: "#5b5b6d" });
 
             const changeSetGroupFolders = {};
             for (const groupName of CHANGE_SET_GROUPS) {
@@ -928,6 +970,8 @@ function createModuleSetupFormApplicationClass() {
             }
 
             return {
+                coreItemFolder,
+                coreActorFolder,
                 monstersFolder,
                 maneuverFolder,
                 weaponFolder,
