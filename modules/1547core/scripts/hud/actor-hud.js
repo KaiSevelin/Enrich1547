@@ -1391,22 +1391,44 @@ function clearHudReactionWindow() {
     stopReactionHudTicker();
 }
 
+/**
+ * Schedule a single re-render at the reaction window's expiry — when
+ * the timer hits zero, the HUD re-renders so the prompt clears.
+ *
+ * NOTE: previously this ticked every 250ms to animate the countdown
+ * text, but the periodic re-render replaced the DOM (and its event
+ * listeners) between mousedown and mouseup of real mouse clicks, so
+ * the browser never synthesised a `click` event. Programmatic
+ * `.click()` worked because it fires synchronously, but a user
+ * clicking with a real mouse hit nothing.
+ *
+ * Trade-off: the countdown text in the prompt is no longer live —
+ * it shows the time-remaining at render time and doesn't update
+ * until the user interacts. The reaction-service still enforces the
+ * real timeout independently.
+ */
 function startReactionHudTicker() {
     if (reactionHudTicker) return;
-    reactionHudTicker = window.setInterval(() => {
-        const reactionWindow = getActiveReactionWindow();
-        if (!reactionWindow) {
-            stopReactionHudTicker();
+    const window_ = HUD_STATE.reactionWindow;
+    const expiresAt = Number(window_?.expiresAt);
+    if (!Number.isFinite(expiresAt)) return;
+    const delay = Math.max(0, expiresAt - Date.now());
+    reactionHudTicker = window.setTimeout(() => {
+        reactionHudTicker = null;
+        if (!getActiveReactionWindow()) {
+            // already cleared (e.g. by passReaction click)
             void renderHudForSelection();
             return;
         }
+        // expiry: clear HUD state and re-render to remove the stale prompt
+        clearHudReactionWindow();
         void renderHudForSelection();
-    }, 250);
+    }, delay);
 }
 
 function stopReactionHudTicker() {
     if (!reactionHudTicker) return;
-    window.clearInterval(reactionHudTicker);
+    window.clearTimeout(reactionHudTicker);
     reactionHudTicker = null;
 }
 
