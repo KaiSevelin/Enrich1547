@@ -1027,9 +1027,14 @@ function getWeaponAttackState(weapon, {
         };
     }
 
-    const minReach = Number.isFinite(weapon.minReach) ? weapon.minReach : 0;
-    const maxReach = Number.isFinite(weapon.maxReach) ? weapon.maxReach : null;
-    if (Number.isFinite(maxReach) && distanceSquares >= minReach && distanceSquares <= maxReach) {
+    // Melee default: most weapon datasets don't specify MinReach /
+    // MaxReach explicitly (buildWeaponProps writes "" when the source
+    // omits them). For a melee weapon with no usable range bands and
+    // no explicit reach, fall back to (1, 1) — the canonical melee
+    // default, matching DEFAULT_UNARMED_WEAPON_SOURCE.
+    const minReach = Number.isFinite(weapon.minReach) ? weapon.minReach : 1;
+    const maxReach = Number.isFinite(weapon.maxReach) ? weapon.maxReach : 1;
+    if (distanceSquares >= minReach && distanceSquares <= maxReach) {
         return {
             status: "valid",
             label: `In reach (${distanceSquares})`,
