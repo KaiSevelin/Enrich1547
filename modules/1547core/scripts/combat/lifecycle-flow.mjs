@@ -379,7 +379,10 @@ export async function resolveAttackOutcomePhased({
             actorConditions: pendingAttack.metadata?.actorConditions,
             targetConditions: pendingAttack.metadata?.targetConditions,
         }),
-    ].filter((w) => w?.actor);
+    ].filter((w) => w?.actor && w.legalPostManeuvers.length > 0);
+    // A side with zero legal post-maneuvers has nothing to choose, so
+    // its window is suppressed entirely — no POST_MANEUVER_WINDOW_OPENED
+    // event, no UI prompt, no closure on the result.
 
     // ── Phases 4..N: POST_MANEUVER_WINDOW_OPENED per window ──
     const postManeuverWindowEvents = [];

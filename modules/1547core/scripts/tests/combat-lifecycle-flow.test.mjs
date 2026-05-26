@@ -272,8 +272,10 @@ console.log("\nresolveAttackOutcomePhased...");
 
     const fakeRun = makeFakeRun([
         { cancelled: false, results: [] },  // damageApplied
-        { cancelled: false, results: [] },  // postManeuverWindow[0:defender]
-        { cancelled: false, results: [] },  // postManeuverWindow[1:attacker]
+        // No postManeuverWindow phases: the test fake actor has no
+        // maneuver items, so getLegalManeuvers returns []. Post-windows
+        // with zero options are now filtered out (suppresses the
+        // dead-end "no legal post maneuvers" UI prompt).
         { cancelled: false, results: [] },  // actionCommitted
     ]);
 
@@ -288,14 +290,15 @@ console.log("\nresolveAttackOutcomePhased...");
     const phaseNames = fakeRun.phases.map((p) => p.phase);
     assert.deepStrictEqual(
         phaseNames,
-        ["applyDamage", "damageApplied", "postManeuverWindow[0:defender]", "postManeuverWindow[1:attacker]", "consumeAmmo", "actionCommitted"]
+        ["applyDamage", "damageApplied", "consumeAmmo", "actionCommitted"]
     );
     assert.strictEqual(result.damageApplied, 3);
     assert.strictEqual(result.hitPointUpdate.previousHitPoints, 10);
     assert.strictEqual(result.hitPointUpdate.currentHitPoints, 7);
-    assert.strictEqual(result.pendingPostManeuverWindows.length, 2);
+    assert.strictEqual(result.pendingPostManeuverWindows.length, 0,
+        "no post-windows when neither side has any legal post maneuvers");
     assert.strictEqual(result.pendingAttack.committed, true);
-    console.log("  ✓ happy path: applyDamage → damageApplied → 2 post-windows → consumeAmmo → actionCommitted");
+    console.log("  ✓ happy path: applyDamage → damageApplied → consumeAmmo → actionCommitted (empty post-windows filtered)");
 }
 
 {
@@ -313,9 +316,8 @@ console.log("\nresolveAttackOutcomePhased...");
 
     const fakeRun = makeFakeRun([
         { cancelled: false, results: [] },  // damageApplied
-        { cancelled: false, results: [] },  // postManeuverWindow[0]
-        { cancelled: false, results: [] },  // postManeuverWindow[1]
         { cancelled: false, results: [] },  // actionCommitted
+        // (no post-window phases — empty post options are filtered)
     ]);
 
     const result = await resolveAttackOutcomePhased({
@@ -328,11 +330,11 @@ console.log("\nresolveAttackOutcomePhased...");
     const phaseNames = fakeRun.phases.map((p) => p.phase);
     assert.deepStrictEqual(
         phaseNames,
-        ["damageApplied", "postManeuverWindow[0:defender]", "postManeuverWindow[1:attacker]", "actionCommitted"],
-        "no damage AND already committed → no applyDamage and no consumeAmmo phases"
+        ["damageApplied", "actionCommitted"],
+        "no damage AND already committed → no applyDamage and no consumeAmmo; empty post-windows skipped"
     );
     assert.strictEqual(result.damageApplied, 0);
-    console.log("  ✓ zero damage + already committed: skips applyDamage AND consumeAmmo");
+    console.log("  ✓ zero damage + already committed: skips applyDamage AND consumeAmmo (and empty post-windows)");
 }
 
 {
