@@ -408,7 +408,15 @@ function makeItemDoc(source, template, img, propsBuilder, folderId, folderHint =
     return {
         _id: source._id,
         name: source.name,
-        type: template.type,
+        // Instance items use the user-facing CSB type ("equippableItem"
+        // for weapons / armor / ammo / maneuvers / change sets / changes
+        // / requirements), NOT the template's own document type
+        // (which is "_equippableItemTemplate" — the schema marker).
+        // Falls back to source.type when the source data specifies one;
+        // otherwise defaults to "equippableItem" since that's CSB's
+        // single user-facing instance type. The CSB template choice is
+        // carried by system.template, not by Foundry's `type` field.
+        type: source.type ?? "equippableItem",
         img,
         system: {
             ...cloneTemplateSystem(template),
