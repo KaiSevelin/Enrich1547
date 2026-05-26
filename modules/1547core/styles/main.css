@@ -136,7 +136,10 @@ a.enricher-1547::before {
 
 .actor-hud-1547 .hud-floating-prompts {
   position: absolute;
-  left: calc(100% + 0.85rem);
+  /* Sit beside the HUD's right edge with a generous gap so the
+     reaction / damage / post-maneuver prompts don't crowd HUD
+     content even when the HUD is at its widest. */
+  left: calc(100% + 2.5rem);
   top: 0;
   width: min(24rem, calc(100vw - 2rem));
   display: grid;
