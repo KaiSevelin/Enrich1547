@@ -12,6 +12,7 @@
 // behaviour change in legality range checks.
 
 const MODULE_ID = "1547core";
+const SOURCE_FLAG_SCOPE = "1547Core";
 const MANEUVER_DATA_SETTING = "maneuverData";
 
 const WINDOW_TO_TIMING = {
