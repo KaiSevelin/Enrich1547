@@ -1075,6 +1075,11 @@ function createModuleSetupFormApplicationClass() {
                 event.preventDefault();
                 await this.#setupData();
             });
+
+            html.find("[data-action='run-diagnostics']").on("click", async (event) => {
+                event.preventDefault();
+                await this.#runDiagnostics();
+            });
         }
 
         async _updateObject() {
@@ -1120,6 +1125,43 @@ function createModuleSetupFormApplicationClass() {
             } catch (error) {
                 console.error(`${MODULE_ID} | Failed to setup data`, error);
                 ui.notifications.error(`1547 Core: failed to setup data. ${error.message}`);
+            }
+        }
+
+        async #runDiagnostics() {
+            try {
+                const api = game.modules.get(MODULE_ID)?.api;
+                const report = typeof api?.diagnostics === "function"
+                    ? api.diagnostics()
+                    : { error: "Diagnostics API is unavailable; is the module fully initialised?" };
+                const json = JSON.stringify(report, null, 2);
+                console.log(`${MODULE_ID} | diagnostics`, report);
+
+                let copied = false;
+                try {
+                    if (game.clipboard?.copyPlainText) {
+                        await game.clipboard.copyPlainText(json);
+                        copied = true;
+                    } else if (navigator.clipboard?.writeText) {
+                        await navigator.clipboard.writeText(json);
+                        copied = true;
+                    }
+                } catch (_) {
+                    copied = false;
+                }
+
+                const escaped = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                const content = `<p>${copied ? "Copied to clipboard and logged" : "Logged"} to the console. Select all in the box below to copy, then paste it for analysis.</p>`
+                    + `<textarea readonly rows="22" style="width:100%; font-family:monospace; white-space:pre; resize:vertical;">${escaped}</textarea>`;
+                new Dialog({
+                    title: "1547 Core Diagnostics",
+                    content,
+                    buttons: { close: { icon: '<i class="fas fa-check"></i>', label: "Close" } },
+                    default: "close"
+                }, { width: 720 }).render(true);
+            } catch (error) {
+                console.error(`${MODULE_ID} | Failed to run diagnostics`, error);
+                ui.notifications.error(`1547 Core: diagnostics failed. ${error.message}`);
             }
         }
 

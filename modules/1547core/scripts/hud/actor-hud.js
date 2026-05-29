@@ -2070,6 +2070,13 @@ function releaseDeferredPostWindowsIntoHud() {
 export function register1547ActorHud() {
     ensureHudRoot().innerHTML = buildEmptyHtml("Waiting for selection");
 
+    const moduleApi = game.modules.get(MODULE_ID);
+    if (moduleApi) {
+        moduleApi.api = moduleApi.api ?? {};
+        // Exposed so the diagnostics service can reuse the real, deps-bound summary path.
+        moduleApi.api.summarizeActor = summarizeActor;
+    }
+
     onCombatEvent(COMBAT_EVENTS.REACTION_WINDOW_OPENED, (event) => {
         setHudReactionWindow(event.payload);
         void renderHudForSelection();

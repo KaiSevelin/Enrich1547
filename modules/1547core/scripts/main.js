@@ -91,6 +91,11 @@ Hooks.once("init", () => {
         () => import("./services/spell-casting-service.js"),
         (module) => module.registerSpellCastingService()
     );
+    void runImportedModuleStep(
+        "registerDiagnosticsService",
+        () => import("./services/diagnostics-service.js"),
+        (module) => module.registerDiagnosticsService()
+    );
 });
 
 Hooks.once("ready", () => {
