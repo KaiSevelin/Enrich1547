@@ -360,38 +360,6 @@ Consumption timing for that example:
 - when the shot is committed, reduce that stack's `quantity` by `1`
 - then clear `loadedAmmoId` if the weapon is now empty
 
-### Scatter Shot
-
-Weapon profile:
-
-```js
-{
-  id: "shot",
-  attackType: "ranged",
-  dice: ["Lethality", "Grace", "Risk"],
-  allowedAmmoTypes: ["Bullet"],
-  tags: []
-}
-```
-
-Loaded ammunition:
-
-```js
-{
-  ammoType: "Bullet",
-  addDice: ["Multiplier"],
-  tags: ["Short Range"],
-  resultModifiers: [
-    { type: "overrideRangeBand", value: "short" }
-  ]
-}
-```
-
-Effect:
-
-- the attacker rolls one extra `Multiplier` die
-- the attack is treated as short-ranged for that shot
-
 ## Alignment Notes
 
 This spec is intentionally aligned with the current equipment schema:

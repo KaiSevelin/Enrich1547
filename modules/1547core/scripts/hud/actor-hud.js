@@ -111,10 +111,13 @@ const CSB_TEMPLATE_IDS = {
     maneuver: "4owc4YQBlp94GbGs",
     magicItem: "HkiFlUWUkUycJdBZ",
     pact: "HPYYc2P0Ouagicmr",
-    power: "w9ky0ZTDvXDs5Ce7",
+    supernaturalMark: "w9ky0ZTDvXDs5Ce7",
+    monsterMagic: "M0nMgk7Yp2RsT5Vu",
     skill: "BbwVnEJobtCR5oOf",
     spell: "2kiWw3Cv5Zk1lZxn",
-    unequippable: "389uqkKKn8M1SKux",
+    ammunition: "389uqkKKn8M1SKux",
+    weaponModifier: "WmP9Ld3Qs7Nk2FvR",
+    unequippable: "woHyeHPKKdo4JDJd",
     usageEffect: "mwPqEYUoOfzXpyT9",
     weapon: "qZCfLEYQ7egbm1B9"
 };
@@ -278,7 +281,8 @@ function buildWeaponRollContext(summary, maneuverEffects = {}) {
 }
 const INVENTORY_FILTER_OPTIONS = [
     { value: "all", label: "All" },
-    { value: "Item.389uqkKKn8M1SKux", label: "Ammunitions" },
+    { value: "Item.389uqkKKn8M1SKux", label: "Ammunition" },
+    { value: "Item.WmP9Ld3Qs7Nk2FvR", label: "Weapon Modifiers" },
     { value: "Item.uLlgZXz3GlXPFtsj", label: "Armors" },
     { value: "Item.PDxRO5ObvLaThpez", label: "Consumables" },
     { value: "Item.l4j1zT3kpdkZmACQ", label: "Containers" },
@@ -521,12 +525,18 @@ function getCsbItemKind(item) {
             return "magic-item";
         case CSB_TEMPLATE_IDS.pact:
             return "pact";
-        case CSB_TEMPLATE_IDS.power:
-            return "power";
+        case CSB_TEMPLATE_IDS.supernaturalMark:
+            return "supernatural-mark";
+        case CSB_TEMPLATE_IDS.monsterMagic:
+            return "monster-magic";
         case CSB_TEMPLATE_IDS.skill:
             return "skill";
         case CSB_TEMPLATE_IDS.spell:
             return "spell";
+        case CSB_TEMPLATE_IDS.ammunition:
+            return "ammunition";
+        case CSB_TEMPLATE_IDS.weaponModifier:
+            return "weapon-modifier";
         case CSB_TEMPLATE_IDS.unequippable:
             return "unequippable";
         case CSB_TEMPLATE_IDS.usageEffect:
@@ -554,7 +564,7 @@ function isAmmoItem(item) {
     const itemProps = item?.system?.props ?? {};
     const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
     return sourceData?.itemType === "ammo"
-        || (getCsbItemKind(item) === "unequippable" && Boolean(itemProps.AmmoType || sourceData.ammoType));
+        || (getCsbItemKind(item) === "ammunition" && Boolean(itemProps.AmmoType || sourceData.ammoType));
 }
 
 function isInternalHudFolderName(folderName) {
@@ -606,7 +616,8 @@ function getPlayerFacingItemGroup(item) {
     if (itemKind === "magic-item") return "Magic Items";
     if (itemKind === "container") return "Containers";
     if (itemKind === "equippable") return "Gear";
-    if (itemKind === "unequippable") return "Other Gear";
+    if (itemKind === "ammunition") return "Ammunition";
+    if (itemKind === "weapon-modifier") return "Weapon Modifiers";
     return "Unknown";
 }
 

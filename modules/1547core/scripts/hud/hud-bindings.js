@@ -63,6 +63,38 @@
         });
     }
 
+    for (const button of root.querySelectorAll("[data-hud-use-monster-magic]")) {
+        button.addEventListener("click", async () => {
+            const itemId = button.dataset.hudUseMonsterMagic;
+            if (!token?.actor || !itemId || button.disabled) return;
+            const item = token.actor.items?.get?.(itemId) ?? null;
+            const resolver = game.modules.get("1547core")?.api?.resolveUsageEffectsFromCarrier;
+            if (!item) {
+                ui.notifications?.warn?.("Monster magic could not be found.");
+                return;
+            }
+            if (typeof resolver !== "function") {
+                ui.notifications?.warn?.("Monster magic resolver is not available.");
+                return;
+            }
+            try {
+                const result = await resolver(item, { sourceToken: token.document });
+                const appliedCount = Array.isArray(result?.targetsResolved)
+                    ? result.targetsResolved.filter((row) => row.applied).length
+                    : 0;
+                if (appliedCount > 0) {
+                    ui.notifications?.info?.(`1547 Core: used '${item.name}'.`);
+                } else {
+                    ui.notifications?.warn?.(`1547 Core: '${item.name}' resolved, but nothing was applied.`);
+                }
+            } catch (error) {
+                console.error(error);
+                ui.notifications?.error?.(`1547 Core: failed to use '${item?.name ?? "monster magic"}'. ${error?.message ?? ""}`.trim());
+            }
+            void renderHudForSelection();
+        });
+    }
+
     for (const select of root.querySelectorAll("[data-hud-inventory-filter]")) {
         select.addEventListener("change", (event) => {
             HUD_STATE.inventoryFilter = event.currentTarget.value || "all";

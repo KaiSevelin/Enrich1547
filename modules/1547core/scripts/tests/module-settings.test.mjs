@@ -1,0 +1,87 @@
+import assert from "assert";
+
+/**
+ * Unit tests for the pure data-seeding helpers in settings/module-settings.js.
+ * These are the functions behind the rolltable-resolution bug class: Foundry-id
+ * validation/derivation and the RollTable doc builders that now carry `sourceKey`.
+ */
+
+globalThis.foundry = {
+    utils: { deepClone: (v) => (v === undefined ? v : JSON.parse(JSON.stringify(v))) },
+};
+
+const {
+    isValidFoundryId,
+    deriveFoundryIdFromText,
+    normalizeSourceEntry,
+    mergeDefinedProps,
+    buildRitualStepRollTableDoc,
+    buildSpellFailureRollTableDoc,
+} = await import("../settings/module-settings.js");
+
+console.log("module-settings pure helpers...");
+
+{
+    assert.strictEqual(isValidFoundryId("AbCdEfGhIjKlMnOp"), true);
+    assert.strictEqual(isValidFoundryId("RitualSteps_Hard"), false, "underscores are not valid Foundry ids");
+    assert.strictEqual(isValidFoundryId("tooShort"), false);
+    assert.strictEqual(isValidFoundryId(""), false);
+    console.log("  ✓ isValidFoundryId: 16-char alphanumeric only");
+}
+
+{
+    const id = deriveFoundryIdFromText("ritualStepRollTable:Ritual Steps Hard:");
+    assert.match(id, /^[A-Za-z0-9]{16}$/, "derives a valid Foundry id");
+    assert.strictEqual(deriveFoundryIdFromText("same"), deriveFoundryIdFromText("same"), "deterministic");
+    assert.notStrictEqual(deriveFoundryIdFromText("a"), deriveFoundryIdFromText("b"));
+    console.log("  ✓ deriveFoundryIdFromText: deterministic, valid-id output");
+}
+
+{
+    const valid = normalizeSourceEntry({ _id: "AbCdEfGhIjKlMnOp", name: "X" }, "kind");
+    assert.strictEqual(valid._id, "AbCdEfGhIjKlMnOp", "valid _id is preserved");
+    assert.strictEqual(valid.uuid, "Item.AbCdEfGhIjKlMnOp");
+
+    const asTable = normalizeSourceEntry({ _id: "AbCdEfGhIjKlMnOp" }, "kind", "RollTable");
+    assert.strictEqual(asTable.uuid, "RollTable.AbCdEfGhIjKlMnOp", "documentType drives the uuid prefix");
+
+    const derived = normalizeSourceEntry({ id: "RitualSteps_Hard", name: "Ritual Steps Hard" }, "ritualStepRollTable", "RollTable");
+    assert.strictEqual(isValidFoundryId(derived._id), true, "an invalid key is replaced with a derived valid id");
+    assert.strictEqual(derived._id, derived.id);
+    assert.strictEqual(derived.uuid, `RollTable.${derived._id}`);
+    console.log("  ✓ normalizeSourceEntry: preserves valid ids, derives for invalid keys");
+}
+
+{
+    assert.deepStrictEqual(
+        mergeDefinedProps({ a: 1, b: 2 }, { b: 3, c: undefined }),
+        { a: 1, b: 3 },
+        "undefined override values are skipped"
+    );
+    console.log("  ✓ mergeDefinedProps: only defined overrides win");
+}
+
+{
+    // The sourceKey fix: spells reference tables by key, so the built doc must
+    // retain the source key even though the _id is a derived hash.
+    const doc = buildRitualStepRollTableDoc(
+        { id: "RitualSteps_Hard", name: "Ritual Steps Hard", entries: [{ id: "e1", stepText: "Gather soil" }, { id: "e2", stepText: "Wait" }] },
+        "folder-1",
+        "Spells/Ritual"
+    );
+    assert.strictEqual(doc.name, "Ritual Steps Hard", "human-readable name is kept");
+    assert.strictEqual(doc.flags["1547Core"].sourceKey, "RitualSteps_Hard", "stable lookup key is preserved");
+    assert.strictEqual(isValidFoundryId(doc._id), true, "doc gets a valid derived id");
+    assert.strictEqual(doc.results.length, 2);
+    assert.strictEqual(doc.formula, "1d2");
+
+    const failure = buildSpellFailureRollTableDoc(
+        { id: "SpellFailure_Minor", name: "Spell Failure Minor", entries: [{ id: "f1", resultText: "Fizzle" }] },
+        "folder-2",
+        "Spells/Failure"
+    );
+    assert.strictEqual(failure.flags["1547Core"].sourceKey, "SpellFailure_Minor");
+    console.log("  ✓ build*RollTableDoc: carries sourceKey for key-based resolution");
+}
+
+console.log("\nAll module-settings pure-helper tests passed.");

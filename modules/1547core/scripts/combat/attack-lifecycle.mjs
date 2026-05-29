@@ -23,6 +23,7 @@
 import {
     isTruthyLike,
     normalizeManeuver,
+    normalizeWeaponModifier,
     resolveSelectedWeaponProfile,
 } from "./normalisation.mjs";
 import { resolveLoadedAmmoForAttack } from "./ammo-state.mjs";
@@ -40,6 +41,27 @@ const MODULE_ID_LOWER = "1547core";
 
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
+
+function resolveAttachedWeaponModifiers({ actor, parentItem, attachedModifierIds = [] } = {}) {
+    if (!Array.isArray(attachedModifierIds) || !attachedModifierIds.length) return [];
+    const actorItems = actor?.items;
+    const parentItems = parentItem?.parent?.items;
+    return attachedModifierIds
+        .map((modifierId) => {
+            const normalizedId = String(modifierId ?? "").trim();
+            if (!normalizedId) return null;
+            const modifierDoc = actorItems?.get?.(normalizedId)
+                ?? parentItems?.get?.(normalizedId)
+                ?? null;
+            const normalized = normalizeWeaponModifier(modifierDoc);
+            if (!normalized) return null;
+            return {
+                ...normalized,
+                attachedToItemId: parentItem?.id ?? parentItem?._id ?? null,
+            };
+        })
+        .filter(Boolean);
+}
 
 // ────────────────────────────────────────────────── Modifier summarisation ──
 
@@ -242,6 +264,16 @@ export function buildPendingAttack({
         weapon: normalizedWeapon,
         profile: selectedProfile,
     });
+    const weaponModifiers = resolveAttachedWeaponModifiers({
+        actor,
+        parentItem: normalizedWeapon.itemDocument ?? weapon ?? null,
+        attachedModifierIds: normalizedWeapon.attachedModifierIds,
+    });
+    const ammoModifiers = resolveAttachedWeaponModifiers({
+        actor,
+        parentItem: ammoState.loadedAmmo?.itemDocument ?? null,
+        attachedModifierIds: ammoState.loadedAmmo?.attachedModifierIds,
+    });
 
     const legalPreManeuvers = getLegalManeuvers({
         actor,
@@ -288,6 +320,9 @@ export function buildPendingAttack({
         weapon: normalizedWeapon,
         profile: selectedProfile,
         loadedAmmo: ammoState.loadedAmmo,
+        weaponModifiers,
+        ammoModifiers,
+        attackModifiers: [...weaponModifiers, ...ammoModifiers],
         triggerType: "attack-declared",
         safeAttack:
             selected.some((maneuver) => createsSafeAttack(maneuver))

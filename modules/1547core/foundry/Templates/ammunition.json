@@ -1,197 +1,56 @@
 [
-    {
-        "_id": "8tV6PqL2mR5xYcN1",
-        "id": "8tV6PqL2mR5xYcN1",
-        "uuid": "Item.8tV6PqL2mR5xYcN1",
-        "name": "Arrow",
-        "folder": "Ammunition",
-        "ammoType": "Arrow",
-        "quantity": 20,
-        "weight": 0.05,
-        "value": 0.02,
-        "addDice": [],
-        "tags": [],
-        "resultModifiers": [],
-        "description": "Standard arrow for bows.",
-        "img": "media/home/games/1547/Items/Standard arrow.webp"
-    },
-    {
-        "_id": "A2n6Qp9LmR4TsV8K",
-        "id": "A2n6Qp9LmR4TsV8K",
-        "uuid": "Item.A2n6Qp9LmR4TsV8K",
-        "name": "Broadhead Arrow",
-        "folder": "Ammunition",
-        "ammoType": "Arrow",
-        "quantity": 20,
-        "weight": 0.05,
-        "value": 0.03,
-        "addDice": [
-            "Lethality"
-        ],
-        "tags": [],
-        "resultModifiers": [],
-        "description": "A broad cutting head that favors raw injury.",
-        "img": "media/home/games/1547/Items/Broad arrow.webp"
-    },
-    {
-        "_id": "B7m3Lq8TxP2vNc5R",
-        "id": "B7m3Lq8TxP2vNc5R",
-        "uuid": "Item.B7m3Lq8TxP2vNc5R",
-        "name": "Bodkin Arrow",
-        "folder": "Ammunition",
-        "ammoType": "Arrow",
-        "quantity": 20,
-        "weight": 0.05,
-        "value": 0.04,
-        "addDice": [
-            "Penetration"
-        ],
-        "tags": [
-            "Armor Breaking"
-        ],
-        "resultModifiers": [
-            {
-                "type": "ignoreProtectionResult",
-                "value": 1
-            }
-        ],
-        "description": "A narrow hardened head for punching through armor seams.",
-        "img": "media/home/games/1547/Items/Bodkin arrow.webp"
-    },
-    {
-        "_id": "3mK8vT1QpL6rXsD2",
-        "id": "3mK8vT1QpL6rXsD2",
-        "uuid": "Item.3mK8vT1QpL6rXsD2",
-        "name": "Bolt",
-        "folder": "Ammunition",
-        "ammoType": "Bolt",
-        "quantity": 20,
-        "weight": 0.06,
-        "value": 0.03,
-        "addDice": [],
-        "tags": [],
-        "resultModifiers": [],
-        "description": "Standard crossbow bolt.",
-        "img": "media/home/games/1547/Items/Standard arrow.webp"
-    },
-    {
-        "_id": "H4p9Vt2LmQ7xNc6R",
-        "id": "H4p9Vt2LmQ7xNc6R",
-        "uuid": "Item.H4p9Vt2LmQ7xNc6R",
-        "name": "Heavy Bolt",
-        "folder": "Ammunition",
-        "ammoType": "Bolt",
-        "quantity": 20,
-        "weight": 0.07,
-        "value": 0.04,
-        "addDice": [
-            "Heavy"
-        ],
-        "tags": [],
-        "resultModifiers": [],
-        "description": "A thicker bolt that trades speed for impact.",
-        "img": "media/home/games/1547/Items/Heavy bolt.webp",
-        "range": {
-            "mode": "modify",
-            "shortRange": 0,
-            "longRange": -1,
-            "maxRange": -1
-        }
-    },
-    {
-        "_id": "J6r2Nc8VmP4tLq7X",
-        "id": "J6r2Nc8VmP4tLq7X",
-        "uuid": "Item.J6r2Nc8VmP4tLq7X",
-        "name": "Bodkin Bolt",
-        "folder": "Ammunition",
-        "ammoType": "Bolt",
-        "quantity": 20,
-        "weight": 0.06,
-        "value": 0.05,
-        "addDice": [
-            "Penetration"
-        ],
-        "tags": [
-            "Armor Breaking"
-        ],
-        "resultModifiers": [
-            {
-                "type": "ignoreProtectionResult",
-                "value": 1
-            }
-        ],
-        "description": "A rigid armor-piercing bolt.",
-        "img": "media/home/games/1547/Items/Bodkin arrow.webp"
-    },
-    {
-        "_id": "5nR4xQ8mLp2TcV7K",
-        "id": "5nR4xQ8mLp2TcV7K",
-        "uuid": "Item.5nR4xQ8mLp2TcV7K",
-        "name": "Bullet",
-        "folder": "Ammunition",
-        "ammoType": "Bullet",
-        "quantity": 10,
-        "weight": 0.03,
-        "value": 0.04,
-        "addDice": [],
-        "tags": [],
-        "resultModifiers": [],
-        "description": "Standard lead ball for firearms.",
-        "img": "media/home/games/1547/Items/Bullet.webp"
-    },
-    {
-        "_id": "K5t8Lp3VnQ2rXc6M",
-        "id": "K5t8Lp3VnQ2rXc6M",
-        "uuid": "Item.K5t8Lp3VnQ2rXc6M",
-        "name": "Heavy Bullet",
-        "folder": "Ammunition",
-        "ammoType": "Bullet",
-        "quantity": 10,
-        "weight": 0.04,
-        "value": 0.05,
-        "addDice": [
-            "Heavy"
-        ],
-        "tags": [],
-        "resultModifiers": [],
-        "description": "A heavier ball with greater crushing force.",
-        "img": "media/home/games/1547/Items/Heavy bullet.webp",
-        "range": {
-            "mode": "modify",
-            "shortRange": 0,
-            "longRange": -1,
-            "maxRange": -1
-        }
-    },
-    {
-        "_id": "S2m7Qx4Lp9VcTr5N",
-        "id": "S2m7Qx4Lp9VcTr5N",
-        "uuid": "Item.S2m7Qx4Lp9VcTr5N",
-        "name": "Scatter Shot",
-        "folder": "Ammunition",
-        "ammoType": "Bullet",
-        "quantity": 10,
-        "weight": 0.04,
-        "value": 0.06,
-        "addDice": [
-            "Multiplier"
-        ],
-        "tags": [
-            "Short Range"
-        ],
-        "resultModifiers": [
-            {
-                "type": "overrideRangeBand",
-                "value": "short"
-            }
-        ],
-        "description": "A pellet load that is only effective at short range but can spike hard on impact.",
-        "img": "media/home/games/1547/Items/Scattershot bullet.webp",
-        "range": {
-            "mode": "override",
-            "shortRange": 2,
-            "longRange": 2,
-            "maxRange": 3
-        }
-    }
+  {
+    "_id": "8tV6PqL2mR5xYcN1",
+    "id": "8tV6PqL2mR5xYcN1",
+    "uuid": "Item.8tV6PqL2mR5xYcN1",
+    "name": "Arrow",
+    "folder": "Ammunition",
+    "ammoType": "Arrow",
+    "quantity": 20,
+    "weight": 0.05,
+    "value": 0.02,
+    "addDice": [],
+    "tags": [],
+    "resultModifiers": [],
+    "description": "Standard arrow for bows.",
+    "img": "media/home/games/1547/Items/Standard arrow.webp",
+    "addDamageQualifiers": [],
+    "overrideDamageType": null
+  },
+  {
+    "_id": "3mK8vT1QpL6rXsD2",
+    "id": "3mK8vT1QpL6rXsD2",
+    "uuid": "Item.3mK8vT1QpL6rXsD2",
+    "name": "Bolt",
+    "folder": "Ammunition",
+    "ammoType": "Bolt",
+    "quantity": 20,
+    "weight": 0.06,
+    "value": 0.03,
+    "addDice": [],
+    "tags": [],
+    "resultModifiers": [],
+    "description": "Standard crossbow bolt.",
+    "img": "media/home/games/1547/Items/Standard arrow.webp",
+    "addDamageQualifiers": [],
+    "overrideDamageType": null
+  },
+  {
+    "_id": "5nR4xQ8mLp2TcV7K",
+    "id": "5nR4xQ8mLp2TcV7K",
+    "uuid": "Item.5nR4xQ8mLp2TcV7K",
+    "name": "Bullet",
+    "folder": "Ammunition",
+    "ammoType": "Bullet",
+    "quantity": 10,
+    "weight": 0.03,
+    "value": 0.04,
+    "addDice": [],
+    "tags": [],
+    "resultModifiers": [],
+    "description": "Standard lead ball for firearms.",
+    "img": "media/home/games/1547/Items/Bullet.webp",
+    "addDamageQualifiers": [],
+    "overrideDamageType": null
+  }
 ]

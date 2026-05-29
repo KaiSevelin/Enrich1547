@@ -1,4 +1,7 @@
-﻿function parseManeuverJson(value, fallback = null) {
+﻿const MODULE_ID = "1547core";
+const SOURCE_FLAG_SCOPE = "1547Core";
+
+function parseManeuverJson(value, fallback = null) {
     if (typeof value !== "string" || value.trim() === "") return fallback;
     try {
         return JSON.parse(value);
@@ -74,7 +77,7 @@ function buildWeaponRollContext(summary, maneuverEffects = {}) {
     };
 }
 
-function getAmmoAddDice(item) {
+function getAmmoAddDice(item, getStringProp) {
     const itemProps = item?.system?.props ?? {};
     const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
     if (Array.isArray(sourceData?.addDice)) {
@@ -211,6 +214,49 @@ function buildDefaultUnprotectedArmorSummary(game, MODULE_ID) {
     };
 }
 
+function getAttachedModifierIds(item) {
+    const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
+    const raw = item?.flags?.[SOURCE_FLAG_SCOPE]?.attachedModifierIds
+        ?? item?.flags?.[MODULE_ID]?.attachedModifierIds
+        ?? item?.system?.props?.AttachedModifierIds
+        ?? sourceData?.attachedModifierIds
+        ?? [];
+    if (Array.isArray(raw)) {
+        return raw.map((entry) => String(entry ?? "").trim()).filter(Boolean);
+    }
+    const text = String(raw ?? "").trim();
+    if (!text) return [];
+    try {
+        const parsed = JSON.parse(text);
+        if (Array.isArray(parsed)) {
+            return parsed.map((entry) => String(entry ?? "").trim()).filter(Boolean);
+        }
+    } catch {
+        // Fall through to CSV parsing.
+    }
+    return text.split(",").map((entry) => entry.trim()).filter(Boolean);
+}
+
+function getAttachedModifierNames(item, allItems = []) {
+    const modifierIds = getAttachedModifierIds(item);
+    if (!modifierIds.length) return [];
+    return modifierIds
+        .map((id) => allItems.find((entry) => entry?.id === id) ?? null)
+        .filter(Boolean)
+        .map((entry) => String(entry.name ?? "").trim())
+        .filter(Boolean);
+}
+
+// Pure helpers exported for unit testing (no behavioural change to the runtime).
+export {
+    parseManeuverJson,
+    summarizeManeuverEffects,
+    buildWeaponRollContext,
+    getAmmoAddDice,
+    getAttachedModifierIds,
+    getAttachedModifierNames,
+};
+
 function resolveActorPortrait(actor, token, MODULE_ID, game) {
     const tokenImage = token?.document?.texture?.src;
     if (tokenImage) return tokenImage;
@@ -291,11 +337,12 @@ export function summarizeActor(actor, token, deps = {}) {
     const armorItems = items.filter(isArmorItem);
     const ammoItems = items.filter(isAmmoItem);
     const maneuverItems = items.filter((item) => getCsbItemKind(item) === "maneuver");
-    const powerItems = items.filter((item) => getCsbItemKind(item) === "power");
+    const supernaturalMarkItems = items.filter((item) => getCsbItemKind(item) === "supernatural-mark");
+    const monsterMagicItems = items.filter((item) => getCsbItemKind(item) === "monster-magic");
     const skillItems = items.filter((item) => getCsbItemKind(item) === "skill");
     const inventoryItems = items.filter((item) => {
         const kind = getCsbItemKind(item);
-        return !["maneuver", "skill", "pact", "power", "spell", "usage-effect"].includes(kind);
+        return !["maneuver", "skill", "pact", "supernatural-mark", "monster-magic", "spell", "usage-effect"].includes(kind);
     });
 
     let equippedWeapons = weaponItems.map((item) => {
@@ -326,6 +373,8 @@ export function summarizeActor(actor, token, deps = {}) {
             HUD_STATE.selectedAmmoByWeapon[item.id] = selectedAmmoId;
         }
         const selectedAmmo = selectedAmmoId ? ammoItems.find((ammo) => ammo.id === selectedAmmoId) ?? null : null;
+        const weaponModifierNames = getAttachedModifierNames(item, items);
+        const ammoModifierNames = selectedAmmo ? getAttachedModifierNames(selectedAmmo, items) : [];
         const weaponSummary = {
             id: item.id,
             name: item.name,
@@ -344,8 +393,12 @@ export function summarizeActor(actor, token, deps = {}) {
             loadedAmmoType: selectedAmmo ? getAmmoType(selectedAmmo) : "",
             loadedAmmoSummary: selectedAmmo ? getAmmoSummary(selectedAmmo) : "",
             loadedAmmoQuantity: selectedAmmo ? getAmmoQuantity(selectedAmmo) : 0,
+            weaponModifierNames,
+            weaponModifierSummary: weaponModifierNames.join(", "),
+            ammoModifierNames,
+            ammoModifierSummary: ammoModifierNames.join(", "),
             selectedAmmoId,
-            loadedAmmoAddDice: selectedAmmo ? getAmmoAddDice(selectedAmmo) : [],
+            loadedAmmoAddDice: selectedAmmo ? getAmmoAddDice(selectedAmmo, getStringProp) : [],
             attackProfiles,
             activeAttackProfile: activeAttackProfile?.key ?? "Attack",
             activeAttackFormula: activeAttackProfile?.formula ?? "",
@@ -585,7 +638,7 @@ export function summarizeActor(actor, token, deps = {}) {
 
     const equippedInventory = inventory.filter((item) => item.equipped);
     const stowedInventory = inventory.filter((item) => !item.equipped);
-    const powers = powerItems.map((item) => {
+    const summarizeMagicCarrier = (item, itemKind) => {
         const itemProps = item.system?.props ?? {};
         const sourceData = item.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item.flags?.[MODULE_ID]?.sourceData ?? {};
         const rawDescription = String(itemProps.Description ?? sourceData.description ?? sourceData.Description ?? "").trim();
@@ -596,9 +649,11 @@ export function summarizeActor(actor, token, deps = {}) {
             id: item.id,
             name: item.name,
             description,
-            itemKind: "power"
+            itemKind
         };
-    });
+    };
+    const supernaturalMarks = supernaturalMarkItems.map((item) => summarizeMagicCarrier(item, "supernatural-mark"));
+    const monsterMagic = monsterMagicItems.map((item) => summarizeMagicCarrier(item, "monster-magic"));
     const pointPools = [
         { label: "STR", key: "StrengthPoints" },
         { label: "STA", key: "StaminaPoints" },
@@ -771,7 +826,8 @@ export function summarizeActor(actor, token, deps = {}) {
         targetConditions,
         hasVisibleAlly,
         skills,
-        powers,
+        supernaturalMarks,
+        monsterMagic,
         inventory: stowedInventory,
         equippedInventory,
         maneuverCount: maneuvers.length + fullTurnManeuvers.length,

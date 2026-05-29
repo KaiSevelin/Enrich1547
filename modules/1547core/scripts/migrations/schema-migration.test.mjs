@@ -22,7 +22,7 @@ const samples = [
       ammoType: "Arrow",
       ammoCapacity: 1,
       ammoLoaded: 1,
-      loadedAmmoId: "ammo-broadhead-arrow"
+      loadedAmmoId: "ammo-arrow"
     }
   },
   {

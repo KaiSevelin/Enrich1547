@@ -229,6 +229,7 @@
                 { "key": "Influence", "value": "Influence" },
                 { "key": "Revelation", "value": "Revelation" },
                 { "key": "Movement", "value": "Movement" },
+                { "key": "Transformation", "value": "Transformation" },
                 { "key": "Protection", "value": "Protection" },
                 { "key": "Remove", "value": "Remove" },
                 { "key": "Descriptive", "value": "Descriptive" }

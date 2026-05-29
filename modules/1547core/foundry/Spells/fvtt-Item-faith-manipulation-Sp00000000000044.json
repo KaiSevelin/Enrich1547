@@ -1,0 +1,883 @@
+{
+    "_id": "Sp00000000000044",
+    "name": "Faith Manipulation",
+    "type": "equippableItem",
+    "img": "media/home/games/1547/Skills/spell.webp",
+    "system": {
+        "body": {
+            "contents": [
+                {
+                    "key": "PrerequisitesTable",
+                    "type": "dynamicTable",
+                    "contents": [],
+                    "rowLayout": [
+                        {
+                            "key": "RequirementType",
+                            "type": "select",
+                            "size": "full-size",
+                            "defaultValue": "Skill",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Skill",
+                                    "value": "Skill"
+                                },
+                                {
+                                    "key": "State",
+                                    "value": "State"
+                                },
+                                {
+                                    "key": "Location",
+                                    "value": "Location"
+                                },
+                                {
+                                    "key": "Item",
+                                    "value": "Item"
+                                },
+                                {
+                                    "key": "Knowledge",
+                                    "value": "Knowledge"
+                                },
+                                {
+                                    "key": "Oath",
+                                    "value": "Oath"
+                                },
+                                {
+                                    "key": "Pact",
+                                    "value": "Pact"
+                                }
+                            ],
+                            "colName": "Type"
+                        },
+                        {
+                            "key": "RequirementTarget",
+                            "type": "textField",
+                            "size": "full-size",
+                            "defaultValue": "",
+                            "colName": "Target"
+                        },
+                        {
+                            "key": "RequirementLevel",
+                            "type": "numberField",
+                            "size": "full-size",
+                            "defaultValue": "1",
+                            "allowDecimal": false,
+                            "minVal": "0",
+                            "maxVal": "10",
+                            "allowRelative": false,
+                            "showControls": true,
+                            "controlsStyle": "hover",
+                            "inputStyle": "text",
+                            "colName": "Level"
+                        },
+                        {
+                            "key": "RequirementNotes",
+                            "type": "textField",
+                            "size": "full-size",
+                            "defaultValue": "",
+                            "colName": "Notes"
+                        }
+                    ],
+                    "head": false,
+                    "deleteWarning": false,
+                    "labelWhenEmpty": "",
+                    "predefinedLines": [],
+                    "canPlayerAdd": true,
+                    "hiddenColumns": [],
+                    "sortOption": "manual",
+                    "sortPredicates": []
+                },
+                {
+                    "key": "SchoolRequirementsTable",
+                    "type": "dynamicTable",
+                    "contents": [],
+                    "rowLayout": [
+                        {
+                            "key": "School",
+                            "type": "select",
+                            "size": "full-size",
+                            "defaultValue": "Alchemy",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Alchemy",
+                                    "value": "Alchemy"
+                                },
+                                {
+                                    "key": "Astrology",
+                                    "value": "Astrology"
+                                },
+                                {
+                                    "key": "Divination",
+                                    "value": "Divination"
+                                },
+                                {
+                                    "key": "Grimoire",
+                                    "value": "Grimoire"
+                                },
+                                {
+                                    "key": "Knot",
+                                    "value": "Knot"
+                                },
+                                {
+                                    "key": "Necromancy",
+                                    "value": "Necromancy"
+                                },
+                                {
+                                    "key": "Religion",
+                                    "value": "Religion"
+                                },
+                                {
+                                    "key": "Wards",
+                                    "value": "Wards"
+                                }
+                            ],
+                            "colName": "School"
+                        },
+                        {
+                            "key": "Level",
+                            "type": "numberField",
+                            "size": "full-size",
+                            "defaultValue": "1",
+                            "allowDecimal": false,
+                            "minVal": "1",
+                            "maxVal": "10",
+                            "allowRelative": false,
+                            "showControls": true,
+                            "controlsStyle": "hover",
+                            "inputStyle": "text",
+                            "colName": "Level"
+                        }
+                    ],
+                    "head": false,
+                    "deleteWarning": false,
+                    "labelWhenEmpty": "",
+                    "predefinedLines": [],
+                    "canPlayerAdd": true,
+                    "hiddenColumns": [],
+                    "sortOption": "manual",
+                    "sortPredicates": []
+                },
+                {
+                    "key": "StaticRitualSteps",
+                    "type": "dynamicTable",
+                    "contents": [],
+                    "rowLayout": [
+                        {
+                            "key": "StepScope",
+                            "type": "select",
+                            "size": "full-size",
+                            "defaultValue": "Mandatory",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Mandatory",
+                                    "value": "Mandatory"
+                                },
+                                {
+                                    "key": "Alternative",
+                                    "value": "Alternative"
+                                }
+                            ],
+                            "colName": "Scope"
+                        },
+                        {
+                            "key": "AlternativeGroup",
+                            "type": "textField",
+                            "size": "full-size",
+                            "defaultValue": "",
+                            "colName": "Alt Group"
+                        },
+                        {
+                            "key": "StepType",
+                            "type": "select",
+                            "size": "full-size",
+                            "defaultValue": "StaticSkill",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "StaticSkill",
+                                    "value": "StaticSkill"
+                                },
+                                {
+                                    "key": "Naming",
+                                    "value": "Naming"
+                                },
+                                {
+                                    "key": "Preparation",
+                                    "value": "Preparation"
+                                },
+                                {
+                                    "key": "Witness",
+                                    "value": "Witness"
+                                },
+                                {
+                                    "key": "Purity",
+                                    "value": "Purity"
+                                }
+                            ],
+                            "colName": "Type"
+                        },
+                        {
+                            "key": "StepText",
+                            "type": "textField",
+                            "size": "full-size",
+                            "defaultValue": "",
+                            "colName": "Step"
+                        },
+                        {
+                            "key": "SkillCheck",
+                            "type": "textField",
+                            "size": "full-size",
+                            "defaultValue": "",
+                            "colName": "Check"
+                        },
+                        {
+                            "key": "Difficulty",
+                            "type": "textField",
+                            "size": "full-size",
+                            "defaultValue": "",
+                            "colName": "Difficulty"
+                        },
+                        {
+                            "key": "StepNotes",
+                            "type": "textField",
+                            "size": "full-size",
+                            "defaultValue": "",
+                            "colName": "Notes"
+                        }
+                    ],
+                    "head": false,
+                    "deleteWarning": false,
+                    "labelWhenEmpty": "",
+                    "predefinedLines": [],
+                    "canPlayerAdd": true,
+                    "hiddenColumns": [],
+                    "sortOption": "manual",
+                    "sortPredicates": []
+                },
+                {
+                    "key": "SuccessEffects",
+                    "type": "itemContainer",
+                    "contents": [],
+                    "rowLayout": [],
+                    "head": false,
+                    "deleteWarning": false,
+                    "labelWhenEmpty": "",
+                    "title": "Canonical Effects",
+                    "hideEmpty": false,
+                    "hiddenColumns": [],
+                    "sortOption": "manual",
+                    "headDisplay": true,
+                    "showCreate": true,
+                    "defaultTemplate": "mwPqEYUoOfzXpyT9",
+                    "createItemDialogShowTemplateList": false,
+                    "showDelete": true,
+                    "statusIcon": false,
+                    "nameAlign": "left",
+                    "nameLabel": "Effect",
+                    "templateFilter": [
+                        "mwPqEYUoOfzXpyT9"
+                    ],
+                    "itemFilterFormula": "",
+                    "sortPredicates": []
+                },
+                {
+                    "key": "RitualGenerationPanel",
+                    "type": "panel",
+                    "title": "Ritual Generation",
+                    "titleStyle": "default",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "RitualStrengthTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Strength Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "RandomStepRollFormula",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Random Step Rolls:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "RitualStepTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Ritual Step Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "RitualModifierTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Modifier Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "RitualAssemblyNotes",
+                            "type": "textArea",
+                            "size": "full-size",
+                            "label": "Assembly Notes:",
+                            "defaultValue": "",
+                            "style": "sheet"
+                        }
+                    ]
+                },
+                {
+                    "key": "FailureGenerationPanel",
+                    "type": "panel",
+                    "title": "Failure Generation",
+                    "titleStyle": "default",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "FailureTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Failure Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "FailureEscalationTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Escalation Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "FailureNotes",
+                            "type": "textArea",
+                            "size": "full-size",
+                            "label": "Failure Notes:",
+                            "defaultValue": "",
+                            "style": "sheet"
+                        }
+                    ]
+                }
+            ],
+            "key": "custom_body",
+            "type": "panel"
+        },
+        "display": {
+            "width": 780,
+            "height": 860,
+            "fix_size": false,
+            "pp_width": 64,
+            "pp_height": 64
+        },
+        "header": {
+            "contents": [
+                {
+                    "key": "Description",
+                    "type": "textArea",
+                    "size": "full-size",
+                    "label": "",
+                    "defaultValue": "",
+                    "style": "sheet"
+                },
+                {
+                    "key": "SpellIdentityPanel",
+                    "type": "panel",
+                    "flow": "grid-2",
+                    "title": "Spell Identity",
+                    "titleStyle": "default",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "SpellKind",
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Kind:",
+                            "defaultValue": "Protection",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Binding",
+                                    "value": "Binding"
+                                },
+                                {
+                                    "key": "Blessing",
+                                    "value": "Blessing"
+                                },
+                                {
+                                    "key": "Conjuration",
+                                    "value": "Conjuration"
+                                },
+                                {
+                                    "key": "Curse",
+                                    "value": "Curse"
+                                },
+                                {
+                                    "key": "Divination",
+                                    "value": "Divination"
+                                },
+                                {
+                                    "key": "Oath",
+                                    "value": "Oath"
+                                },
+                                {
+                                    "key": "Protection",
+                                    "value": "Protection"
+                                },
+                                {
+                                    "key": "Summoning",
+                                    "value": "Summoning"
+                                },
+                                {
+                                    "key": "Transformation",
+                                    "value": "Transformation"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "Strength",
+                            "type": "numberField",
+                            "size": "full-size",
+                            "label": "Strength:",
+                            "defaultValue": "1",
+                            "allowDecimal": false,
+                            "minVal": "1",
+                            "maxVal": "10",
+                            "allowRelative": false,
+                            "showControls": true,
+                            "controlsStyle": "hover",
+                            "inputStyle": "text"
+                        },
+                        {
+                            "key": "Complexity",
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Complexity:",
+                            "defaultValue": "Medium",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Easy",
+                                    "value": "Easy"
+                                },
+                                {
+                                    "key": "Medium",
+                                    "value": "Medium"
+                                },
+                                {
+                                    "key": "Hard",
+                                    "value": "Hard"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "RitualProfile",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Ritual Profile:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "SchoolRequirementMode",
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "School Logic:",
+                            "defaultValue": "Any",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Any",
+                                    "value": "Any"
+                                },
+                                {
+                                    "key": "All",
+                                    "value": "All"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "FailureProfile",
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Failure Profile:",
+                            "defaultValue": "Minor",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Minor",
+                                    "value": "Minor"
+                                },
+                                {
+                                    "key": "Major",
+                                    "value": "Major"
+                                },
+                                {
+                                    "key": "Catastrophic",
+                                    "value": "Catastrophic"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "RandomOutcome",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Random Outcome:",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "SpellNotes",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Notes:",
+                            "defaultValue": ""
+                        }
+                    ]
+                },
+                {
+                    "key": "SchoolPanel",
+                    "type": "panel",
+                    "flow": "grid-4",
+                    "title": "Schools",
+                    "titleStyle": "default",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "School_Alchemy",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Alchemy",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Astrology",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Astrology",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Divination",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Divination",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Grimoire",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Grimoire",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Knot",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Knot",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Necromancy",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Necromancy",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Religion",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Religion",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Wards",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Wards",
+                            "defaultChecked": false
+                        }
+                    ]
+                }
+            ],
+            "key": "custom_header",
+            "type": "panel"
+        },
+        "hidden": [],
+        "modifiers": [],
+        "template": "2kiWw3Cv5Zk1lZxn",
+        "props": {
+            "Description": "Uses divination to trick a victim to disbelief. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "SpellKind": "Divination",
+            "Strength": 2,
+            "Complexity": "Medium",
+            "RitualProfile": "Divination",
+            "SchoolRequirementMode": "Any",
+            "FailureProfile": "Major",
+            "RandomOutcome": false,
+            "SpellNotes": "Canonical effect: If the caster overcomes the target's faith, the target gains the **lost faith** active effect.",
+            "SchoolRequirementsTable": [
+                {
+                    "School": "Divination",
+                    "Level": 2
+                }
+            ],
+            "PrerequisitesTable": [
+                {
+                    "RequirementType": "State",
+                    "RequirementTarget": "Focused question, named subject, omen focus, or object of inquiry",
+                    "RequirementLevel": 1,
+                    "RequirementNotes": "Divinatory workings require a fixed subject or carefully held question."
+                }
+            ],
+            "StaticRitualSteps": [
+                {
+                    "StepScope": "Mandatory",
+                    "AlternativeGroup": "",
+                    "StepType": "StaticSkill",
+                    "StepText": "Meet the Divination school casting requirement.",
+                    "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
+                    "Difficulty": "2",
+                    "StepNotes": "Static core school requirement."
+                }
+            ],
+            "SuccessEffects": [
+                {
+                    "Description": "Faith Manipulation: Influence/Doubt",
+                    "ApplicationMode": "CreateActiveEffect",
+                    "EffectType": "Influence",
+                    "EffectSubtype": "Doubt",
+                    "Visible": true,
+                    "TargetType": "Actor",
+                    "TargetCount": "1",
+                    "TargetRange": "",
+                    "TargetFilter": "",
+                    "TargetDescription": "",
+                    "CheckType": "Contest",
+                    "CheckFormula": "caster Power",
+                    "ResistanceType": "Faith",
+                    "ResistanceFormula": "target Faith",
+                    "OnPartial": "",
+                    "OnFailure": "",
+                    "DetectionCheck": "",
+                    "PayloadTarget": "Judgment / certainty",
+                    "PayloadOperation": "Apply",
+                    "PayloadValue": "Doubt",
+                    "PayloadDice": "",
+                    "PayloadTag": "",
+                    "PayloadTraitName": "",
+                    "PayloadTraitText": "",
+                    "GrantedItemTemplate": "",
+                    "GrantedItemName": "",
+                    "PayloadNotes": "Weakens trust, conviction, or confidence.",
+                    "DurationType": "Scene",
+                    "DurationValue": "",
+                    "ExpiryTrigger": "",
+                    "RemovalMethod": "",
+                    "SuppressedBy": ""
+                },
+                {
+                    "Description": "Faith Manipulation: Status/LostFaith",
+                    "ApplicationMode": "CreateActiveEffect",
+                    "EffectType": "Status",
+                    "EffectSubtype": "LostFaith",
+                    "Visible": false,
+                    "TargetType": "Actor",
+                    "TargetCount": "1",
+                    "TargetRange": "",
+                    "TargetFilter": "",
+                    "TargetDescription": "",
+                    "CheckType": "Contest",
+                    "CheckFormula": "caster Power",
+                    "ResistanceType": "Faith",
+                    "ResistanceFormula": "target Faith",
+                    "OnPartial": "",
+                    "OnFailure": "",
+                    "DetectionCheck": "",
+                    "PayloadTarget": "Status",
+                    "PayloadOperation": "Apply",
+                    "PayloadValue": "Lost Faith",
+                    "PayloadDice": "",
+                    "PayloadTag": "",
+                    "PayloadTraitName": "",
+                    "PayloadTraitText": "",
+                    "GrantedItemTemplate": "",
+                    "GrantedItemName": "",
+                    "PayloadNotes": "The target's confidence in prayer, rite, or belief is shaken.",
+                    "DurationType": "Days",
+                    "DurationValue": "1d6",
+                    "ExpiryTrigger": "",
+                    "RemovalMethod": "",
+                    "SuppressedBy": ""
+                }
+            ],
+            "RitualStrengthTable": "",
+            "RandomStepRollFormula": "1d3",
+            "RitualStepTable": "RitualSteps_Medium",
+            "RitualModifierTable": "",
+            "RitualAssemblyNotes": "To be generated from recipes and ritual tables defined later.",
+            "FailureTable": "SpellFailure_Major",
+            "FailureEscalationTable": "",
+            "FailureNotes": "Failure is roll-table-driven per the magic source document.",
+            "School_Alchemy": false,
+            "School_Astrology": false,
+            "School_Divination": true,
+            "School_Grimoire": false,
+            "School_Knot": false,
+            "School_Necromancy": false,
+            "School_Religion": false,
+            "School_Wards": false
+        }
+    },
+    "effects": [],
+    "folder": null,
+    "flags": {
+        "custom-system-builder": {
+            "version": "5.2.0"
+        },
+        "1547Core": {
+            "folderHint": "Spells",
+            "sourceData": {
+                "_id": "Sp00000000000044",
+                "id": "Sp00000000000044",
+                "name": "Faith Manipulation",
+                "uuid": "Item.Sp00000000000044",
+                "folder": "Spells",
+                "itemType": "spell",
+                "spellKind": "Divination",
+                "strength": 2,
+                "ritualProfile": "Divination",
+                "failureProfile": "Major",
+                "randomOutcome": false,
+                "spellNotes": "Canonical effect: If the caster overcomes the target's faith, the target gains the **lost faith** active effect.",
+                "description": "Uses divination to trick a victim to disbelief. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "schools": [
+                    "Divination"
+                ],
+                "prerequisitesTable": [
+                    {
+                        "RequirementType": "State",
+                        "RequirementTarget": "Focused question, named subject, omen focus, or object of inquiry",
+                        "RequirementLevel": 1,
+                        "RequirementNotes": "Divinatory workings require a fixed subject or carefully held question."
+                    }
+                ],
+                "successEffects": [
+                    {
+                        "Description": "Faith Manipulation: Influence/Doubt",
+                        "ApplicationMode": "CreateActiveEffect",
+                        "EffectType": "Influence",
+                        "EffectSubtype": "Doubt",
+                        "Visible": true,
+                        "TargetType": "Actor",
+                        "TargetCount": "1",
+                        "TargetRange": "",
+                        "TargetFilter": "",
+                        "TargetDescription": "",
+                        "CheckType": "Contest",
+                        "CheckFormula": "caster Power",
+                        "ResistanceType": "Faith",
+                        "ResistanceFormula": "target Faith",
+                        "OnPartial": "",
+                        "OnFailure": "",
+                        "DetectionCheck": "",
+                        "PayloadTarget": "Judgment / certainty",
+                        "PayloadOperation": "Apply",
+                        "PayloadValue": "Doubt",
+                        "PayloadDice": "",
+                        "PayloadTag": "",
+                        "PayloadTraitName": "",
+                        "PayloadTraitText": "",
+                        "GrantedItemTemplate": "",
+                        "GrantedItemName": "",
+                        "PayloadNotes": "Weakens trust, conviction, or confidence.",
+                        "DurationType": "Scene",
+                        "DurationValue": "",
+                        "ExpiryTrigger": "",
+                        "RemovalMethod": "",
+                        "SuppressedBy": ""
+                    },
+                    {
+                        "Description": "Faith Manipulation: Status/LostFaith",
+                        "ApplicationMode": "CreateActiveEffect",
+                        "EffectType": "Status",
+                        "EffectSubtype": "LostFaith",
+                        "Visible": false,
+                        "TargetType": "Actor",
+                        "TargetCount": "1",
+                        "TargetRange": "",
+                        "TargetFilter": "",
+                        "TargetDescription": "",
+                        "CheckType": "Contest",
+                        "CheckFormula": "caster Power",
+                        "ResistanceType": "Faith",
+                        "ResistanceFormula": "target Faith",
+                        "OnPartial": "",
+                        "OnFailure": "",
+                        "DetectionCheck": "",
+                        "PayloadTarget": "Status",
+                        "PayloadOperation": "Apply",
+                        "PayloadValue": "Lost Faith",
+                        "PayloadDice": "",
+                        "PayloadTag": "",
+                        "PayloadTraitName": "",
+                        "PayloadTraitText": "",
+                        "GrantedItemTemplate": "",
+                        "GrantedItemName": "",
+                        "PayloadNotes": "The target's confidence in prayer, rite, or belief is shaken.",
+                        "DurationType": "Days",
+                        "DurationValue": "1d6",
+                        "ExpiryTrigger": "",
+                        "RemovalMethod": "",
+                        "SuppressedBy": ""
+                    }
+                ],
+                "ritualStrengthTable": "",
+                "ritualStepTable": "RitualSteps_Medium",
+                "ritualModifierTable": "",
+                "ritualAssemblyNotes": "To be generated from recipes and ritual tables defined later.",
+                "failureTable": "",
+                "failureEscalationTable": "",
+                "failureNotes": "Failure is roll-table-driven per the magic source document.",
+                "img": "media/home/games/1547/Skills/spell.webp",
+                "schoolRequirementMode": "Any",
+                "schoolRequirements": [
+                    {
+                        "School": "Divination",
+                        "Level": 2
+                    }
+                ],
+                "staticRitualSteps": [
+                    {
+                        "StepScope": "Mandatory",
+                        "AlternativeGroup": "",
+                        "StepType": "StaticSkill",
+                        "StepText": "Meet the Divination school casting requirement.",
+                        "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
+                        "Difficulty": "2",
+                        "StepNotes": "Static core school requirement."
+                    }
+                ],
+                "complexity": "Medium",
+                "randomStepRollFormula": "1d3"
+            }
+        }
+    },
+    "items": [],
+    "ownership": {
+        "default": 0
+    }
+}

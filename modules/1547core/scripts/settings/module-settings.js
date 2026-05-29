@@ -4,12 +4,15 @@ const TEMPLATE_FILES = {
     actorTemplate: "fvtt-Actor-1547-Tgs09eTiTp63Cp7u.json",
     maneuver: "fvtt-Item-maneuvertemplate-4owc4YQBlp94GbGs.json",
     weapon: "fvtt-Item-weapontemplate-qZCfLEYQ7egbm1B9.json",
-    armor: "fvtt-Item-armor-uLlgZXz3GlXPFtsj.json",
-    ammo: "fvtt-Item-unequippabletemplate-woHyeHPKKdo4JDJd.json",
-    power: "fvtt-Item-powertemplate-w9ky0ZTDvXDs5Ce7.json",
+    armor: "fvtt-Item-armortemplate-uLlgZXz3GlXPFtsj.json",
+    ammo: "fvtt-Item-ammunitiontemplate-389uqkKKn8M1SKux.json",
+    weaponModifier: "fvtt-Item-weaponmodifiertemplate-WmP9Ld3Qs7Nk2FvR.json",
+    supernaturalMark: "fvtt-Item-supernaturalmarktemplate-w9ky0ZTDvXDs5Ce7.json",
+    monsterMagic: "fvtt-Item-monstermagictemplate-M0nMgk7Yp2RsT5Vu.json",
     spell: "fvtt-Item-spelltemplate-2kiWw3Cv5Zk1lZxn.json",
     pact: "fvtt-Item-pacttemplate-HPYYc2P0Ouagicmr.json",
-    recipe: "fvtt-Item-recipetemplate-Qv6pN2Lm8R4tY1Ks.json",
+    ritual: "fvtt-Item-ritualtemplate-Qv6pN2Lm8R4tY1Ks.json",
+    ritualStep: "fvtt-Item-ritualsteptemplate-R7sTu4Qn2Lp8Vx5K.json",
     usageEffect: "fvtt-Item-usageeffecttemplate-mwPqEYUoOfzXpyT9.json",
     changeSet: "fvtt-Item-changesettemplate-b7A1z6cSZO4dYTKT.json",
     change: "fvtt-Item-changetemplate-WsrkfjBmudnIhvEK.json",
@@ -110,6 +113,16 @@ function mergeDefinedProps(baseProps, overrideProps) {
     return merged;
 }
 
+// Pure helpers exported for unit testing (no behavioural change to the runtime).
+export {
+    isValidFoundryId,
+    deriveFoundryIdFromText,
+    normalizeSourceEntry,
+    mergeDefinedProps,
+    buildRitualStepRollTableDoc,
+    buildSpellFailureRollTableDoc,
+};
+
 function normalizeTypeList(values) {
     if (Array.isArray(values)) return values.map((entry) => String(entry ?? "").trim()).filter(Boolean);
     if (typeof values === "string" && values.trim()) return [values.trim()];
@@ -159,6 +172,11 @@ function buildWeaponProps(weapon) {
         return allowedAmmoTypes.join(", ");
     };
 
+    const profileDamageType = (profile) => profile?.damageType ?? "";
+    const profileDamageQualifiers = (profile) => Array.isArray(profile?.damageQualifiers)
+        ? profile.damageQualifiers.join(", ")
+        : "";
+
     const availableProfiles = [a, b, c]
         .map((profile, index) => profile ? ["Attack", "AttackB", "AttackC"][index] : null)
         .filter(Boolean);
@@ -186,11 +204,17 @@ function buildWeaponProps(weapon) {
         ReloadTime: weapon.reloadTime ?? 0,
         ReloadProgress: weapon.reloadProgress ?? 0,
         Attack: profileText(a),
+        AttackDamageType: profileDamageType(a),
         AttackAmmo: profileAmmoText(a),
+        AttackDamageQualifiers: profileDamageQualifiers(a),
         AttackB: profileText(b),
+        AttackBDamageType: profileDamageType(b),
         AttackBAmmo: profileAmmoText(b),
+        AttackBDamageQualifiers: profileDamageQualifiers(b),
         AttackC: profileText(c),
+        AttackCDamageType: profileDamageType(c),
         AttackCAmmo: profileAmmoText(c),
+        AttackCDamageQualifiers: profileDamageQualifiers(c),
         ActiveAttackProfile: activeAttackProfile
     };
 
@@ -222,6 +246,9 @@ function buildArmorProps(armor) {
 
 function buildAmmoProps(ammo) {
     const addDice = Array.isArray(ammo.addDice) ? ammo.addDice.join(", ") : "";
+    const addDamageQualifiers = Array.isArray(ammo.addDamageQualifiers)
+        ? ammo.addDamageQualifiers.join(", ")
+        : "";
     const tags = Array.isArray(ammo.tags) ? ammo.tags.join(", ") : "";
     const range = ammo.range
         ?? (ammo.rangeOverride ? { mode: "override", ...ammo.rangeOverride } : null)
@@ -235,6 +262,8 @@ function buildAmmoProps(ammo) {
         AmmoType: ammo.ammoType ?? ammo.name ?? "",
         AddDice: addDice,
         AddDiceSummary: addDice,
+        AddDamageQualifiers: addDamageQualifiers,
+        OverrideDamageType: ammo.overrideDamageType ?? "",
         Tags: tags,
         TagsSummary: tags,
         RangeModeOverride: String(range?.mode ?? "modify").trim().toLowerCase() === "override",
@@ -243,6 +272,179 @@ function buildAmmoProps(ammo) {
         RangeLong: range?.maxRange ?? 0,
         Range: range ? JSON.stringify(range, null, 2) : "",
         ResultModifiers: JSON.stringify(ammo.resultModifiers ?? [], null, 2)
+    };
+}
+
+function buildWeaponModifierProps(modifier) {
+    const toCsv = (value) => Array.isArray(value) ? value.join(", ") : "";
+    return {
+        Description: modifier.description ?? "",
+        Weight: modifier.weight ?? 0,
+        Value: modifier.value ?? 0,
+        ModifierType: modifier.modifierType ?? "",
+        TargetKinds: toCsv(modifier.targetKinds),
+        AddDamageQualifiers: toCsv(modifier.addDamageQualifiers),
+        RemoveDamageQualifiers: toCsv(modifier.removeDamageQualifiers),
+        OverrideDamageType: modifier.overrideDamageType ?? "",
+        AddDice: toCsv(modifier.addDice),
+        RemoveDice: toCsv(modifier.removeDice),
+        ResultModifiers: JSON.stringify(modifier.resultModifiers ?? [], null, 2),
+        Tags: toCsv(modifier.tags),
+        OnHitEffects: JSON.stringify(modifier.onHitEffects ?? [], null, 2),
+        AppliesToProfiles: toCsv(modifier.appliesToProfiles),
+        DurationType: modifier.durationType ?? "",
+        DurationValue: modifier.durationValue ?? "",
+        StackKey: modifier.stackKey ?? "",
+        StackMode: modifier.stackMode ?? "",
+        Requirements: JSON.stringify(modifier.requirements ?? {}, null, 2)
+    };
+}
+
+function buildSpellProps(spell) {
+    const schoolSet = new Set((spell.schools ?? []).map((entry) => String(entry ?? "").trim()));
+    const complexity = spell.complexity ?? "Medium";
+    const failureProfile = spell.failureProfile ?? "Minor";
+    const failureTable = String(spell.failureTable ?? "").trim() || `SpellFailure_${failureProfile}`;
+    const randomStepRollFormula = spell.randomStepRollFormula
+        ?? (complexity === "Easy" ? "1d2" : complexity === "Hard" ? "1d6" : "1d3");
+    return {
+        Description: spell.description ?? "",
+        SpellKind: spell.spellKind ?? "Protection",
+        Strength: spell.strength ?? 1,
+        Complexity: complexity,
+        RitualProfile: spell.ritualProfile ?? "",
+        SchoolRequirementMode: spell.schoolRequirementMode ?? "Any",
+        FailureProfile: failureProfile,
+        RandomOutcome: Boolean(spell.randomOutcome),
+        SpellNotes: spell.spellNotes ?? "",
+        SchoolRequirementsTable: Array.isArray(spell.schoolRequirements) ? foundry.utils.deepClone(spell.schoolRequirements) : [],
+        PrerequisitesTable: Array.isArray(spell.prerequisitesTable) ? foundry.utils.deepClone(spell.prerequisitesTable) : [],
+        StaticRitualSteps: Array.isArray(spell.staticRitualSteps) ? foundry.utils.deepClone(spell.staticRitualSteps) : [],
+        SuccessEffects: Array.isArray(spell.successEffects) ? foundry.utils.deepClone(spell.successEffects) : [],
+        RitualStrengthTable: spell.ritualStrengthTable ?? "",
+        RandomStepRollFormula: randomStepRollFormula,
+        RitualStepTable: spell.ritualStepTable ?? "",
+        RitualModifierTable: spell.ritualModifierTable ?? "",
+        RitualAssemblyNotes: spell.ritualAssemblyNotes ?? "",
+        FailureTable: failureTable,
+        FailureEscalationTable: spell.failureEscalationTable ?? "",
+        FailureNotes: spell.failureNotes ?? "",
+        School_Alchemy: schoolSet.has("Alchemy"),
+        School_Astrology: schoolSet.has("Astrology"),
+        School_Divination: schoolSet.has("Divination"),
+        School_Grimoire: schoolSet.has("Grimoire"),
+        School_Knot: schoolSet.has("Knot"),
+        School_Necromancy: schoolSet.has("Necromancy"),
+        School_Religion: schoolSet.has("Religion"),
+        School_Wards: schoolSet.has("Wards")
+    };
+}
+
+function buildRitualStepRollTableDescription(table) {
+    const complexity = table.complexity ?? "Medium";
+    const drawFormula = table.drawFormula ?? "";
+    const count = Array.isArray(table.entries) ? table.entries.length : 0;
+    return [
+        `<p><strong>Complexity:</strong> ${complexity}</p>`,
+        drawFormula ? `<p><strong>Random ritual step draws:</strong> ${drawFormula}</p>` : "",
+        `<p><strong>Available entries:</strong> ${count}</p>`,
+        "<p>This table is rolled to add variable ritual requirements after a spell's static ritual steps have been applied.</p>"
+    ].filter(Boolean).join("");
+}
+
+function buildSpellFailureRollTableDescription(table) {
+    const severity = table.severity ?? "Minor";
+    const count = Array.isArray(table.entries) ? table.entries.length : 0;
+    return [
+        `<p><strong>Severity:</strong> ${severity}</p>`,
+        `<p><strong>Available entries:</strong> ${count}</p>`,
+        "<p>This table is rolled when a spell cast fails and no more specific authored exception overrides the spell's default failure profile.</p>"
+    ].join("");
+}
+
+function buildRitualStepRollTableDoc(table, folderId, folderHint = null) {
+    const normalized = normalizeSourceEntry(table, "ritualStepRollTable", "RollTable");
+    const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
+    const tableFormula = `1d${Math.max(entries.length, 1)}`;
+    const textResultType = globalThis.CONST?.TABLE_RESULT_TYPES?.TEXT ?? 0;
+
+    const results = entries.map((entry, index) => ({
+        _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
+        type: textResultType,
+        text: entry.stepText ?? `Ritual step ${index + 1}`,
+        img: "icons/svg/d20-grey.svg",
+        weight: 1,
+        range: [index + 1, index + 1],
+        drawn: false,
+        flags: {
+            [SOURCE_FLAG_SCOPE]: {
+                ritualStepEntry: foundry.utils.deepClone(entry)
+            }
+        }
+    }));
+
+    return {
+        _id: normalized._id,
+        name: normalized.name,
+        description: buildRitualStepRollTableDescription(normalized),
+        results,
+        formula: tableFormula,
+        replacement: false,
+        displayRoll: true,
+        folder: folderId ?? null,
+        flags: {
+            [SOURCE_FLAG_SCOPE]: {
+                sourceKey: String(table?.id ?? table?.name ?? "").trim(),
+                folderHint: folderHint ?? normalized.folder ?? null,
+                sourceData: normalized,
+                complexity: normalized.complexity ?? "",
+                drawFormula: normalized.drawFormula ?? "",
+                drawMode: normalized.drawMode ?? "distinct"
+            }
+        },
+        ownership: { default: 0 }
+    };
+}
+
+function buildSpellFailureRollTableDoc(table, folderId, folderHint = null) {
+    const normalized = normalizeSourceEntry(table, "spellFailureRollTable", "RollTable");
+    const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
+    const tableFormula = `1d${Math.max(entries.length, 1)}`;
+    const textResultType = globalThis.CONST?.TABLE_RESULT_TYPES?.TEXT ?? 0;
+
+    const results = entries.map((entry, index) => ({
+        _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
+        type: textResultType,
+        text: entry.resultText ?? `Failure result ${index + 1}`,
+        img: "icons/svg/skull.svg",
+        weight: 1,
+        range: [index + 1, index + 1],
+        drawn: false,
+        flags: {
+            [SOURCE_FLAG_SCOPE]: {
+                spellFailureEntry: foundry.utils.deepClone(entry)
+            }
+        }
+    }));
+
+    return {
+        _id: normalized._id,
+        name: normalized.name,
+        description: buildSpellFailureRollTableDescription(normalized),
+        results,
+        formula: tableFormula,
+        replacement: true,
+        displayRoll: true,
+        folder: folderId ?? null,
+        flags: {
+            [SOURCE_FLAG_SCOPE]: {
+                sourceKey: String(table?.id ?? table?.name ?? "").trim(),
+                folderHint: folderHint ?? normalized.folder ?? null,
+                sourceData: normalized,
+                severity: normalized.severity ?? ""
+            }
+        },
+        ownership: { default: 0 }
     };
 }
 
@@ -553,6 +755,41 @@ async function upsertWorldActors(docs) {
     };
 }
 
+async function upsertWorldRollTables(docs) {
+    const sourceIds = new Set(docs.map((doc) => doc._id));
+    const existingById = new Map(
+        game.tables.filter((table) => sourceIds.has(table.id)).map((table) => [table.id, table])
+    );
+
+    const toCreate = [];
+    const toUpdate = [];
+
+    for (const doc of docs) {
+        const existing = existingById.get(doc._id);
+        if (existing) {
+            toUpdate.push({
+                ...doc,
+                _id: existing.id
+            });
+        } else {
+            toCreate.push(doc);
+        }
+    }
+
+    if (toCreate.length > 0) {
+        await RollTable.createDocuments(toCreate);
+    }
+
+    if (toUpdate.length > 0) {
+        await RollTable.updateDocuments(toUpdate, { recursive: false });
+    }
+
+    return {
+        created: toCreate.length,
+        updated: toUpdate.length
+    };
+}
+
 async function pruneManagedFolderItems({ folderId, validIds, templateId, folderHint }) {
     if (!folderId || !(validIds instanceof Set)) {
         return { removed: 0 };
@@ -597,6 +834,27 @@ async function pruneManagedFolderActors({ folderId, validIds, folderHint }) {
     return { removed: staleIds.length };
 }
 
+async function pruneManagedFolderRollTables({ folderId, validIds, folderHint }) {
+    if (!folderId || !(validIds instanceof Set)) {
+        return { removed: 0 };
+    }
+
+    const staleIds = game.tables
+        .filter((table) => table.folder?.id === folderId)
+        .filter((table) => {
+            const sourceFlag = table.flags?.[SOURCE_FLAG_SCOPE] ?? {};
+            const tableFolderHint = sourceFlag.folderHint ?? sourceFlag.sourceData?.folder ?? null;
+            return tableFolderHint === folderHint && !validIds.has(table.id);
+        })
+        .map((table) => table.id);
+
+    if (staleIds.length > 0) {
+        await RollTable.deleteDocuments(staleIds);
+    }
+
+    return { removed: staleIds.length };
+}
+
 export function register1547ModuleSettings() {
     game.settings.register(MODULE_ID, "maneuverData", {
         name: "Maneuver Data",
@@ -624,6 +882,38 @@ export function register1547ModuleSettings() {
 
     game.settings.register(MODULE_ID, "ammoData", {
         name: "Ammunition Data",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: []
+    });
+
+    game.settings.register(MODULE_ID, "weaponModifierData", {
+        name: "Weapon Modifier Data",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: []
+    });
+
+    game.settings.register(MODULE_ID, "spellData", {
+        name: "Spell Data",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: []
+    });
+
+    game.settings.register(MODULE_ID, "ritualStepRollTableData", {
+        name: "Ritual Step Roll Table Data",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: []
+    });
+
+    game.settings.register(MODULE_ID, "spellFailureRollTableData", {
+        name: "Spell Failure Roll Table Data",
         scope: "world",
         config: false,
         type: Object,
@@ -750,6 +1040,10 @@ function createModuleSetupFormApplicationClass() {
             const storedWeapons = game.settings.get(MODULE_ID, "weaponData") ?? [];
             const storedArmors = game.settings.get(MODULE_ID, "armorData") ?? [];
             const storedAmmunition = game.settings.get(MODULE_ID, "ammoData") ?? [];
+            const storedWeaponModifiers = game.settings.get(MODULE_ID, "weaponModifierData") ?? [];
+            const storedSpells = game.settings.get(MODULE_ID, "spellData") ?? [];
+            const storedRitualStepRollTables = game.settings.get(MODULE_ID, "ritualStepRollTableData") ?? [];
+            const storedSpellFailureRollTables = game.settings.get(MODULE_ID, "spellFailureRollTableData") ?? [];
             const storedMonsters = game.settings.get(MODULE_ID, "monsterData") ?? [];
             const storedChangeSets = game.settings.get(MODULE_ID, "changeSetData") ?? [];
             const storedChanges = game.settings.get(MODULE_ID, "changeData") ?? [];
@@ -762,6 +1056,10 @@ function createModuleSetupFormApplicationClass() {
                 storedWeaponCount: Array.isArray(storedWeapons) ? storedWeapons.length : 0,
                 storedArmorCount: Array.isArray(storedArmors) ? storedArmors.length : 0,
                 storedAmmoCount: Array.isArray(storedAmmunition) ? storedAmmunition.length : 0,
+                storedWeaponModifierCount: Array.isArray(storedWeaponModifiers) ? storedWeaponModifiers.length : 0,
+                storedSpellCount: Array.isArray(storedSpells) ? storedSpells.length : 0,
+                storedRitualStepRollTableCount: Array.isArray(storedRitualStepRollTables) ? storedRitualStepRollTables.length : 0,
+                storedSpellFailureRollTableCount: Array.isArray(storedSpellFailureRollTables) ? storedSpellFailureRollTables.length : 0,
                 storedMonsterCount: Array.isArray(storedMonsters) ? storedMonsters.length : 0,
                 storedChangeSetCount: Array.isArray(storedChangeSets) ? storedChangeSets.length : 0,
                 storedChangeCount: Array.isArray(storedChanges) ? storedChanges.length : 0,
@@ -790,6 +1088,10 @@ function createModuleSetupFormApplicationClass() {
                     weapons,
                     armors,
                     ammunition,
+                    weaponModifiers,
+                    spells,
+                    ritualStepRollTables,
+                    spellFailureRollTables,
                     monsters,
                     changeSets,
                     changes,
@@ -801,6 +1103,10 @@ function createModuleSetupFormApplicationClass() {
                     weapons,
                     armors,
                     ammunition,
+                    weaponModifiers,
+                    spells,
+                    ritualStepRollTables,
+                    spellFailureRollTables,
                     monsters,
                     changeSets,
                     changes,
@@ -808,7 +1114,7 @@ function createModuleSetupFormApplicationClass() {
                 });
 
                 ui.notifications.info(
-                    `1547 Core: stored and synced ${maneuvers.length} maneuvers, ${weapons.length} weapons, ${armors.length} armors, ${ammunition.length} ammunition items, ${monsters.length} monsters, ${changeSets.length} change sets, ${changes.length} changes, and ${requirements.length} requirements from source data.`
+                `1547 Core: stored and synced ${maneuvers.length} maneuvers, ${weapons.length} weapons, ${armors.length} armors, ${ammunition.length} ammunition items, ${weaponModifiers.length} weapon modifiers, ${spells.length} spells, ${ritualStepRollTables.length} ritual step roll tables, ${spellFailureRollTables.length} spell failure roll tables, ${monsters.length} monsters, ${changeSets.length} change sets, ${changes.length} changes, and ${requirements.length} requirements from source data.`
                 );
                 this.render(false);
             } catch (error) {
@@ -843,11 +1149,15 @@ function createModuleSetupFormApplicationClass() {
         }
 
         async #loadSourceBackedData() {
-            const [maneuvers, weapons, armors, ammunition, monsters, changeSets, changes, requirements] = await Promise.all([
+            const [maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, monsters, changeSets, changes, requirements] = await Promise.all([
                 this.#loadDataset("maneuvers.json"),
                 this.#loadDataset("weapons.json"),
                 this.#loadDataset("armors.json"),
                 this.#loadDataset("ammunition.json"),
+                this.#loadDataset("weapon-modifiers.json"),
+                this.#loadDataset("spells.json"),
+                this.#loadDataset("ritual-step-roll-tables.json"),
+                this.#loadDataset("spell-failure-roll-tables.json"),
                 this.#loadDataset("monsters.json"),
                 this.#loadDataset("changesets.json"),
                 this.#loadDataset("changes.json"),
@@ -859,6 +1169,10 @@ function createModuleSetupFormApplicationClass() {
                 game.settings.set(MODULE_ID, "weaponData", weapons),
                 game.settings.set(MODULE_ID, "armorData", armors),
                 game.settings.set(MODULE_ID, "ammoData", ammunition),
+                game.settings.set(MODULE_ID, "weaponModifierData", weaponModifiers),
+                game.settings.set(MODULE_ID, "spellData", spells),
+                game.settings.set(MODULE_ID, "ritualStepRollTableData", ritualStepRollTables),
+                game.settings.set(MODULE_ID, "spellFailureRollTableData", spellFailureRollTables),
                 game.settings.set(MODULE_ID, "monsterData", monsters),
                 game.settings.set(MODULE_ID, "changeSetData", changeSets),
                 game.settings.set(MODULE_ID, "changeData", changes),
@@ -866,7 +1180,7 @@ function createModuleSetupFormApplicationClass() {
                 game.settings.set(MODULE_ID, "lastDataSetupAt", new Date().toISOString())
             ]);
 
-            return { maneuvers, weapons, armors, ammunition, monsters, changeSets, changes, requirements };
+            return { maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, monsters, changeSets, changes, requirements };
         }
 
         /**
@@ -917,6 +1231,11 @@ function createModuleSetupFormApplicationClass() {
                 type: "Actor",
                 color: "#445566"
             });
+            const coreRollTableFolder = await this.#getOrCreateFolder({
+                folderName: "1547 Core",
+                type: "RollTable",
+                color: "#445566"
+            });
 
             // Migrate any pre-0.2.4 root-level kind folders into the
             // new core namespace. Idempotent: skips folders already
@@ -925,6 +1244,10 @@ function createModuleSetupFormApplicationClass() {
             await this.#reparentRootFolder("Weapons", "Item", coreItemFolder.id);
             await this.#reparentRootFolder("Armor", "Item", coreItemFolder.id);
             await this.#reparentRootFolder("Ammunition", "Item", coreItemFolder.id);
+            await this.#reparentRootFolder("Weapon Modifiers", "Item", coreItemFolder.id);
+            await this.#reparentRootFolder("Spells", "Item", coreItemFolder.id);
+            await this.#reparentRootFolder("Ritual Step Tables", "RollTable", coreRollTableFolder.id);
+            await this.#reparentRootFolder("Spell Failure Tables", "RollTable", coreRollTableFolder.id);
             await this.#reparentRootFolder("Change Sets", "Item", coreItemFolder.id);
             await this.#reparentRootFolder("Changes", "Item", coreItemFolder.id);
             await this.#reparentRootFolder("Requirements", "Item", coreItemFolder.id);
@@ -935,6 +1258,10 @@ function createModuleSetupFormApplicationClass() {
             const weaponFolder = await this.#getOrCreateFolder({ folderName: "Weapons", type: "Item", parentId: coreItemFolder.id });
             const armorFolder = await this.#getOrCreateFolder({ folderName: "Armor", type: "Item", parentId: coreItemFolder.id });
             const ammoFolder = await this.#getOrCreateFolder({ folderName: "Ammunition", type: "Item", parentId: coreItemFolder.id });
+            const weaponModifierFolder = await this.#getOrCreateFolder({ folderName: "Weapon Modifiers", type: "Item", parentId: coreItemFolder.id });
+            const spellsFolder = await this.#getOrCreateFolder({ folderName: "Spells", type: "Item", parentId: coreItemFolder.id });
+            const ritualStepRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Ritual Step Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#5b6276" });
+            const spellFailureRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Spell Failure Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#6d5b5b" });
             const changeSetsFolder = await this.#getOrCreateFolder({ folderName: "Change Sets", type: "Item", parentId: coreItemFolder.id, color: "#6d5b51" });
             const changesFolder = await this.#getOrCreateFolder({ folderName: "Changes", type: "Item", parentId: coreItemFolder.id, color: "#6d6551" });
             const requirementsFolder = await this.#getOrCreateFolder({ folderName: "Requirements", type: "Item", parentId: coreItemFolder.id, color: "#5b5b6d" });
@@ -972,11 +1299,16 @@ function createModuleSetupFormApplicationClass() {
             return {
                 coreItemFolder,
                 coreActorFolder,
+                coreRollTableFolder,
                 monstersFolder,
                 maneuverFolder,
                 weaponFolder,
                 armorFolder,
                 ammoFolder,
+                weaponModifierFolder,
+                spellsFolder,
+                ritualStepRollTablesFolder,
+                spellFailureRollTablesFolder,
                 changeSetsFolder,
                 changesFolder,
                 requirementsFolder,
@@ -986,17 +1318,20 @@ function createModuleSetupFormApplicationClass() {
             };
         }
 
-        async #importItemsFromData({ maneuvers, weapons, armors, ammunition, monsters, changeSets, changes, requirements }) {
-            const [actorTemplate, maneuverTemplate, weaponTemplate, armorTemplate, ammoTemplate, powerTemplate, spellTemplate, pactTemplate, recipeTemplate, usageEffectTemplate, changeSetTemplate, changeTemplate, requirementTemplate] = await Promise.all([
+        async #importItemsFromData({ maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, monsters, changeSets, changes, requirements }) {
+            const [actorTemplate, maneuverTemplate, weaponTemplate, armorTemplate, ammoTemplate, weaponModifierTemplate, supernaturalMarkTemplate, monsterMagicTemplate, spellTemplate, pactTemplate, ritualTemplate, ritualStepTemplate, usageEffectTemplate, changeSetTemplate, changeTemplate, requirementTemplate] = await Promise.all([
                 this.#loadTemplate(TEMPLATE_FILES.actorTemplate),
                 this.#loadTemplate(TEMPLATE_FILES.maneuver),
                 this.#loadTemplate(TEMPLATE_FILES.weapon),
                 this.#loadTemplate(TEMPLATE_FILES.armor),
                 this.#loadTemplate(TEMPLATE_FILES.ammo),
-                this.#loadTemplate(TEMPLATE_FILES.power),
+                this.#loadTemplate(TEMPLATE_FILES.weaponModifier),
+                this.#loadTemplate(TEMPLATE_FILES.supernaturalMark),
+                this.#loadTemplate(TEMPLATE_FILES.monsterMagic),
                 this.#loadTemplate(TEMPLATE_FILES.spell),
                 this.#loadTemplate(TEMPLATE_FILES.pact),
-                this.#loadTemplate(TEMPLATE_FILES.recipe),
+                this.#loadTemplate(TEMPLATE_FILES.ritual),
+                this.#loadTemplate(TEMPLATE_FILES.ritualStep),
                 this.#loadTemplate(TEMPLATE_FILES.usageEffect),
                 this.#loadTemplate(TEMPLATE_FILES.changeSet),
                 this.#loadTemplate(TEMPLATE_FILES.change),
@@ -1008,10 +1343,13 @@ function createModuleSetupFormApplicationClass() {
                 makeTemplateDoc(armorTemplate),
                 makeTemplateDoc(maneuverTemplate),
                 makeTemplateDoc(ammoTemplate),
-                makeTemplateDoc(powerTemplate),
+                makeTemplateDoc(weaponModifierTemplate),
+                makeTemplateDoc(supernaturalMarkTemplate),
+                makeTemplateDoc(monsterMagicTemplate),
                 makeTemplateDoc(spellTemplate),
                 makeTemplateDoc(pactTemplate),
-                makeTemplateDoc(recipeTemplate),
+                makeTemplateDoc(ritualTemplate),
+                makeTemplateDoc(ritualStepTemplate),
                 makeTemplateDoc(usageEffectTemplate),
                 makeTemplateDoc(changeSetTemplate),
                 makeTemplateDoc(changeTemplate),
@@ -1031,6 +1369,18 @@ function createModuleSetupFormApplicationClass() {
             );
             const ammoDocs = ammunition.map((ammo) =>
                 makeItemDoc(normalizeSourceEntry(ammo, "ammo"), ammoTemplate, ammo.img ?? ammoTemplate.img ?? "icons/svg/item-bag.svg", buildAmmoProps, folders.ammoFolder.id, "Ammunition")
+            );
+            const weaponModifierDocs = weaponModifiers.map((modifier) =>
+                makeItemDoc(normalizeSourceEntry(modifier, "weaponModifier"), weaponModifierTemplate, modifier.img ?? weaponModifierTemplate.img ?? "icons/svg/item-bag.svg", buildWeaponModifierProps, folders.weaponModifierFolder.id, "Weapon Modifiers")
+            );
+            const spellDocs = spells.map((spell) =>
+                makeItemDoc(normalizeSourceEntry(spell, "spell"), spellTemplate, spell.img ?? spellTemplate.img ?? "icons/svg/daze.svg", buildSpellProps, folders.spellsFolder.id, "Spells")
+            );
+            const ritualStepRollTableDocs = ritualStepRollTables.map((table) =>
+                buildRitualStepRollTableDoc(table, folders.ritualStepRollTablesFolder.id, "Ritual Step Tables")
+            );
+            const spellFailureRollTableDocs = spellFailureRollTables.map((table) =>
+                buildSpellFailureRollTableDoc(table, folders.spellFailureRollTablesFolder.id, "Spell Failure Tables")
             );
             const changeSetDocs = changeSets.map((changeSet) => {
                 const normalized = normalizeSourceEntry(changeSet, "changeset");
@@ -1099,6 +1449,28 @@ function createModuleSetupFormApplicationClass() {
                 templateId: ammoTemplate._id,
                 folderHint: "Ammunition"
             });
+            await pruneManagedFolderItems({
+                folderId: folders.weaponModifierFolder.id,
+                validIds: new Set(weaponModifierDocs.map((doc) => doc._id)),
+                templateId: weaponModifierTemplate._id,
+                folderHint: "Weapon Modifiers"
+            });
+            await pruneManagedFolderItems({
+                folderId: folders.spellsFolder.id,
+                validIds: new Set(spellDocs.map((doc) => doc._id)),
+                templateId: spellTemplate._id,
+                folderHint: "Spells"
+            });
+            await pruneManagedFolderRollTables({
+                folderId: folders.ritualStepRollTablesFolder.id,
+                validIds: new Set(ritualStepRollTableDocs.map((doc) => doc._id)),
+                folderHint: "Ritual Step Tables"
+            });
+            await pruneManagedFolderRollTables({
+                folderId: folders.spellFailureRollTablesFolder.id,
+                validIds: new Set(spellFailureRollTableDocs.map((doc) => doc._id)),
+                folderHint: "Spell Failure Tables"
+            });
             for (const groupName of CHANGE_SET_GROUPS) {
                 const folder = folders.changeSetGroupFolders[groupName];
                 await pruneManagedFolderItems({
@@ -1155,12 +1527,16 @@ function createModuleSetupFormApplicationClass() {
                 ...weaponDocs,
                 ...armorDocs,
                 ...ammoDocs,
+                ...weaponModifierDocs,
+                ...spellDocs,
                 ...changeSetDocs,
                 ...changeDocs,
                 ...requirementDocs
             ];
-            const [itemResult, actorResult] = await Promise.all([
+            const [itemResult, ritualRollTableResult, spellFailureRollTableResult, actorResult] = await Promise.all([
                 upsertWorldItems(docs),
+                upsertWorldRollTables(ritualStepRollTableDocs),
+                upsertWorldRollTables(spellFailureRollTableDocs),
                 upsertWorldActors([
                     makeActorDoc(actorTemplate, null, "Actor Template"),
                     ...monsterDocs
@@ -1170,8 +1546,11 @@ function createModuleSetupFormApplicationClass() {
             return {
                 totalItems: docs.length,
                 totalActors: monsterDocs.length,
+                totalRollTables: ritualStepRollTableDocs.length + spellFailureRollTableDocs.length,
                 createdItems: itemResult.created,
                 updatedItems: itemResult.updated,
+                createdRollTables: ritualRollTableResult.created + spellFailureRollTableResult.created,
+                updatedRollTables: ritualRollTableResult.updated + spellFailureRollTableResult.updated,
                 createdActors: actorResult.created,
                 updatedActors: actorResult.updated
             };

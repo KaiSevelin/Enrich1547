@@ -44,6 +44,164 @@ import { resolveThreatReactionActor } from "./reaction-candidates.mjs";
 import { getLegalManeuvers } from "./maneuver-legality.mjs";
 import { COMBAT_EVENTS } from "../services/combat-events.js";
 
+const MODULE_ID = "1547core";
+const SOURCE_FLAG_SCOPE = "1547Core";
+
+function normalizeAttachedModifierIdList(value) {
+    if (Array.isArray(value)) {
+        return value.map((entry) => String(entry ?? "").trim()).filter(Boolean);
+    }
+    const trimmed = String(value ?? "").trim();
+    if (!trimmed) return [];
+    try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+            return parsed.map((entry) => String(entry ?? "").trim()).filter(Boolean);
+        }
+    } catch {
+        // Fall through to comma-split parsing.
+    }
+    return trimmed.split(",").map((entry) => entry.trim()).filter(Boolean);
+}
+
+function getActorStatCheckValue(actor, statName) {
+    const normalized = String(statName ?? "").trim();
+    if (!normalized) return 0;
+    const props = actor?.system?.props ?? {};
+    const dice = Number(props[`Stats_${normalized}Dice`] ?? props[`${normalized}Dice`] ?? 0) || 0;
+    const mod = Number(props[`Stats_${normalized}Mod`] ?? props[`${normalized}Mod`] ?? 0) || 0;
+    return dice + mod;
+}
+
+function parseCheckDescriptor(descriptor = "") {
+    const trimmed = String(descriptor ?? "").trim();
+    if (!trimmed) return null;
+    const parts = trimmed.split(/\s+/);
+    if (parts.length < 2) return null;
+    const side = parts[0].toLowerCase();
+    const stat = parts.slice(1).join(" ").trim();
+    if (!["source", "target"].includes(side) || !stat) return null;
+    return { side, stat };
+}
+
+function shouldTriggerOnHitEffect(effect, context) {
+    const triggerMode = String(effect?.triggerMode ?? "").trim().toLowerCase() || "onanyhit";
+    if (triggerMode === "onmanualchoice") return false;
+    if (triggerMode === "ondamageapplied") return context.baseDamageApplied > 0;
+    if (triggerMode === "oncritical") return context.attackRollCrit > 0;
+    if (triggerMode === "onexposure") return context.baseDamageApplied > 0;
+    return true;
+}
+
+function passesArmorInteraction(effect, context) {
+    const armorInteraction = String(effect?.armorInteraction ?? "").trim().toLowerCase() || "normal";
+    if (armorInteraction === "onlyifbasedamagepassed") return context.baseDamageApplied > 0;
+    return true;
+}
+
+// A save's difficulty is expressed as 1-5, read as "[difficulty]d6". In this
+// deterministic model an Nd6 pool has a nominal value of N (its dice count),
+// directly comparable to a stat check value (statDice + statMod).
+const DEFAULT_SAVE_DIFFICULTY = 3;
+
+function parseDifficultyValue(value) {
+    if (typeof value === "number") return Number.isFinite(value) && value > 0 ? value : null;
+    const match = /^(\d+)\s*(?:d6)?$/i.exec(String(value ?? "").trim());
+    if (!match) return null;
+    const parsed = Number.parseInt(match[1], 10);
+    return parsed > 0 ? parsed : null;
+}
+
+function resolveSaveDifficulty(effect) {
+    return parseDifficultyValue(effect?.difficulty)
+        ?? parseDifficultyValue(effect?.sourceCheck)
+        ?? DEFAULT_SAVE_DIFFICULTY;
+}
+
+function resolveOnHitEffectSuccess(effect, context) {
+    const resolution = String(effect?.resolution ?? "").trim().toLowerCase() || "automatic";
+    if (resolution === "automatic") return true;
+
+    const sourceDescriptor = parseCheckDescriptor(effect?.sourceCheck);
+    const targetDescriptor = parseCheckDescriptor(effect?.targetCheck);
+    const sourceActor = sourceDescriptor?.side === "target" ? context.targetActor : context.sourceActor;
+    const targetActor = targetDescriptor?.side === "source" ? context.sourceActor : context.targetActor;
+    const targetValue = targetDescriptor ? getActorStatCheckValue(targetActor, targetDescriptor.stat) : 0;
+
+    if (resolution === "save") {
+        // A save pits an attacker stat — or a flat difficulty when no attacker
+        // stat is given — against the defender's resistance. The rider lands
+        // unless the defender's check strictly exceeds the attacker side.
+        const attackerValue = sourceDescriptor
+            ? getActorStatCheckValue(sourceActor, sourceDescriptor.stat)
+            : resolveSaveDifficulty(effect);
+        return attackerValue >= targetValue;
+    }
+
+    if (resolution === "contest") {
+        if (!sourceDescriptor && !targetDescriptor) return true;
+        const sourceValue = sourceDescriptor ? getActorStatCheckValue(sourceActor, sourceDescriptor.stat) : 0;
+        return sourceValue >= targetValue;
+    }
+
+    return true;
+}
+
+function cloneActorWithHitPoints(actor, currentHitPoints) {
+    return {
+        ...actor,
+        system: {
+            ...(actor?.system ?? {}),
+            props: {
+                ...(actor?.system?.props ?? {}),
+                CurrentHitPoints: currentHitPoints,
+            },
+        },
+    };
+}
+
+function collectTriggeredModifierEffects(pendingAttack, context) {
+    const modifiers = Array.isArray(pendingAttack?.attackModifiers)
+        ? pendingAttack.attackModifiers
+        : [
+            ...(Array.isArray(pendingAttack?.weaponModifiers) ? pendingAttack.weaponModifiers : []),
+            ...(Array.isArray(pendingAttack?.ammoModifiers) ? pendingAttack.ammoModifiers : []),
+        ];
+    return modifiers.flatMap((modifier) => {
+        const effects = Array.isArray(modifier?.onHitEffects) ? modifier.onHitEffects : [];
+        return effects
+            .filter((effect) => shouldTriggerOnHitEffect(effect, context))
+            .filter((effect) => passesArmorInteraction(effect, context))
+            .filter((effect) => resolveOnHitEffectSuccess(effect, context))
+            .map((effect) => ({ modifier, effect }));
+    });
+}
+
+function planConsumeTriggeredModifier(parentActor, modifier) {
+    if (!parentActor?.id || !modifier?.attachedToItemId || !modifier?._id) return [];
+    const durationType = String(modifier.durationType ?? "").trim().toLowerCase();
+    const durationValue = Number(modifier.durationValue ?? 0) || 0;
+    if (durationType !== "uses" || durationValue > 1) return [];
+
+    const parentItem = parentActor?.items?.get?.(modifier.attachedToItemId) ?? null;
+    if (!parentItem?.id) return [];
+
+    const currentAttached = parentItem?.flags?.[SOURCE_FLAG_SCOPE]?.attachedModifierIds
+        ?? parentItem?.flags?.[MODULE_ID]?.attachedModifierIds
+        ?? parentItem?.system?.props?.AttachedModifierIds
+        ?? parentItem?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData?.attachedModifierIds
+        ?? [];
+    const nextAttached = normalizeAttachedModifierIdList(currentAttached)
+        .filter((entry) => entry && entry !== modifier._id);
+
+    return [{
+        kind: "item.update",
+        actorId: parentActor.id,
+        itemId: parentItem.id,
+        data: { [`flags.${SOURCE_FLAG_SCOPE}.attachedModifierIds`]: nextAttached },
+    }];
+}
+
 // ─────────────────────────────────────────────────── declareAttackPhased ──
 
 export async function declareAttackPhased(opts = {}, run) {
@@ -279,15 +437,15 @@ export async function resolveAttackOutcomePhased({
         protection: baseDefenseRoll.protection + defenseModifiers.addArmorDice,
         appliedModifiers: defenseModifiers,
     };
-    const damageApplied = Math.max(
+    const baseDamageApplied = Math.max(
         0,
         normalizedAttackRoll.damage - normalizedDefenseRoll.protection - defenseModifiers.reduceDamageTaken
     );
 
     // ── Phase 1: HP + status patches (when there's damage) ──
     let hitPointUpdate;
-    if (damageApplied > 0) {
-        const { patches: hpPatches, result: hpResult } = planApplyDamage(pendingAttack.target, damageApplied);
+    if (baseDamageApplied > 0) {
+        const { patches: hpPatches, result: hpResult } = planApplyDamage(pendingAttack.target, baseDamageApplied);
         await run({ phase: "applyDamage", patches: hpPatches });
         hitPointUpdate = {
             previousHitPoints: hpResult.previousHitPoints,
@@ -301,6 +459,52 @@ export async function resolveAttackOutcomePhased({
         const hp = getActorCurrentHitPoints(pendingAttack.target);
         hitPointUpdate = { previousHitPoints: hp, currentHitPoints: hp, isDead: false, isUnconscious: false };
     }
+
+    const triggeredModifierEffects = collectTriggeredModifierEffects(pendingAttack, {
+        baseDamageApplied,
+        attackRollCrit: normalizedAttackRoll.crit,
+        sourceActor: pendingAttack.actor,
+        targetActor: pendingAttack.target,
+    });
+    const secondaryDamageApplied = triggeredModifierEffects.reduce(
+        (sum, entry) => sum + Math.max(0, Number(entry.effect?.damageAmount ?? 0) || 0),
+        0
+    );
+    if (secondaryDamageApplied > 0 || triggeredModifierEffects.some((entry) => String(entry.effect?.applyStatus ?? "").trim())) {
+        const targetAfterBaseDamage = cloneActorWithHitPoints(pendingAttack.target, hitPointUpdate.currentHitPoints);
+        const secondaryDamagePlan = secondaryDamageApplied > 0
+            ? planApplyDamage(targetAfterBaseDamage, secondaryDamageApplied)
+            : { patches: [], result: null };
+        const statusPatches = triggeredModifierEffects
+            .map((entry) => String(entry.effect?.applyStatus ?? "").trim())
+            .filter(Boolean)
+            .map((keyword) => ({
+                kind: "actor.statusEffect",
+                actorId: pendingAttack.target?.id,
+                keyword,
+                active: true,
+            }));
+        const consumePatches = triggeredModifierEffects.flatMap((entry) =>
+            planConsumeTriggeredModifier(pendingAttack.actor, entry.modifier)
+        );
+        await run({
+            phase: "applySecondaryEffects",
+            patches: [
+                ...secondaryDamagePlan.patches,
+                ...statusPatches,
+                ...consumePatches,
+            ],
+        });
+        if (secondaryDamagePlan.result) {
+            hitPointUpdate = {
+                previousHitPoints: hitPointUpdate.previousHitPoints,
+                currentHitPoints: secondaryDamagePlan.result.currentHitPoints,
+                isDead: secondaryDamagePlan.result.isDead,
+                isUnconscious: secondaryDamagePlan.result.isUnconscious,
+            };
+        }
+    }
+    const damageApplied = baseDamageApplied + secondaryDamageApplied;
 
     const criticalPoints =
         currentCriticalPoints
@@ -322,6 +526,9 @@ export async function resolveAttackOutcomePhased({
                 attackRoll: normalizedAttackRoll,
                 defenseRoll: normalizedDefenseRoll,
                 damageApplied,
+                baseDamageApplied,
+                secondaryDamageApplied,
+                secondaryEffects: triggeredModifierEffects,
                 hitPointUpdate,
                 appliedModifiers,
                 defenseModifiers,
@@ -414,6 +621,9 @@ export async function resolveAttackOutcomePhased({
                 type: "attack",
                 pendingAttack,
                 damageApplied,
+                baseDamageApplied,
+                secondaryDamageApplied,
+                secondaryEffects: triggeredModifierEffects,
                 hitPointUpdate,
                 appliedModifiers,
                 defenseModifiers,
@@ -427,6 +637,9 @@ export async function resolveAttackOutcomePhased({
         attackRoll: normalizedAttackRoll,
         defenseRoll: normalizedDefenseRoll,
         damageApplied,
+        baseDamageApplied,
+        secondaryDamageApplied,
+        secondaryEffects: triggeredModifierEffects,
         hitPointUpdate,
         currentCriticalPoints: criticalPoints,
         appliedModifiers,

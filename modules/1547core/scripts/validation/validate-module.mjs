@@ -256,7 +256,7 @@ function checkDuplicateFunctionDefinitions() {
   }
 }
 function checkCsbTraitFormula() {
-  const templatePath = path.join(ROOT, "foundry", "fvtt-Item-weapontemplate-qZCfLEYQ7egbm1B9.json");
+  const templatePath = path.join(ROOT, "foundry", "Templates", "fvtt-Item-weapontemplate-qZCfLEYQ7egbm1B9.json");
   const templateText = fs.readFileSync(templatePath, "utf8");
   assert(!templateText.includes('Traits_Tactical ? "Traits_Tactical," : "",\r\n)'), "Weapon template trait formula has no trailing comma before closing concat");
   assert(!templateText.includes('Traits_Tactical ? "Traits_Tactical," : "",\n)'), "Weapon template trait formula has no trailing comma before closing concat");
@@ -304,12 +304,56 @@ function checkCrossFileDuplicateFunctions() {
   }
 }
 
+async function checkSpellExportDrift() {
+  const templatePath = path.join(ROOT, "foundry", "Templates", "fvtt-Item-spelltemplate-2kiWw3Cv5Zk1lZxn.json");
+  const sourcePath = path.join(ROOT, "foundry", "Templates", "spells.json");
+  const bundlePath = path.join(ROOT, "foundry", "Templates", "fvtt-Items-spells.json");
+  const spellsDir = path.join(ROOT, "foundry", "Spells");
+
+  let makeItemDoc;
+  try {
+    ({ makeItemDoc } = await import("../tools/generate-spell-exports.mjs"));
+  } catch (error) {
+    fail(`Spell export generator is importable: ${error.message}`);
+    return;
+  }
+
+  const template = JSON.parse(fs.readFileSync(templatePath, "utf8"));
+  const source = JSON.parse(fs.readFileSync(sourcePath, "utf8"));
+  const bundle = JSON.parse(fs.readFileSync(bundlePath, "utf8"));
+  assert(source.length === bundle.length, `Spell bundle entry count matches source (${bundle.length}/${source.length})`);
+
+  const bundleById = new Map(bundle.map((doc) => [doc._id, doc]));
+  const drifted = [];
+  for (const spell of source) {
+    const expected = JSON.stringify(makeItemDoc(spell, template));
+    const actual = JSON.stringify(bundleById.get(spell._id) ?? null);
+    if (expected !== actual) drifted.push(spell._id ?? spell.name);
+  }
+  const driftSuffix = drifted.length
+    ? ` :: ${drifted.length} drifted (e.g. ${drifted.slice(0, 3).join(", ")}); re-run scripts/tools/generate-spell-exports.mjs`
+    : "";
+  assert(drifted.length === 0, `Spell bundle is in sync with spells.json${driftSuffix}`);
+
+  const individualDrift = [];
+  for (const name of fs.readdirSync(spellsDir).filter((entry) => /^fvtt-Item-.*\.json$/i.test(entry))) {
+    const doc = JSON.parse(fs.readFileSync(path.join(spellsDir, name), "utf8"));
+    const counterpart = bundleById.get(doc._id);
+    if (!counterpart || JSON.stringify(doc) !== JSON.stringify(counterpart)) individualDrift.push(name);
+  }
+  const individualSuffix = individualDrift.length
+    ? ` :: ${individualDrift.length} mismatched (e.g. ${individualDrift.slice(0, 3).join(", ")}); re-run scripts/tools/generate-spell-exports.mjs`
+    : "";
+  assert(individualDrift.length === 0, `Individual spell exports match the bundle${individualSuffix}`);
+}
+
 checkModuleJson();
 checkJavaScriptSyntax();
 checkHudStructure();
 checkCsbTraitFormula();
 checkDuplicateFunctionDefinitions();
 checkCrossFileDuplicateFunctions();
+await checkSpellExportDrift();
 
 for (const message of passes) console.log(`PASS ${message}`);
 for (const message of skips) console.log(`SKIP ${message}`);

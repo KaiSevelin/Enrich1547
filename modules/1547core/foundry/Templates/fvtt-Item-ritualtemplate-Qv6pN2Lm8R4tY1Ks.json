@@ -1,5 +1,5 @@
 {
-  "name": "RecipeTemplate",
+  "name": "RitualTemplate",
   "type": "_equippableItemTemplate",
   "_id": "Qv6pN2Lm8R4tY1Ks",
   "img": "icons/svg/book.svg",
@@ -19,19 +19,34 @@
               "selectedOptionType": "custom",
               "options": [
                 { "key": "Material", "value": "Material" },
+                { "key": "StaticSkill", "value": "Static Skill" },
                 { "key": "Verbal", "value": "Verbal" },
                 { "key": "Gesture", "value": "Gesture" },
                 { "key": "Diagram", "value": "Diagram" },
                 { "key": "Offering", "value": "Offering" },
                 { "key": "Invocation", "value": "Invocation" },
                 { "key": "Dance", "value": "Dance" },
+                { "key": "Performance", "value": "Performance" },
                 { "key": "Craft", "value": "Craft" },
+                { "key": "Writing", "value": "Writing" },
+                { "key": "Placement", "value": "Placement" },
+                { "key": "DivinatoryFocus", "value": "Divinatory Focus" },
                 { "key": "Timing", "value": "Timing" },
+                { "key": "Environment", "value": "Environment" },
                 { "key": "Vigil", "value": "Vigil" },
                 { "key": "Sacrifice", "value": "Sacrifice" },
                 { "key": "Defense", "value": "Defense" },
                 { "key": "Purification", "value": "Purification" },
+                { "key": "Purity", "value": "Purity" },
                 { "key": "Social", "value": "Social" },
+                { "key": "Witness", "value": "Witness" },
+                { "key": "Resistance", "value": "Resistance" },
+                { "key": "Naming", "value": "Naming" },
+                { "key": "Isolation", "value": "Isolation" },
+                { "key": "CorpseWork", "value": "Corpse Work" },
+                { "key": "Alchemy", "value": "Alchemy" },
+                { "key": "Boundary", "value": "Boundary" },
+                { "key": "Oath", "value": "Oath" },
                 { "key": "Random", "value": "Random" }
               ],
               "colName": "Step Type"
@@ -83,69 +98,9 @@
           "sortPredicates": []
         },
         {
-          "key": "RandomStepPoolTable",
-          "type": "dynamicTable",
-          "contents": [],
-          "rowLayout": [
-            {
-              "key": "PoolStepType",
-              "type": "select",
-              "size": "full-size",
-              "defaultValue": "Random",
-              "selectedOptionType": "custom",
-              "options": [
-                { "key": "Random", "value": "Random" },
-                { "key": "Material", "value": "Material" },
-                { "key": "Verbal", "value": "Verbal" },
-                { "key": "Diagram", "value": "Diagram" },
-                { "key": "Timing", "value": "Timing" },
-                { "key": "Defense", "value": "Defense" },
-                { "key": "Offering", "value": "Offering" }
-              ],
-              "colName": "Pool Type"
-            },
-            {
-              "key": "PoolStepText",
-              "type": "textField",
-              "size": "full-size",
-              "defaultValue": "",
-              "colName": "Possible Step"
-            },
-            {
-              "key": "PoolSkillCheck",
-              "type": "textField",
-              "size": "full-size",
-              "defaultValue": "",
-              "colName": "Check"
-            },
-            {
-              "key": "PoolDifficulty",
-              "type": "textField",
-              "size": "full-size",
-              "defaultValue": "",
-              "colName": "Difficulty"
-            },
-            {
-              "key": "PoolNotes",
-              "type": "textField",
-              "size": "full-size",
-              "defaultValue": "",
-              "colName": "Notes"
-            }
-          ],
-          "head": false,
-          "deleteWarning": false,
-          "labelWhenEmpty": "",
-          "predefinedLines": [],
-          "canPlayerAdd": true,
-          "hiddenColumns": [],
-          "sortOption": "manual",
-          "sortPredicates": []
-        },
-        {
-          "key": "RecipeNotesPanel",
+          "key": "RitualNotesPanel",
           "type": "panel",
-          "title": "Recipe Notes",
+          "title": "Ritual Notes",
           "titleStyle": "default",
           "flow": "vertical",
           "align": "left",
@@ -174,6 +129,14 @@
               "type": "textArea",
               "size": "full-size",
               "label": "Witnesses / Helpers:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "FailureTableUsed",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Failure Table Used:",
               "defaultValue": "",
               "style": "sheet"
             },
@@ -209,16 +172,37 @@
           "style": "sheet"
         },
         {
-          "key": "RecipeIdentityPanel",
+          "key": "RitualIdentityPanel",
           "type": "panel",
           "flow": "grid-2",
-          "title": "Recipe Identity",
+          "title": "Ritual Identity",
           "titleStyle": "default",
           "align": "left",
           "verticalAlign": "top",
           "collapsible": false,
           "defaultCollapsed": false,
           "contents": [
+            {
+              "key": "BaseSpell",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Base Spell:",
+              "defaultValue": ""
+            },
+            {
+              "key": "SpellStrength",
+              "type": "numberField",
+              "size": "full-size",
+              "label": "Spell Strength:",
+              "defaultValue": "1",
+              "allowDecimal": false,
+              "minVal": "1",
+              "maxVal": "10",
+              "allowRelative": false,
+              "showControls": true,
+              "controlsStyle": "hover",
+              "inputStyle": "text"
+            },
             {
               "key": "Tradition",
               "type": "textField",
@@ -227,7 +211,7 @@
               "defaultValue": ""
             },
             {
-              "key": "RecipeLineage",
+              "key": "RitualLineage",
               "type": "textField",
               "size": "full-size",
               "label": "Lineage / Source:",
@@ -248,18 +232,11 @@
               ]
             },
             {
-              "key": "ComplexityAdjustment",
-              "type": "numberField",
+              "key": "GeneratedFromTable",
+              "type": "textField",
               "size": "full-size",
-              "label": "Complexity Adj.:",
-              "defaultValue": "0",
-              "allowDecimal": false,
-              "minVal": "-5",
-              "maxVal": "5",
-              "allowRelative": false,
-              "showControls": true,
-              "controlsStyle": "hover",
-              "inputStyle": "text"
+              "label": "Generated From:",
+              "defaultValue": ""
             }
           ]
         }

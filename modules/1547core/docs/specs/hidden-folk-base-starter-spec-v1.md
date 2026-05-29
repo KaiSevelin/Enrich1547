@@ -6,15 +6,27 @@ monster chassis.
 It is intended as the first reusable Hidden Folk root actor before domain,
 motivation, loadout, and quirk ChangeSets are layered on top.
 
+Hidden Folk are the magical remnants of those who inhabited the land before
+human settlement. They occupy the same regions as human life, but hidden in
+parallel rather than in open common possession.
+
 ## Design Goals
 
 The base Hidden Folk should be:
 
 - intelligent
 - evasive
+- magical by nature
+- proud
 - place-aware
+- able to live in parallel with human settlement rather than wholly apart from it
 - more dangerous through influence than brute violence
-- uncanny without yet being specialized into mound, hearth, wood, or water variants
+- guided by their own alien purposes rather than by human morality or convenience
+- uncanny without yet being specialized into mound, hearth, wood, water, or courtly variants
+
+Hidden Folk are not usually monsters fought openly. They are more often
+encountered through concealment, testing, transformation, bargains, seduction,
+misdirection, or reprisal after offense.
 
 ## Base Stats
 
@@ -71,7 +83,7 @@ These are the concrete passive changes the base monster should receive.
   name: Hidden Folk Base - Half-Seen Trait
   kind: Trait
   traitName: Half-Seen
-  traitDescription: The being is difficult to clearly make out unless it chooses to reveal itself, is cornered, or the conditions of its place are broken.
+  traitDescription: The being is difficult to clearly make out because it dwells partly in hidden parallel to ordinary human sight, revealing itself only by choice, pressure, or failure of concealment.
   notes: Paired with the Glamour tag.
 ```
 
@@ -88,19 +100,19 @@ These are the concrete passive changes the base monster should receive.
   name: Hidden Folk Base - Bound to Custom Trait
   kind: Trait
   traitName: Bound to Custom
-  traitDescription: It reacts strongly to trespass, insult, theft, broken hospitality, and oath-breaking.
+  traitDescription: It reacts strongly to trespass, insult, theft, broken hospitality, oath-breaking, and other violations of the older rules by which its people deal with the world.
   notes: Core folklore-law rule for Hidden Folk.
 ```
 
-### Near but Not Friendly
+### Elder Parallel People
 
 ```yaml
-- _id: HfBaseNearNotFriendlyTrait
-  name: Hidden Folk Base - Near but Not Friendly
+- _id: HfBaseParallelPeopleTrait
+  name: Hidden Folk Base - Elder Parallel People
   kind: Trait
-  traitName: Near but Not Friendly
-  traitDescription: It lives beside human life rather than wholly apart from it, and usually tests, watches, or misleads before acting openly.
-  notes: Tone-setting trait for encounter play.
+  traitName: Elder Parallel People
+  traitDescription: It belongs to an older hidden people that still occupies the land beside humanity, with pride, memory, and purposes that do not center human needs.
+  notes: Tone-setting trait for Hidden Folk as a parallel elder nation rather than a mere local oddity.
 ```
 
 ## Granted Power Items
@@ -145,7 +157,7 @@ PayloadTraitName: ""
 PayloadTraitText: ""
 GrantedItemTemplate: ""
 GrantedItemName: ""
-PayloadNotes: Use for uncertainty, second-guessing, false safety, or glamour haze.
+PayloadNotes: Use for uncertainty, second-guessing, false safety, glamour haze, or the difficulty of judging what is truly present when dealing with Hidden Folk.
 DurationType: Scene
 DurationValue: ""
 ExpiryTrigger: Leave the scene, receive trusted guidance, or break the glamour.
@@ -266,7 +278,7 @@ PayloadTraitName: ""
 PayloadTraitText: ""
 GrantedItemTemplate: ""
 GrantedItemName: ""
-PayloadNotes: Use to justify slipping behind cover, breaking line of sight, or resisting immediate reprisal.
+PayloadNotes: Use to justify slipping behind cover, stepping partly out of ordinary sight, breaking line of sight, or resisting immediate reprisal.
 DurationType: Scene
 DurationValue: ""
 ExpiryTrigger: Reveals itself, attacks openly, or concealment is broken
@@ -281,7 +293,7 @@ The `Hidden Folk Base` should therefore include:
 - passive tag/trait changes:
   - `Half-Seen`
   - `Bound to Custom`
-  - `Near but Not Friendly`
+  - `Elder Parallel People`
 - owned power items:
   - `Brush of Glamour`
   - `Cold Hand`
@@ -322,7 +334,7 @@ system:
 items:
   - Half-Seen rule feature
   - Bound to Custom rule feature
-  - Near but Not Friendly trait
+  - Elder Parallel People trait
   - Brush of Glamour power
   - Cold Hand power
   - Slip Aside power
@@ -338,4 +350,5 @@ The first domain sets to stack onto this base should be:
 - `Water`
 
 Those should add the stronger folklore identity, vulnerabilities, and location-bound
-behavior that the base intentionally leaves open.
+behavior, parallel territorial logic, and hidden social purpose that the base
+intentionally leaves open.

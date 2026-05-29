@@ -1,0 +1,279 @@
+const MODULE_ID = "1547core";
+const SOURCE_FLAG_SCOPE = "1547Core";
+const SPELL_TEMPLATE_ID = "2kiWw3Cv5Zk1lZxn";
+const RITUAL_TEMPLATE_ID = "Qv6pN2Lm8R4tY1Ks";
+
+function readSourceData(doc) {
+    return doc?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? doc?.flags?.[MODULE_ID]?.sourceData ?? doc ?? {};
+}
+
+function isSpellItem(item) {
+    return item?.system?.template === SPELL_TEMPLATE_ID;
+}
+
+function isActorOwnedItem(item) {
+    return item?.parent?.documentName === "Actor";
+}
+
+function getSpellProps(spell) {
+    return spell?.system?.props ?? readSourceData(spell) ?? {};
+}
+
+export function parseRandomStepRollFormula(formula) {
+    const text = String(formula ?? "").trim();
+    const match = /^(\d+)d(\d+)$/i.exec(text);
+    if (!match) return null;
+    return {
+        count: Number.parseInt(match[1], 10),
+        faces: Number.parseInt(match[2], 10)
+    };
+}
+
+function rollFormulaCount(formulaText) {
+    const parsed = parseRandomStepRollFormula(formulaText);
+    if (!parsed) return 0;
+    let total = 0;
+    for (let index = 0; index < parsed.count; index += 1) {
+        total += Math.floor(Math.random() * parsed.faces) + 1;
+    }
+    return total;
+}
+
+function normalizeStaticStep(step, index) {
+    const scope = String(step?.StepScope ?? "Mandatory").trim() || "Mandatory";
+    return {
+        id: String(step?.id ?? `static-${index + 1}`),
+        sourceKind: "static",
+        stepScope: scope,
+        stepType: String(step?.StepType ?? "StaticSkill").trim() || "StaticSkill",
+        stepText: String(step?.StepText ?? "").trim(),
+        skillCheck: String(step?.SkillCheck ?? "").trim(),
+        difficulty: String(step?.Difficulty ?? "").trim(),
+        requiredItem: String(step?.RequiredItem ?? "").trim(),
+        timingConstraint: String(step?.TimingConstraint ?? "").trim(),
+        contactRestriction: String(step?.ContactRestriction ?? "").trim(),
+        dangerTag: String(step?.DangerTag ?? "").trim(),
+        repeatable: Boolean(step?.Repeatable),
+        failureConsequence: String(step?.FailureConsequence ?? "").trim(),
+        stepNotes: String(step?.StepNotes ?? "").trim(),
+        required: scope !== "Optional"
+    };
+}
+
+function normalizeRandomStep(step, index) {
+    const scope = String(step?.stepScope ?? "Optional").trim() || "Optional";
+    return {
+        id: String(step?.id ?? `rolled-${index + 1}`),
+        sourceKind: "rolled",
+        stepScope: scope,
+        stepType: String(step?.stepType ?? "Random").trim() || "Random",
+        stepText: String(step?.stepText ?? "").trim(),
+        skillCheck: String(step?.skillCheck ?? "").trim(),
+        difficulty: String(step?.difficulty ?? "").trim(),
+        requiredItem: String(step?.requiredItem ?? "").trim(),
+        timingConstraint: String(step?.timingConstraint ?? "").trim(),
+        contactRestriction: String(step?.contactRestriction ?? "").trim(),
+        dangerTag: String(step?.dangerTag ?? "").trim(),
+        repeatable: Boolean(step?.repeatable),
+        failureConsequence: String(step?.failureConsequence ?? "").trim(),
+        stepNotes: String(step?.stepNotes ?? "").trim(),
+        required: true
+    };
+}
+
+export function buildRitualTableRowsFromSteps(steps) {
+    return steps.map((step) => ({
+        StepType: step.stepType || "Random",
+        StepText: step.stepText || "",
+        SkillCheck: step.skillCheck || "",
+        Difficulty: step.difficulty || "",
+        Required: step.required !== false,
+        FailureConsequence: step.failureConsequence || ""
+    }));
+}
+
+function extractConstraintList(steps, key) {
+    return steps
+        .map((step) => String(step?.[key] ?? "").trim())
+        .filter(Boolean)
+        .filter((value, index, arr) => arr.indexOf(value) === index);
+}
+
+function pickDistinctEntries(entries, count) {
+    const pool = Array.isArray(entries) ? [...entries] : [];
+    const picked = [];
+    while (pool.length > 0 && picked.length < count) {
+        const pickIndex = Math.floor(Math.random() * pool.length);
+        picked.push(pool.splice(pickIndex, 1)[0]);
+    }
+    return picked;
+}
+
+async function resolveRollTableByNameOrId(tableRef) {
+    const ref = String(tableRef ?? "").trim();
+    if (!ref) return null;
+    return game.tables.get(ref)
+        ?? game.tables.find((table) => table.flags?.[SOURCE_FLAG_SCOPE]?.sourceKey === ref)
+        ?? game.tables.find((table) => table.name === ref)
+        ?? await fromUuid(ref).catch(() => null);
+}
+
+export async function generateRitualStepsFromSpell(spell) {
+    if (!isSpellItem(spell)) {
+        throw new Error("generateRitualStepsFromSpell requires a spell item.");
+    }
+
+    const props = getSpellProps(spell);
+    const staticSteps = Array.isArray(props.StaticRitualSteps)
+        ? props.StaticRitualSteps.map(normalizeStaticStep)
+        : [];
+    const tableRef = String(props.RitualStepTable ?? "").trim();
+    const drawFormula = String(props.RandomStepRollFormula ?? "").trim();
+
+    let rolledSteps = [];
+    let drawCount = 0;
+    if (tableRef && drawFormula) {
+        const drawTable = await resolveRollTableByNameOrId(tableRef);
+        if (!drawTable) {
+            throw new Error(`Could not resolve ritual step roll table '${tableRef}'.`);
+        }
+        const sourceEntries = Array.isArray(drawTable.flags?.[SOURCE_FLAG_SCOPE]?.sourceData?.entries)
+            ? drawTable.flags[SOURCE_FLAG_SCOPE].sourceData.entries
+            : [];
+        drawCount = rollFormulaCount(drawFormula);
+        rolledSteps = pickDistinctEntries(sourceEntries, drawCount).map(normalizeRandomStep);
+    }
+
+    return {
+        tableRef,
+        drawFormula,
+        drawCount,
+        staticSteps,
+        rolledSteps,
+        allSteps: [...staticSteps, ...rolledSteps]
+    };
+}
+
+function buildGeneratedRitualName(spell) {
+    return `${spell.name} Ritual`;
+}
+
+export async function createRitualFromSpell(spell, options = {}) {
+    if (!isSpellItem(spell)) {
+        throw new Error("createRitualFromSpell requires a spell item.");
+    }
+
+    const ritualTemplate = game.items.get(RITUAL_TEMPLATE_ID);
+    if (!ritualTemplate) {
+        throw new Error("Ritual template item is not loaded in the world.");
+    }
+
+    const generated = await generateRitualStepsFromSpell(spell);
+    const props = getSpellProps(spell);
+    const allSteps = generated.allSteps;
+    const timingConstraints = extractConstraintList(allSteps, "timingConstraint");
+    const contactRestrictions = extractConstraintList(allSteps, "contactRestriction");
+    const witnessLines = allSteps
+        .filter((step) => step.stepType === "Witness")
+        .map((step) => step.stepText)
+        .filter(Boolean);
+
+    const ritualDoc = {
+        name: String(options.name ?? buildGeneratedRitualName(spell)).trim() || buildGeneratedRitualName(spell),
+        type: "equippableItem",
+        img: options.img ?? spell.img ?? ritualTemplate.img,
+        system: {
+            body: foundry.utils.deepClone(ritualTemplate.system.body),
+            display: foundry.utils.deepClone(ritualTemplate.system.display),
+            header: foundry.utils.deepClone(ritualTemplate.system.header),
+            hidden: foundry.utils.deepClone(ritualTemplate.system.hidden ?? []),
+            modifiers: [],
+            template: ritualTemplate._id,
+            templateSystemUniqueVersion: ritualTemplate.system.templateSystemUniqueVersion,
+            props: {
+                Description: String(props.Description ?? "").trim(),
+                BaseSpell: spell.name,
+                SpellStrength: props.Strength ?? 1,
+                Tradition: String(options.tradition ?? "").trim(),
+                RitualLineage: String(options.ritualLineage ?? "").trim(),
+                Reliability: String(options.reliability ?? "Standard").trim() || "Standard",
+                GeneratedFromTable: generated.tableRef,
+                RitualStepsTable: buildRitualTableRowsFromSteps(allSteps),
+                TimingConstraint: timingConstraints.join("\n"),
+                ContactRestriction: contactRestrictions.join("\n"),
+                WitnessRequirement: witnessLines.join("\n"),
+                FailureTableUsed: String(props.FailureTable ?? "").trim(),
+                OutcomeModifier: generated.drawFormula
+                    ? `Generated from ${generated.tableRef} with ${generated.drawFormula} -> ${generated.drawCount} rolled step(s).`
+                    : "No random ritual steps were added."
+            }
+        },
+        effects: [],
+        folder: options.folderId ?? spell.folder?.id ?? null,
+        flags: {
+            "custom-system-builder": {
+                version: ritualTemplate.flags?.["custom-system-builder"]?.version ?? "5.2.0"
+            },
+            [SOURCE_FLAG_SCOPE]: {
+                generatedFromSpellId: spell.id,
+                generatedFromSpellName: spell.name,
+                generatedSteps: foundry.utils.deepClone(allSteps),
+                drawCount: generated.drawCount,
+                tableRef: generated.tableRef,
+                drawFormula: generated.drawFormula
+            }
+        },
+        items: [],
+        ownership: { default: 0 }
+    };
+
+    if (options.createDocument === false) {
+        return ritualDoc;
+    }
+
+    if (isActorOwnedItem(spell)) {
+        const actor = spell.parent;
+        const [created] = await actor.createEmbeddedDocuments("Item", [{ ...ritualDoc, folder: null }]);
+        return created;
+    }
+
+    const created = await Item.create(ritualDoc);
+    return created;
+}
+
+async function handleGenerateRitualClick(item) {
+    const created = await createRitualFromSpell(item);
+    ui.notifications.info(`1547 Core: generated ritual '${created?.name ?? `${item.name} Ritual`}'.`);
+}
+
+function addGenerateRitualHeaderButton(app, buttons) {
+    const item = app?.object;
+    if (!isSpellItem(item)) return;
+    buttons.unshift({
+        class: "generate-ritual",
+        icon: "fas fa-wand-sparkles",
+        label: "Generate Ritual",
+        onclick: () => {
+            void handleGenerateRitualClick(item).catch((error) => {
+                console.error(`${MODULE_ID} | Failed to generate ritual`, error);
+                ui.notifications.error(`1547 Core: failed to generate ritual. ${error.message}`);
+            });
+        }
+    });
+}
+
+export function registerRitualGenerationService() {
+    Hooks.on("getItemSheetHeaderButtons", (app, buttons) => {
+        addGenerateRitualHeaderButton(app, buttons);
+    });
+
+    const moduleApi = game.modules.get(MODULE_ID);
+    if (!moduleApi) {
+        console.warn(`${MODULE_ID} | registerRitualGenerationService: module not found`);
+        return;
+    }
+    moduleApi.api = moduleApi.api ?? {};
+    moduleApi.api.parseRandomStepRollFormula = parseRandomStepRollFormula;
+    moduleApi.api.generateRitualStepsFromSpell = generateRitualStepsFromSpell;
+    moduleApi.api.createRitualFromSpell = createRitualFromSpell;
+}

@@ -207,6 +207,22 @@ function readSourceData(doc) {
     return doc?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? doc?.flags?.[MODULE_ID]?.sourceData ?? doc;
 }
 
+function readAttachedModifierIds(doc, source = {}) {
+    const runtimeAttached = doc?.flags?.[SOURCE_FLAG_SCOPE]?.attachedModifierIds
+        ?? doc?.flags?.[MODULE_ID]?.attachedModifierIds
+        ?? doc?.system?.props?.AttachedModifierIds
+        ?? source?.attachedModifierIds
+        ?? [];
+    if (Array.isArray(runtimeAttached)) {
+        return runtimeAttached.map((entry) => String(entry ?? "").trim()).filter(Boolean);
+    }
+    const parsed = parseJsonString(runtimeAttached, null);
+    if (Array.isArray(parsed)) {
+        return parsed.map((entry) => String(entry ?? "").trim()).filter(Boolean);
+    }
+    return parseCommaList(runtimeAttached);
+}
+
 export function normalizeManeuver(maneuver) {
     if (!maneuver) return null;
     const source = readSourceData(maneuver) ?? {};
@@ -274,7 +290,60 @@ export function normalizeAmmoItem(ammo) {
             ? source.resultModifiers
             : (parseJsonString(props.ResultModifiers, []) ?? []),
         range: resolveAmmoRangeSpec(source, props),
+        attachedModifierIds: readAttachedModifierIds(ammo, source),
         itemDocument: ammo,
+    };
+}
+
+export function normalizeWeaponModifier(modifier) {
+    if (!modifier) return null;
+    const source = readSourceData(modifier) ?? {};
+    const props = modifier.system?.props ?? {};
+    return {
+        ...source,
+        _id: modifier.id ?? modifier._id ?? source._id ?? source.id ?? null,
+        id: modifier.id ?? modifier._id ?? source.id ?? source._id ?? null,
+        name: source.name ?? modifier.name ?? "",
+        itemType: source.itemType ?? "weaponModifier",
+        modifierType: source.modifierType ?? props.ModifierType ?? "",
+        targetKinds: Array.isArray(source.targetKinds)
+            ? [...source.targetKinds]
+            : parseCommaList(props.TargetKinds),
+        addDamageQualifiers: Array.isArray(source.addDamageQualifiers)
+            ? [...source.addDamageQualifiers]
+            : parseCommaList(props.AddDamageQualifiers),
+        removeDamageQualifiers: Array.isArray(source.removeDamageQualifiers)
+            ? [...source.removeDamageQualifiers]
+            : parseCommaList(props.RemoveDamageQualifiers),
+        overrideDamageType: source.overrideDamageType ?? (String(props.OverrideDamageType ?? "").trim() || null),
+        addDice: Array.isArray(source.addDice)
+            ? [...source.addDice]
+            : parseCommaList(props.AddDice),
+        removeDice: Array.isArray(source.removeDice)
+            ? [...source.removeDice]
+            : parseCommaList(props.RemoveDice),
+        resultModifiers: Array.isArray(source.resultModifiers)
+            ? [...source.resultModifiers]
+            : (parseJsonString(props.ResultModifiers, []) ?? []),
+        tags: Array.isArray(source.tags)
+            ? [...source.tags]
+            : parseCommaList(props.Tags),
+        onHitEffects: Array.isArray(source.onHitEffects)
+            ? [...source.onHitEffects]
+            : (parseJsonString(props.OnHitEffects, []) ?? []),
+        appliesToProfiles: Array.isArray(source.appliesToProfiles)
+            ? [...source.appliesToProfiles]
+            : parseCommaList(props.AppliesToProfiles),
+        durationType: source.durationType ?? (String(props.DurationType ?? "").trim() || "Permanent"),
+        durationValue: firstFiniteNumber([
+            source.durationValue,
+            props.DurationValue,
+        ]),
+        stackKey: source.stackKey ?? (String(props.StackKey ?? "").trim() || ""),
+        stackMode: source.stackMode ?? (String(props.StackMode ?? "").trim() || "stack"),
+        requirements: source.requirements ?? (parseJsonString(props.Requirements, {}) ?? {}),
+        description: source.description ?? String(props.Description ?? "").trim(),
+        itemDocument: modifier,
     };
 }
 
@@ -358,6 +427,7 @@ export function normalizeWeapon(weapon, actor = null) {
             weapon.usesAmmo ??
             source.usesAmmo ??
             false,
+        attachedModifierIds: readAttachedModifierIds(weapon, source),
         equipped:
             props.Equipped ??
             weapon.equipped ??

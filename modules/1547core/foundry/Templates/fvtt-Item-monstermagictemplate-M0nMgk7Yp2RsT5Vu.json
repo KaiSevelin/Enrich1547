@@ -1,0 +1,161 @@
+{
+  "name": "MonsterMagicTemplate",
+  "type": "_equippableItemTemplate",
+  "_id": "M0nMgk7Yp2RsT5Vu",
+  "img": "icons/svg/explosion.svg",
+  "system": {
+    "body": {
+      "contents": [
+        {
+          "key": "MagicEffects",
+          "type": "itemContainer",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "contents": [],
+          "rowLayout": [],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "",
+          "title": "Magic Effects",
+          "hideEmpty": false,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "headDisplay": true,
+          "showCreate": true,
+          "defaultTemplate": "mwPqEYUoOfzXpyT9",
+          "createItemDialogShowTemplateList": false,
+          "showDelete": true,
+          "statusIcon": false,
+          "nameAlign": "left",
+          "nameLabel": "Effect",
+          "templateFilter": [
+            "mwPqEYUoOfzXpyT9"
+          ],
+          "itemFilterFormula": "",
+          "sortPredicates": []
+        },
+        {
+          "key": "MagicNotes",
+          "type": "textArea",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "size": "full-size",
+          "label": "Notes:",
+          "defaultValue": "",
+          "style": "sheet"
+        }
+      ],
+      "key": "custom_body",
+      "type": "panel"
+    },
+    "display": {
+      "width": 680,
+      "height": 700,
+      "fix_size": false,
+      "pp_width": 64,
+      "pp_height": 64
+    },
+    "header": {
+      "contents": [
+        {
+          "key": "Description",
+          "type": "textArea",
+          "size": "full-size",
+          "label": "",
+          "defaultValue": "",
+          "style": "sheet"
+        },
+        {
+          "key": "MonsterMagicIdentityPanel",
+          "type": "panel",
+          "flow": "grid-2",
+          "title": "Monster Magic Identity",
+          "titleStyle": "default",
+          "align": "left",
+          "verticalAlign": "top",
+          "collapsible": false,
+          "defaultCollapsed": false,
+          "contents": [
+            {
+              "key": "MagicKind",
+              "type": "select",
+              "size": "full-size",
+              "label": "Kind:",
+              "defaultValue": "Aura",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Aura", "value": "Aura" },
+                { "key": "Curse", "value": "Curse" },
+                { "key": "Command", "value": "Command" },
+                { "key": "Glamour", "value": "Glamour" },
+                { "key": "Movement", "value": "Movement" },
+                { "key": "Pressure", "value": "Pressure" },
+                { "key": "Sign", "value": "Sign" },
+                { "key": "Touch", "value": "Touch" },
+                { "key": "Ward", "value": "Ward" }
+              ]
+            },
+            {
+              "key": "UseMode",
+              "type": "select",
+              "size": "full-size",
+              "label": "Use Mode:",
+              "defaultValue": "Activated",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Passive", "value": "Passive" },
+                { "key": "Triggered", "value": "Triggered" },
+                { "key": "Activated", "value": "Activated" },
+                { "key": "Constant", "value": "Constant" }
+              ]
+            },
+            {
+              "key": "TriggerText",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Trigger:",
+              "defaultValue": ""
+            },
+            {
+              "key": "RangeText",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Range:",
+              "defaultValue": ""
+            },
+            {
+              "key": "CostText",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Cost / Limit:",
+              "defaultValue": ""
+            },
+            {
+              "key": "FamilyNotes",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Family Notes:",
+              "defaultValue": ""
+            }
+          ]
+        }
+      ],
+      "key": "custom_header",
+      "type": "panel"
+    },
+    "hidden": [],
+    "modifiers": [],
+    "uniqueId": "M0nMgk7Yp2RsT5Vu"
+  },
+  "effects": [],
+  "folder": null,
+  "flags": {
+    "custom-system-builder": {
+      "version": "5.2.0"
+    }
+  },
+  "items": [],
+  "ownership": {
+    "default": 0
+  }
+}

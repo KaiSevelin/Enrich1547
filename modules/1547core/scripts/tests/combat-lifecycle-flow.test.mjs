@@ -338,6 +338,180 @@ console.log("\nresolveAttackOutcomePhased...");
 }
 
 {
+    const poisonModifier = {
+        _id: "mod-poison",
+        name: "Poisoned",
+        attachedToItemId: "w1",
+        durationType: "Uses",
+        durationValue: 1,
+        onHitEffects: [{
+            triggerMode: "onDamageApplied",
+            armorInteraction: "onlyIfBaseDamagePassed",
+            resolution: "contest",
+            sourceCheck: "source Dexterity",
+            targetCheck: "target Stamina",
+            damageType: "Poison",
+            damageAmount: 1,
+            applyStatus: "Weakened",
+        }],
+    };
+    const attacker = {
+        ...fakeActor({ id: "a", name: "Attacker" }),
+        system: { props: { Stats_DexterityDice: 3, Stats_DexterityMod: 0 } },
+        items: {
+            get: (id) => {
+                if (id !== "w1") return null;
+                return {
+                    id: "w1",
+                    flags: { "1547Core": { attachedModifierIds: ["mod-poison"] } },
+                    system: { props: {} },
+                };
+            },
+            contents: [],
+        },
+    };
+    const defender = {
+        ...fakeActor({ id: "d", name: "Defender", hp: 10 }),
+        system: { props: { CurrentHitPoints: 10, Stats_StaminaDice: 2, Stats_StaminaMod: 0 } },
+    };
+    const pendingAttack = {
+        kind: "1547core.pendingAttack",
+        actor: attacker,
+        target: defender,
+        weapon: fakeWeapon(),
+        profile: { id: "default", attackType: "melee", allowedAmmoTypes: [] },
+        loadedAmmo: null,
+        committed: true,
+        mergedModifiers: {},
+        metadata: {},
+        weaponModifiers: [poisonModifier],
+        ammoModifiers: [],
+        attackModifiers: [poisonModifier],
+    };
+
+    const fakeRun = makeFakeRun([
+        { cancelled: false, results: [] },
+        { cancelled: false, results: [] },
+    ]);
+
+    const result = await resolveAttackOutcomePhased({
+        pendingAttack,
+        attackRoll: { damage: 5, protection: 0, crit: 0, fumble: 0, multiplier: 1 },
+        defenseRoll: { damage: 0, protection: 2, crit: 0, fumble: 0, multiplier: 1 },
+        buildDefaultDefenseRollSummary: () => null,
+    }, fakeRun);
+
+    const phaseNames = fakeRun.phases.map((p) => p.phase);
+    assert.deepStrictEqual(
+        phaseNames,
+        ["applyDamage", "applySecondaryEffects", "damageApplied", "actionCommitted"]
+    );
+    assert.strictEqual(result.baseDamageApplied, 3);
+    assert.strictEqual(result.secondaryDamageApplied, 1);
+    assert.strictEqual(result.damageApplied, 4);
+    assert.strictEqual(result.hitPointUpdate.currentHitPoints, 6);
+    assert.strictEqual(result.secondaryEffects.length, 1);
+    assert.strictEqual(
+        fakeRun.phases[1].patches.some((patch) => patch.kind === "item.update" && patch.itemId === "w1"),
+        true,
+        "one-use poison detaches after firing"
+    );
+    console.log("  ✓ poison rider applies after blood-drawing hit and detaches one-use modifier");
+}
+
+// ─────────────────────────────────────── resolveAttackOutcomePhased: save riders ──
+
+console.log("\nresolveAttackOutcomePhased (save riders)...");
+
+async function runSaveRider({ effect, attackerProps = {}, defenderProps = {} }) {
+    const modifier = {
+        _id: "mod-save",
+        name: "Save Rider",
+        attachedToItemId: "w1",
+        durationType: "Permanent",
+        durationValue: 0,
+        onHitEffects: [effect],
+    };
+    const attacker = {
+        ...fakeActor({ id: "a", name: "Attacker" }),
+        system: { props: attackerProps },
+        items: { get: () => null, contents: [] },
+    };
+    const defender = {
+        ...fakeActor({ id: "d", name: "Defender", hp: 10 }),
+        system: { props: { CurrentHitPoints: 10, ...defenderProps } },
+    };
+    const pendingAttack = {
+        kind: "1547core.pendingAttack",
+        actor: attacker,
+        target: defender,
+        weapon: fakeWeapon(),
+        profile: { id: "default", attackType: "melee", allowedAmmoTypes: [] },
+        loadedAmmo: null,
+        committed: true,
+        mergedModifiers: {},
+        metadata: {},
+        weaponModifiers: [modifier],
+        ammoModifiers: [],
+        attackModifiers: [modifier],
+    };
+    const fakeRun = makeFakeRun([
+        { cancelled: false, results: [] },
+        { cancelled: false, results: [] },
+    ]);
+    const result = await resolveAttackOutcomePhased({
+        pendingAttack,
+        attackRoll: { damage: 5, protection: 0, crit: 0, fumble: 0, multiplier: 1 },
+        defenseRoll: { damage: 0, protection: 2, crit: 0, fumble: 0, multiplier: 1 },
+        buildDefaultDefenseRollSummary: () => null,
+    }, fakeRun);
+    return { result, phaseNames: fakeRun.phases.map((p) => p.phase) };
+}
+
+const SAVE_RIDER_BASE = {
+    triggerMode: "onDamageApplied",
+    armorInteraction: "onlyIfBaseDamagePassed",
+    resolution: "save",
+    targetCheck: "target Power",
+    damageType: "Corruption",
+    damageAmount: 1,
+    applyStatus: "Weakened",
+};
+
+{
+    // No attacker stat → difficulty field (5) vs defender Power (2): rider lands.
+    const { result, phaseNames } = await runSaveRider({
+        effect: { ...SAVE_RIDER_BASE, sourceCheck: "", difficulty: 5 },
+        defenderProps: { Stats_PowerDice: 2, Stats_PowerMod: 0 },
+    });
+    assert.strictEqual(result.secondaryDamageApplied, 1);
+    assert.ok(phaseNames.includes("applySecondaryEffects"), "save fires when difficulty beats defender");
+    console.log("  ✓ save with difficulty field (5) beats defender Power (2) → rider lands");
+}
+
+{
+    // No attacker stat → difficulty from sourceCheck "1d6" (1) vs defender Power (3): resisted.
+    const { result, phaseNames } = await runSaveRider({
+        effect: { ...SAVE_RIDER_BASE, sourceCheck: "1d6" },
+        defenderProps: { Stats_PowerDice: 3, Stats_PowerMod: 0 },
+    });
+    assert.strictEqual(result.secondaryDamageApplied, 0);
+    assert.ok(!phaseNames.includes("applySecondaryEffects"), "save resisted when defender exceeds difficulty");
+    console.log("  ✓ save with sourceCheck difficulty (1d6) below defender Power (3) → resisted");
+}
+
+{
+    // Attacker stat present: source Faith (4) vs defender Power (2): rider lands.
+    const { result } = await runSaveRider({
+        effect: { ...SAVE_RIDER_BASE, sourceCheck: "source Faith" },
+        attackerProps: { Stats_FaithDice: 4, Stats_FaithMod: 0 },
+        defenderProps: { Stats_PowerDice: 2, Stats_PowerMod: 0 },
+    });
+    assert.strictEqual(result.secondaryDamageApplied, 1);
+    console.log("  ✓ save with attacker stat (Faith 4) beats defender Power (2) → rider lands");
+}
+
+{
     assert.rejects(
         () => resolveAttackOutcomePhased({ pendingAttack: null }, makeFakeRun()),
         /Missing pending attack/

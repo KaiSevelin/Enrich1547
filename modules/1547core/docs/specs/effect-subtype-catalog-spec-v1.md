@@ -177,6 +177,7 @@ Allowed subtypes:
 - `Obedience`
 - `Rage`
 - `Shame`
+- `Sleep`
 - `SocialFavor`
 - `Suggestion`
 - `Temptation`
@@ -195,6 +196,7 @@ Allowed subtypes:
 - `Memory`
 - `ObjectHistory`
 - `Omen`
+- `PastEvent`
 - `Prophecy`
 - `SpiritSight`
 - `TrueName`
@@ -210,10 +212,22 @@ Allowed subtypes:
 - `Immobilize`
 - `LeadAstray`
 - `Phase`
+- `PhaseTravel`
 - `Pull`
 - `Push`
 - `Slow`
 - `Teleport`
+
+## Transformation
+
+Use when the effect changes what a being, body, or object is rather than only
+applying a temporary condition.
+
+Allowed subtypes:
+
+- `Object`
+- `Other`
+- `Self`
 
 ## Protection
 
@@ -270,6 +284,7 @@ Common pairings for this module:
 - `Status / Possessed`
 - `Status / IllLuck`
 - `Status / LostFaith`
+- `Influence / Sleep`
 - `Tag / VulnerabilityTag`
 - `Trait / VisibleTell`
 - `Grant / Spell`
@@ -278,9 +293,13 @@ Common pairings for this module:
 - `Possession / DriveOut`
 - `Influence / TruthPressure`
 - `Revelation / TrueName`
+- `Revelation / PastEvent`
 - `Movement / LeadAstray`
+- `Movement / PhaseTravel`
 - `Protection / DamageResistance`
 - `Remove / Curse`
+- `Transformation / Self`
+- `Transformation / Object`
 - `Descriptive / Omen`
 
 ## Default Effect Meanings
@@ -414,6 +433,7 @@ mode, typical duration, and the payload fields most likely to matter.
 | Influence | Obedience | Pushes the target toward service or compliance. | CreateActiveEffect | Scene to Days | `PayloadValue` |
 | Influence | Rage | Pushes the target toward aggression or loss of restraint. | CreateActiveEffect | Scene | `PayloadValue` |
 | Influence | Shame | Burdens the target with guilt, exposure, or social shrinking. | CreateActiveEffect | Scene to Days | `PayloadValue` |
+| Influence | Sleep | Pushes the target into magical sleep, slumber, or lethargy. | CreateActiveEffect | Scene to Night | `PayloadValue`, `ResistanceFormula` |
 | Influence | SocialFavor | Makes the target view source more favorably. | CreateActiveEffect | Scene to Days | `PayloadValue` |
 | Influence | Suggestion | Plants an urge, direction, or accepted idea. | CreateActiveEffect | Scene to Days | `PayloadValue`, `OnFailure` |
 | Influence | Temptation | Urges the target toward sinful, dangerous, or patron-aligned action. | CreateActiveEffect | Scene to Days | `PayloadValue` |
@@ -430,6 +450,7 @@ mode, typical duration, and the payload fields most likely to matter.
 | Revelation | Memory | Recovers hidden, lost, or buried memory. | NarrativeOnly or CreateActiveEffect | Instant to Scene | `PayloadValue` |
 | Revelation | ObjectHistory | Reveals impressions or past events tied to an object. | NarrativeOnly | Instant | `PayloadValue` |
 | Revelation | Omen | Reveals or generates omen-significance. | NarrativeOnly | Instant to Days | `PayloadValue` |
+| Revelation | PastEvent | Reveals, reconstructs, or ritually re-frames an earlier event. | NarrativeOnly or Hybrid | Instant to Scene | `PayloadValue`, `PayloadNotes` |
 | Revelation | Prophecy | Gives insight into future events or possible outcomes. | NarrativeOnly | Instant | `PayloadValue`, `PayloadNotes` |
 | Revelation | SpiritSight | Reveals spiritual presence or hidden beings. | CreateActiveEffect or NarrativeOnly | Scene | `PayloadValue`, `DetectionCheck` |
 | Revelation | TrueName | Reveals a true name or binding identity. | NarrativeOnly | Permanent | `PayloadValue` |
@@ -443,10 +464,19 @@ mode, typical duration, and the payload fields most likely to matter.
 | Movement | Immobilize | Prevents or nearly prevents movement. | CreateActiveEffect | Scene | `PayloadValue` |
 | Movement | LeadAstray | Causes loss of route, separation, or misdirection. | CreateActiveEffect or NarrativeOnly | Scene | `PayloadValue`, `ExpiryTrigger` |
 | Movement | Phase | Allows movement through barriers or beings. | CreateActiveEffect | Scene | `PayloadValue` |
+| Movement | PhaseTravel | Projects or shifts the target through an altered state of travel or presence. | NarrativeOnly or Hybrid | Scene to Night | `PayloadValue`, `TargetDescription` |
 | Movement | Pull | Draws the target toward a point or source. | DirectDataChange or NarrativeOnly | Instant to Scene | `PayloadValue` |
 | Movement | Push | Forces the target away from a point or source. | DirectDataChange or NarrativeOnly | Instant | `PayloadValue` |
 | Movement | Slow | Reduces available movement or pace. | CreateActiveEffect | Scene to Days | `PayloadValue` |
 | Movement | Teleport | Instantly relocates a target. | NarrativeOnly or DirectDataChange | Instant | `PayloadValue`, `TargetDescription` |
+
+### Transformation
+
+| Type | Subtype | Default effect meaning | Typical application mode | Typical duration | Typical payload fields |
+| --- | --- | --- | --- | --- | --- |
+| Transformation | Object | Changes the form, nature, or magical function of an object, vessel, or crafted thing. | Hybrid or DirectDataChange | Scene to Permanent | `PayloadTarget`, `PayloadValue`, `PayloadTraitText` |
+| Transformation | Other | Changes the form or nature of another being. | Hybrid | Scene to Permanent | `PayloadTarget`, `PayloadValue`, `ResistanceFormula` |
+| Transformation | Self | Changes the caster's or user's own form, body, or occult state. | Hybrid or CreateActiveEffect | Scene to Permanent | `PayloadTarget`, `PayloadValue`, `PayloadTraitText` |
 
 ### Protection
 
@@ -575,6 +605,7 @@ Use these rows as the default building blocks for monsters, spells, powers, and 
 | Obedience | Influence | Obedience | will or compliance | Scene to Days | Yes |
 | Rage | Influence | Rage | temper or aggression | Scene | Yes |
 | Shame | Influence | Shame | morale or social bearing | Scene to Days | Yes |
+| Magical Sleep | Influence | Sleep | sleep, slumber, or lethargy | Scene to Night | Yes |
 | Social Favor | Influence | SocialFavor | stance toward source | Scene to Days | Yes |
 | Suggestion | Influence | Suggestion | intent or chosen action | Scene to Days | Yes |
 | Temptation | Influence | Temptation | desire or sinful urge | Scene to Days | Yes |
@@ -586,6 +617,7 @@ Use these rows as the default building blocks for monsters, spells, powers, and 
 | Recover Memory | Revelation | Memory | forgotten memory | Instant to Scene | No |
 | Reveal Object History | Revelation | ObjectHistory | object past | Instant | No |
 | Reveal Omen | Revelation | Omen | omen meaning | Instant to Days | No |
+| Reveal Past Event | Revelation | PastEvent | earlier event or altered recollection | Instant to Scene | No |
 | Prophecy | Revelation | Prophecy | future knowledge | Instant | No |
 | Spirit Sight | Revelation | SpiritSight | hidden spirit presence | Scene | Sometimes |
 | Reveal True Name | Revelation | TrueName | true name knowledge | Permanent | No |
@@ -597,7 +629,11 @@ Use these rows as the default building blocks for monsters, spells, powers, and 
 | Push | Movement | Push | position relative to source | Instant | No |
 | Slow | Movement | Slow | movement allowance | Scene to Days | Yes |
 | Phase | Movement | Phase | collision or barrier rules | Scene | Yes |
+| Phase Travel | Movement | PhaseTravel | altered travel or projected presence | Scene to Night | Sometimes |
 | Teleport | Movement | Teleport | position | Instant | No |
+| Transform Object | Transformation | Object | form, vessel, or magical function | Scene to Permanent | Sometimes |
+| Transform Other | Transformation | Other | body, form, or nature of another | Scene to Permanent | Sometimes |
+| Transform Self | Transformation | Self | body, form, or occult state of self | Scene to Permanent | Sometimes |
 | Concealment | Protection | Concealment | detectability or identification | Scene | Yes |
 | Condition Immunity | Protection | ConditionImmunity | blocked condition type | Scene to Permanent | Sometimes |
 | Damage Immunity | Protection | DamageImmunity | blocked damage source | Scene to Permanent | Sometimes |

@@ -252,6 +252,7 @@ function fakeWeapon({ id = "w1", name = "Sword", attackType = "melee" } = {}) {
         loadedAmmoId: null,
         ammoType: "", ammoCapacity: 0, ammoLoaded: 0,
         equipped: true,
+        itemDocument: { id, parent: null },
     };
 }
 function fakeActor({ id = "a1", name = "Hero" } = {}) {
@@ -286,6 +287,47 @@ function fakeActor({ id = "a1", name = "Hero" } = {}) {
     assert.strictEqual(pa.committed, false);
     assert.deepStrictEqual(pa.reactionCandidates, [{ id: "react-1", name: "Parry" }]);
     console.log("  ✓ happy path: returns PendingAttack with PENDING_ATTACK_KIND tag + injected reactionCandidates");
+}
+
+{
+    const modifierDoc = {
+        id: "mod-poison",
+        name: "Poisoned",
+        system: { props: {} },
+        flags: {
+            "1547Core": {
+                sourceData: {
+                    _id: "mod-poison",
+                    name: "Poisoned",
+                    onHitEffects: [{ triggerMode: "onDamageApplied", damageAmount: 1 }],
+                },
+            },
+        },
+    };
+    const actor = {
+        ...fakeActor(),
+        items: {
+            get: (id) => (id === "mod-poison" ? modifierDoc : null),
+            contents: [modifierDoc],
+        },
+    };
+    const weapon = {
+        ...fakeWeapon(),
+        attachedModifierIds: ["mod-poison"],
+        itemDocument: { id: "w1", parent: actor },
+    };
+
+    const pa = al.buildPendingAttack({
+        actor,
+        weapon,
+        normalizeWeapon: (w) => w,
+        buildAttackReactionCandidates: () => [],
+    });
+
+    assert.strictEqual(pa.weaponModifiers.length, 1);
+    assert.strictEqual(pa.attackModifiers.length, 1);
+    assert.strictEqual(pa.weaponModifiers[0].name, "Poisoned");
+    console.log("  ✓ attached weapon modifier ids resolve into pending attack modifier descriptors");
 }
 
 {

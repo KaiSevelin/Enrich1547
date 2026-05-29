@@ -1,0 +1,205 @@
+{
+  "name": "RitualStepTemplate",
+  "type": "_equippableItemTemplate",
+  "_id": "R7sTu4Qn2Lp8Vx5K",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "body": {
+      "contents": [
+        {
+          "key": "StepNotes",
+          "type": "textArea",
+          "size": "full-size",
+          "label": "Step Notes:",
+          "defaultValue": "",
+          "style": "sheet"
+        },
+        {
+          "key": "StepEffects",
+          "type": "itemContainer",
+          "label": "Step Effects",
+          "size": "full-size",
+          "itemFilter": "",
+          "templateFilter": "",
+          "head": true,
+          "showDelete": true
+        }
+      ],
+      "key": "custom_body",
+      "type": "panel"
+    },
+    "display": {
+      "width": 720,
+      "height": 760,
+      "fix_size": false,
+      "pp_width": 64,
+      "pp_height": 64
+    },
+    "header": {
+      "contents": [
+        {
+          "key": "Description",
+          "type": "textArea",
+          "size": "full-size",
+          "label": "",
+          "defaultValue": "",
+          "style": "sheet"
+        },
+        {
+          "key": "RitualStepIdentityPanel",
+          "type": "panel",
+          "flow": "grid-2",
+          "title": "Ritual Step Identity",
+          "titleStyle": "default",
+          "align": "left",
+          "verticalAlign": "top",
+          "collapsible": false,
+          "defaultCollapsed": false,
+          "contents": [
+            {
+              "key": "StepType",
+              "type": "select",
+              "size": "full-size",
+              "label": "Step Type:",
+              "defaultValue": "Material",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Material", "value": "Material" },
+                { "key": "StaticSkill", "value": "Static Skill" },
+                { "key": "Verbal", "value": "Verbal" },
+                { "key": "Gesture", "value": "Gesture" },
+                { "key": "Diagram", "value": "Diagram" },
+                { "key": "Offering", "value": "Offering" },
+                { "key": "Invocation", "value": "Invocation" },
+                { "key": "Dance", "value": "Dance" },
+                { "key": "Performance", "value": "Performance" },
+                { "key": "Craft", "value": "Craft" },
+                { "key": "Writing", "value": "Writing" },
+                { "key": "Placement", "value": "Placement" },
+                { "key": "DivinatoryFocus", "value": "Divinatory Focus" },
+                { "key": "Timing", "value": "Timing" },
+                { "key": "Environment", "value": "Environment" },
+                { "key": "Vigil", "value": "Vigil" },
+                { "key": "Sacrifice", "value": "Sacrifice" },
+                { "key": "Defense", "value": "Defense" },
+                { "key": "Purification", "value": "Purification" },
+                { "key": "Purity", "value": "Purity" },
+                { "key": "Social", "value": "Social" },
+                { "key": "Witness", "value": "Witness" },
+                { "key": "Resistance", "value": "Resistance" },
+                { "key": "Naming", "value": "Naming" },
+                { "key": "Isolation", "value": "Isolation" },
+                { "key": "CorpseWork", "value": "Corpse Work" },
+                { "key": "Alchemy", "value": "Alchemy" },
+                { "key": "Boundary", "value": "Boundary" },
+                { "key": "Oath", "value": "Oath" },
+                { "key": "Travel", "value": "Travel" },
+                { "key": "Random", "value": "Random" }
+              ]
+            },
+            {
+              "key": "StepScope",
+              "type": "select",
+              "size": "full-size",
+              "label": "Scope:",
+              "defaultValue": "Optional",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Mandatory", "value": "Mandatory" },
+                { "key": "Optional", "value": "Optional" },
+                { "key": "Alternative", "value": "Alternative" },
+                { "key": "Escalation", "value": "Escalation" }
+              ]
+            },
+            {
+              "key": "StepText",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Step Text:",
+              "defaultValue": ""
+            },
+            {
+              "key": "TraditionTag",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Tradition Tag:",
+              "defaultValue": ""
+            },
+            {
+              "key": "SkillCheck",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Skill Check:",
+              "defaultValue": ""
+            },
+            {
+              "key": "Difficulty",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Difficulty:",
+              "defaultValue": ""
+            },
+            {
+              "key": "RequiredItem",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Required Item:",
+              "defaultValue": ""
+            },
+            {
+              "key": "TimingConstraint",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Timing Constraint:",
+              "defaultValue": ""
+            },
+            {
+              "key": "ContactRestriction",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Contact Restriction:",
+              "defaultValue": ""
+            },
+            {
+              "key": "DangerTag",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Danger Tag:",
+              "defaultValue": ""
+            },
+            {
+              "key": "Repeatable",
+              "type": "checkbox",
+              "size": "full-size",
+              "label": "Repeatable",
+              "defaultChecked": false
+            },
+            {
+              "key": "FailureConsequence",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Failure Consequence:",
+              "defaultValue": ""
+            }
+          ]
+        }
+      ],
+      "key": "custom_header",
+      "type": "panel"
+    },
+    "hidden": [],
+    "modifiers": [],
+    "uniqueId": "R7sTu4Qn2Lp8Vx5K"
+  },
+  "effects": [],
+  "folder": null,
+  "flags": {
+    "custom-system-builder": {
+      "version": "5.2.0"
+    }
+  },
+  "items": [],
+  "ownership": {
+    "default": 0
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "PowerTemplate",
+  "name": "SupernaturalMarkTemplate",
   "type": "_equippableItemTemplate",
   "_id": "w9ky0ZTDvXDs5Ce7",
   "img": "icons/svg/aura.svg",
@@ -7,7 +7,7 @@
     "body": {
       "contents": [
         {
-          "key": "PowerEffects",
+          "key": "MarkEffects",
           "type": "itemContainer",
           "colSpan": 1,
           "rowSpan": 1,
@@ -16,7 +16,7 @@
           "head": false,
           "deleteWarning": false,
           "labelWhenEmpty": "",
-          "title": "Power Effects",
+          "title": "Mark Effects",
           "hideEmpty": false,
           "hiddenColumns": [],
           "sortOption": "manual",
@@ -27,7 +27,7 @@
           "showDelete": true,
           "statusIcon": false,
           "nameAlign": "left",
-          "nameLabel": "Name",
+          "nameLabel": "Effect",
           "templateFilter": [
             "mwPqEYUoOfzXpyT9"
           ],
@@ -63,7 +63,7 @@
           "sortPredicates": []
         },
         {
-          "key": "TriggerTable",
+          "key": "MarkTriggerTable",
           "type": "dynamicTable",
           "colSpan": 1,
           "rowSpan": 1,
@@ -115,12 +115,12 @@
           "sortPredicates": []
         },
         {
-          "key": "PowerNotesPanel",
+          "key": "MarkNotesPanel",
           "type": "panel",
           "colSpan": 1,
           "rowSpan": 1,
           "flow": "vertical",
-          "title": "Power Notes",
+          "title": "Mark Notes",
           "titleStyle": "default",
           "align": "left",
           "verticalAlign": "top",
@@ -131,12 +131,12 @@
               "key": "RemovalConditions",
               "type": "textArea",
               "size": "full-size",
-              "label": "Removal / End:",
+              "label": "Removal / Ending:",
               "defaultValue": "",
               "style": "sheet"
             },
             {
-              "key": "InheritanceNotes",
+              "key": "TransmissionNotes",
               "type": "textArea",
               "size": "full-size",
               "label": "Inheritance / Transfer:",
@@ -148,6 +148,14 @@
               "type": "textArea",
               "size": "full-size",
               "label": "Social Consequences:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "BearerNotes",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Bearer / Mark Notes:",
               "defaultValue": "",
               "style": "sheet"
             }
@@ -175,10 +183,10 @@
           "style": "sheet"
         },
         {
-          "key": "PowerIdentityPanel",
+          "key": "MarkIdentityPanel",
           "type": "panel",
           "flow": "grid-2",
-          "title": "Identity",
+          "title": "Mark Identity",
           "titleStyle": "default",
           "align": "left",
           "verticalAlign": "top",
@@ -186,23 +194,23 @@
           "defaultCollapsed": false,
           "contents": [
             {
-              "key": "PowerType",
+              "key": "MarkNature",
               "type": "select",
               "size": "full-size",
-              "label": "Type:",
+              "label": "Nature:",
               "defaultValue": "Blessing",
               "selectedOptionType": "custom",
               "options": [
                 { "key": "Blessing", "value": "Blessing" },
                 { "key": "Curse", "value": "Curse" },
-                { "key": "Miracle", "value": "Miracle" },
                 { "key": "Mark", "value": "Mark" },
+                { "key": "Favor", "value": "Favor" },
                 { "key": "Mutation", "value": "Mutation" },
-                { "key": "Favor", "value": "Favor" }
+                { "key": "Sign", "value": "Sign" }
               ]
             },
             {
-              "key": "PowerSource",
+              "key": "MarkSource",
               "type": "select",
               "size": "full-size",
               "label": "Source:",
@@ -220,20 +228,35 @@
               ]
             },
             {
-              "key": "Severity",
+              "key": "Potency",
               "type": "select",
               "size": "full-size",
-              "label": "Severity:",
+              "label": "Potency:",
               "defaultValue": "Minor",
               "selectedOptionType": "custom",
               "options": [
                 { "key": "Minor", "value": "Minor" },
                 { "key": "Major", "value": "Major" },
-                { "key": "Mixed", "value": "Mixed" }
+                { "key": "Mixed", "value": "Mixed" },
+                { "key": "Overwhelming", "value": "Overwhelming" }
               ]
             },
             {
-              "key": "SocialStatus",
+              "key": "Visibility",
+              "type": "select",
+              "size": "full-size",
+              "label": "Visibility:",
+              "defaultValue": "Subtle",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Hidden", "value": "Hidden" },
+                { "key": "Subtle", "value": "Subtle" },
+                { "key": "Visible", "value": "Visible" },
+                { "key": "Manifest", "value": "Manifest" }
+              ]
+            },
+            {
+              "key": "SocialStanding",
               "type": "select",
               "size": "full-size",
               "label": "Public Standing:",
@@ -256,7 +279,7 @@
               "defaultValue": ""
             },
             {
-              "key": "PowerScope",
+              "key": "MarkScope",
               "type": "textField",
               "size": "full-size",
               "label": "Scope:",

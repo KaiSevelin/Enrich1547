@@ -1,0 +1,217 @@
+[
+  {
+    "_id": "modSilvered01",
+    "id": "modSilvered01",
+    "uuid": "Item.modSilvered01",
+    "name": "Silvered",
+    "folder": "Weapon Modifiers",
+    "itemType": "weaponModifier",
+    "modifierType": "Material",
+    "targetKinds": [
+      "weapon",
+      "ammo"
+    ],
+    "addDamageQualifiers": [
+      "Silver"
+    ],
+    "removeDamageQualifiers": [],
+    "overrideDamageType": null,
+    "addDice": [],
+    "removeDice": [],
+    "resultModifiers": [],
+    "tags": [],
+    "onHitEffects": [],
+    "appliesToProfiles": [],
+    "durationType": "Permanent",
+    "durationValue": null,
+    "stackKey": "material",
+    "stackMode": "replace",
+    "requirements": {},
+    "description": "Counts as silver against beings vulnerable to silver.",
+    "img": "icons/svg/item-bag.svg"
+  },
+  {
+    "_id": "modBlessed001",
+    "id": "modBlessed001",
+    "uuid": "Item.modBlessed001",
+    "name": "Blessed",
+    "folder": "Weapon Modifiers",
+    "itemType": "weaponModifier",
+    "modifierType": "Blessing",
+    "targetKinds": [
+      "weapon",
+      "ammo"
+    ],
+    "addDamageQualifiers": [
+      "Blessed"
+    ],
+    "removeDamageQualifiers": [],
+    "overrideDamageType": null,
+    "addDice": [],
+    "removeDice": [],
+    "resultModifiers": [],
+    "tags": [],
+    "onHitEffects": [],
+    "appliesToProfiles": [],
+    "durationType": "Days",
+    "durationValue": 1,
+    "stackKey": "blessing",
+    "stackMode": "replace",
+    "requirements": {},
+    "description": "Consecrated for creatures harmed by blessing.",
+    "img": "icons/svg/item-bag.svg"
+  },
+  {
+    "_id": "modColdIron01",
+    "id": "modColdIron01",
+    "uuid": "Item.modColdIron01",
+    "name": "Cold Iron",
+    "folder": "Weapon Modifiers",
+    "itemType": "weaponModifier",
+    "modifierType": "Material",
+    "targetKinds": [
+      "weapon",
+      "ammo"
+    ],
+    "addDamageQualifiers": [
+      "ColdIron"
+    ],
+    "removeDamageQualifiers": [],
+    "overrideDamageType": null,
+    "addDice": [],
+    "removeDice": [],
+    "resultModifiers": [],
+    "tags": [],
+    "onHitEffects": [],
+    "appliesToProfiles": [],
+    "durationType": "Permanent",
+    "durationValue": null,
+    "stackKey": "material",
+    "stackMode": "replace",
+    "requirements": {},
+    "description": "Counts as cold iron against beings vulnerable to it.",
+    "img": "icons/svg/item-bag.svg"
+  },
+  {
+    "_id": "modPoisoned01",
+    "id": "modPoisoned01",
+    "uuid": "Item.modPoisoned01",
+    "name": "Poisoned",
+    "folder": "Weapon Modifiers",
+    "itemType": "weaponModifier",
+    "modifierType": "Poison",
+    "targetKinds": [
+      "weapon",
+      "ammo"
+    ],
+    "addDamageQualifiers": [],
+    "removeDamageQualifiers": [],
+    "overrideDamageType": null,
+    "addDice": [],
+    "removeDice": [],
+    "resultModifiers": [],
+    "tags": [
+      "Poisoned"
+    ],
+    "onHitEffects": [
+      {
+        "triggerMode": "onDamageApplied",
+        "armorInteraction": "onlyIfBaseDamagePassed",
+        "resolution": "contest",
+        "sourceCheck": "source Dexterity",
+        "targetCheck": "target Stamina",
+        "damageType": "Poison",
+        "damageQualifiers": [],
+        "damageAmount": 1,
+        "applyStatus": "Weakened",
+        "applyTag": "",
+        "notes": "The poison takes hold only if the strike got into the body."
+      }
+    ],
+    "appliesToProfiles": [],
+    "durationType": "Uses",
+    "durationValue": 1,
+    "stackKey": "poison",
+    "stackMode": "replace",
+    "requirements": {},
+    "description": "Carries poison for the next legal strike or shot.",
+    "img": "icons/svg/item-bag.svg"
+  },
+  {
+    "_id": "modBodkin001",
+    "id": "modBodkin001",
+    "uuid": "Item.modBodkin001",
+    "name": "Bodkin Head",
+    "folder": "Weapon Modifiers",
+    "itemType": "weaponModifier",
+    "modifierType": "Craft",
+    "targetKinds": [
+      "ammo"
+    ],
+    "addDamageQualifiers": [],
+    "removeDamageQualifiers": [],
+    "overrideDamageType": null,
+    "addDice": [
+      "Penetration"
+    ],
+    "removeDice": [],
+    "resultModifiers": [
+      {
+        "type": "ignoreProtectionResult",
+        "value": 1
+      }
+    ],
+    "tags": [
+      "Armor Breaking"
+    ],
+    "onHitEffects": [],
+    "appliesToProfiles": [],
+    "durationType": "Permanent",
+    "durationValue": null,
+    "stackKey": "arrowhead",
+    "stackMode": "replace",
+    "requirements": {
+      "ammoTypes": [
+        "Arrow",
+        "Bolt"
+      ]
+    },
+    "description": "An armor-piercing head shape.",
+    "img": "icons/svg/item-bag.svg"
+  },
+  {
+    "_id": "modBroadhead1",
+    "id": "modBroadhead1",
+    "uuid": "Item.modBroadhead1",
+    "name": "Broadhead Head",
+    "folder": "Weapon Modifiers",
+    "itemType": "weaponModifier",
+    "modifierType": "Craft",
+    "targetKinds": [
+      "ammo"
+    ],
+    "addDamageQualifiers": [],
+    "removeDamageQualifiers": [],
+    "overrideDamageType": null,
+    "addDice": [
+      "Lethality"
+    ],
+    "removeDice": [],
+    "resultModifiers": [],
+    "tags": [],
+    "onHitEffects": [],
+    "appliesToProfiles": [],
+    "durationType": "Permanent",
+    "durationValue": null,
+    "stackKey": "arrowhead",
+    "stackMode": "replace",
+    "requirements": {
+      "ammoTypes": [
+        "Arrow",
+        "Bolt"
+      ]
+    },
+    "description": "A broad cutting head that favors raw injury.",
+    "img": "icons/svg/item-bag.svg"
+  }
+]

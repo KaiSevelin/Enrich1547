@@ -5,7 +5,7 @@ import {
   toFoundryFormula
 } from '../combat/pool-builder.mjs';
 
-// Test 1: Rapier thrust + Broadhead
+// Test 1: Rapier thrust + Arrow with a bodkin-style modifier
 {
   const attackDice = ['Grace', 'Grace', 'Balanced'];
   const advantage = true;

@@ -7,18 +7,32 @@ It is intended as the reusable root actor for singular, powerful beings such as
 Jinn, the Lady of the Lake, Sidhe nobles, the Erlking, Frau Holle, and leaders
 of the Wild Hunt.
 
+The Unseen are unique elder powers tied to the Hidden Folk civilization. They
+are older than ordinary Hidden Folk, stronger in magic, feared and sometimes
+worshipped by them, and often occupy the place of ruler, patron, terror, or
+old-god-like presence within the parallel world.
+
 ## Design Goals
 
 The base Unseen should be:
 
 - singular
 - mythically significant
+- older than ordinary `Hidden Folk`
+- deeply magical
+- feared and sometimes worshipped
 - socially and supernaturally dominant
 - able to alter the whole scene by presence alone
 - powerful without yet being specialized into water, hunt, winter, court, or fire
+- motivated in part by the preservation, rule, or terrible continuity of the hidden parallel civilization and its magic
 
-It should not feel like a stronger `Hidden Folk`, but like a being of rank,
-office, and consequence.
+It should not feel like a stronger `Hidden Folk`, but like one of the great and
+terrible powers above or within that civilization: a being of rank, office,
+taboo, and consequence.
+
+The Unseen are not usually creatures one fights in ordinary circumstances. Even
+when neutral, they should feel dangerous. Even when hostile, they should feel
+purposeful rather than merely predatory.
 
 ## Base Stats
 
@@ -65,12 +79,18 @@ These are the concrete passive changes the base monster should receive.
 ### Of Higher Order
 
 ```yaml
+- _id: UnseenBaseHigherOrderTag
+  name: The Unseen Base - Of Higher Order Tag
+  kind: Tag
+  tagName: HigherOrder
+  notes: The being stands above ordinary Hidden Folk in power, age, and significance.
+
 - _id: UnseenBaseHigherOrderTrait
   name: The Unseen Base - Of Higher Order
   kind: Trait
   traitName: Of Higher Order
-  traitDescription: This is not a local hidden creature but a being of rank, office, or mythic significance.
-  notes: Core status trait for singular mythic beings.
+  traitDescription: This is not an ordinary hidden creature but one of the elder great beings of the parallel civilization, set apart by age, magical force, and consequence.
+  notes: Core status trait for old-god-like powers among the Hidden Folk world.
 ```
 
 ### Majesty or Dread
@@ -86,7 +106,7 @@ These are the concrete passive changes the base monster should receive.
   name: The Unseen Base - Majesty or Dread Trait
   kind: Trait
   traitName: Majesty or Dread
-  traitDescription: Mortals feel awe, fascination, pressure, or terror in its presence even when it is calm.
+  traitDescription: Mortals and lesser Hidden Folk alike feel awe, fascination, pressure, or terror in its presence even when it is calm.
   notes: Core emotional pressure aura for the Unseen.
 ```
 
@@ -103,7 +123,7 @@ These are the concrete passive changes the base monster should receive.
   name: The Unseen Base - Bound by Ancient Law
   kind: Trait
   traitName: Bound by Ancient Law
-  traitDescription: Bargains, names, invitations, thresholds, and oaths carry real force when dealing with it.
+  traitDescription: Bargains, names, invitations, thresholds, oaths, and older hidden obligations carry real force when dealing with it.
   notes: Core folklore-law rule for powerful singular beings.
 ```
 
@@ -120,8 +140,8 @@ These are the concrete passive changes the base monster should receive.
   name: The Unseen Base - Not Meant for Common Company
   kind: Trait
   traitName: Not Meant for Common Company
-  traitDescription: Prolonged contact with the being disturbs mortal judgment, fortune, sleep, or piety, and concealment is less reliable before it.
-  notes: Combines alien presence with superior supernatural perception.
+  traitDescription: Prolonged contact with the being disturbs mortal judgment, fortune, sleep, piety, or allegiance, and concealment is less reliable before it.
+  notes: Combines old-god-like presence with superior supernatural perception.
 ```
 
 ## Granted Power Items
@@ -166,7 +186,7 @@ PayloadTraitName: ""
 PayloadTraitText: ""
 GrantedItemTemplate: ""
 GrantedItemName: ""
-PayloadNotes: Gentler variants may use Social Favor or Doubt instead of Afraid.
+PayloadNotes: Gentler variants may use Social Favor or Doubt instead of Afraid, but even favor from the Unseen should feel weighty and unequal.
 DurationType: Scene
 DurationValue: ""
 ExpiryTrigger: Leave the presence, scene ends, or the being dismisses the pressure.
@@ -212,7 +232,7 @@ PayloadTraitName: ""
 PayloadTraitText: ""
 GrantedItemTemplate: ""
 GrantedItemName: ""
-PayloadNotes: A milder base variant can use TruthPressure instead of direct obedience.
+PayloadNotes: A milder base variant can use TruthPressure instead of direct obedience, but the speech should still carry the sense of higher authority.
 DurationType: Scene
 DurationValue: ""
 ExpiryTrigger: Command fulfilled, scene ends, or stronger authority intervenes.
@@ -258,7 +278,7 @@ PayloadTraitName: ""
 PayloadTraitText: ""
 GrantedItemTemplate: ""
 GrantedItemName: ""
-PayloadNotes: Use for crossing barriers, ignoring common obstruction, or arriving and departing unnaturally.
+PayloadNotes: Use for crossing barriers, ignoring common obstruction, or arriving and departing unnaturally as a being not constrained like ordinary people or creatures.
 DurationType: Scene
 DurationValue: ""
 ExpiryTrigger: The being chooses to remain plainly present, or the scene changes.
@@ -382,5 +402,5 @@ office, for example:
 - `Smokeless Fire`
 
 Those should add the defining domain, vulnerabilities, mounted or impossible
-movement, named retinues, and boon/curse authority that the base intentionally
-leaves open.
+movement, named retinues, cultic or political authority, and boon/curse power
+that the base intentionally leaves open.

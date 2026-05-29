@@ -1,47 +1,101 @@
 # Magic Schema Spec v1
 
-This document defines the first structured schema split for `1547Core` magic content.
+This document defines the current structured schema split for `1547Core`
+magic content.
+
+Authoritative source note:
+
+- [`magic-source-outline-spec-v1.md`](C:/temp/Enrich%201547/modules/1547core/docs/specs/magic-source-outline-spec-v1.md)
+  is the source-aligned outline derived from the uploaded `Magic.md`.
+- The human spell catalog in `foundry/Templates/spells.json` should stay aligned
+  with that outline's spell list.
 
 ## Core Types
 
-- `Power`: a persistent or long-term magical state on an actor, item, or bloodline.
+- `Supernatural Mark`: a persistent or long-term magical state such as a
+  blessing, curse, inherited sign, mutation, or favor.
+- `Monster Magic`: a thin carrier for active monster occult abilities, auras,
+  pressures, touches, and signs.
 - `Spell`: the named magical working and its canonical outcome.
-- `Recipe`: one concrete way to perform a spell.
+- `Ritual`: a generated or authored execution of a spell after ritual steps
+  have been assembled.
+- `Ritual Step`: one reusable procedural step that can be assembled into a
+  ritual or used in step-generation tables.
 - `Pact`: an ongoing contract with a human or supernatural patron.
-- `Usage effect`: the payload item used to express success, failure, boon, price, and strain effects.
+- `Usage effect`: the payload item used to express success, failure, boon,
+  price, strain, and monster action effects.
 
 ## Design Rules
 
-- `Power` is for blessings, curses, miracles, inherited marks, pact-granted gifts, and long-term occult alterations.
-- `Spell` is not the ritual procedure itself. It defines the named working, prerequisites, complexity, schools, and core outcome.
-- `Recipe` is the ritual procedure. Multiple recipes may exist for the same spell.
-- `Pact` is stateful and must carry patron, obligation, tension, and status progression.
-- `Usage effect` remains the shared low-level outcome payload for automation-friendly effects.
+- `Supernatural Mark` is for blessings, curses, inherited marks, pact-granted
+  gifts, miracles, and long-term occult alterations.
+- `Monster Magic` is for monster-owned magic that is not itself a blessing or
+  curse on a bearer.
+- `Spell` is not the ritual procedure itself. It defines the named working,
+  prerequisites, strength, schools, and canonical outcome.
+- `Spell` should point to ritual-generation tables rather than storing full
+  ritual procedures directly.
+- `Ritual` is the enriched execution artifact created from a spell by
+  assembling steps, constraints, and modifiers.
+- `Ritual Step` is the reusable authored unit for one procedural requirement,
+  action, timing, offering, defense, or danger within a ritual.
+- `Failure` for spells should be roll-table-driven rather than embedded as one
+  fixed item list.
+- `Pact` is stateful and must carry patron, obligation, tension, and status
+  progression.
+- `Usage effect` remains the shared low-level outcome payload for
+  automation-friendly effects.
 
-## Power Template
+## Supernatural Mark Template
 
 Template ID: `Item.w9ky0ZTDvXDs5Ce7`
 
 Fields:
 
-- `PowerType`
-- `PowerSource`
-- `Severity`
-- `SocialStatus`
+- `MarkNature`
+- `MarkSource`
+- `Potency`
+- `Visibility`
+- `SocialStanding`
 - `VisibleTell`
-- `PowerScope`
-- `PowerEffects` item container
+- `MarkScope`
+- `MarkEffects` item container
 - `GrantedSpells` item container
-- `TriggerTable`
+- `MarkTriggerTable`
 - `RemovalConditions`
-- `InheritanceNotes`
+- `TransmissionNotes`
 - `SocialConsequences`
+- `BearerNotes`
 
 Authoring intent:
 
-- Use `PowerEffects` for persistent bonuses, penalties, conditions, and passive magical consequences.
-- Use `GrantedSpells` when a power permits limited use of a ritual working.
-- Use `TriggerTable` for recurring or situational activation notes.
+- Use `MarkEffects` for persistent bonuses, penalties, conditions, and passive
+  magical consequences.
+- Use `GrantedSpells` when a mark permits limited use of a ritual working.
+- Use `MarkTriggerTable` for recurring or situational activation notes.
+
+## Monster Magic Template
+
+Template ID: `Item.M0nMgk7Yp2RsT5Vu`
+
+Fields:
+
+- `MagicKind`
+- `UseMode`
+- `TriggerText`
+- `RangeText`
+- `CostText`
+- `FamilyNotes`
+- `MagicEffects` item container
+- `MagicNotes`
+
+Authoring intent:
+
+- Keep this template thin.
+- Use it for named monster actions, auras, pressures, touches, or signs.
+- Put the actual magical payload in `MagicEffects`.
+- Do not use this template for persistent blessings or curses on a bearer. Use
+  `Supernatural Mark` for those.
 
 ## Spell Template
 
@@ -50,9 +104,12 @@ Template ID: `Item.2kiWw3Cv5Zk1lZxn`
 Fields:
 
 - `SpellKind`
+- `Strength`
 - `Complexity`
+- `RitualProfile`
+- `SchoolRequirementMode`
+- `SchoolRequirementsTable`
 - `FailureProfile`
-- `FailureTable`
 - `RandomOutcome`
 - `SpellNotes`
 - school checkboxes:
@@ -65,40 +122,143 @@ Fields:
   - `Religion`
   - `Wards`
 - `PrerequisitesTable`
-- `DefaultComponentsTable`
+- `StaticRitualSteps`
 - `SuccessEffects` item container
-- `FailureEffects` item container
-- `Recipes` item container
+- `RitualStrengthTable`
+- `RandomStepRollFormula`
+- `RitualStepTable`
+- `RitualModifierTable`
+- `RitualAssemblyNotes`
+- `FailureTable`
+- `FailureEscalationTable`
+- `FailureNotes`
 
 Authoring intent:
 
-- A spell defines the canonical magical effect and its risk profile.
-- Use `DefaultComponentsTable` only for parts every recipe should respect.
-- Store recipe-specific steps in child `Recipe` items.
+- A spell defines the canonical magical effect, its strength, and its risk
+  profile.
+- Static ritual steps live on the spell directly rather than being randomly
+  generated.
+- `Complexity` is an explicit spell property and drives how many random ritual
+  steps are drawn.
+- The default complexity mapping is:
+  - `Easy` -> `1d2`
+  - `Medium` -> `1d3`
+  - `Hard` -> `1d6`
+- The three random step pools are:
+  - `RitualSteps_Easy`
+  - `RitualSteps_Medium`
+  - `RitualSteps_Hard`
+- `RitualStepTable` should point at the pool that matches the spell's
+  complexity unless a later authored exception says otherwise.
+- `SchoolRequirementMode` is `Any` unless the source explicitly requires
+  schools with `and`, in which case it is `All`.
+- Environmental requirements belong to generated ritual steps or
+  prerequisites; they are pure requirements rather than skill checks.
+- Learned and pagan ritual skills may be treated as interchangeable where the
+  casting tradition allows it.
+- A spell stores ritual-generation table references instead of one baked ritual
+  procedure.
+- Use `SuccessEffects` for the canonical magical outcome.
+- Use the ritual generation fields when creating or enriching a ritual from the
+  spell.
+- Use the failure fields to resolve roll-table-driven fallout.
 
-## Recipe Template
+## Ritual Template
 
 Template ID: `Item.Qv6pN2Lm8R4tY1Ks`
 
 Fields:
 
+- `BaseSpell`
+- `SpellStrength`
 - `Tradition`
-- `RecipeLineage`
+- `RitualLineage`
 - `Reliability`
-- `ComplexityAdjustment`
+- `GeneratedFromTable`
 - `RitualStepsTable`
-- `RandomStepPoolTable`
 - `TimingConstraint`
 - `ContactRestriction`
 - `WitnessRequirement`
+- `FailureTableUsed`
 - `OutcomeModifier`
 
 Authoring intent:
 
-- Each recipe is one executable ritual script for a spell.
-- `RitualStepsTable` holds fixed procedure.
-- `RandomStepPoolTable` holds optional or generated steps used to vary executions by complexity or lineage.
-- `OutcomeModifier` records how the recipe changes randomness, duration, or strength without redefining the spell.
+- Each ritual is one executable ritual instance derived from a spell.
+- `RitualStepsTable` holds the assembled procedure after enrichment.
+- `GeneratedFromTable` records which ritual-generation table or profile
+  produced it.
+- `FailureTableUsed` records which failure table applies to this assembled
+  ritual.
+- `OutcomeModifier` records how the ritual changes randomness, duration, or
+  strength without redefining the spell.
+
+## Ritual Step Template
+
+Template ID: `Item.R7sTu4Qn2Lp8Vx5K`
+
+Fields:
+
+- `StepType`
+- `StepScope`
+- `StepText`
+- `TraditionTag`
+- `SkillCheck`
+- `Difficulty`
+- `RequiredItem`
+- `TimingConstraint`
+- `ContactRestriction`
+- `DangerTag`
+- `Repeatable`
+- `FailureConsequence`
+- `StepNotes`
+- `StepEffects` item container
+
+Authoring intent:
+
+- Use `Ritual Step` for reusable authored steps rather than embedding every
+  step as plain text inside a ritual.
+- `StepScope` distinguishes mandatory, optional, alternative, and escalation
+  steps.
+- When used as generated ritual steps, environmental requirements should be
+  modeled as pure constraints rather than checks.
+- `TraditionTag` helps one spell resolve differently across grimoires,
+  folk-traditions, church rites, or alchemical schools.
+- `StepEffects` is reserved for later automation where a step itself can
+  create a condition, risk, modifier, or contest.
+
+## Ritual Step Roll Tables
+
+See:
+
+- [`ritual-step-roll-tables-spec-v1.md`](C:/temp/Enrich%201547/modules/1547core/docs/specs/ritual-step-roll-tables-spec-v1.md)
+
+Current shared pools:
+
+- `RitualSteps_Easy`
+- `RitualSteps_Medium`
+- `RitualSteps_Hard`
+
+Authoritative data source:
+
+- `foundry/Templates/ritual-step-roll-tables.json`
+
+## Spell Failure Roll Tables
+
+See:
+
+- [`spell-failure-roll-tables-spec-v1.md`](C:/temp/Enrich%201547/modules/1547core/docs/specs/spell-failure-roll-tables-spec-v1.md)
+
+Current shared pools:
+
+- `SpellFailure_Minor`
+- `SpellFailure_Major`
+- `SpellFailure_Catastrophic`
+
+Authoritative data source:
+
+- `foundry/Templates/spell-failure-roll-tables.json`
 
 ## Pact Template
 
@@ -131,14 +291,18 @@ Authoring intent:
 
 - Use `GrantedPowers` for persistent pact gifts.
 - Use effect containers for automation-friendly consequences at each stage.
-- Use state description fields to record the narrative and procedural meaning of each status.
+- Use state description fields to record the narrative and procedural meaning
+  of each status.
 
 ## Usage Effect Placement
 
 Use `usage-effect` items in the container that reflects outcome role:
 
-- `PowerEffects` for long-term powers
-- `SuccessEffects` and `FailureEffects` for spells
-- `BoonEffects`, `PriceEffects`, `StrainEffects`, and `BrokenEffects` for pacts
+- `MarkEffects` for long-term blessings, curses, and marks
+- `MagicEffects` for monster magic
+- `SuccessEffects` for spells
+- `BoonEffects`, `PriceEffects`, `StrainEffects`, and `BrokenEffects` for
+  pacts
 
-This keeps one effect payload model while preserving the higher-level meaning of the magic system.
+This keeps one effect payload model while preserving the higher-level meaning
+of the magic system.

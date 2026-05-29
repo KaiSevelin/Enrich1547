@@ -13,11 +13,15 @@ when working with 1547 Core items backed by Custom System Builder templates.
 - `Item.4owc4YQBlp94GbGs`: Maneuver
 - `Item.HkiFlUWUkUycJdBZ`: Magic item
 - `Item.HPYYc2P0Ouagicmr`: Pact
-- `Item.w9ky0ZTDvXDs5Ce7`: Power
-- `Item.Qv6pN2Lm8R4tY1Ks`: Recipe
+- `Item.w9ky0ZTDvXDs5Ce7`: Supernatural mark
+- `Item.M0nMgk7Yp2RsT5Vu`: Monster magic
+- `Item.Qv6pN2Lm8R4tY1Ks`: Ritual
+- `Item.R7sTu4Qn2Lp8Vx5K`: Ritual step
 - `Item.BbwVnEJobtCR5oOf`: Skill
 - `Item.2kiWw3Cv5Zk1lZxn`: Spell
-- `Item.389uqkKKn8M1SKux`: Unequippable item
+- `Item.389uqkKKn8M1SKux`: Ammunition
+- `Item.WmP9Ld3Qs7Nk2FvR`: Weapon modifier
+- `Item.woHyeHPKKdo4JDJd`: Unequippable item
 - `Item.mwPqEYUoOfzXpyT9`: Usage effect
 - `Item.qZCfLEYQ7egbm1B9`: Weapon
 

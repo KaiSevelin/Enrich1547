@@ -67,9 +67,29 @@ Hooks.once("init", () => {
         (module) => module.registerItemGrantService()
     );
     void runImportedModuleStep(
+        "registerWeaponModifierAttachmentService",
+        () => import("./services/weapon-modifier-attachment-service.js"),
+        (module) => module.registerWeaponModifierAttachmentService()
+    );
+    void runImportedModuleStep(
         "registerRollTableResolutionService",
         () => import("./services/rolltable-resolution-service.js"),
         (module) => module.registerRollTableResolutionService()
+    );
+    void runImportedModuleStep(
+        "registerRitualGenerationService",
+        () => import("./services/ritual-generation-service.js"),
+        (module) => module.registerRitualGenerationService()
+    );
+    void runImportedModuleStep(
+        "registerUsageEffectActionResolver",
+        () => import("./services/usage-effect-action-resolver.js"),
+        (module) => module.registerUsageEffectActionResolver()
+    );
+    void runImportedModuleStep(
+        "registerSpellCastingService",
+        () => import("./services/spell-casting-service.js"),
+        (module) => module.registerSpellCastingService()
     );
 });
 

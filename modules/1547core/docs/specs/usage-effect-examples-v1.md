@@ -392,6 +392,6 @@ PayloadNotes: "Can mean pathing penalty, separation, or arrival at a dangerous p
 DurationType: Scene
 DurationValue: ""
 ExpiryTrigger: "Daylight, blessing, regained bearings, or guide intervention."
-RemovalMethod: "Holy sign, trusted guide, iron token, or dawn."
+RemovalMethod: "Sacred sign, trusted guide, iron token, or dawn."
 SuppressedBy: ""
 ```

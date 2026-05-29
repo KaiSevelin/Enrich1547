@@ -122,7 +122,9 @@ function buildEquippedTree(data, deps = {}) {
                     <div class="hud-row-sub">${escapeHtml(weapon.attackState?.reason || "")}</div>
                     <ul class="hud-tree-children hud-tree-compact">
                         <li><span class="hud-tree-key">Active</span><span class="hud-tree-value">${escapeHtml(weapon.activeAttackFormula || "-")}</span></li>
+                        ${weapon.weaponModifierSummary ? `<li><span class="hud-tree-key">Modifiers</span><span class="hud-tree-value">${escapeHtml(weapon.weaponModifierSummary)}</span></li>` : ""}
                         ${weapon.usesAmmo ? `<li><span class="hud-tree-key">Loaded Ammo</span><span class="hud-tree-value">${escapeHtml(weapon.loadedAmmoName ? `${weapon.loadedAmmoName} (${weapon.ammoLoaded})` : "None")}</span></li>` : ""}
+                        ${weapon.usesAmmo && weapon.ammoModifierSummary ? `<li><span class="hud-tree-key">Ammo Mods</span><span class="hud-tree-value">${escapeHtml(weapon.ammoModifierSummary)}</span></li>` : ""}
                         ${weapon.usesAmmo && weapon.activeAttackAmmoText ? `<li><span class="hud-tree-key">Allowed Ammo</span><span class="hud-tree-value">${escapeHtml(weapon.activeAttackAmmoText)}</span></li>` : ""}
                     </ul>
                     <div class="hud-weapon-controls">
@@ -185,10 +187,28 @@ function buildEquippedTree(data, deps = {}) {
         `;
     }, deps, { scroll: true });
 
+    const monsterMagicRows = data.monsterMagic.length
+        ? buildTreeList(data.monsterMagic, (magic) => `
+            <li class="hud-tree-item hud-weapon-card">
+                <div class="hud-row-main">${escapeHtml(magic.name)}</div>
+                ${magic.description ? `<div class="hud-row-sub">${escapeHtml(magic.description)}</div>` : ""}
+                <div class="hud-weapon-action-strip">
+                    <button type="button" class="hud-mini-button hud-mini-button-primary" data-hud-use-monster-magic="${escapeHtml(magic.id)}">
+                        Use
+                    </button>
+                </div>
+            </li>
+        `)
+        : `<li class="hud-empty-row">No monster magic</li>`;
+
     return `
         <div class="hud-tree-block">
             <div class="hud-section-title">Equipped Weapons</div>
             <ul class="hud-list hud-tree-list">${equippedWeaponRows}</ul>
+        </div>
+        <div class="hud-tree-block">
+            <div class="hud-section-title">Attacks</div>
+            <ul class="hud-list hud-tree-list">${monsterMagicRows}</ul>
         </div>
         <div class="hud-tree-block">
             <div class="hud-section-title">Equipped Armor</div>
@@ -454,11 +474,11 @@ function getCategoryDefinitions(data) {
         { key: "dice", label: "Dice", count: null, icon: "fa-dice-d20" },
         { key: "overview", label: "Overview", count: null },
         { key: "stats", label: "Stats", count: data.stats.length },
-        { key: "powers", label: "Powers", count: data.powers.length, icon: "fa-wand-sparkles" },
+        { key: "supernatural-marks", label: "Marks", count: data.supernaturalMarks.length, icon: "fa-sparkles" },
         {
             key: "equipped",
             label: "Equipped",
-            count: data.equippedWeapons.length + data.equippedArmor.length + data.equippedInventory.filter((item) => item.itemKind !== "weapon" && item.itemKind !== "armor").length
+            count: data.equippedWeapons.length + data.monsterMagic.length + data.equippedArmor.length + data.equippedInventory.filter((item) => item.itemKind !== "weapon" && item.itemKind !== "armor").length
         },
         { key: "inventory", label: "Inventory", count: data.inventory.length },
         { key: "maneuvers", label: "Maneuvers", count: data.maneuverCount },
@@ -488,13 +508,13 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
             })();
         case "equipped":
             return buildEquippedTree(data, deps);
-        case "powers":
+        case "supernatural-marks":
             return `<ul class="hud-list hud-tree-list hud-list-scroll hud-single-scroll">
-                ${buildTreeList(data.powers, (power) => `
+                ${buildTreeList(data.supernaturalMarks, (mark) => `
                     <li class="hud-tree-item">
-                        <button type="button" class="hud-action-row" data-hud-open-item="${escapeHtml(power.id)}">
-                            <span class="hud-row-main">${escapeHtml(power.name)}</span>
-                            ${power.description ? `<span class="hud-row-sub">${escapeHtml(power.description)}</span>` : ""}
+                        <button type="button" class="hud-action-row" data-hud-open-item="${escapeHtml(mark.id)}">
+                            <span class="hud-row-main">${escapeHtml(mark.name)}</span>
+                            ${mark.description ? `<span class="hud-row-sub">${escapeHtml(mark.description)}</span>` : ""}
                             <span class="hud-tree-value">Open</span>
                         </button>
                     </li>

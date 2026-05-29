@@ -1,0 +1,53 @@
+[
+  {
+    "id": "SpellFailure_Minor",
+    "name": "Spell Failure Minor",
+    "severity": "Minor",
+    "drawFormula": "1d1",
+    "drawMode": "single",
+    "entries": [
+      { "id": "SFM01", "resultText": "The working fizzles. The rite fails without further harm, but the materials are spoiled.", "resultTag": "Fizzle", "resultNotes": "No spell effect. Replace consumable ritual materials." },
+      { "id": "SFM02", "resultText": "The power slips sideways. A harmless but unsettling omen appears nearby.", "resultTag": "Omen", "resultNotes": "GM adds a brief manifestation, sign, or sensory disturbance." },
+      { "id": "SFM03", "resultText": "The caster is left spiritually winded and suffers a moment of weakness.", "resultTag": "Fatigue", "resultNotes": "Apply a short-lived weakness or narrative fatigue." },
+      { "id": "SFM04", "resultText": "The rite lingers imperfectly. The spell cannot be attempted again until the next dawn.", "resultTag": "Delay", "resultNotes": "Temporary lockout on this spell." },
+      { "id": "SFM05", "resultText": "The sign is misread. The next omen or divinatory answer concerning the same matter is clouded.", "resultTag": "CloudedOmen", "resultNotes": "Penalty is narrative unless later system support is added." },
+      { "id": "SFM06", "resultText": "The caster draws attention. Nearby spirits, hidden folk, or watching powers become faintly aware of the rite.", "resultTag": "Notice", "resultNotes": "Use as a future complication hook." },
+      { "id": "SFM07", "resultText": "The working rebounds softly. A minor inconvenience or ill-luck clings to the caster for the scene.", "resultTag": "IllLuck", "resultNotes": "Suitable for mild curse flavor." },
+      { "id": "SFM08", "resultText": "The spell half-forms and stains its tools. The ritual focus or vessel gains an obvious occult tell.", "resultTag": "Taint", "resultNotes": "Best used for item-focused workings." }
+    ]
+  },
+  {
+    "id": "SpellFailure_Major",
+    "name": "Spell Failure Major",
+    "severity": "Major",
+    "drawFormula": "1d1",
+    "drawMode": "single",
+    "entries": [
+      { "id": "SFG01", "resultText": "The caster is struck by backlash and suffers a real weakening of body or spirit.", "resultTag": "Backlash", "resultNotes": "Apply Weakened, a stat loss, or comparable short-term debility." },
+      { "id": "SFG02", "resultText": "The spell fastens to the wrong target: the caster, a helper, or a sympathetic object nearby.", "resultTag": "Misfire", "resultNotes": "Redirect success effect or a softened version of it." },
+      { "id": "SFG03", "resultText": "An intrusive presence answers the rite. Something unseen now watches, follows, or remembers the caster.", "resultTag": "Attention", "resultNotes": "Strong future complication." },
+      { "id": "SFG04", "resultText": "The rite leaves a stain in place. Threshold, room, grave, or vessel becomes spiritually troubled.", "resultTag": "BlightedPlace", "resultNotes": "Use for local haunting, ill feeling, or ritual instability." },
+      { "id": "SFG05", "resultText": "The caster is marked by the failure. A visible or divinatory tell reveals recent occult misuse.", "resultTag": "Marked", "resultNotes": "Could become a trait or discoverable sign." },
+      { "id": "SFG06", "resultText": "The spell opens too far. A hostile omen, false message, or deceptive sign replaces the intended result.", "resultTag": "FalseRevelation", "resultNotes": "Especially appropriate for divination and prophecy." },
+      { "id": "SFG07", "resultText": "The materials turn against the rite. A vessel breaks, wax collapses, cord knots itself, or ink blackens the hand.", "resultTag": "MaterialRuin", "resultNotes": "Narrative item damage and failed rite." },
+      { "id": "SFG08", "resultText": "The working binds strain to the caster. Until properly cleansed, later rites of the same school are harder to perform.", "resultTag": "SchoolStrain", "resultNotes": "Track as temporary magical strain." }
+    ]
+  },
+  {
+    "id": "SpellFailure_Catastrophic",
+    "name": "Spell Failure Catastrophic",
+    "severity": "Catastrophic",
+    "drawFormula": "1d1",
+    "drawMode": "single",
+    "entries": [
+      { "id": "SFC01", "resultText": "The power breaks loose completely. A hostile force, entity, or effect manifests beyond the caster's control.", "resultTag": "Manifestation", "resultNotes": "Best for grimoire, summoning, pact, and necromancy disasters." },
+      { "id": "SFC02", "resultText": "The spell inverts. The intended blessing becomes a curse, the ward becomes an opening, or the binding becomes a release.", "resultTag": "Inversion", "resultNotes": "Reverse the spell's broad intent." },
+      { "id": "SFC03", "resultText": "The caster is spiritually torn. A lasting curse, mark, or pact-strain is inflicted.", "resultTag": "LastingCurse", "resultNotes": "Good place to create a Supernatural Mark later." },
+      { "id": "SFC04", "resultText": "The ritual contaminates the place. Ground, room, vessel, or threshold becomes dangerous until ritually repaired.", "resultTag": "RitualBlight", "resultNotes": "Strong area complication." },
+      { "id": "SFC05", "resultText": "Something is lost in the crossing. Memory, voice, warmth, shadow, or name is partially taken from the caster.", "resultTag": "Loss", "resultNotes": "Use as a severe narrative cost or direct stat/trait loss." },
+      { "id": "SFC06", "resultText": "The caster is seized by backlash and collapses under body-and-soul strain.", "resultTag": "Collapse", "resultNotes": "Could cause unconsciousness, wounds, or a scene-ending breakdown." },
+      { "id": "SFC07", "resultText": "The spell binds itself into the wrong thing permanently: a tool, corpse, vessel, home, or living bystander.", "resultTag": "WrongBinding", "resultNotes": "Creates a new problem creature, cursed item, or haunted place." },
+      { "id": "SFC08", "resultText": "The failure tears open a path that should have remained shut. The world is left thinner, stranger, and easier for later horrors to breach.", "resultTag": "Breach", "resultNotes": "Best for Zone, Unnatural, and Unseen complications." }
+    ]
+  }
+]

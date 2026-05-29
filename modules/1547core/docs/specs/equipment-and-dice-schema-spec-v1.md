@@ -14,6 +14,13 @@ This document defines the canonical stored-data vocabulary for:
 It exists so `1547Core` can keep equipment content, Foundry item data, and
 combat resolution aligned around one stable model.
 
+## Cross-Reference
+
+Damage classification used by weapons, ammunition, natural weapons, and monster
+attacks should follow:
+
+- `damage-type-catalog-spec-v1.md`
+
 ## Core Principle
 
 Stored equipment data must match the current combat engine.
@@ -280,6 +287,30 @@ Weapons that use loading or ammunition rules should track:
 also tracked, because reload pacing and loaded ammunition are related but not
 identical concepts.
 
+### Weapon And Ammunition Modifiers
+
+Weapons and ammunition should each be able to carry multiple attached
+`WeaponModifier` items at once.
+
+This is required for combinations such as:
+
+- a silvered and blessed sword
+- an arrow with `Bodkin Head` and `Silvered`
+- an arrow with `Broadhead Head` and `Poisoned`
+
+Coexistence is controlled by modifier rules:
+
+- legality comes from `requirements`
+- same-family conflict comes from `stackKey`
+- replacement, coexistence, or rejection comes from `stackMode`
+
+So the equipment schema should assume a parent item may own an attachment list
+such as:
+
+- `attachedModifierIds: []`
+
+or an equivalent embedded modifier collection.
+
 ## Canonical Ammunition Rules
 
 Ammunition modifies a weapon attack profile's single attacker resolution pool.
@@ -287,14 +318,54 @@ Ammunition modifies a weapon attack profile's single attacker resolution pool.
 In v1.1:
 
 - the weapon attack profile provides the base ordered `dice` pool
+- the weapon attack profile also provides the base `damageType` and
+  `damageQualifiers`
 - the loaded ammo item may add more dice to that same pool
+- the loaded ammo item may also add or override damage qualifiers
+- the loaded ammo item may rarely override `damageType` when it fundamentally
+  changes the nature of the harm
 - the loaded ammo item may add tags or result modifiers
+- the loaded ammo item may also carry multiple attached `WeaponModifier` items
 - the loaded ammo item may also narrow or override range behavior for that
   resolved attack
 - attacker and defender still each roll one pool
 
 This keeps ammunition compatible with the current simultaneous opposed
 resolution model.
+
+### Damage Classification Merge Rule
+
+For attacks made with weapons, the final damage classification should resolve in
+this order:
+
+1. choose weapon
+2. choose attack profile
+3. read base `damageType` and `damageQualifiers` from that profile
+4. apply loaded ammunition modifications if any
+5. apply attached weapon modifiers if any
+6. apply attached ammunition modifiers if any
+7. resolve one final `damageType` and one final `damageQualifiers` array for
+   the committed attack
+
+Recommended rule:
+
+- attack profile owns the base `damageType`
+- ammunition usually adds qualifiers
+- attached weapon and ammunition modifiers may add or remove qualifiers, add
+  dice, attach riders, or override damage type according to their own rules
+- ammunition only overrides `damageType` when it truly changes the harm from
+  one kind into another
+
+Examples:
+
+- sword slash profile -> `Slashing`
+- sword thrust profile -> `Piercing`
+- arrow shot profile -> `Piercing` + `Weapon` + `NormalWeapon`
+- silver arrow modifies that profile to:
+  `Piercing` + `Weapon` + `NormalWeapon` + `Silver`
+- fire arrow may modify that profile to:
+  `Piercing` + `Weapon` + `Fire` or fully override to `Fire`, depending on the
+  authored rule intent
 
 ### Ammunition Lifecycle
 
@@ -340,8 +411,13 @@ In v1.1:
 - neither loading nor swapping should reduce `quantity`
 - quantity is reduced only by successful attack commitment
 
-This lets players select `Broadhead Arrow` versus `Bodkin Arrow` explicitly
-without spending ammo until the shot is actually resolved.
+This lets players select a specific loaded ammo stack without spending ammo
+until the shot is actually resolved.
+
+Head shape, material treatment, blessing, poison, and similar specialization
+should normally be modeled through `WeaponModifier` items attached to the
+loaded ammunition stack rather than by proliferating specialized ammunition
+base items.
 
 ## Canonical Weapon Schema
 
@@ -369,6 +445,7 @@ Recommended weapon schema:
   ammoCapacity,
   ammoLoaded,
   loadedAmmoId,
+  attachedModifierIds: [],
   traits: [],
   attackProfiles: []
 }
@@ -519,6 +596,18 @@ Use `null` when:
 When present, it should identify a specific compatible ammo stack owned by the
 same actor.
 
+### `attachedModifierIds`
+
+Optional ordered list of attached `WeaponModifier` item ids on the weapon.
+
+Use an empty array when no modifiers are attached.
+
+This field exists so one weapon can legally hold multiple active treatments at
+the same time, such as:
+
+- `Silvered` and `Blessed`
+- `Blessed` and `Wrapped in Flame`
+
 ### `traits`
 
 Canonical stored weapon traits.
@@ -535,6 +624,8 @@ Recommended shape:
     id,
     name,
     attackType,
+    damageType,
+    damageQualifiers: [],
     dice: ["Balanced", "Heavy", "Control"],
     allowedAmmoTypes: [],
     tags: []
@@ -554,6 +645,24 @@ This is intentionally aligned with the current combat engine:
 
 If the combat engine later gains a true separate attack-pool and damage-pool
 workflow, the schema can be expanded in a future version.
+
+Attack profiles should also carry the canonical damage classification for the
+resolved hit:
+
+- `damageType` is required
+- `damageQualifiers` is optional and defaults to `[]`
+
+Use the controlled vocabulary from `damage-type-catalog-spec-v1.md`.
+
+Examples:
+
+- sword cut: `damageType: "Slashing"`
+- spear thrust: `damageType: "Piercing"`
+- war hammer strike: `damageType: "Blunt"`
+- blessed spear thrust: `damageType: "Piercing"`,
+  `damageQualifiers: ["Weapon", "Blessed"]`
+- wolf bite: `damageType: "Piercing"`,
+  `damageQualifiers: ["NaturalWeapon"]`
 
 ## Weapon Example
 
@@ -579,12 +688,15 @@ workflow, the schema can be expanded in a future version.
   ammoCapacity: 0,
   ammoLoaded: 0,
   loadedAmmoId: null,
+  attachedModifierIds: [],
   traits: ["Parrying", "Disarming", "Fast", "Narrow"],
   attackProfiles: [
     {
       id: "thrust",
       name: "Thrust",
       attackType: "melee",
+      damageType: "Piercing",
+      damageQualifiers: ["Weapon"],
       dice: ["Grace", "Grace", "Balanced"],
       allowedAmmoTypes: [],
       tags: []
@@ -593,6 +705,8 @@ workflow, the schema can be expanded in a future version.
       id: "bind",
       name: "Bind",
       attackType: "melee",
+      damageType: "Piercing",
+      damageQualifiers: ["Weapon"],
       dice: ["Grace", "Control", "Balanced"],
       allowedAmmoTypes: [],
       tags: []
@@ -612,7 +726,10 @@ Recommended ammunition schema:
   itemType: "ammo",
   ammoType,
   quantity,
+  attachedModifierIds: [],
   addDice: [],
+  addDamageQualifiers: [],
+  overrideDamageType: null,
   tags: [],
   resultModifiers: []
 }
@@ -649,6 +766,19 @@ How many units of this ammunition item are currently available.
 `quantity` should decrease only when ammunition is actually consumed by a
 committed attack or another explicit spend rule.
 
+### `attachedModifierIds`
+
+Optional ordered list of attached `WeaponModifier` item ids on the ammunition
+stack.
+
+Use an empty array when no modifiers are attached.
+
+This field exists so one ammunition stack can legally carry multiple
+specializations at the same time, such as:
+
+- `Bodkin Head` and `Silvered`
+- `Broadhead Head` and `Poisoned`
+
 ### `addDice`
 
 Ordered dice added to the attack profile's attacker pool when this ammunition
@@ -659,6 +789,39 @@ Example:
 ```js
 ["Penetration"]
 ```
+
+### `addDamageQualifiers`
+
+Additional damage qualifiers applied to the selected attack profile when this
+ammunition is used.
+
+Most ammunition that affects folklore counters should use this field rather
+than replacing the whole damage type.
+
+Examples:
+
+```js
+["Silver"]
+```
+
+```js
+["Blessed"]
+```
+
+### `overrideDamageType`
+
+Optional replacement for the selected profile's `damageType`.
+
+Default should be `null`.
+
+Use this only when the ammunition fundamentally changes the nature of the harm.
+
+Examples:
+
+- an incendiary missile that should count as `Fire`
+- an alchemical frost bolt that should count as `Cold`
+
+Most ammunition should leave this field `null`.
 
 ### `tags`
 
@@ -685,12 +848,15 @@ modifiers.
 
 ```js
 {
-  id: "ammo-broadhead-arrow",
-  name: "Broadhead Arrow",
+  id: "ammo-arrow",
+  name: "Arrow",
   itemType: "ammo",
   ammoType: "Arrow",
   quantity: 20,
-  addDice: ["Lethality"],
+  attachedModifierIds: [],
+  addDice: [],
+  addDamageQualifiers: [],
+  overrideDamageType: null,
   tags: [],
   resultModifiers: []
 }
@@ -752,31 +918,31 @@ declaration.
 
 ```js
 {
-  id: "ammo-bodkin-arrow",
-  name: "Bodkin Arrow",
+  id: "ammo-bolt",
+  name: "Bolt",
   itemType: "ammo",
-  ammoType: "Arrow",
+  ammoType: "Bolt",
   quantity: 20,
-  addDice: ["Penetration"],
-  tags: ["Armor Breaking"],
-  resultModifiers: [
-    { type: "ignoreProtectionResult", value: 1 }
-  ]
+  addDice: [],
+  addDamageQualifiers: [],
+  overrideDamageType: null,
+  tags: [],
+  resultModifiers: []
 }
 ```
 
 ```js
 {
-  id: "ammo-scatter-shot",
-  name: "Scatter Shot",
+  id: "ammo-bullet",
+  name: "Bullet",
   itemType: "ammo",
   ammoType: "Bullet",
   quantity: 10,
-  addDice: ["Multiplier"],
-  tags: ["Short Range"],
-  resultModifiers: [
-    { type: "overrideRangeBand", value: "short" }
-  ]
+  addDice: [],
+  addDamageQualifiers: [],
+  overrideDamageType: null,
+  tags: [],
+  resultModifiers: []
 }
 ```
 
@@ -1019,9 +1185,12 @@ In Foundry templates and import files:
   `usesAmmo`, `ammoType`, `ammoCapacity`, `ammoLoaded`, and `loadedAmmoId`
 - ammo items should expose `ammoType`, `quantity`, `addDice`, `tags`, and
   `resultModifiers`
+- weapon and ammo items should expose `attachedModifierIds` or an equivalent
+  embedded modifier collection
 - armor items should expose `equipped`, `armorClass`, and `defenseDice`
 - attack profile data should be structured enough to support multiple named
   weapon modes
+- attack profiles should expose `damageType` and `damageQualifiers`
 - stored attack profile dice should use canonical family names in ordered arrays
 - ranged attack profiles should define `allowedAmmoTypes`
 - runtime roll formulas should convert canonical names to the mapped Foundry
@@ -1040,4 +1209,3 @@ This schema version does not attempt to standardize:
 - deep inventory-container behavior for ammunition stacks
 
 Those can be added later once the runtime model for them is stable.
-

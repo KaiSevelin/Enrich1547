@@ -1,4 +1,4 @@
-﻿[
+[
     {
         "_id": "ladrJocl1LJMEBsy",
         "id": "ladrJocl1LJMEBsy",
@@ -28,7 +28,12 @@
                     "Balanced",
                     "Balanced"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Slashing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -76,6 +81,11 @@
                 "tags": [],
                 "allowedAmmoTypes": [
                     "Bullet"
+                ],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
                 ]
             }
         ],
@@ -123,7 +133,12 @@
                     "Control",
                     "Grace"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Slashing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -164,7 +179,12 @@
                 "dice": [
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Blunt",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -211,6 +231,11 @@
                 "tags": [],
                 "allowedAmmoTypes": [
                     "Bolt"
+                ],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
                 ]
             }
         ],
@@ -257,7 +282,12 @@
                     "Grace",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -300,7 +330,12 @@
                     "Grace",
                     "Grace"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -345,7 +380,12 @@
                     "Balanced",
                     "Balanced"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             },
             {
                 "id": "swing",
@@ -356,7 +396,12 @@
                     "Balanced",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Slashing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -399,7 +444,12 @@
                     "Balanced",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Blunt",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -442,7 +492,12 @@
                     "Balanced",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Slashing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             },
             {
                 "id": "thrust",
@@ -453,7 +508,12 @@
                     "Penetration",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -497,7 +557,12 @@
                     "Balanced",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Slashing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             },
             {
                 "id": "thrust",
@@ -508,7 +573,12 @@
                     "Penetration",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -556,6 +626,11 @@
                 "tags": [],
                 "allowedAmmoTypes": [
                     "Bullet"
+                ],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
                 ]
             }
         ],
@@ -608,6 +683,11 @@
                 "tags": [],
                 "allowedAmmoTypes": [
                     "Bullet"
+                ],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
                 ]
             }
         ],
@@ -655,7 +735,12 @@
                     "Control",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Blunt",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -700,6 +785,11 @@
                 ],
                 "tags": [
                     "mounted"
+                ],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
                 ]
             }
         ],
@@ -744,7 +834,12 @@
                     "Heavy",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Slashing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             },
             {
                 "id": "thrust",
@@ -755,7 +850,12 @@
                     "Heavy",
                     "Grace"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -802,6 +902,11 @@
                 "tags": [],
                 "allowedAmmoTypes": [
                     "Arrow"
+                ],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
                 ]
             }
         ],
@@ -848,7 +953,12 @@
                     "Balanced",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Blunt",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -890,7 +1000,12 @@
                     "Heavy",
                     "Risk"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Blunt",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -932,7 +1047,12 @@
                     "Grace",
                     "Balanced"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Slashing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -976,7 +1096,12 @@
                     "Balanced",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Blunt",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -1018,7 +1143,12 @@
                     "Grace",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -1061,7 +1191,12 @@
                     "Balanced",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -1105,7 +1240,12 @@
                     "Grace",
                     "Grace"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -1150,7 +1290,12 @@
                     "Penetration",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             },
             {
                 "id": "hook",
@@ -1161,7 +1306,12 @@
                     "Control",
                     "Hooking"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Slashing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -1205,7 +1355,12 @@
                     "Balanced",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Blunt",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -1250,7 +1405,12 @@
                     "Grace",
                     "Balanced"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             },
             {
                 "id": "bind",
@@ -1261,7 +1421,12 @@
                     "Control",
                     "Balanced"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -1304,7 +1469,12 @@
                     "Grace",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -1345,7 +1515,12 @@
                 "dice": [
                     "Balanced"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Blunt",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -1390,6 +1565,11 @@
                 "tags": [],
                 "allowedAmmoTypes": [
                     "Arrow"
+                ],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
                 ]
             }
         ],
@@ -1436,7 +1616,12 @@
                     "Control",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -1480,7 +1665,12 @@
                     "Grace",
                     "Balanced"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -1526,7 +1716,11 @@
                     "Control",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Blunt",
+                "damageQualifiers": [
+                    "NaturalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -1572,6 +1766,11 @@
                 "tags": [],
                 "allowedAmmoTypes": [
                     "Arrow"
+                ],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
                 ]
             }
         ],
@@ -1618,7 +1817,12 @@
                     "Heavy",
                     "Balanced"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Blunt",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
@@ -1666,6 +1870,11 @@
                 "tags": [],
                 "allowedAmmoTypes": [
                     "Bullet"
+                ],
+                "damageType": "Piercing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
                 ]
             }
         ],
@@ -1715,7 +1924,12 @@
                     "Heavy",
                     "Control"
                 ],
-                "tags": []
+                "tags": [],
+                "damageType": "Slashing",
+                "damageQualifiers": [
+                    "Weapon",
+                    "NormalWeapon"
+                ]
             }
         ],
         "groups": [
