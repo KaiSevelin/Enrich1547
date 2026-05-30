@@ -1,4 +1,6 @@
-﻿const MODULE_ID = "1547core";
+﻿import { buildOnHitEffectItemDoc } from "../services/weapon-modifier-attachment-service.js";
+
+const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
 const TEMPLATE_FILES = {
     actorTemplate: "fvtt-Actor-1547-Tgs09eTiTp63Cp7u.json",
@@ -302,6 +304,45 @@ function buildWeaponModifierProps(modifier) {
         StackMode: modifier.stackMode ?? "",
         Requirements: JSON.stringify(modifier.requirements ?? {}, null, 2)
     };
+}
+
+// Pre-seeds an OnHitEffect ITEM in the world for every onHitEffects entry on
+// each modifier source. With these in the world, the modifier item's CSB
+// itemContainer renders the effects from the Items panel without needing the
+// attach-time createItem hook to fire on an actor. Reuses the actor-side
+// buildOnHitEffectItemDoc so the world and actor shapes stay in lockstep.
+function buildWorldOnHitEffectDocs(modifierSources, modifierDocs, onHitEffectTemplate, folderId) {
+    if (!onHitEffectTemplate) return [];
+    const docsByModifierId = new Map(modifierDocs.map((doc) => [doc._id, doc]));
+    const out = [];
+    for (const modifier of modifierSources) {
+        const modifierDoc = docsByModifierId.get(modifier._id);
+        if (!modifierDoc) continue;
+        const effects = Array.isArray(modifier.onHitEffects) ? modifier.onHitEffects : [];
+        effects.forEach((effectSource, index) => {
+            const base = buildOnHitEffectItemDoc(effectSource, modifierDoc._id, onHitEffectTemplate);
+            if (!base) return;
+            const _id = deriveFoundryIdFromText(`onhit:${modifierDoc._id}:${index}`);
+            const damageOrStatus = String(effectSource.damageType ?? effectSource.applyStatus ?? "Effect").trim() || "Effect";
+            out.push({
+                ...base,
+                _id,
+                name: `${modifierDoc.name} — ${damageOrStatus}`,
+                folder: folderId ?? null,
+                effects: [],
+                items: [],
+                ownership: { default: 0 },
+                flags: {
+                    ...(base.flags ?? {}),
+                    [SOURCE_FLAG_SCOPE]: {
+                        ...(base.flags?.[SOURCE_FLAG_SCOPE] ?? {}),
+                        folderHint: "Weapon Modifiers",
+                    },
+                },
+            });
+        });
+    }
+    return out;
 }
 
 function buildSpellProps(spell) {
@@ -1501,8 +1542,15 @@ function createModuleSetupFormApplicationClass() {
             const ammoDocs = ammunition.map((ammo) =>
                 makeItemDoc(normalizeSourceEntry(ammo, "ammo"), ammoTemplate, ammo.img ?? ammoTemplate.img ?? "icons/svg/item-bag.svg", buildAmmoProps, folders.ammoFolder.id, "Ammunition")
             );
-            const weaponModifierDocs = weaponModifiers.map((modifier) =>
-                makeItemDoc(normalizeSourceEntry(modifier, "weaponModifier"), weaponModifierTemplate, modifier.img ?? weaponModifierTemplate.img ?? "icons/svg/item-bag.svg", buildWeaponModifierProps, folders.weaponModifierFolder.id, "Weapon Modifiers")
+            const normalizedWeaponModifiers = weaponModifiers.map((modifier) => normalizeSourceEntry(modifier, "weaponModifier"));
+            const weaponModifierDocs = normalizedWeaponModifiers.map((modifier) =>
+                makeItemDoc(modifier, weaponModifierTemplate, modifier.img ?? weaponModifierTemplate.img ?? "icons/svg/item-bag.svg", buildWeaponModifierProps, folders.weaponModifierFolder.id, "Weapon Modifiers")
+            );
+            const onHitEffectDocs = buildWorldOnHitEffectDocs(
+                normalizedWeaponModifiers,
+                weaponModifierDocs,
+                onHitEffectTemplate,
+                folders.weaponModifierFolder.id
             );
             const spellDocs = spells.map((spell) =>
                 makeItemDoc(normalizeSourceEntry(spell, "spell"), spellTemplate, spell.img ?? spellTemplate.img ?? "icons/svg/daze.svg", buildSpellProps, folders.spellsFolder.id, "Spells")
@@ -1582,7 +1630,10 @@ function createModuleSetupFormApplicationClass() {
             });
             await pruneManagedFolderItems({
                 folderId: folders.weaponModifierFolder.id,
-                validIds: new Set(weaponModifierDocs.map((doc) => doc._id)),
+                validIds: new Set([
+                    ...weaponModifierDocs.map((doc) => doc._id),
+                    ...onHitEffectDocs.map((doc) => doc._id),
+                ]),
                 templateId: weaponModifierTemplate._id,
                 folderHint: "Weapon Modifiers"
             });
@@ -1659,6 +1710,7 @@ function createModuleSetupFormApplicationClass() {
                 ...armorDocs,
                 ...ammoDocs,
                 ...weaponModifierDocs,
+                ...onHitEffectDocs,
                 ...spellDocs,
                 ...changeSetDocs,
                 ...changeDocs,
