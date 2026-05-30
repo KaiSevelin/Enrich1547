@@ -29,7 +29,7 @@
           "templateFilter": ["PDxRO5ObvLaThpez"],
           "itemFilterFormula": "",
           "sortPredicates": [],
-          "visibilityFormula": "StepType == 'Material'"
+          "visibilityFormula": "equalText(StepType, 'Material')"
         },
         {
           "key": "Skills",
@@ -54,7 +54,7 @@
           "templateFilter": ["BbwVnEJobtCR5oOf"],
           "itemFilterFormula": "",
           "sortPredicates": [],
-          "visibilityFormula": "StepType == 'Skill'"
+          "visibilityFormula": "equalText(StepType, 'Skill')"
         },
         {
           "key": "StepNotes",
@@ -134,7 +134,7 @@
               "size": "full-size",
               "label": "Difficulty:",
               "defaultValue": "",
-              "visibilityFormula": "StepType == 'Skill'"
+              "visibilityFormula": "equalText(StepType, 'Skill')"
             }
           ]
         }
