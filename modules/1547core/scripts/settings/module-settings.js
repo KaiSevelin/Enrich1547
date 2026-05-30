@@ -456,7 +456,7 @@ function buildWorldSpellRitualStepDocs(spellSources, spellDocs, ritualStepTempla
                 templateDoc: ritualStepTemplate,
                 props: buildRitualStepProps(stepSource),
                 folderId,
-                folderHint: "Spells",
+                folderHint: "Ritual Steps",
                 sourceData: stepSource,
             }));
         });
@@ -1542,6 +1542,7 @@ function createModuleSetupFormApplicationClass() {
             const weaponModifierFolder = await this.#getOrCreateFolder({ folderName: "Weapon Modifiers", type: "Item", parentId: coreItemFolder.id });
             const onHitEffectsFolder = await this.#getOrCreateFolder({ folderName: "On-Hit Effects", type: "Item", parentId: weaponModifierFolder.id });
             const spellsFolder = await this.#getOrCreateFolder({ folderName: "Spells", type: "Item", parentId: coreItemFolder.id });
+            const ritualStepsFolder = await this.#getOrCreateFolder({ folderName: "Ritual Steps", type: "Item", parentId: spellsFolder.id });
             const usageEffectsFolder = await this.#getOrCreateFolder({ folderName: "Usage Effects", type: "Item", parentId: coreItemFolder.id });
             const ritualStepRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Ritual Step Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#5b6276" });
             const spellFailureRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Spell Failure Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#6d5b5b" });
@@ -1591,6 +1592,7 @@ function createModuleSetupFormApplicationClass() {
                 weaponModifierFolder,
                 onHitEffectsFolder,
                 spellsFolder,
+                ritualStepsFolder,
                 usageEffectsFolder,
                 ritualStepRollTablesFolder,
                 spellFailureRollTablesFolder,
@@ -1689,7 +1691,7 @@ function createModuleSetupFormApplicationClass() {
                 normalizedSpells,
                 spellDocs,
                 ritualStepTemplate,
-                folders.spellsFolder.id
+                folders.ritualStepsFolder.id
             );
             const ritualStepRollTableDocs = ritualStepRollTables.map((table) =>
                 buildRitualStepRollTableDoc(table, folders.ritualStepRollTablesFolder.id, "Ritual Step Tables")
@@ -1778,12 +1780,15 @@ function createModuleSetupFormApplicationClass() {
             });
             await pruneManagedFolderItems({
                 folderId: folders.spellsFolder.id,
-                validIds: new Set([
-                    ...spellDocs.map((doc) => doc._id),
-                    ...spellRitualStepDocs.map((doc) => doc._id),
-                ]),
+                validIds: new Set(spellDocs.map((doc) => doc._id)),
                 templateId: spellTemplate._id,
                 folderHint: "Spells"
+            });
+            await pruneManagedFolderItems({
+                folderId: folders.ritualStepsFolder.id,
+                validIds: new Set(spellRitualStepDocs.map((doc) => doc._id)),
+                templateId: ritualStepTemplate._id,
+                folderHint: "Ritual Steps"
             });
             await pruneManagedFolderItems({
                 folderId: folders.usageEffectsFolder.id,
