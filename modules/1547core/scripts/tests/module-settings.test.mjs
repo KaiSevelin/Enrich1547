@@ -118,4 +118,50 @@ console.log("module-settings pure helpers...");
     console.log("  ✓ pruneDuplicateTemplates: deletes wrong-id duplicates and removed-template orphans, preserves unrelated content");
 }
 
+{
+    // refreshActorItemBodiesFromTemplates: walks actor items, refreshes body/
+    // header/display/hidden/templateSystemUniqueVersion from the canonical
+    // template, preserves props (and other system fields via toObject), skips
+    // items whose body already matches and items whose template is unrelated.
+    const { refreshActorItemBodiesFromTemplates } = await import("../settings/module-settings.js");
+
+    const templateDocs = [
+        { _id: "TPL1", system: { body: { contents: ["new"] }, header: {}, display: {}, hidden: [], templateSystemUniqueVersion: "v2" } },
+    ];
+
+    const stale = {
+        id: "stale1",
+        system: { template: "TPL1", body: { contents: ["old"] }, header: {}, display: {}, hidden: [], props: { keep: "yes" }, templateSystemUniqueVersion: "v1" },
+        toObject() { return JSON.parse(JSON.stringify({ _id: this.id, system: this.system })); },
+    };
+    const fresh = {
+        id: "fresh1",
+        system: { template: "TPL1", body: { contents: ["new"] }, header: {}, display: {}, hidden: [], props: {}, templateSystemUniqueVersion: "v2" },
+        toObject() { return JSON.parse(JSON.stringify({ _id: this.id, system: this.system })); },
+    };
+    const unrelated = {
+        id: "other",
+        system: { template: "OTHER", body: { contents: ["x"] } },
+        toObject() { return JSON.parse(JSON.stringify({ _id: this.id, system: this.system })); },
+    };
+
+    const calls = [];
+    const actor = {
+        items: { contents: [stale, fresh, unrelated] },
+        updateEmbeddedDocuments: async (type, list, opts) => { calls.push({ type, list, opts }); },
+    };
+
+    const result = await refreshActorItemBodiesFromTemplates(templateDocs, [actor]);
+    assert.strictEqual(result.refreshedItems, 1, "only the stale item is refreshed");
+    assert.strictEqual(result.touchedActors, 1);
+    assert.strictEqual(calls.length, 1);
+    assert.strictEqual(calls[0].type, "Item");
+    assert.strictEqual(calls[0].opts.recursive, false);
+    assert.strictEqual(calls[0].list[0]._id, "stale1");
+    assert.deepStrictEqual(calls[0].list[0].system.body, { contents: ["new"] }, "body refreshed from template");
+    assert.strictEqual(calls[0].list[0].system.props.keep, "yes", "props preserved via toObject()");
+    assert.strictEqual(calls[0].list[0].system.templateSystemUniqueVersion, "v2");
+    console.log("  ✓ refreshActorItemBodiesFromTemplates: refreshes stale bodies, preserves props, skips up-to-date and unrelated items");
+}
+
 console.log("\nAll module-settings pure-helper tests passed.");

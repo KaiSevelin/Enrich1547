@@ -195,41 +195,53 @@ async function handleModifierCreate(item, options) {
     await attachWeaponModifierToItem(targetItem, item);
 }
 
-// CSB renders only system.props fields defined on the template, so the
-// flag-stored attached modifier list never appears on the weapon/ammo sheet.
-// Inject a read-only notice so testers/GMs can verify attachments at a glance.
-const ATTACHED_NOTICE_ATTR = "data-1547core-attached-modifiers";
-
-function escapeHtml(value) {
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-}
-
-function renderAttachedModifiersNotice(app, html) {
+// CSB renders the attached-modifier flag through the AttachedModifierSummary
+// textArea on the weapon/ammo sheet. Find that textArea after CSB renders
+// the sheet and swap it for a clickable <ul> — each entry opens the modifier
+// item's sheet on click. If the CSB-rendered textArea isn't found (selector
+// drift, alternate sheet), the plain-text summary stays visible as fallback.
+function renderAttachedModifiersList(app, html) {
     // v1 ItemSheet exposes the doc as `app.object`; v2 ApplicationV2-based
     // sheets (e.g. CSB's EquippableItemSheetV2) expose it as `app.document`.
     const item = app?.document ?? app?.object ?? null;
     if (!isAttachableModifierTarget(item)) return;
     const actor = item?.parent;
-    const names = getAttachedModifierIds(item)
-        .map((id) => actor?.items?.get?.(id)?.name)
-        .filter(Boolean);
-    if (!names.length) return;
+    if (!actor) return;
+    const ids = getAttachedModifierIds(item);
+    if (!ids.length) return;
 
     const root = html instanceof HTMLElement ? html : html?.[0];
     if (!root?.querySelector) return;
-    root.querySelector(`[${ATTACHED_NOTICE_ATTR}]`)?.remove();
+    const textarea = root.querySelector('textarea[name="system.props.AttachedModifierSummary"]');
+    if (!textarea) return;
 
-    const notice = document.createElement("div");
-    notice.setAttribute(ATTACHED_NOTICE_ATTR, "true");
-    notice.style.cssText = "margin:6px 8px; padding:6px 10px; border:1px solid var(--color-border-light-tertiary, #888); border-radius:4px; background:rgba(0,0,0,0.04);";
-    notice.innerHTML = `<strong>Attached modifiers:</strong> ${escapeHtml(names.join(", "))}`;
-    const target = root.querySelector(".window-content") ?? root;
-    target.insertBefore(notice, target.firstChild);
+    const list = document.createElement("ul");
+    list.style.cssText = "list-style:none; padding:6px 10px; margin:0; border:1px solid var(--color-border-light-tertiary,#888); border-radius:4px; background:rgba(0,0,0,0.04);";
+
+    for (const id of ids) {
+        const modifierItem = actor.items?.get?.(id);
+        if (!modifierItem) continue;
+        const uses = getEffectiveUsesRemaining(modifierItem);
+        const usesText = uses !== null ? ` (${uses} ${uses === 1 ? "use" : "uses"})` : "";
+
+        const li = document.createElement("li");
+        li.style.cssText = "padding:3px 0;";
+        const link = document.createElement("a");
+        link.textContent = (modifierItem.name ?? "Unknown") + usesText;
+        link.title = `Open ${modifierItem.name ?? "modifier"} sheet`;
+        link.style.cssText = "cursor:pointer; text-decoration:underline;";
+        link.addEventListener("click", (event) => {
+            event.preventDefault();
+            modifierItem.sheet?.render(true);
+        });
+        li.appendChild(link);
+        list.appendChild(li);
+    }
+
+    // Swap out the surrounding label/form-group too so we don't leave an
+    // empty wrapper around the new list; fall back to the textarea alone.
+    const wrapper = textarea.closest("label, .form-group, .csb-textarea") ?? textarea;
+    wrapper.replaceWith(list);
 }
 
 export function registerWeaponModifierAttachmentService() {
@@ -248,9 +260,9 @@ export function registerWeaponModifierAttachmentService() {
     // prior notice is removed first), so double-firing is harmless.
     const onSheetRender = (app, html) => {
         try {
-            renderAttachedModifiersNotice(app, html);
+            renderAttachedModifiersList(app, html);
         } catch (error) {
-            console.error(`${MODULE_ID} | renderAttachedModifiersNotice failed`, error);
+            console.error(`${MODULE_ID} | renderAttachedModifiersList failed`, error);
         }
     };
     Hooks.on("renderItemSheet", onSheetRender);

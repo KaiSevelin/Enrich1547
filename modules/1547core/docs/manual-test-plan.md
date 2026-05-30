@@ -4,7 +4,7 @@ Covers the Foundry-coupled paths the Node test suite (`npm test`) cannot exercis
 the live HUD, item-sheet actions, document CRUD, roll tables, and the diagnostics
 button. This-session fixes are flagged **Regression**.
 
-_Current target: 1547core 0.2.17._
+_Current target: 1547core 0.2.18._
 
 ## Prerequisites
 
@@ -95,14 +95,15 @@ When I reload it says Reloaded crossbow with bolt, but loaded ammo is none
 
 ## E. Weapon-modifier attachment
 
-> Attached modifiers are stored as a Foundry flag (`flags["1547Core"].attachedModifierIds`). As of 0.2.17 the **WeaponTemplate** and **AmmunitionTemplate** both have an "Attached Modifiers" panel (CSB-native) that renders `system.props.AttachedModifierSummary`. The attachment service mirrors a `Name (N uses)` summary into that prop, and an `updateItem` hook keeps the summary in sync as attached/usesRemaining flags change. Note: re-run **Setup Data** after upgrading so the new panel appears on existing world weapon/ammo template instances.
+> Attached modifiers are stored as a Foundry flag (`flags["1547Core"].attachedModifierIds`). The **WeaponTemplate** and **AmmunitionTemplate** both have an "Attached Modifiers" panel (CSB-native) that renders `system.props.AttachedModifierSummary`. The attachment service mirrors a `Name (N uses)` summary into that prop, and an `updateItem` hook keeps the summary in sync as attached/usesRemaining flags change. A `renderItemSheet` hook then **replaces the textArea inside the panel with a clickable list** — each entry opens that modifier's item sheet on click. As of 0.2.18, **Setup Data also refreshes existing actor-owned items' bodies/headers/displays from the canonical template** (`refreshActorItemBodiesFromTemplates`), so template changes propagate to characters' equipped items without re-creating them. Re-run **Setup Data** after upgrading.
 
 ### E1 — Drop auto-attaches
 1. Drag a seeded weapon-modifier item onto an actor that owns a weapon.
 2. Open the target weapon's item sheet.
 
 **Expected:**
-- The weapon sheet shows an **"Attached Modifiers"** panel listing the new modifier name. If the modifier has a `durationType: "Uses"` with `durationValue: N`, the entry reads `Name (N uses)`.
+- The weapon sheet shows an **"Attached Modifiers"** panel containing a clickable list with one entry per attached modifier. If the modifier has a `durationType: "Uses"` with `durationValue: N`, the entry reads `Name (N uses)`.
+- Clicking a name **opens the modifier item's sheet** (you can inspect its stats / uses there).
 - The HUD weapon row shows the modifier in `weaponModifierNames`.
 - Console verification (optional):
   ```js

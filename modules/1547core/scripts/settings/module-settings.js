@@ -123,6 +123,7 @@ export {
     buildSpellFailureRollTableDoc,
     pruneDuplicateTemplates,
     OBSOLETE_TEMPLATE_NAMES,
+    refreshActorItemBodiesFromTemplates,
 };
 
 function normalizeTypeList(values) {
@@ -825,6 +826,48 @@ async function pruneDuplicateTemplates(canonicalDocs) {
     return { removed: staleIds.length };
 }
 
+// CSB stores `system.body`/header/display/hidden on each instance item, cloned
+// from the template at creation. Updating the template doc on Setup Data does
+// NOT propagate to actor-owned items, so existing actors keep the old sheet
+// shape forever. Walk all actors and refresh those parts of system from the
+// canonical templates, preserving props/modifiers/flags/template-id.
+async function refreshActorItemBodiesFromTemplates(templateDocs, actors = game.actors) {
+    const templatesById = new Map(templateDocs.map((doc) => [doc._id, doc]));
+    let refreshedItems = 0;
+    let touchedActors = 0;
+
+    for (const actor of actors ?? []) {
+        const items = actor?.items?.contents ?? Array.from(actor?.items ?? []);
+        const updates = [];
+        for (const item of items) {
+            const tpl = templatesById.get(item?.system?.template);
+            if (!tpl?.system) continue;
+
+            const sameBody = JSON.stringify(item.system?.body) === JSON.stringify(tpl.system.body);
+            const sameHeader = JSON.stringify(item.system?.header) === JSON.stringify(tpl.system.header);
+            const sameDisplay = JSON.stringify(item.system?.display) === JSON.stringify(tpl.system.display);
+            const sameHidden = JSON.stringify(item.system?.hidden ?? []) === JSON.stringify(tpl.system.hidden ?? []);
+            const sameVersion = item.system?.templateSystemUniqueVersion === tpl.system.templateSystemUniqueVersion;
+            if (sameBody && sameHeader && sameDisplay && sameHidden && sameVersion) continue;
+
+            const data = item.toObject();
+            data.system.body = foundry.utils.deepClone(tpl.system.body);
+            data.system.header = foundry.utils.deepClone(tpl.system.header);
+            data.system.display = foundry.utils.deepClone(tpl.system.display);
+            data.system.hidden = foundry.utils.deepClone(tpl.system.hidden ?? []);
+            data.system.templateSystemUniqueVersion = tpl.system.templateSystemUniqueVersion;
+            updates.push(data);
+        }
+        if (updates.length && actor?.updateEmbeddedDocuments) {
+            await actor.updateEmbeddedDocuments("Item", updates, { recursive: false });
+            refreshedItems += updates.length;
+            touchedActors += 1;
+        }
+    }
+
+    return { refreshedItems, touchedActors };
+}
+
 async function pruneManagedFolderItems({ folderId, validIds, templateId, folderHint }) {
     if (!folderId || !(validIds instanceof Set)) {
         return { removed: 0 };
@@ -1434,6 +1477,12 @@ function createModuleSetupFormApplicationClass() {
             ];
             await upsertWorldItems(templateDocs);
             await pruneDuplicateTemplates(templateDocs);
+            // CSB stores body/header/display on each instance; templates alone
+            // don't propagate updates to existing actor-owned items.
+            const bodyRefresh = await refreshActorItemBodiesFromTemplates(templateDocs);
+            if (bodyRefresh.refreshedItems > 0) {
+                console.log(`${MODULE_ID} | Setup Data: refreshed ${bodyRefresh.refreshedItems} actor item body/bodies across ${bodyRefresh.touchedActors} actor(s)`);
+            }
 
             const folders = await this.#buildManagedFolderTree();
 
