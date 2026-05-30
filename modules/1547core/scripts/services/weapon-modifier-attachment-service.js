@@ -132,7 +132,9 @@ function escapeHtml(value) {
 }
 
 function renderAttachedModifiersNotice(app, html) {
-    const item = app?.object;
+    // v1 ItemSheet exposes the doc as `app.object`; v2 ApplicationV2-based
+    // sheets (e.g. CSB's EquippableItemSheetV2) expose it as `app.document`.
+    const item = app?.document ?? app?.object ?? null;
     if (!isAttachableModifierTarget(item)) return;
     const actor = item?.parent;
     const names = getAttachedModifierIds(item)
