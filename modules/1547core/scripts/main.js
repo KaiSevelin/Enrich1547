@@ -125,6 +125,11 @@ Hooks.once("ready", () => {
         (module) => module.registerTierDisplay()
     );
     void runImportedModuleStep(
+        "registerMonsterValidationDisplay",
+        () => import("./services/monster-validation-display-service.js"),
+        (module) => module.registerMonsterValidationDisplay()
+    );
+    void runImportedModuleStep(
         "register1547CombatTrackerSideGroups",
         () => import("./combat-tracker/side-tracker.js"),
         (module) => module.register1547CombatTrackerSideGroups()
