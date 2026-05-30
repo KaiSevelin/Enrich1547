@@ -541,18 +541,19 @@ function buildDiceTree(data, deps = {}) {
 function getCategoryDefinitions(data) {
     return [
         { key: "dice", label: "Dice", count: null, icon: "fa-dice-d20" },
-        { key: "overview", label: "Overview", count: null },
-        { key: "stats", label: "Stats", count: data.stats.length },
+        { key: "overview", label: "Overview", count: null, icon: "fa-eye" },
+        { key: "stats", label: "Stats", count: data.stats.length, icon: "fa-chart-simple" },
         { key: "supernatural-marks", label: "Powers", count: data.supernaturalMarks.length + data.monsterMagic.length, icon: "fa-sparkles" },
         {
             key: "equipped",
             label: "Equipped",
-            count: data.equippedWeapons.length + data.equippedArmor.length + data.equippedInventory.filter((item) => item.itemKind !== "weapon" && item.itemKind !== "armor").length
+            count: data.equippedWeapons.length + data.equippedArmor.length + data.equippedInventory.filter((item) => item.itemKind !== "weapon" && item.itemKind !== "armor").length,
+            icon: "fa-shield-halved"
         },
-        { key: "inventory", label: "Inventory", count: data.inventory.length },
-        { key: "maneuvers", label: "Maneuvers", count: data.maneuverCount },
-        { key: "skills", label: "Skills", count: data.skills.length },
-        { key: "conditions", label: "Conditions", count: data.conditions.length }
+        { key: "inventory", label: "Inventory", count: data.inventory.length, icon: "fa-bag-shopping" },
+        { key: "maneuvers", label: "Maneuvers", count: data.maneuverCount, icon: "fa-hand-fist" },
+        { key: "skills", label: "Skills", count: data.skills.length, icon: "fa-graduation-cap" },
+        { key: "conditions", label: "Conditions", count: data.conditions.length, icon: "fa-heart-pulse" }
     ];
 }
 
