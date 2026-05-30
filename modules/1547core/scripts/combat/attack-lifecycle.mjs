@@ -43,21 +43,42 @@ const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
 
 function resolveAttachedWeaponModifiers({ actor, parentItem, attachedModifierIds = [] } = {}) {
-    if (!Array.isArray(attachedModifierIds) || !attachedModifierIds.length) return [];
+    const parentId = parentItem?.id ?? parentItem?._id ?? null;
     const actorItems = actor?.items;
     const parentItems = parentItem?.parent?.items;
-    return attachedModifierIds
+
+    // Two sources of truth (this round): the legacy `attachedModifierIds`
+    // flag AND modifiers whose `system.container` points at this weapon/ammo
+    // (CSB sets that when a modifier is dropped into the itemContainer
+    // component on the parent's sheet). Union + dedupe so combat sees a
+    // modifier attached via either path.
+    const ids = new Set();
+    if (Array.isArray(attachedModifierIds)) {
+        for (const id of attachedModifierIds) {
+            const trimmed = String(id ?? "").trim();
+            if (trimmed) ids.add(trimmed);
+        }
+    }
+    if (parentId) {
+        const itemsList = actorItems?.contents ?? Array.from(actorItems ?? []);
+        for (const candidate of itemsList) {
+            if (String(candidate?.system?.container ?? "").trim() !== parentId) continue;
+            const id = String(candidate.id ?? candidate._id ?? "").trim();
+            if (id) ids.add(id);
+        }
+    }
+    if (!ids.size) return [];
+
+    return Array.from(ids)
         .map((modifierId) => {
-            const normalizedId = String(modifierId ?? "").trim();
-            if (!normalizedId) return null;
-            const modifierDoc = actorItems?.get?.(normalizedId)
-                ?? parentItems?.get?.(normalizedId)
+            const modifierDoc = actorItems?.get?.(modifierId)
+                ?? parentItems?.get?.(modifierId)
                 ?? null;
             const normalized = normalizeWeaponModifier(modifierDoc);
             if (!normalized) return null;
             return {
                 ...normalized,
-                attachedToItemId: parentItem?.id ?? parentItem?._id ?? null,
+                attachedToItemId: parentId,
             };
         })
         .filter(Boolean);
