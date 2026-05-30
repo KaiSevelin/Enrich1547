@@ -304,9 +304,25 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
         const hpText = Number.isFinite(Number(resolvedAttack?.hitPointUpdate?.currentHitPoints))
             ? `<br>HP: ${escapeHtml(String(resolvedAttack.hitPointUpdate.currentHitPoints))}${Number.isFinite(Number(resolvedAttack?.hitPointUpdate?.previousHitPoints)) ? ` / was ${escapeHtml(String(resolvedAttack.hitPointUpdate.previousHitPoints))}` : ""}`
             : "";
+        const firedRiders = Array.isArray(resolvedAttack?.secondaryEffects) ? resolvedAttack.secondaryEffects : [];
+        const ridersText = firedRiders.length
+            ? "<br>Riders fired:<br>" + firedRiders.map(({ modifier, effect }) => {
+                const name = String(modifier?.name ?? "Modifier");
+                const resolution = String(effect?.resolution ?? "automatic");
+                const payload = [];
+                const damageAmount = Number(effect?.damageAmount ?? 0) || 0;
+                if (damageAmount > 0) payload.push(`${damageAmount} ${String(effect?.damageType ?? "").trim() || "damage"}`);
+                const status = String(effect?.applyStatus ?? "").trim();
+                if (status) payload.push(`status ${status}`);
+                const tag = String(effect?.applyTag ?? "").trim();
+                if (tag) payload.push(`tag ${tag}`);
+                const payloadText = payload.length ? payload.join(", ") : "(check passed, no payload)";
+                return `• ${escapeHtml(name)} — ${escapeHtml(resolution)}: ${escapeHtml(payloadText)}`;
+              }).join("<br>")
+            : "";
         await ChatMessage.create({
             speaker,
-            content: `<strong>Attack Result</strong><br>${escapeHtml(attackerName)} -> ${escapeHtml(defenderName)}<br>Damage: ${escapeHtml(String(resolvedAttack?.attackRoll?.damage ?? 0))}<br>Protection: ${escapeHtml(String(resolvedAttack?.defenseRoll?.protection ?? 0))}<br>Applied: ${escapeHtml(String(resolvedAttack?.damageApplied ?? 0))}<br>Critical: ${escapeHtml(String(resolvedAttack?.currentCriticalPoints ?? 0))}${hpText}`
+            content: `<strong>Attack Result</strong><br>${escapeHtml(attackerName)} -> ${escapeHtml(defenderName)}<br>Damage: ${escapeHtml(String(resolvedAttack?.attackRoll?.damage ?? 0))}<br>Protection: ${escapeHtml(String(resolvedAttack?.defenseRoll?.protection ?? 0))}<br>Applied: ${escapeHtml(String(resolvedAttack?.damageApplied ?? 0))}<br>Critical: ${escapeHtml(String(resolvedAttack?.currentCriticalPoints ?? 0))}${hpText}${ridersText}`
         });
 
         await consumePersistentEffectIfPresent(context.actor, "aimed", deps);

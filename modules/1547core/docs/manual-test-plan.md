@@ -133,7 +133,7 @@ When I reload it says Reloaded crossbow with bolt, but loaded ammo is none
 - After attack 3: the modifier item is **deleted from the actor**; the container row vanishes (CSB removes it because `system.container` no longer resolves).
 - The HUD's "Modifiers" row mirrors the same lifecycle.
 ---
-After an attack with poisoned, the usesRemaining is not updated.
+After an attack with poisoned, the usesRemaining is not still updated.
 
 ## F. Combat on-hit effects — **Regression** (`save` resolution)
 
@@ -142,13 +142,7 @@ After an attack with poisoned, the usesRemaining is not updated.
 
 **Expected:** Secondary damage + status applied; chat/HUD reflects it.
 
-Attack Result
-Spelare 1 -> Spelare 2
-Damage: 0
-Protection: 0
-Applied: 1
-Critical: 4
-HP: null / was 3
+
 
 ### F2 — `contest` rider
 1. `resolution: "contest"`, `sourceCheck: "source Dexterity"`, `targetCheck: "target Stamina"`. Attack where attacker Dexterity ≥ defender Stamina.
@@ -160,7 +154,7 @@ HP: null / was 3
 
 **Expected:** Rider **fires**. _(Previously never fired.)_ Raise the defender's Power above the difficulty → rider is resisted (does not fire).
 
-No save is done
+No save is done still
 ---
 
 ## G. Spell casting — **Regression** (failure table)
