@@ -4,7 +4,7 @@ Covers the Foundry-coupled paths the Node test suite (`npm test`) cannot exercis
 the live HUD, item-sheet actions, document CRUD, roll tables, and the diagnostics
 button. This-session fixes are flagged **Regression**.
 
-_Current target: 1547core 0.2.21._
+_Current target: 1547core 0.2.22._
 
 ## Prerequisites
 
@@ -95,7 +95,7 @@ When I reload it says Reloaded crossbow with bolt, but loaded ammo is none
 
 ## E. Weapon-modifier attachment
 
-> As of 0.2.19 the "Attached Modifiers" surface is a **CSB-native `itemContainer`** on the WeaponTemplate / AmmunitionTemplate (filtered to WeaponModifierTemplate). It renders the attached modifiers as clickable rows that open each modifier's sheet, and surfaces a **Uses remaining** column populated from `system.props.UsesRemaining`. On every fire, the consume path decrements both the legacy `flags["1547Core"].usesRemaining` and the new prop (so the column updates); when uses hit 0 the modifier item is deleted and CSB removes it from the container. A one-time `ready` migration (`runContainerMigration`) backfills `system.container` and `system.props.UsesRemaining` on existing attachments. As of **0.2.21**, the combat resolver finds modifiers via **both** the legacy flag *and* the `system.container` relationship (union), so modifiers attached by dropping directly into the CSB container are honoured by combat without any extra wiring. Re-run **Setup Data** after upgrading so the templates pick up the new container component and the new prop field.
+> The "Attached Modifiers" surface is a **CSB-native `itemContainer`** on the WeaponTemplate / AmmunitionTemplate (filtered to WeaponModifierTemplate). Rows open each modifier's sheet, and a **Uses remaining** column reads from `system.props.UsesRemaining`. The consume path decrements both the legacy `flags["1547Core"].usesRemaining` and the prop; when uses hit 0 the modifier item is deleted and CSB drops the row. The combat resolver unions flag-based and `system.container`-based attachments, so drops directly into the container are honoured. As of **0.2.22**, on-hit effects are first-class items (`OnHitEffectTemplate`) shown in an `itemContainer` on each WeaponModifier sheet: child items with `system.container = modifier.id` carry the per-effect props (TriggerMode, ArmorInteraction, Resolution, SourceCheck/TargetCheck/Difficulty, DamageType/Amount/Qualifiers, ApplyStatus/Tag, Notes). Combat normalisation reads the effects from those child items (falling back to the legacy JSON prop for unmigrated worlds). A `createItem` hook auto-seeds child effects from `source.onHitEffects` on modifier creation, and `runContainerMigration` backfills existing actor modifiers. Re-run **Setup Data** after upgrading so the new template ships and the modifier sheet picks up the new container component.
 
 ### E1 — Drop auto-attaches
 1. Drag a seeded weapon-modifier item onto an actor that owns a weapon.

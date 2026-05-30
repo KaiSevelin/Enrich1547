@@ -7,6 +7,7 @@ const TEMPLATE_FILES = {
     armor: "fvtt-Item-armortemplate-uLlgZXz3GlXPFtsj.json",
     ammo: "fvtt-Item-ammunitiontemplate-389uqkKKn8M1SKux.json",
     weaponModifier: "fvtt-Item-weaponmodifiertemplate-WmP9Ld3Qs7Nk2FvR.json",
+    onHitEffect: "fvtt-Item-onhiteffecttemplate-OnH1tEffectTmpl0.json",
     supernaturalMark: "fvtt-Item-supernaturalmarktemplate-w9ky0ZTDvXDs5Ce7.json",
     monsterMagic: "fvtt-Item-monstermagictemplate-M0nMgk7Yp2RsT5Vu.json",
     spell: "fvtt-Item-spelltemplate-2kiWw3Cv5Zk1lZxn.json",
@@ -1439,13 +1440,14 @@ function createModuleSetupFormApplicationClass() {
         }
 
         async #importItemsFromData({ maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, monsters, changeSets, changes, requirements }) {
-            const [actorTemplate, maneuverTemplate, weaponTemplate, armorTemplate, ammoTemplate, weaponModifierTemplate, supernaturalMarkTemplate, monsterMagicTemplate, spellTemplate, pactTemplate, ritualTemplate, ritualStepTemplate, usageEffectTemplate, changeSetTemplate, changeTemplate, requirementTemplate] = await Promise.all([
+            const [actorTemplate, maneuverTemplate, weaponTemplate, armorTemplate, ammoTemplate, weaponModifierTemplate, onHitEffectTemplate, supernaturalMarkTemplate, monsterMagicTemplate, spellTemplate, pactTemplate, ritualTemplate, ritualStepTemplate, usageEffectTemplate, changeSetTemplate, changeTemplate, requirementTemplate] = await Promise.all([
                 this.#loadTemplate(TEMPLATE_FILES.actorTemplate),
                 this.#loadTemplate(TEMPLATE_FILES.maneuver),
                 this.#loadTemplate(TEMPLATE_FILES.weapon),
                 this.#loadTemplate(TEMPLATE_FILES.armor),
                 this.#loadTemplate(TEMPLATE_FILES.ammo),
                 this.#loadTemplate(TEMPLATE_FILES.weaponModifier),
+                this.#loadTemplate(TEMPLATE_FILES.onHitEffect),
                 this.#loadTemplate(TEMPLATE_FILES.supernaturalMark),
                 this.#loadTemplate(TEMPLATE_FILES.monsterMagic),
                 this.#loadTemplate(TEMPLATE_FILES.spell),
@@ -1464,6 +1466,7 @@ function createModuleSetupFormApplicationClass() {
                 makeTemplateDoc(maneuverTemplate),
                 makeTemplateDoc(ammoTemplate),
                 makeTemplateDoc(weaponModifierTemplate),
+                makeTemplateDoc(onHitEffectTemplate),
                 makeTemplateDoc(supernaturalMarkTemplate),
                 makeTemplateDoc(monsterMagicTemplate),
                 makeTemplateDoc(spellTemplate),

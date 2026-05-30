@@ -3,6 +3,7 @@ const SOURCE_FLAG_SCOPE = "1547Core";
 const MODIFIER_TEMPLATE_ID = "WmP9Ld3Qs7Nk2FvR";
 const WEAPON_TEMPLATE_ID = "qZCfLEYQ7egbm1B9";
 const AMMO_TEMPLATE_ID = "389uqkKKn8M1SKux";
+export const ON_HIT_EFFECT_TEMPLATE_ID = "OnH1tEffectTmpl0";
 const ATTACH_GUARD = `${MODULE_ID}.weaponModifierAttachGuard`;
 
 function readSourceData(doc) {
@@ -218,8 +219,103 @@ async function handleModifierCreate(item, options) {
     }
 
     const targetItem = inferModifierAttachmentTarget(item);
-    if (!targetItem) return;
-    await attachWeaponModifierToItem(targetItem, item);
+    if (targetItem) {
+        await attachWeaponModifierToItem(targetItem, item);
+    }
+
+    // On-hit effects are items in 0.2.22+. Seed one OnHitEffectTemplate child
+    // item per source.onHitEffects entry so they show up in the modifier's
+    // itemContainer and the combat lifecycle reads them via system.container.
+    await seedOnHitEffectItemsForModifier(item);
+}
+
+function deepClone(value) {
+    if (value === undefined) return value;
+    if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
+    return JSON.parse(JSON.stringify(value));
+}
+
+// Returns null when the source entry yields no usable shape.
+export function buildOnHitEffectItemDoc(effectSource, modifierId, templateDoc) {
+    if (!effectSource || !templateDoc) return null;
+    const trigger = String(effectSource.triggerMode ?? "onAnyHit").trim() || "onAnyHit";
+    const damageType = String(effectSource.damageType ?? "").trim();
+    const applyStatus = String(effectSource.applyStatus ?? "").trim();
+    const name = `${damageType || applyStatus || "Effect"} (${trigger})`;
+    const qualifiers = Array.isArray(effectSource.damageQualifiers)
+        ? effectSource.damageQualifiers.join(", ")
+        : String(effectSource.damageQualifiers ?? "");
+    const props = {
+        Description: String(effectSource.notes ?? "").trim(),
+        TriggerMode: trigger,
+        ArmorInteraction: String(effectSource.armorInteraction ?? "normal").trim() || "normal",
+        Resolution: String(effectSource.resolution ?? "automatic").trim() || "automatic",
+        SourceCheck: String(effectSource.sourceCheck ?? "").trim(),
+        TargetCheck: String(effectSource.targetCheck ?? "").trim(),
+        Difficulty: Number(effectSource.difficulty ?? 0) || 0,
+        DamageType: damageType,
+        DamageAmount: Number(effectSource.damageAmount ?? 0) || 0,
+        DamageQualifiers: qualifiers,
+        ApplyStatus: applyStatus,
+        ApplyTag: String(effectSource.applyTag ?? "").trim(),
+        Notes: String(effectSource.notes ?? "").trim(),
+    };
+    return {
+        name,
+        type: "equippableItem",
+        img: templateDoc.img ?? "icons/svg/burning.svg",
+        system: {
+            body: deepClone(templateDoc.system?.body),
+            display: deepClone(templateDoc.system?.display) ?? {},
+            header: deepClone(templateDoc.system?.header),
+            hidden: deepClone(templateDoc.system?.hidden ?? []),
+            modifiers: [],
+            template: templateDoc._id,
+            templateSystemUniqueVersion: templateDoc.system?.templateSystemUniqueVersion,
+            container: modifierId,
+            props,
+        },
+        flags: {
+            "custom-system-builder": {
+                version: templateDoc.flags?.["custom-system-builder"]?.version ?? "5.2.0",
+            },
+            [SOURCE_FLAG_SCOPE]: {
+                sourceData: deepClone(effectSource),
+            },
+        },
+    };
+}
+
+export async function seedOnHitEffectItemsForModifier(modifierItem) {
+    const actor = modifierItem?.parent;
+    if (actor?.documentName !== "Actor") return { created: 0 };
+    if (!isWeaponModifierItem(modifierItem)) return { created: 0 };
+
+    const source = readSourceData(modifierItem);
+    const sourceEffects = Array.isArray(source?.onHitEffects) ? source.onHitEffects : null;
+    if (!sourceEffects?.length) return { created: 0 };
+
+    // Skip when child OnHitEffect items already exist for this modifier.
+    const items = actor.items?.contents ?? Array.from(actor.items ?? []);
+    const alreadySeeded = items.some((it) =>
+        it?.system?.template === ON_HIT_EFFECT_TEMPLATE_ID
+        && String(it?.system?.container ?? "") === modifierItem.id
+    );
+    if (alreadySeeded) return { created: 0 };
+
+    const templateDoc = game.items?.get?.(ON_HIT_EFFECT_TEMPLATE_ID);
+    if (!templateDoc?.system?.body) {
+        console.warn(`${MODULE_ID} | OnHitEffectTemplate not in world; cannot seed child effects for ${modifierItem.name}`);
+        return { created: 0 };
+    }
+
+    const docs = sourceEffects
+        .map((effectSource) => buildOnHitEffectItemDoc(effectSource, modifierItem.id, templateDoc))
+        .filter(Boolean);
+    if (!docs.length) return { created: 0 };
+
+    await actor.createEmbeddedDocuments("Item", docs);
+    return { created: docs.length };
 }
 
 // CSB renders the attached-modifier flag through the AttachedModifierSummary

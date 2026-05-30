@@ -295,6 +295,47 @@ export function normalizeAmmoItem(ammo) {
     };
 }
 
+// Mirror of services/weapon-modifier-attachment-service.js. The combat
+// normaliser is purely a read, so hard-coding the template id keeps it free
+// of cross-package imports.
+const ON_HIT_EFFECT_TEMPLATE_ID = "OnH1tEffectTmpl0";
+
+function normalizeOnHitEffectItem(item) {
+    const props = item?.system?.props ?? {};
+    return {
+        triggerMode: String(props.TriggerMode ?? "").trim() || "onAnyHit",
+        armorInteraction: String(props.ArmorInteraction ?? "").trim() || "normal",
+        resolution: String(props.Resolution ?? "").trim() || "automatic",
+        sourceCheck: String(props.SourceCheck ?? "").trim(),
+        targetCheck: String(props.TargetCheck ?? "").trim(),
+        difficulty: Number(props.Difficulty ?? 0) || 0,
+        damageType: String(props.DamageType ?? "").trim(),
+        damageAmount: Number(props.DamageAmount ?? 0) || 0,
+        damageQualifiers: String(props.DamageQualifiers ?? "").split(",").map((s) => s.trim()).filter(Boolean),
+        applyStatus: String(props.ApplyStatus ?? "").trim(),
+        applyTag: String(props.ApplyTag ?? "").trim(),
+        notes: String(props.Notes ?? "").trim(),
+    };
+}
+
+function resolveOnHitEffectsForModifier(modifier, source, props) {
+    // Prefer child OnHitEffect items when the modifier is on an actor.
+    const actor = modifier?.parent;
+    const modifierId = modifier?.id ?? modifier?._id ?? null;
+    if (actor?.documentName === "Actor" && modifierId) {
+        const items = actor.items?.contents ?? Array.from(actor.items ?? []);
+        const children = items.filter((it) =>
+            it?.system?.template === ON_HIT_EFFECT_TEMPLATE_ID
+            && String(it?.system?.container ?? "") === modifierId
+        );
+        if (children.length) return children.map(normalizeOnHitEffectItem);
+    }
+    // Fallback: legacy source array or props JSON (worlds not yet migrated).
+    return Array.isArray(source?.onHitEffects)
+        ? [...source.onHitEffects]
+        : (parseJsonString(props.OnHitEffects, []) ?? []);
+}
+
 export function normalizeWeaponModifier(modifier) {
     if (!modifier) return null;
     const source = readSourceData(modifier) ?? {};
@@ -328,9 +369,7 @@ export function normalizeWeaponModifier(modifier) {
         tags: Array.isArray(source.tags)
             ? [...source.tags]
             : parseCommaList(props.Tags),
-        onHitEffects: Array.isArray(source.onHitEffects)
-            ? [...source.onHitEffects]
-            : (parseJsonString(props.OnHitEffects, []) ?? []),
+        onHitEffects: resolveOnHitEffectsForModifier(modifier, source, props),
         appliesToProfiles: Array.isArray(source.appliesToProfiles)
             ? [...source.appliesToProfiles]
             : parseCommaList(props.AppliesToProfiles),
