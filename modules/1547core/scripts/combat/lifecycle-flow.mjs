@@ -148,8 +148,14 @@ function resolveOnHitEffectSuccess(effect, context) {
 }
 
 function cloneActorWithHitPoints(actor, currentHitPoints) {
+    // Foundry Actors expose `id` as a prototype getter; the spread below
+    // would drop it, and downstream planApplyDamage bails on missing id
+    // and returns a null hitPointUpdate. Copy `id` (and `name`, for chat
+    // attribution) explicitly so the secondary-damage pass keeps working.
     return {
         ...actor,
+        id: actor?.id,
+        name: actor?.name,
         system: {
             ...(actor?.system ?? {}),
             props: {
@@ -495,7 +501,12 @@ export async function resolveAttackOutcomePhased({
         (sum, entry) => sum + Math.max(0, Number(entry.effect?.damageAmount ?? 0) || 0),
         0
     );
-    if (secondaryDamageApplied > 0 || triggeredModifierEffects.some((entry) => String(entry.effect?.applyStatus ?? "").trim())) {
+    // Any rider that passed shouldTrigger/armorInteraction/resolveSuccess counts
+    // as fired even with an empty payload (e.g. a save rider authored only as a
+    // gating check, no damage/status). Firing must still consume the modifier's
+    // charge and surface in DAMAGE_APPLIED; otherwise zero-payload riders are
+    // silently ignored.
+    if (triggeredModifierEffects.length > 0) {
         const targetAfterBaseDamage = cloneActorWithHitPoints(pendingAttack.target, hitPointUpdate.currentHitPoints);
         const secondaryDamagePlan = secondaryDamageApplied > 0
             ? planApplyDamage(targetAfterBaseDamage, secondaryDamageApplied)
