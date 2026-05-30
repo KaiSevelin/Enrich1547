@@ -117,9 +117,52 @@ async function handleModifierCreate(item, options) {
     await attachWeaponModifierToItem(targetItem, item);
 }
 
+// CSB renders only system.props fields defined on the template, so the
+// flag-stored attached modifier list never appears on the weapon/ammo sheet.
+// Inject a read-only notice so testers/GMs can verify attachments at a glance.
+const ATTACHED_NOTICE_ATTR = "data-1547core-attached-modifiers";
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function renderAttachedModifiersNotice(app, html) {
+    const item = app?.object;
+    if (!isAttachableModifierTarget(item)) return;
+    const actor = item?.parent;
+    const names = getAttachedModifierIds(item)
+        .map((id) => actor?.items?.get?.(id)?.name)
+        .filter(Boolean);
+    if (!names.length) return;
+
+    const root = html instanceof HTMLElement ? html : html?.[0];
+    if (!root?.querySelector) return;
+    root.querySelector(`[${ATTACHED_NOTICE_ATTR}]`)?.remove();
+
+    const notice = document.createElement("div");
+    notice.setAttribute(ATTACHED_NOTICE_ATTR, "true");
+    notice.style.cssText = "margin:6px 8px; padding:6px 10px; border:1px solid var(--color-border-light-tertiary, #888); border-radius:4px; background:rgba(0,0,0,0.04);";
+    notice.innerHTML = `<strong>Attached modifiers:</strong> ${escapeHtml(names.join(", "))}`;
+    const target = root.querySelector(".window-content") ?? root;
+    target.insertBefore(notice, target.firstChild);
+}
+
 export function registerWeaponModifierAttachmentService() {
     Hooks.on("createItem", (item, options) => {
         void handleModifierCreate(item, options);
+    });
+
+    Hooks.on("renderItemSheet", (app, html) => {
+        try {
+            renderAttachedModifiersNotice(app, html);
+        } catch (error) {
+            console.error(`${MODULE_ID} | renderAttachedModifiersNotice failed`, error);
+        }
     });
 
     const moduleApi = game.modules.get(MODULE_ID);

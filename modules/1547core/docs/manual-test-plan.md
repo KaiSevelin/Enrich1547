@@ -4,7 +4,7 @@ Covers the Foundry-coupled paths the Node test suite (`npm test`) cannot exercis
 the live HUD, item-sheet actions, document CRUD, roll tables, and the diagnostics
 button. This-session fixes are flagged **Regression**.
 
-_Current target: 1547core 0.2.11._
+_Current target: 1547core 0.2.14._
 
 ## Prerequisites
 
@@ -95,16 +95,31 @@ When I reload it says Reloaded crossbow with bolt, but loaded ammo is none
 
 ## E. Weapon-modifier attachment
 
+> Attached modifiers are stored as a Foundry flag (`flags["1547Core"].attachedModifierIds`), which CSB does not surface on the item sheet. As of 0.2.14 the module injects a read-only **"Attached modifiers: …"** notice at the top of weapon/ammo sheets so attachments are visible on the sheet as well as in the HUD.
+
 ### E1 — Drop auto-attaches
 1. Drag a seeded weapon-modifier item onto an actor that owns a weapon.
+2. Open the target weapon's item sheet.
 
-**Expected:** The modifier is created and **auto-attached** to the inferred target weapon (its id appears in the weapon's `attachedModifierIds`); the HUD reflects it.
+**Expected:**
+- The weapon sheet displays an injected **"Attached modifiers: \<name\>"** notice listing the new modifier.
+- The HUD weapon row shows the modifier in `weaponModifierNames`.
+- Console verification (optional):
+  ```js
+  const a = canvas.tokens.controlled[0].actor;
+  const w = a.items.find(i => i.name === "Dagger");
+  console.log(w.flags["1547Core"].attachedModifierIds);
+  ```
+  prints `[<modifier-id>]`.
 
 ### E2 — Stack replace
-1. Attach a second modifier with the same stack key.
+1. With one modifier already attached (E1), drag a second modifier that has the **same `stackKey`** onto the actor.
+2. Re-open the target weapon's sheet.
 
-**Expected:** The same-key modifier is **replaced**, not duplicated; other modifiers are preserved.
-
+**Expected:**
+- The "Attached modifiers" notice still lists exactly one modifier — the **new** one replaces the previous same-key modifier; other (different-key) modifiers are preserved.
+- The HUD reflects the same list.
+- `attachedModifierIds` in flags contains one id where it previously contained the old one.
 ---
 
 ## F. Combat on-hit effects — **Regression** (`save` resolution)
