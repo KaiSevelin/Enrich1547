@@ -157,13 +157,20 @@ export function registerWeaponModifierAttachmentService() {
         void handleModifierCreate(item, options);
     });
 
-    Hooks.on("renderItemSheet", (app, html) => {
+    // v1 sheets fire renderItemSheet; v2 sheets (Foundry v12+/v13 with
+    // ApplicationV2-based sheet classes, which CSB may use) fire
+    // renderItemSheetV2. Register both so the notice appears regardless of
+    // which API the active item sheet uses. The render is idempotent (any
+    // prior notice is removed first), so double-firing is harmless.
+    const onSheetRender = (app, html) => {
         try {
             renderAttachedModifiersNotice(app, html);
         } catch (error) {
             console.error(`${MODULE_ID} | renderAttachedModifiersNotice failed`, error);
         }
-    });
+    };
+    Hooks.on("renderItemSheet", onSheetRender);
+    Hooks.on("renderItemSheetV2", onSheetRender);
 
     const moduleApi = game.modules.get(MODULE_ID);
     if (!moduleApi) {
