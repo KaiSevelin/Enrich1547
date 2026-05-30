@@ -991,6 +991,20 @@ a.enricher-1547::before {
   gap: 0.16rem 0.6rem;
 }
 
+.actor-hud-1547 .hud-weapon-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.actor-hud-1547 .hud-chip-row-inline {
+  display: inline-flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
 .actor-hud-1547 .hud-dice-row {
   display: flex;
   align-items: center;
