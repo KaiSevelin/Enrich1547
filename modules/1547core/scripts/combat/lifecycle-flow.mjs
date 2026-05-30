@@ -73,11 +73,18 @@ function getActorStatCheckValue(actor, statName) {
     return dice + mod;
 }
 
-function parseCheckDescriptor(descriptor = "") {
+// Accepts either "source X" / "target X" (legacy/freeform) or a bare stat
+// name "X" (new stat-only dropdowns). When the value is bare, the caller's
+// `defaultSide` picks the side from the field's natural meaning
+// (sourceCheck → source, targetCheck → target).
+function parseCheckDescriptor(descriptor = "", defaultSide = null) {
     const trimmed = String(descriptor ?? "").trim();
     if (!trimmed) return null;
     const parts = trimmed.split(/\s+/);
-    if (parts.length < 2) return null;
+    if (parts.length === 1) {
+        if (!defaultSide) return null;
+        return { side: defaultSide, stat: parts[0] };
+    }
     const side = parts[0].toLowerCase();
     const stat = parts.slice(1).join(" ").trim();
     if (!["source", "target"].includes(side) || !stat) return null;
@@ -122,8 +129,8 @@ function resolveOnHitEffectSuccess(effect, context) {
     const resolution = String(effect?.resolution ?? "").trim().toLowerCase() || "automatic";
     if (resolution === "automatic") return true;
 
-    const sourceDescriptor = parseCheckDescriptor(effect?.sourceCheck);
-    const targetDescriptor = parseCheckDescriptor(effect?.targetCheck);
+    const sourceDescriptor = parseCheckDescriptor(effect?.sourceCheck, "source");
+    const targetDescriptor = parseCheckDescriptor(effect?.targetCheck, "target");
     const sourceActor = sourceDescriptor?.side === "target" ? context.targetActor : context.sourceActor;
     const targetActor = targetDescriptor?.side === "source" ? context.sourceActor : context.targetActor;
     const targetValue = targetDescriptor ? getActorStatCheckValue(targetActor, targetDescriptor.stat) : 0;

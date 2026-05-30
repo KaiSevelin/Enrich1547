@@ -7,22 +7,62 @@
     "body": {
       "contents": [
         {
+          "key": "MaterialComponents",
+          "type": "itemContainer",
+          "contents": [],
+          "rowLayout": [],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "No material components.",
+          "title": "Material Components",
+          "hideEmpty": false,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "headDisplay": true,
+          "showCreate": false,
+          "defaultTemplate": "PDxRO5ObvLaThpez",
+          "createItemDialogShowTemplateList": false,
+          "showDelete": true,
+          "statusIcon": false,
+          "nameAlign": "left",
+          "nameLabel": "Component",
+          "templateFilter": ["PDxRO5ObvLaThpez"],
+          "itemFilterFormula": "",
+          "sortPredicates": [],
+          "visibilityFormula": "StepType == 'Material'"
+        },
+        {
+          "key": "Skills",
+          "type": "itemContainer",
+          "contents": [],
+          "rowLayout": [],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "No skills required.",
+          "title": "Skills",
+          "hideEmpty": false,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "headDisplay": true,
+          "showCreate": false,
+          "defaultTemplate": "BbwVnEJobtCR5oOf",
+          "createItemDialogShowTemplateList": false,
+          "showDelete": true,
+          "statusIcon": false,
+          "nameAlign": "left",
+          "nameLabel": "Skill",
+          "templateFilter": ["BbwVnEJobtCR5oOf"],
+          "itemFilterFormula": "",
+          "sortPredicates": [],
+          "visibilityFormula": "StepType == 'Skill'"
+        },
+        {
           "key": "StepNotes",
           "type": "textArea",
           "size": "full-size",
-          "label": "Step Notes:",
+          "label": "Notes:",
           "defaultValue": "",
           "style": "sheet"
-        },
-        {
-          "key": "StepEffects",
-          "type": "itemContainer",
-          "label": "Step Effects",
-          "size": "full-size",
-          "itemFilter": "",
-          "templateFilter": "",
-          "head": true,
-          "showDelete": true
         }
       ],
       "key": "custom_body",
@@ -65,36 +105,7 @@
               "selectedOptionType": "custom",
               "options": [
                 { "key": "Material", "value": "Material" },
-                { "key": "StaticSkill", "value": "Static Skill" },
-                { "key": "Verbal", "value": "Verbal" },
-                { "key": "Gesture", "value": "Gesture" },
-                { "key": "Diagram", "value": "Diagram" },
-                { "key": "Offering", "value": "Offering" },
-                { "key": "Invocation", "value": "Invocation" },
-                { "key": "Dance", "value": "Dance" },
-                { "key": "Performance", "value": "Performance" },
-                { "key": "Craft", "value": "Craft" },
-                { "key": "Writing", "value": "Writing" },
-                { "key": "Placement", "value": "Placement" },
-                { "key": "DivinatoryFocus", "value": "Divinatory Focus" },
-                { "key": "Timing", "value": "Timing" },
-                { "key": "Environment", "value": "Environment" },
-                { "key": "Vigil", "value": "Vigil" },
-                { "key": "Sacrifice", "value": "Sacrifice" },
-                { "key": "Defense", "value": "Defense" },
-                { "key": "Purification", "value": "Purification" },
-                { "key": "Purity", "value": "Purity" },
-                { "key": "Social", "value": "Social" },
-                { "key": "Witness", "value": "Witness" },
-                { "key": "Resistance", "value": "Resistance" },
-                { "key": "Naming", "value": "Naming" },
-                { "key": "Isolation", "value": "Isolation" },
-                { "key": "CorpseWork", "value": "Corpse Work" },
-                { "key": "Alchemy", "value": "Alchemy" },
-                { "key": "Boundary", "value": "Boundary" },
-                { "key": "Oath", "value": "Oath" },
-                { "key": "Travel", "value": "Travel" },
-                { "key": "Random", "value": "Random" }
+                { "key": "Skill", "value": "Skill" }
               ]
             },
             {
@@ -102,13 +113,12 @@
               "type": "select",
               "size": "full-size",
               "label": "Scope:",
-              "defaultValue": "Optional",
+              "defaultValue": "Mandatory",
               "selectedOptionType": "custom",
               "options": [
                 { "key": "Mandatory", "value": "Mandatory" },
                 { "key": "Optional", "value": "Optional" },
-                { "key": "Alternative", "value": "Alternative" },
-                { "key": "Escalation", "value": "Escalation" }
+                { "key": "Alternative", "value": "Alternative" }
               ]
             },
             {
@@ -119,67 +129,12 @@
               "defaultValue": ""
             },
             {
-              "key": "TraditionTag",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Tradition Tag:",
-              "defaultValue": ""
-            },
-            {
-              "key": "SkillCheck",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Skill Check:",
-              "defaultValue": ""
-            },
-            {
               "key": "Difficulty",
               "type": "textField",
               "size": "full-size",
               "label": "Difficulty:",
-              "defaultValue": ""
-            },
-            {
-              "key": "RequiredItem",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Required Item:",
-              "defaultValue": ""
-            },
-            {
-              "key": "TimingConstraint",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Timing Constraint:",
-              "defaultValue": ""
-            },
-            {
-              "key": "ContactRestriction",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Contact Restriction:",
-              "defaultValue": ""
-            },
-            {
-              "key": "DangerTag",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Danger Tag:",
-              "defaultValue": ""
-            },
-            {
-              "key": "Repeatable",
-              "type": "checkbox",
-              "size": "full-size",
-              "label": "Repeatable",
-              "defaultChecked": false
-            },
-            {
-              "key": "FailureConsequence",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Failure Consequence:",
-              "defaultValue": ""
+              "defaultValue": "",
+              "visibilityFormula": "StepType == 'Skill'"
             }
           ]
         }
@@ -189,7 +144,9 @@
     },
     "hidden": [],
     "modifiers": [],
-    "uniqueId": "R7sTu4Qn2Lp8Vx5K"
+    "uniqueId": "R7sTu4Qn2Lp8Vx5K",
+    "templateSystemUniqueVersion": 1780300000000,
+    "props": {}
   },
   "effects": [],
   "folder": null,

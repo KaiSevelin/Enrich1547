@@ -345,6 +345,125 @@ function buildWorldOnHitEffectDocs(modifierSources, modifierDocs, onHitEffectTem
     return out;
 }
 
+// Generic world-item doc builder using an item template + already-shaped
+// props. Mirrors the actor-side buildOnHitEffectItemDoc structure so all
+// pre-seeded child items have the same shape (system.body/header/display
+// cloned from the template, container points at the parent, props passed
+// through verbatim).
+function buildChildItemDoc({ id, name, parentId, templateDoc, props, folderId, folderHint, sourceData, img }) {
+    return {
+        _id: id,
+        name,
+        type: "equippableItem",
+        img: img ?? templateDoc.img ?? "icons/svg/item-bag.svg",
+        system: {
+            body: foundry.utils.deepClone(templateDoc.system?.body),
+            display: foundry.utils.deepClone(templateDoc.system?.display) ?? {},
+            header: foundry.utils.deepClone(templateDoc.system?.header),
+            hidden: foundry.utils.deepClone(templateDoc.system?.hidden ?? []),
+            modifiers: [],
+            template: templateDoc._id,
+            templateSystemUniqueVersion: templateDoc.system?.templateSystemUniqueVersion,
+            container: parentId,
+            props: props ?? {},
+        },
+        effects: [],
+        folder: folderId ?? null,
+        flags: {
+            "custom-system-builder": {
+                version: templateDoc.flags?.["custom-system-builder"]?.version ?? "5.2.0",
+            },
+            [SOURCE_FLAG_SCOPE]: {
+                folderHint: folderHint ?? null,
+                sourceData: sourceData ?? null,
+            },
+        },
+        items: [],
+        ownership: { default: 0 },
+    };
+}
+
+// Pre-seeds a UsageEffectTemplate child item per spell.successEffects entry,
+// so the SpellTemplate's SuccessEffects itemContainer is populated from the
+// Items panel. Source data already uses PascalCase keys matching the template
+// props, so the entry is passed through verbatim.
+function buildWorldSpellUsageEffectDocs(spellSources, spellDocs, usageEffectTemplate, folderId) {
+    if (!usageEffectTemplate) return [];
+    const docsBySpellId = new Map(spellDocs.map((doc) => [doc._id, doc]));
+    const out = [];
+    for (const spell of spellSources) {
+        const spellDoc = docsBySpellId.get(spell._id);
+        if (!spellDoc) continue;
+        const effects = Array.isArray(spell.successEffects) ? spell.successEffects : [];
+        effects.forEach((effectSource, index) => {
+            const props = foundry.utils.deepClone(effectSource ?? {});
+            const baseName = String(effectSource?.Description ?? effectSource?.EffectType ?? "Effect").trim() || "Effect";
+            out.push(buildChildItemDoc({
+                id: deriveFoundryIdFromText(`spellusage:${spellDoc._id}:${index}`),
+                name: `${spellDoc.name} — ${baseName}`,
+                parentId: spellDoc._id,
+                templateDoc: usageEffectTemplate,
+                props,
+                folderId,
+                folderHint: "Spells",
+                sourceData: effectSource,
+            }));
+        });
+    }
+    return out;
+}
+
+// Map legacy step types (StaticSkill, Naming, Preparation, Witness, Purity)
+// down to the new {Material, Skill} domain. None of the legacy spells encode
+// material requirements via StepType — the StepText/SkillCheck signal a skill
+// check. Default to Skill so the difficulty + skill-container surfaces; users
+// can flip the type on a step-by-step basis post-seed.
+function mapLegacyRitualStepType(legacy) {
+    const v = String(legacy ?? "").trim();
+    if (v === "Material") return "Material";
+    return "Skill";
+}
+
+function buildRitualStepProps(stepSource) {
+    return {
+        Description: String(stepSource?.StepText ?? "").trim(),
+        StepType: mapLegacyRitualStepType(stepSource?.StepType),
+        StepScope: String(stepSource?.StepScope ?? "Mandatory").trim() || "Mandatory",
+        StepText: String(stepSource?.StepText ?? "").trim(),
+        Difficulty: String(stepSource?.Difficulty ?? "").trim(),
+        StepNotes: String(stepSource?.StepNotes ?? "").trim(),
+    };
+}
+
+// Pre-seeds a RitualStepTemplate child item per spell.staticRitualSteps entry.
+// Legacy step types collapse to {Material, Skill}; existing SkillCheck / step
+// text content is preserved as props for now. Users author MaterialComponents
+// and Skills via the step sheet's itemContainers post-seed.
+function buildWorldSpellRitualStepDocs(spellSources, spellDocs, ritualStepTemplate, folderId) {
+    if (!ritualStepTemplate) return [];
+    const docsBySpellId = new Map(spellDocs.map((doc) => [doc._id, doc]));
+    const out = [];
+    for (const spell of spellSources) {
+        const spellDoc = docsBySpellId.get(spell._id);
+        if (!spellDoc) continue;
+        const steps = Array.isArray(spell.staticRitualSteps) ? spell.staticRitualSteps : [];
+        steps.forEach((stepSource, index) => {
+            const baseName = String(stepSource?.StepText ?? "").slice(0, 60).trim() || `Step ${index + 1}`;
+            out.push(buildChildItemDoc({
+                id: deriveFoundryIdFromText(`spellstep:${spellDoc._id}:${index}`),
+                name: `${spellDoc.name} — ${baseName}`,
+                parentId: spellDoc._id,
+                templateDoc: ritualStepTemplate,
+                props: buildRitualStepProps(stepSource),
+                folderId,
+                folderHint: "Spells",
+                sourceData: stepSource,
+            }));
+        });
+    }
+    return out;
+}
+
 function buildSpellProps(spell) {
     const schoolSet = new Set((spell.schools ?? []).map((entry) => String(entry ?? "").trim()));
     const complexity = spell.complexity ?? "Medium";
@@ -1552,8 +1671,21 @@ function createModuleSetupFormApplicationClass() {
                 onHitEffectTemplate,
                 folders.weaponModifierFolder.id
             );
-            const spellDocs = spells.map((spell) =>
-                makeItemDoc(normalizeSourceEntry(spell, "spell"), spellTemplate, spell.img ?? spellTemplate.img ?? "icons/svg/daze.svg", buildSpellProps, folders.spellsFolder.id, "Spells")
+            const normalizedSpells = spells.map((spell) => normalizeSourceEntry(spell, "spell"));
+            const spellDocs = normalizedSpells.map((spell) =>
+                makeItemDoc(spell, spellTemplate, spell.img ?? spellTemplate.img ?? "icons/svg/daze.svg", buildSpellProps, folders.spellsFolder.id, "Spells")
+            );
+            const spellUsageEffectDocs = buildWorldSpellUsageEffectDocs(
+                normalizedSpells,
+                spellDocs,
+                usageEffectTemplate,
+                folders.spellsFolder.id
+            );
+            const spellRitualStepDocs = buildWorldSpellRitualStepDocs(
+                normalizedSpells,
+                spellDocs,
+                ritualStepTemplate,
+                folders.spellsFolder.id
             );
             const ritualStepRollTableDocs = ritualStepRollTables.map((table) =>
                 buildRitualStepRollTableDoc(table, folders.ritualStepRollTablesFolder.id, "Ritual Step Tables")
@@ -1639,7 +1771,11 @@ function createModuleSetupFormApplicationClass() {
             });
             await pruneManagedFolderItems({
                 folderId: folders.spellsFolder.id,
-                validIds: new Set(spellDocs.map((doc) => doc._id)),
+                validIds: new Set([
+                    ...spellDocs.map((doc) => doc._id),
+                    ...spellUsageEffectDocs.map((doc) => doc._id),
+                    ...spellRitualStepDocs.map((doc) => doc._id),
+                ]),
                 templateId: spellTemplate._id,
                 folderHint: "Spells"
             });
@@ -1712,6 +1848,8 @@ function createModuleSetupFormApplicationClass() {
                 ...weaponModifierDocs,
                 ...onHitEffectDocs,
                 ...spellDocs,
+                ...spellUsageEffectDocs,
+                ...spellRitualStepDocs,
                 ...changeSetDocs,
                 ...changeDocs,
                 ...requirementDocs

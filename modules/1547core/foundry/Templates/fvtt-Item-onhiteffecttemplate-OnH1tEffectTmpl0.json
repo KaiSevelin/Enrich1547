@@ -178,17 +178,25 @@
               "role": 0,
               "editRole": 0,
               "permission": 0,
-              "tooltip": "",
+              "tooltip": "Attacker stat used for the rider's check. Leave empty to use the rider's flat Difficulty.",
               "visibilityFormula": "",
               "editableFormula": "",
               "escapeHTML": false,
-              "type": "textField",
+              "type": "select",
               "size": "full-size",
-              "label": "Source check (e.g. source Dexterity):",
+              "label": "Source check (attacker stat):",
               "defaultValue": "",
-              "charList": "",
-              "maxLength": null,
-              "autocomplete": ""
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "", "value": "— none —" },
+                { "key": "Charisma", "value": "Charisma" },
+                { "key": "Dexterity", "value": "Dexterity" },
+                { "key": "Faith", "value": "Faith" },
+                { "key": "Intelligence", "value": "Intelligence" },
+                { "key": "Power", "value": "Power" },
+                { "key": "Stamina", "value": "Stamina" },
+                { "key": "Strength", "value": "Strength" }
+              ]
             },
             {
               "key": "TargetCheck",
@@ -198,17 +206,25 @@
               "role": 0,
               "editRole": 0,
               "permission": 0,
-              "tooltip": "",
+              "tooltip": "Defender stat that resists the rider.",
               "visibilityFormula": "",
               "editableFormula": "",
               "escapeHTML": false,
-              "type": "textField",
+              "type": "select",
               "size": "full-size",
-              "label": "Target check (e.g. target Stamina):",
+              "label": "Target check (defender stat):",
               "defaultValue": "",
-              "charList": "",
-              "maxLength": null,
-              "autocomplete": ""
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "", "value": "— none —" },
+                { "key": "Charisma", "value": "Charisma" },
+                { "key": "Dexterity", "value": "Dexterity" },
+                { "key": "Faith", "value": "Faith" },
+                { "key": "Intelligence", "value": "Intelligence" },
+                { "key": "Power", "value": "Power" },
+                { "key": "Stamina", "value": "Stamina" },
+                { "key": "Strength", "value": "Strength" }
+              ]
             },
             {
               "key": "Difficulty",
