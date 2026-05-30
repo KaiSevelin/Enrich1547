@@ -290,12 +290,6 @@ function buildOverviewTree(data, deps = {}) {
     const { escapeHtml, formatCurrentMax } = deps;
 
     const hpDisplay = formatCurrentMax(data.hitPoints, data.maxHitPoints);
-    const pointRows = data.pointPools.map((resource) => `
-        <li class="hud-point-cell">
-            <span class="hud-tree-key">${escapeHtml(resource.label)}</span>
-            <span class="hud-tree-value">${escapeHtml(resource.display)}</span>
-        </li>
-    `).join("");
     const riskRows = data.riskAndCritical.map((resource) => `
         <li><span class="hud-tree-key">${escapeHtml(resource.label)}</span><span class="hud-tree-value">${escapeHtml(resource.display)}</span></li>
     `).join("");
@@ -356,10 +350,6 @@ function buildOverviewTree(data, deps = {}) {
             <div class="hud-tree-block hud-overview-block hud-overview-block-hp">
                 <div class="hud-section-title">Hit Points</div>
                 <div class="hud-overview-value">${escapeHtml(hpDisplay || "-")}</div>
-            </div>
-            <div class="hud-tree-block hud-overview-block">
-                <div class="hud-section-title">Point Pools</div>
-                <ul class="hud-tree-children hud-tree-compact hud-points-grid">${pointRows || '<li class="hud-empty-row">None</li>'}</ul>
             </div>
             <div class="hud-tree-block hud-overview-block hud-overview-block-risk">
                 <div class="hud-section-title">Risk & Critical</div>
@@ -483,7 +473,19 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
         case "stats":
             return (() => {
                 const previewStat = getStatPreview(data);
-                return `${buildCounterRollControls(deps)}<ul class="hud-list hud-tree-list hud-stat-grid">
+                const pointRows = (data.pointPools ?? []).map((resource) => `
+                    <li class="hud-point-cell">
+                        <span class="hud-tree-key">${escapeHtml(resource.label)}</span>
+                        <span class="hud-tree-value">${escapeHtml(resource.display)}</span>
+                    </li>
+                `).join("");
+                const pointPoolsBlock = `
+                    <div class="hud-tree-block">
+                        <div class="hud-section-title">Point Pools</div>
+                        <ul class="hud-tree-children hud-tree-compact hud-points-grid">${pointRows || '<li class="hud-empty-row">None</li>'}</ul>
+                    </div>
+                `;
+                return `${buildCounterRollControls(deps)}${pointPoolsBlock}<ul class="hud-list hud-tree-list hud-stat-grid">
                 ${buildTreeList(data.stats, (stat) => `
                     <li class="hud-tree-item${stat.label === previewStat?.label ? " is-active" : ""}">
                         <button type="button" class="hud-action-row${stat.label === previewStat?.label ? " is-active" : ""}" data-hud-stat="${escapeHtml(stat.label)}">
