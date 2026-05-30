@@ -403,13 +403,18 @@
               "visibilityFormula": "",
               "editableFormula": "",
               "escapeHTML": false,
-              "type": "textField",
+              "type": "select",
               "size": "full-size",
               "label": "Modifier type:",
               "defaultValue": "",
-              "charList": "",
-              "maxLength": null,
-              "autocomplete": ""
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "", "value": "— none —" },
+                { "key": "Material", "value": "Material" },
+                { "key": "Blessing", "value": "Blessing" },
+                { "key": "Poison", "value": "Poison" },
+                { "key": "Craft", "value": "Craft" }
+              ]
             },
             {
               "key": "DurationType",
@@ -423,13 +428,16 @@
               "visibilityFormula": "",
               "editableFormula": "",
               "escapeHTML": false,
-              "type": "textField",
+              "type": "select",
               "size": "full-size",
               "label": "Duration type:",
-              "defaultValue": "",
-              "charList": "",
-              "maxLength": null,
-              "autocomplete": ""
+              "defaultValue": "Permanent",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "Permanent", "value": "Permanent" },
+                { "key": "Days", "value": "Days" },
+                { "key": "Uses", "value": "Uses" }
+              ]
             },
             {
               "key": "DurationValue",
@@ -513,13 +521,15 @@
               "visibilityFormula": "",
               "editableFormula": "",
               "escapeHTML": false,
-              "type": "textField",
+              "type": "select",
               "size": "full-size",
               "label": "Stack mode:",
-              "defaultValue": "",
-              "charList": "",
-              "maxLength": null,
-              "autocomplete": ""
+              "defaultValue": "replace",
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "replace", "value": "Replace same-key" },
+                { "key": "stack", "value": "Stack with same key" }
+              ]
             }
           ],
           "flow": "grid-3",

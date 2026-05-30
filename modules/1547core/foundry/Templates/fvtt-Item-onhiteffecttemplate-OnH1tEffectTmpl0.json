@@ -286,13 +286,21 @@
               "visibilityFormula": "",
               "editableFormula": "",
               "escapeHTML": false,
-              "type": "textField",
+              "type": "select",
               "size": "full-size",
               "label": "Damage type:",
               "defaultValue": "",
-              "charList": "",
-              "maxLength": null,
-              "autocomplete": ""
+              "selectedOptionType": "custom",
+              "options": [
+                { "key": "", "value": "— none —" },
+                { "key": "Slashing", "value": "Slashing" },
+                { "key": "Piercing", "value": "Piercing" },
+                { "key": "Blunt", "value": "Blunt" },
+                { "key": "Poison", "value": "Poison" },
+                { "key": "Fire", "value": "Fire" },
+                { "key": "Cold", "value": "Cold" },
+                { "key": "Acid", "value": "Acid" }
+              ]
             },
             {
               "key": "DamageAmount",

@@ -114,8 +114,12 @@ export function computeAttachedModifierIds({ actor, targetItem, modifierItem } =
     const stackKey = getModifierStackKey(modifierItem);
     const filteredIds = currentIds.filter((attachedId) => {
         if (attachedId === modifierId) return false;
-        if (!stackKey) return true;
         const attachedItem = actor.items?.get?.(attachedId) ?? null;
+        // Drop orphans: ids whose modifier item no longer exists on the actor.
+        // These accumulate when a previous attach was replaced or its item was
+        // deleted without going through the consume path (which clears the flag).
+        if (!attachedItem) return false;
+        if (!stackKey) return true;
         return getModifierStackKey(attachedItem) !== stackKey;
     });
 
@@ -195,6 +199,20 @@ async function handleItemUpdated(item, changes, options) {
             if (!getAttachedModifierIds(candidate).includes(item.id)) continue;
             await refreshSummaryForItem(candidate);
         }
+    }
+
+    // Case C: a modifier's `system.container` just got set. CSB's itemContainer
+    // drop sometimes wires the container in a follow-up update after the initial
+    // createItem fires, leaving handleModifierCreate's attach + seed pass to
+    // miss it. Re-run both here; they're idempotent (attach skips when state
+    // matches, seed skips when children already exist).
+    const containerChanged = changes?.system?.container !== undefined;
+    if (containerChanged && isWeaponModifierItem(item)) {
+        const targetItem = inferModifierAttachmentTarget(item);
+        if (targetItem) {
+            await attachWeaponModifierToItem(targetItem, item);
+        }
+        await seedOnHitEffectItemsForModifier(item);
     }
 }
 
