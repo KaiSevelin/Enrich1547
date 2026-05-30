@@ -139,6 +139,20 @@ export function validateMonster(actor) {
         }
     }
 
+    // A monster (any non-Player TypeDropdown) is expected to have exactly one
+    // Base ChangeSet — its chassis. Drop time can't enforce the lower bound
+    // (a freshly-created actor legitimately starts with zero), so it surfaces
+    // here as an audit warning. PCs and untyped actors are skipped.
+    const actorType = String(actor.system?.props?.TypeDropdown ?? "").trim();
+    if (actorType && actorType !== "Player" && (groupCounts.Base ?? 0) === 0) {
+        violations.push({
+            kind: "missing-base",
+            group: "Base",
+            count: 0,
+            message: `${actorType} has no Base ChangeSet (chassis). Attach one before treating this actor as a finished monster.`
+        });
+    }
+
     for (const set of changeSets) {
         const props = set.system?.props ?? {};
         const forType = checkForType(props, actor);

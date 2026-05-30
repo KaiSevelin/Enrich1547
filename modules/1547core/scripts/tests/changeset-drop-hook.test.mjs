@@ -232,5 +232,34 @@ console.log("validateMonster: audits...");
     assert.deepStrictEqual(validateMonster(a), []);
     console.log("  ✓ _template actor returns no violations");
 }
+{
+    const a = actor({ props: { TypeDropdown: "Beast" }, items: [] });
+    const violations = validateMonster(a);
+    const missingBase = violations.filter((v) => v.kind === "missing-base");
+    assert.strictEqual(missingBase.length, 1);
+    assert.strictEqual(missingBase[0].group, "Base");
+    console.log("  ✓ Flags monster with no Base ChangeSet");
+}
+{
+    const a = actor({
+        props: { TypeDropdown: "Beast" },
+        items: [changeSet({ id: "base-1", name: "Beast Base", group: "Base" })]
+    });
+    const violations = validateMonster(a);
+    assert.strictEqual(violations.filter((v) => v.kind === "missing-base").length, 0);
+    console.log("  ✓ No missing-base when chassis is attached");
+}
+{
+    const a = actor({ props: { TypeDropdown: "Player" }, items: [] });
+    const violations = validateMonster(a);
+    assert.strictEqual(violations.filter((v) => v.kind === "missing-base").length, 0);
+    console.log("  ✓ Player actors are skipped");
+}
+{
+    const a = actor({ props: { TypeDropdown: "" }, items: [] });
+    const violations = validateMonster(a);
+    assert.strictEqual(violations.filter((v) => v.kind === "missing-base").length, 0);
+    console.log("  ✓ Untyped actors are skipped");
+}
 
 console.log("\nAll changeset-drop-hook tests passed.");
