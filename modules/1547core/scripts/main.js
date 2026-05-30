@@ -62,6 +62,11 @@ Hooks.once("init", () => {
         (module) => module.registerChangeSetDropHook()
     );
     void runImportedModuleStep(
+        "registerChangeSetCascadeService",
+        () => import("./services/changeset-cascade-service.js"),
+        (module) => module.registerChangeSetCascadeService()
+    );
+    void runImportedModuleStep(
         "registerItemGrantService",
         () => import("./services/item-grant-service.js"),
         (module) => module.registerItemGrantService()
