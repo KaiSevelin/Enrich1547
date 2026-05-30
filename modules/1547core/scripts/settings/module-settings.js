@@ -36,7 +36,7 @@ const ACTOR_TYPES = [
     "Zone",
     "People"
 ];
-const CHANGE_SET_GROUPS = ["Domain", "Size", "Role", "Motivation", "Loadout", "Quirk", "Boost"];
+const CHANGE_SET_GROUPS = ["Base", "Domain", "Size", "Role", "Motivation", "Loadout", "Quirk", "Boost"];
 const CHANGE_FOLDER_LABELS = {
     Stat: "Stat (Numeric)",
     PrimaryStat: "Primary Stat",

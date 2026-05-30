@@ -19,7 +19,11 @@ const MODULE_ID = "1547core";
 const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
 const REQUIREMENT_TEMPLATE_ID = "L4ujYgqhGBGcoo2P";
 const REQUIREMENT_CONTAINER_KEY = "RequirementsDisplayer";
-const SINGLETON_GROUPS = new Set(["Size", "Role", "Domain"]);
+// Base is at-most-one (enforced here); a well-formed monster also has
+// exactly-one, which validateMonster reports separately as a missing-base
+// warning. Drop time can't enforce the lower bound — a freshly-created
+// actor legitimately starts with zero.
+const SINGLETON_GROUPS = new Set(["Base", "Size", "Role", "Domain"]);
 
 function isChangeSet(item) {
     return item?.system?.template === CHANGESET_TEMPLATE_ID;

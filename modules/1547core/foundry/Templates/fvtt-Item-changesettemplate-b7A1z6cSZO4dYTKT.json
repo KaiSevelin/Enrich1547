@@ -59,7 +59,7 @@
               "role": 0,
               "editRole": 0,
               "permission": 0,
-              "tooltip": "Which slot this ChangeSet fills. Application order: Size > Role > Domain > Motivation > Loadout > Quirk > Boost.",
+              "tooltip": "Which slot this ChangeSet fills. Application order: Base > Size > Role > Domain > Motivation > Loadout > Quirk > Boost.",
               "visibilityFormula": "",
               "editableFormula": "",
               "escapeHTML": false,
@@ -69,6 +69,7 @@
               "defaultValue": "Quirk",
               "selectedOptionType": "custom",
               "options": [
+                { "key": "Base", "value": "Base" },
                 { "key": "Size", "value": "Size" },
                 { "key": "Role", "value": "Role" },
                 { "key": "Domain", "value": "Domain" },

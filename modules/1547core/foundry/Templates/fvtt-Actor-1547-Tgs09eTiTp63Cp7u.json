@@ -1165,6 +1165,50 @@
                                                      "type":  "panel",
                                                      "contents":  [
                                                                       {
+                                                                          "key":  "BaseContainer",
+                                                                          "colSpan":  1,
+                                                                          "rowSpan":  1,
+                                                                          "cssClass":  "",
+                                                                          "role":  0,
+                                                                          "editRole":  0,
+                                                                          "permission":  0,
+                                                                          "tooltip":  "Single-slot: the creature chassis (identity Tags, Traits, and granted powers). Layered first; Size/Role/Domain/etc. apply on top.",
+                                                                          "visibilityFormula":  "",
+                                                                          "editableFormula":  "",
+                                                                          "escapeHTML":  false,
+                                                                          "type":  "itemContainer",
+                                                                          "contents":  [
+
+                                                                                       ],
+                                                                          "rowLayout":  [
+
+                                                                                        ],
+                                                                          "head":  false,
+                                                                          "deleteWarning":  false,
+                                                                          "labelWhenEmpty":  "(no chassis assigned)",
+                                                                          "title":  "Chassis",
+                                                                          "hideEmpty":  false,
+                                                                          "hiddenColumns":  [
+
+                                                                                            ],
+                                                                          "sortOption":  "manual",
+                                                                          "headDisplay":  true,
+                                                                          "showCreate":  false,
+                                                                          "defaultTemplate":  "b7A1z6cSZO4dYTKT",
+                                                                          "createItemDialogShowTemplateList":  false,
+                                                                          "showDelete":  true,
+                                                                          "statusIcon":  false,
+                                                                          "nameAlign":  "left",
+                                                                          "nameLabel":  "Name",
+                                                                          "templateFilter":  [
+                                                                                                 "b7A1z6cSZO4dYTKT"
+                                                                                             ],
+                                                                          "itemFilterFormula":  "equalText(item.Group, 'Base')",
+                                                                          "sortPredicates":  [
+
+                                                                                             ]
+                                                                      },
+                                                                      {
                                                                           "key":  "SizeContainer",
                                                                           "colSpan":  1,
                                                                           "rowSpan":  1,
