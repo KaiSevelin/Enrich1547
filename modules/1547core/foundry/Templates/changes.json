@@ -1,1 +1,53 @@
-[]
+[
+  {
+    "_id": "NsBaseTag1Place0",
+    "name": "Bound to Place — Tag",
+    "kind": "Tag",
+    "tagName": "PlaceBound",
+    "notes": "The being's nature and power are tied to a specific natural seat.",
+    "parentChangeSetId": "NsBaseChassis001"
+  },
+  {
+    "_id": "NsBaseTrt1Place0",
+    "name": "Bound to Place — Trait",
+    "kind": "Trait",
+    "traitName": "Bound to Place",
+    "traitDescription": "It is tied to a natural seat such as a grove, spring, stone, marsh, or cliff, and is strongest when acting through or within that place.",
+    "notes": "Core identity trait for Nature Spirits.",
+    "parentChangeSetId": "NsBaseChassis001"
+  },
+  {
+    "_id": "NsBaseTag2Warden",
+    "name": "Warden of a Natural Seat — Tag",
+    "kind": "Tag",
+    "tagName": "ThresholdAware",
+    "notes": "Reacts to trespass, damage, theft, pollution, and broken respect within its place.",
+    "parentChangeSetId": "NsBaseChassis001"
+  },
+  {
+    "_id": "NsBaseTrt2Warden",
+    "name": "Warden of a Natural Seat — Trait",
+    "kind": "Trait",
+    "traitName": "Warden of a Natural Seat",
+    "traitDescription": "It notices and reacts when its place is violated, neglected, polluted, despoiled, or treated without proper respect, and may answer respect with aid or trespass with warning, misdirection, or death.",
+    "notes": "Core reciprocity and guardianship rule for Nature Spirits.",
+    "parentChangeSetId": "NsBaseChassis001"
+  },
+  {
+    "_id": "NsBaseTag3Land00",
+    "name": "More Than Landscape — Tag",
+    "kind": "Tag",
+    "tagName": "UnsettlingPresence",
+    "notes": "The being is part of the place, but not merely scenery.",
+    "parentChangeSetId": "NsBaseChassis001"
+  },
+  {
+    "_id": "NsBaseTrt3Land00",
+    "name": "More Than Landscape — Trait",
+    "kind": "Trait",
+    "traitName": "More Than Landscape",
+    "traitDescription": "It can seem beautiful, monstrous, half-seen, or wholly natural until it chooses to reveal that the place itself is watching.",
+    "notes": "Tone-setting trait for local uncanny presence.",
+    "parentChangeSetId": "NsBaseChassis001"
+  }
+]

@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "_id": "NsBaseChassis001",
+    "name": "Nature Spirit Base",
+    "group": "Base",
+    "forTypeAny": false,
+    "ForType_NatureSpirit": true,
+    "notes": "Chassis for Nature Spirits: place-bound guardian beings tied to a specific natural seat (grove, spring, hill, marsh, etc.). Provides identity Tags and Traits. Domain / Motivation / Loadout / Quirk ChangeSets layer on top to specialise the spirit."
+  }
+]

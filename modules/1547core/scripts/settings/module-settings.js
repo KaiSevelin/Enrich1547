@@ -1812,7 +1812,7 @@ function createModuleSetupFormApplicationClass() {
                 const normalized = normalizeSourceEntry(change, "change");
                 const kind = normalized.kind ?? normalized.system?.props?.Kind ?? "";
                 const folder = folders.changeTypeFolders[kind] ?? folders.changesFolder;
-                return makeItemDoc(
+                const doc = makeItemDoc(
                     normalized,
                     changeTemplate,
                     normalized.img ?? changeTemplate.img ?? "icons/svg/item-bag.svg",
@@ -1820,7 +1820,32 @@ function createModuleSetupFormApplicationClass() {
                     folder.id,
                     CHANGE_FOLDER_LABELS[kind] ?? "Changes"
                 );
+                // Mark the Change as a CSB itemContainer child of its parent
+                // ChangeSet. CSB hides items with `system.container` from the
+                // main inventory panels; the parent's ChangeDisplayer surfaces
+                // them in its sheet.
+                const parentChangeSetId = normalized.parentChangeSetId ?? change.parentChangeSetId ?? null;
+                if (parentChangeSetId) {
+                    doc.system.container = parentChangeSetId;
+                }
+                return doc;
             });
+            // Wire each parent ChangeSet's ChangeDisplayer to its Changes by
+            // id. CSB itemContainer reads from props.<containerKey> = { [childId]:
+            // { name, id, uuid } }; the composition pipeline walks this map.
+            const changeSetById = new Map(changeSetDocs.map((doc) => [doc._id, doc]));
+            for (const changeDoc of changeDocs) {
+                const parentChangeSetId = String(changeDoc.system?.container ?? "").trim();
+                if (!parentChangeSetId) continue;
+                const parent = changeSetById.get(parentChangeSetId);
+                if (!parent) continue;
+                parent.system.props.ChangeDisplayer = parent.system.props.ChangeDisplayer ?? {};
+                parent.system.props.ChangeDisplayer[changeDoc._id] = {
+                    name: changeDoc.name,
+                    id: changeDoc._id,
+                    uuid: `Item.${changeDoc._id}`,
+                };
+            }
             const requirementDocs = requirements.map((requirement) => {
                 const normalized = normalizeSourceEntry(requirement, "requirement");
                 const predicate = normalized.predicateType ?? normalized.system?.props?.PredicateType ?? "";
