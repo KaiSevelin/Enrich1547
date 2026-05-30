@@ -336,7 +336,7 @@ function buildWorldOnHitEffectDocs(modifierSources, modifierDocs, onHitEffectTem
                     ...(base.flags ?? {}),
                     [SOURCE_FLAG_SCOPE]: {
                         ...(base.flags?.[SOURCE_FLAG_SCOPE] ?? {}),
-                        folderHint: "Weapon Modifiers",
+                        folderHint: "On-Hit Effects",
                     },
                 },
             });
@@ -1540,6 +1540,7 @@ function createModuleSetupFormApplicationClass() {
             const armorFolder = await this.#getOrCreateFolder({ folderName: "Armor", type: "Item", parentId: coreItemFolder.id });
             const ammoFolder = await this.#getOrCreateFolder({ folderName: "Ammunition", type: "Item", parentId: coreItemFolder.id });
             const weaponModifierFolder = await this.#getOrCreateFolder({ folderName: "Weapon Modifiers", type: "Item", parentId: coreItemFolder.id });
+            const onHitEffectsFolder = await this.#getOrCreateFolder({ folderName: "On-Hit Effects", type: "Item", parentId: weaponModifierFolder.id });
             const spellsFolder = await this.#getOrCreateFolder({ folderName: "Spells", type: "Item", parentId: coreItemFolder.id });
             const ritualStepRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Ritual Step Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#5b6276" });
             const spellFailureRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Spell Failure Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#6d5b5b" });
@@ -1587,6 +1588,7 @@ function createModuleSetupFormApplicationClass() {
                 armorFolder,
                 ammoFolder,
                 weaponModifierFolder,
+                onHitEffectsFolder,
                 spellsFolder,
                 ritualStepRollTablesFolder,
                 spellFailureRollTablesFolder,
@@ -1669,7 +1671,7 @@ function createModuleSetupFormApplicationClass() {
                 normalizedWeaponModifiers,
                 weaponModifierDocs,
                 onHitEffectTemplate,
-                folders.weaponModifierFolder.id
+                folders.onHitEffectsFolder.id
             );
             const normalizedSpells = spells.map((spell) => normalizeSourceEntry(spell, "spell"));
             const spellDocs = normalizedSpells.map((spell) =>
@@ -1762,12 +1764,15 @@ function createModuleSetupFormApplicationClass() {
             });
             await pruneManagedFolderItems({
                 folderId: folders.weaponModifierFolder.id,
-                validIds: new Set([
-                    ...weaponModifierDocs.map((doc) => doc._id),
-                    ...onHitEffectDocs.map((doc) => doc._id),
-                ]),
+                validIds: new Set(weaponModifierDocs.map((doc) => doc._id)),
                 templateId: weaponModifierTemplate._id,
                 folderHint: "Weapon Modifiers"
+            });
+            await pruneManagedFolderItems({
+                folderId: folders.onHitEffectsFolder.id,
+                validIds: new Set(onHitEffectDocs.map((doc) => doc._id)),
+                templateId: onHitEffectTemplate._id,
+                folderHint: "On-Hit Effects"
             });
             await pruneManagedFolderItems({
                 folderId: folders.spellsFolder.id,
