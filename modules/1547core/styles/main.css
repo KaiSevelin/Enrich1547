@@ -714,8 +714,53 @@ a.enricher-1547::before {
   padding-right: 0.2rem;
 }
 
+.actor-hud-1547 .hud-skill-scroll {
+  max-height: 24rem;
+}
+
 .actor-hud-1547 .hud-single-scroll {
   padding-right: 0.15rem;
+}
+
+.actor-hud-1547 .hud-check-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.actor-hud-1547 .hud-check-radio-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.actor-hud-1547 .hud-check-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.actor-hud-1547 .hud-check-radio.is-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.actor-hud-1547 .hud-check-expansion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-left: 0.5rem;
+  border-left: 2px solid rgba(201, 171, 113, 0.32);
+}
+
+.actor-hud-1547 .hud-check-skill-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  cursor: pointer;
 }
 
 .actor-hud-1547 .hud-sticky-subgroups {

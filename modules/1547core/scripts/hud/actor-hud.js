@@ -1888,10 +1888,39 @@ async function renderHudForSelection() {
 }
 
 async function maybeRollCounter(context, label, playerTotal) {
-    if (!context.counterRollEnabled) return;
+    // Skills tab "Checks" header — pick the counter formula from the mode.
+    // Manual = no counter. Falls through to the legacy counter-roll toggle
+    // path for non-skills callers that still flip counterRollEnabled.
+    const mode = String(context.checkMode ?? "manual");
+    let counterFormula = null;
+    let counterContext = "";
+    if (mode === "stat" && context.checkTarget?.count > 0 && context.checkStatTarget) {
+        const stat = (context.checkTarget?.stats ?? []).find((s) => s.label === context.checkStatTarget);
+        if (stat?.formula) {
+            counterFormula = stat.formula;
+            counterContext = `${context.checkTarget.name ?? "Target"} ${stat.label}`;
+        }
+    } else if (mode === "skill" && context.checkTarget?.count === 1 && context.checkSkillTarget) {
+        const skill = (context.checkTarget?.skills ?? []).find((s) => s.name === context.checkSkillTarget);
+        if (skill?.formula) {
+            counterFormula = skill.formula;
+            counterContext = `${context.checkTarget.name ?? "Target"} ${skill.name}`;
+        }
+    } else if (mode === "general") {
+        const dice = sanitizeCounterRollDice(context.checkGeneralDice ?? 3);
+        counterFormula = `${dice}d6`;
+        counterContext = `${context.checkGeneralDifficulty ?? "General"} (${counterFormula})`;
+    } else if (mode === "manual") {
+        // Manual mode explicitly skips a counter even if the legacy toggle
+        // was left on from a prior session.
+        return;
+    } else if (context.counterRollEnabled) {
+        const counterDice = sanitizeCounterRollDice(context.counterRollDice);
+        counterFormula = `${counterDice}d6`;
+        counterContext = counterFormula;
+    }
+    if (!counterFormula) return;
 
-    const counterDice = sanitizeCounterRollDice(context.counterRollDice);
-    const counterFormula = `${counterDice}d6`;
     const counterRoll = await new Roll(counterFormula).evaluate({ async: true });
     const speaker = ChatMessage.getSpeaker({ actor: context.actor, token: context.token?.document });
     const success = Number(playerTotal) >= Number(counterRoll.total);
@@ -1899,7 +1928,7 @@ async function maybeRollCounter(context, label, playerTotal) {
 
     await counterRoll.toMessage({
         speaker,
-        flavor: `${label} Counter Roll<br>Difficulty: ${escapeHtml(counterFormula)}<br>Player Total: ${escapeHtml(playerTotal)}<br>Outcome: ${resultText}`
+        flavor: `${label} Counter Roll<br>Difficulty: ${escapeHtml(counterContext)}<br>Player Total: ${escapeHtml(playerTotal)}<br>Outcome: ${resultText}`
     });
 
     HUD_STATE.counterRollEnabled = false;

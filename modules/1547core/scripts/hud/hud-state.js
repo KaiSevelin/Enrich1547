@@ -4,6 +4,15 @@
     activeStatPreview: "",
     counterRollEnabled: false,
     counterRollDice: 1,
+    // Skills tab "Checks" header: which counter-roll mode the player chose,
+    // plus the per-mode selection. Manual = no counter; Stat = counter is
+    // target's chosen stat formula; Skill = counter is target's chosen skill
+    // formula; General = counter is N d6 picked via difficulty preset + numeric.
+    checkMode: "manual",
+    checkStatTarget: "Strength",
+    checkSkillTarget: "",
+    checkGeneralDifficulty: "Average",
+    checkGeneralDice: 3,
     collapsed: false,
     reactionWindow: null,
     damageTakenWindow: null,

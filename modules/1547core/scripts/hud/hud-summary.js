@@ -832,8 +832,59 @@ export function summarizeActor(actor, token, deps = {}) {
         equippedInventory,
         maneuverCount: maneuvers.length + fullTurnManeuvers.length,
         isCombatActive,
-        round: game.combat?.round ?? null
+        round: game.combat?.round ?? null,
+        checkTarget: buildCheckTargetSnapshot({
+            targetedTokens,
+            statDefinitions,
+            getNumericProp,
+            buildRollFormula,
+            getCsbItemKind,
+            getSkillDiceShift,
+            buildSkillRollData,
+        }),
     };
+}
+
+// Snapshot of the currently-targeted actor's stat formulas + skills, used by
+// the Skills tab's Checks header (Stat/Skill modes need the target's roll
+// values to compute counter-roll formulas). Returns `count: 0` and empty
+// arrays when no token is targeted.
+function buildCheckTargetSnapshot({ targetedTokens, statDefinitions, getNumericProp, buildRollFormula, getCsbItemKind, getSkillDiceShift, buildSkillRollData }) {
+    const count = targetedTokens.length;
+    const primary = targetedTokens[0] ?? null;
+    const targetActor = primary?.actor ?? null;
+    if (!targetActor) return { name: null, count: 0, stats: [], skills: [] };
+    const props = targetActor.system?.props ?? {};
+    const stats = statDefinitions.map((label) => {
+        const dice = getNumericProp(props, [`Stats_${label}Dice`, `${label}Dice`]);
+        const mod = getNumericProp(props, [`Stats_${label}Mod`, `${label}Mod`]) ?? 0;
+        return {
+            label,
+            formula: buildRollFormula(dice ?? 0, mod ?? 0),
+            value: (dice ?? 0) + (mod ?? 0),
+        };
+    });
+    const statsByLabel = new Map(stats.map((s) => [s.label, s]));
+    const items = targetActor.items?.contents ?? Array.from(targetActor.items ?? []);
+    const skills = items
+        .filter((item) => getCsbItemKind(item) === "skill")
+        .map((item) => {
+            const itemProps = item.system?.props ?? {};
+            const sourceData = item.flags?.["1547Core"]?.sourceData ?? item.flags?.["1547core"]?.sourceData ?? {};
+            const statLabel = itemProps.Stat ?? sourceData.linkedStat ?? itemProps.LinkedStat ?? "";
+            const baseStat = statsByLabel.get(statLabel) ?? null;
+            const currentLevel = getNumericProp(itemProps, ["CurrentLevel"]) ?? 0;
+            const diceShift = getSkillDiceShift(itemProps);
+            const rollData = buildSkillRollData(baseStat, diceShift, 0, 0);
+            return {
+                id: item.id,
+                name: item.name,
+                linkedStat: statLabel,
+                currentLevel,
+                formula: baseStat ? rollData.formula : "",
+            };
+        });
+    return { name: targetActor.name, count, stats, skills };
 }
 
 

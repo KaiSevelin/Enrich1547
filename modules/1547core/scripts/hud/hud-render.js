@@ -358,6 +358,107 @@ function buildOverviewTree(data, deps = {}) {
     `;
 }
 
+// Skills-tab "Checks" header. Replaces the legacy counter-roll bar with a
+// 4-way mode picker (Manual / Stat / Skill / General) and a per-mode
+// expansion. Selection state lives in HUD_STATE.check*. The actual counter
+// roll happens in maybeRollCounter (actor-hud.js) after the player clicks
+// a skill — this renderer is presentational only.
+function buildChecksHeader(data, deps = {}) {
+    const { HUD_STATE, escapeHtml, sanitizeCounterRollDice } = deps;
+    const target = data.checkTarget ?? { name: null, count: 0, stats: [], skills: [] };
+    const hasTarget = (target.count ?? 0) > 0;
+    const hasSingleTarget = (target.count ?? 0) === 1;
+    const requestedMode = String(HUD_STATE.checkMode ?? "manual");
+    // Coerce to a legal mode if the saved choice is no longer available
+    // (e.g. Stat selected but the target dropped). Falls back to Manual.
+    const allowed = {
+        manual: true,
+        stat: hasTarget,
+        skill: hasSingleTarget,
+        general: true,
+    };
+    const mode = allowed[requestedMode] ? requestedMode : "manual";
+
+    const modes = [
+        { key: "manual", label: "Manual" },
+        { key: "stat", label: "Stat", disabled: !hasTarget, title: hasTarget ? "" : "Requires at least one target" },
+        { key: "skill", label: "Skill", disabled: !hasSingleTarget, title: hasSingleTarget ? "" : "Requires exactly one target" },
+        { key: "general", label: "General" },
+    ];
+    const radioRow = modes.map((m) => `
+        <label class="hud-check-radio${m.disabled ? " is-disabled" : ""}" title="${escapeHtml(m.title ?? "")}">
+            <input type="radio" name="hud-check-mode" value="${m.key}"${mode === m.key ? " checked" : ""}${m.disabled ? " disabled" : ""} data-hud-check-mode="${m.key}">
+            <span>${escapeHtml(m.label)}</span>
+        </label>
+    `).join("");
+
+    let expansion = "";
+    if (mode === "stat") {
+        const currentStat = HUD_STATE.checkStatTarget && target.stats.some((s) => s.label === HUD_STATE.checkStatTarget)
+            ? HUD_STATE.checkStatTarget
+            : (target.stats[0]?.label ?? "");
+        const statOptions = target.stats.map((s) => `
+            <option value="${escapeHtml(s.label)}"${currentStat === s.label ? " selected" : ""}>${escapeHtml(`${s.label} (${s.formula})`)}</option>
+        `).join("");
+        expansion = `
+            <div class="hud-check-expansion">
+                <label class="hud-counter-roll-config">
+                    <span>${escapeHtml(target.name ?? "Target")} stat</span>
+                    <select data-hud-check-stat>${statOptions}</select>
+                </label>
+            </div>
+        `;
+    } else if (mode === "skill") {
+        const skillRows = target.skills.length
+            ? target.skills.map((s) => `
+                <label class="hud-check-skill-row">
+                    <input type="radio" name="hud-check-target-skill" value="${escapeHtml(s.name)}"${HUD_STATE.checkSkillTarget === s.name ? " checked" : ""} data-hud-check-skill="${escapeHtml(s.name)}">
+                    <span>${escapeHtml(`${s.name} (${s.formula || "—"})`)}</span>
+                </label>
+            `).join("")
+            : `<div class="hud-empty-row">Target has no skills</div>`;
+        expansion = `
+            <div class="hud-check-expansion">
+                <div class="hud-section-title">${escapeHtml(target.name ?? "Target")} skills</div>
+                ${skillRows}
+            </div>
+        `;
+    } else if (mode === "general") {
+        const difficulties = [
+            { key: "Trivial", dice: 1 },
+            { key: "Easy", dice: 2 },
+            { key: "Average", dice: 3 },
+            { key: "Hard", dice: 4 },
+            { key: "Rough", dice: 5 },
+        ];
+        const currentDiff = difficulties.some((d) => d.key === HUD_STATE.checkGeneralDifficulty)
+            ? HUD_STATE.checkGeneralDifficulty
+            : "Average";
+        const diffOptions = difficulties.map((d) => `<option value="${d.key}"${currentDiff === d.key ? " selected" : ""}>${d.key}</option>`).join("");
+        const diceValue = sanitizeCounterRollDice(HUD_STATE.checkGeneralDice ?? 3);
+        expansion = `
+            <div class="hud-check-expansion">
+                <label class="hud-counter-roll-config">
+                    <span>Difficulty</span>
+                    <select data-hud-check-difficulty>${diffOptions}</select>
+                </label>
+                <label class="hud-counter-roll-config">
+                    <span>d6</span>
+                    <input type="number" min="1" max="6" value="${escapeHtml(diceValue)}" data-hud-check-general-dice>
+                </label>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="hud-tree-block hud-check-bar">
+            <div class="hud-section-title">Checks</div>
+            <div class="hud-check-radio-row">${radioRow}</div>
+            ${expansion}
+        </div>
+    `;
+}
+
 function buildCounterRollControls(deps = {}) {
     const { HUD_STATE, escapeHtml, sanitizeCounterRollDice } = deps;
     const checked = HUD_STATE.counterRollEnabled ? " checked" : "";
@@ -644,7 +745,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
         case "dice":
             return buildDiceTree(data, deps);
         case "skills":
-            return `${buildCounterRollControls(deps)}<ul class="hud-list hud-tree-list hud-list-scroll hud-single-scroll">
+            return `${buildChecksHeader(data, deps)}<ul class="hud-list hud-tree-list hud-list-scroll hud-skill-scroll">
                 ${buildTreeList(data.skills, (skill) => `
                     <li class="hud-tree-item">
                         <button type="button" class="hud-action-row" data-hud-skill="${escapeHtml(skill.name)}">

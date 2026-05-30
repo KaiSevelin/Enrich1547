@@ -506,6 +506,42 @@
             event.currentTarget.value = String(HUD_STATE.counterRollDice);
         });
     }
+    // Checks header: radio mode picker + per-mode selection. Mode change
+    // re-renders so the expansion swaps; the inner selects only update state.
+    for (const input of root.querySelectorAll("[data-hud-check-mode]")) {
+        input.addEventListener("change", (event) => {
+            if (!event.currentTarget.checked) return;
+            HUD_STATE.checkMode = String(event.currentTarget.value || "manual");
+            void renderHudForSelection();
+        });
+    }
+    for (const select of root.querySelectorAll("[data-hud-check-stat]")) {
+        select.addEventListener("change", (event) => {
+            HUD_STATE.checkStatTarget = String(event.currentTarget.value || "");
+        });
+    }
+    for (const input of root.querySelectorAll("[data-hud-check-skill]")) {
+        input.addEventListener("change", (event) => {
+            if (!event.currentTarget.checked) return;
+            HUD_STATE.checkSkillTarget = String(event.currentTarget.value || "");
+        });
+    }
+    const generalDifficultyToDice = { Trivial: 1, Easy: 2, Average: 3, Hard: 4, Rough: 5 };
+    for (const select of root.querySelectorAll("[data-hud-check-difficulty]")) {
+        select.addEventListener("change", (event) => {
+            const value = String(event.currentTarget.value || "Average");
+            HUD_STATE.checkGeneralDifficulty = value;
+            // Difficulty preset overrides the numeric so they stay in sync.
+            HUD_STATE.checkGeneralDice = generalDifficultyToDice[value] ?? 3;
+            void renderHudForSelection();
+        });
+    }
+    for (const input of root.querySelectorAll("[data-hud-check-general-dice]")) {
+        input.addEventListener("change", (event) => {
+            HUD_STATE.checkGeneralDice = sanitizeCounterRollDice(event.currentTarget.value);
+            event.currentTarget.value = String(HUD_STATE.checkGeneralDice);
+        });
+    }
 }
 
 
