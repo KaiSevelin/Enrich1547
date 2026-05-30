@@ -160,100 +160,28 @@
                 },
                 {
                     "key": "StaticRitualSteps",
-                    "type": "dynamicTable",
+                    "type": "itemContainer",
                     "contents": [],
-                    "rowLayout": [
-                        {
-                            "key": "StepScope",
-                            "type": "select",
-                            "size": "full-size",
-                            "defaultValue": "Mandatory",
-                            "selectedOptionType": "custom",
-                            "options": [
-                                {
-                                    "key": "Mandatory",
-                                    "value": "Mandatory"
-                                },
-                                {
-                                    "key": "Alternative",
-                                    "value": "Alternative"
-                                }
-                            ],
-                            "colName": "Scope"
-                        },
-                        {
-                            "key": "AlternativeGroup",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Alt Group"
-                        },
-                        {
-                            "key": "StepType",
-                            "type": "select",
-                            "size": "full-size",
-                            "defaultValue": "StaticSkill",
-                            "selectedOptionType": "custom",
-                            "options": [
-                                {
-                                    "key": "StaticSkill",
-                                    "value": "StaticSkill"
-                                },
-                                {
-                                    "key": "Naming",
-                                    "value": "Naming"
-                                },
-                                {
-                                    "key": "Preparation",
-                                    "value": "Preparation"
-                                },
-                                {
-                                    "key": "Witness",
-                                    "value": "Witness"
-                                },
-                                {
-                                    "key": "Purity",
-                                    "value": "Purity"
-                                }
-                            ],
-                            "colName": "Type"
-                        },
-                        {
-                            "key": "StepText",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Step"
-                        },
-                        {
-                            "key": "SkillCheck",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Check"
-                        },
-                        {
-                            "key": "Difficulty",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Difficulty"
-                        },
-                        {
-                            "key": "StepNotes",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Notes"
-                        }
-                    ],
+                    "rowLayout": [],
                     "head": false,
                     "deleteWarning": false,
-                    "labelWhenEmpty": "",
-                    "predefinedLines": [],
-                    "canPlayerAdd": true,
+                    "labelWhenEmpty": "No static ritual steps.",
+                    "title": "Static Ritual Steps",
+                    "hideEmpty": false,
                     "hiddenColumns": [],
                     "sortOption": "manual",
+                    "headDisplay": true,
+                    "showCreate": true,
+                    "defaultTemplate": "R7sTu4Qn2Lp8Vx5K",
+                    "createItemDialogShowTemplateList": false,
+                    "showDelete": true,
+                    "statusIcon": false,
+                    "nameAlign": "left",
+                    "nameLabel": "Step",
+                    "templateFilter": [
+                        "R7sTu4Qn2Lp8Vx5K"
+                    ],
+                    "itemFilterFormula": "",
                     "sortPredicates": []
                 },
                 {
@@ -361,6 +289,34 @@
                             "type": "textArea",
                             "size": "full-size",
                             "label": "Failure Notes:",
+                            "defaultValue": "",
+                            "style": "sheet"
+                        }
+                    ]
+                },
+                {
+                    "key": "SupportGenerationPanel",
+                    "type": "panel",
+                    "title": "Support Tables",
+                    "titleStyle": "default",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "SupportRollTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Support Roll Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "SupportRollNotes",
+                            "type": "textArea",
+                            "size": "full-size",
+                            "label": "Support Notes:",
                             "defaultValue": "",
                             "style": "sheet"
                         }
@@ -662,16 +618,16 @@
             ],
             "SuccessEffects": [
                 {
-                    "Description": "Bless Weapon: Trait/BlessingText",
-                    "ApplicationMode": "DirectDataChange",
-                    "EffectType": "Trait",
-                    "EffectSubtype": "BlessingText",
+                    "Description": "Bless Weapon: Grant/Item",
+                    "ApplicationMode": "GrantItem",
+                    "EffectType": "Grant",
+                    "EffectSubtype": "Item",
                     "Visible": true,
                     "TargetType": "Item",
                     "TargetCount": "1",
                     "TargetRange": "Touch",
                     "TargetFilter": "",
-                    "TargetDescription": "A weapon to be blessed.",
+                    "TargetDescription": "Chosen weapon or item.",
                     "CheckType": "None",
                     "CheckFormula": "",
                     "ResistanceType": "",
@@ -679,52 +635,18 @@
                     "OnPartial": "",
                     "OnFailure": "",
                     "DetectionCheck": "",
-                    "PayloadTarget": "FlagTrait:blessing-text",
-                    "PayloadOperation": "Apply",
-                    "PayloadValue": "",
-                    "PayloadDice": "",
-                    "PayloadTag": "",
-                    "PayloadTraitName": "Blessed Weapon",
-                    "PayloadTraitText": "This weapon is ritually blessed and counts as favored against unclean or hostile supernatural targets.",
-                    "GrantedItemTemplate": "",
-                    "GrantedItemName": "",
-                    "PayloadNotes": "Readable blessing text rather than a numeric status.",
-                    "DurationType": "Permanent",
-                    "DurationValue": "",
-                    "ExpiryTrigger": "",
-                    "RemovalMethod": "",
-                    "SuppressedBy": ""
-                },
-                {
-                    "Description": "Bless Weapon: Protection/DamageResistance",
-                    "ApplicationMode": "CreateActiveEffect",
-                    "EffectType": "Protection",
-                    "EffectSubtype": "DamageResistance",
-                    "Visible": true,
-                    "TargetType": "Item",
-                    "TargetCount": "1",
-                    "TargetRange": "Touch",
-                    "TargetFilter": "",
-                    "TargetDescription": "",
-                    "CheckType": "None",
-                    "CheckFormula": "",
-                    "ResistanceType": "",
-                    "ResistanceFormula": "",
-                    "OnPartial": "",
-                    "OnFailure": "",
-                    "DetectionCheck": "",
-                    "PayloadTarget": "Blessed weapon",
-                    "PayloadOperation": "Apply",
-                    "PayloadValue": "Sanctified harm",
+                    "PayloadTarget": "Item",
+                    "PayloadOperation": "Grant",
+                    "PayloadValue": "Blessed",
                     "PayloadDice": "",
                     "PayloadTag": "",
                     "PayloadTraitName": "",
                     "PayloadTraitText": "",
-                    "GrantedItemTemplate": "",
-                    "GrantedItemName": "",
-                    "PayloadNotes": "The blessed weapon better harms or resists hostile supernatural force.",
-                    "DurationType": "Days",
-                    "DurationValue": "1",
+                    "GrantedItemTemplate": "Item.YEmH08i9vPl49ZNu",
+                    "GrantedItemName": "Blessed",
+                    "PayloadNotes": "Attach the Blessed weapon modifier to the chosen weapon.",
+                    "DurationType": "UntilBroken",
+                    "DurationValue": "",
                     "ExpiryTrigger": "",
                     "RemovalMethod": "",
                     "SuppressedBy": ""
@@ -738,6 +660,8 @@
             "FailureTable": "SpellFailure_Major",
             "FailureEscalationTable": "",
             "FailureNotes": "Failure is roll-table-driven per the magic source document.",
+            "SupportRollTable": "",
+            "SupportRollNotes": "",
             "School_Alchemy": false,
             "School_Astrology": false,
             "School_Divination": false,
@@ -789,16 +713,16 @@
                 ],
                 "successEffects": [
                     {
-                        "Description": "Bless Weapon: Trait/BlessingText",
-                        "ApplicationMode": "DirectDataChange",
-                        "EffectType": "Trait",
-                        "EffectSubtype": "BlessingText",
+                        "Description": "Bless Weapon: Grant/Item",
+                        "ApplicationMode": "GrantItem",
+                        "EffectType": "Grant",
+                        "EffectSubtype": "Item",
                         "Visible": true,
                         "TargetType": "Item",
                         "TargetCount": "1",
                         "TargetRange": "Touch",
                         "TargetFilter": "",
-                        "TargetDescription": "A weapon to be blessed.",
+                        "TargetDescription": "Chosen weapon or item.",
                         "CheckType": "None",
                         "CheckFormula": "",
                         "ResistanceType": "",
@@ -806,52 +730,18 @@
                         "OnPartial": "",
                         "OnFailure": "",
                         "DetectionCheck": "",
-                        "PayloadTarget": "FlagTrait:blessing-text",
-                        "PayloadOperation": "Apply",
-                        "PayloadValue": "",
-                        "PayloadDice": "",
-                        "PayloadTag": "",
-                        "PayloadTraitName": "Blessed Weapon",
-                        "PayloadTraitText": "This weapon is ritually blessed and counts as favored against unclean or hostile supernatural targets.",
-                        "GrantedItemTemplate": "",
-                        "GrantedItemName": "",
-                        "PayloadNotes": "Readable blessing text rather than a numeric status.",
-                        "DurationType": "Permanent",
-                        "DurationValue": "",
-                        "ExpiryTrigger": "",
-                        "RemovalMethod": "",
-                        "SuppressedBy": ""
-                    },
-                    {
-                        "Description": "Bless Weapon: Protection/DamageResistance",
-                        "ApplicationMode": "CreateActiveEffect",
-                        "EffectType": "Protection",
-                        "EffectSubtype": "DamageResistance",
-                        "Visible": true,
-                        "TargetType": "Item",
-                        "TargetCount": "1",
-                        "TargetRange": "Touch",
-                        "TargetFilter": "",
-                        "TargetDescription": "",
-                        "CheckType": "None",
-                        "CheckFormula": "",
-                        "ResistanceType": "",
-                        "ResistanceFormula": "",
-                        "OnPartial": "",
-                        "OnFailure": "",
-                        "DetectionCheck": "",
-                        "PayloadTarget": "Blessed weapon",
-                        "PayloadOperation": "Apply",
-                        "PayloadValue": "Sanctified harm",
+                        "PayloadTarget": "Item",
+                        "PayloadOperation": "Grant",
+                        "PayloadValue": "Blessed",
                         "PayloadDice": "",
                         "PayloadTag": "",
                         "PayloadTraitName": "",
                         "PayloadTraitText": "",
-                        "GrantedItemTemplate": "",
-                        "GrantedItemName": "",
-                        "PayloadNotes": "The blessed weapon better harms or resists hostile supernatural force.",
-                        "DurationType": "Days",
-                        "DurationValue": "1",
+                        "GrantedItemTemplate": "Item.YEmH08i9vPl49ZNu",
+                        "GrantedItemName": "Blessed",
+                        "PayloadNotes": "Attach the Blessed weapon modifier to the chosen weapon.",
+                        "DurationType": "UntilBroken",
+                        "DurationValue": "",
                         "ExpiryTrigger": "",
                         "RemovalMethod": "",
                         "SuppressedBy": ""

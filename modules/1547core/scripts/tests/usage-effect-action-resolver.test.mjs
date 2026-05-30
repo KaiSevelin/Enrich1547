@@ -79,6 +79,7 @@ console.log("usage-effect-action-resolver pure helpers...");
     assert.strictEqual(resolveDirectTargetPath({ PayloadTarget: "" }).kind, "invalid");
     assert.deepStrictEqual(resolveDirectTargetPath({ PayloadTarget: "system.props.Foo" }), { kind: "property", path: "system.props.Foo" });
     assert.strictEqual(resolveDirectTargetPath({ PayloadTarget: "PrimaryStat:Strength:dice" }).path, "system.props.Stats_StrengthDice");
+    assert.deepStrictEqual(resolveDirectTargetPath({ PayloadTarget: "PrimaryStat:Strength:steps" }), { kind: "primary-stat-steps", statLabel: "Strength" });
     assert.strictEqual(resolveDirectTargetPath({ PayloadTarget: "PrimaryStat:Bogus:dice" }).kind, "invalid");
     assert.strictEqual(resolveDirectTargetPath({ PayloadTarget: "Resource:Mana" }).path, "system.props.Mana");
     const trait = resolveDirectTargetPath({ PayloadTarget: "FlagTrait:Cursed-Soul" });
@@ -106,6 +107,26 @@ console.log("usage-effect-action-resolver pure helpers...");
         buildDirectDocumentUpdate({ PayloadTarget: "system.props.HP", PayloadValue: "nope" }, target).update,
         null,
         "non-numeric value on a numeric property is rejected"
+    );
+    const steppedTarget = {
+        update() {},
+        system: { props: { Stats_StrengthDice: 1, Stats_StrengthMod: 3, Stats_StaminaDice: 1, Stats_DexterityDice: 1, MaxHitPoints: 3 } }
+    };
+    assert.deepStrictEqual(
+        buildDirectDocumentUpdate({ PayloadTarget: "PrimaryStat:Strength:steps", PayloadOperation: "add", PayloadValue: 1 }, steppedTarget).update,
+        {
+            "system.props.Stats_StrengthDice": 2,
+            "system.props.Stats_StrengthMod": 0,
+            "system.props.MaxHitPoints": 4
+        }
+    );
+    assert.deepStrictEqual(
+        buildDirectDocumentUpdate({ PayloadTarget: "PrimaryStat:Strength:steps", PayloadOperation: "decrease", PayloadValue: 2 }, steppedTarget).update,
+        {
+            "system.props.Stats_StrengthDice": 1,
+            "system.props.Stats_StrengthMod": 1,
+            "system.props.MaxHitPoints": 3
+        }
     );
     console.log("  ✓ buildDirectDocumentUpdate: set/increase/decrease + numeric guard");
 }

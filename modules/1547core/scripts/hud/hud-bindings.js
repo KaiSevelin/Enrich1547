@@ -121,6 +121,23 @@
             void renderHudForSelection();
         });
     }
+    // Range-band buttons: toggle .is-highlighted on weapon rows whose
+    // data-band-<key> is set. Click the same band again to clear. Switching
+    // bands swaps the highlight without re-rendering the HUD.
+    for (const button of root.querySelectorAll("[data-hud-range-band]")) {
+        button.addEventListener("click", () => {
+            const band = button.dataset.hudRangeBand;
+            const container = button.closest(".hud-range-bands");
+            const list = container?.querySelector("[data-hud-range-list]");
+            if (!container || !list) return;
+            const wasActive = button.classList.contains("is-active");
+            container.querySelectorAll("[data-hud-range-band]").forEach((b) => b.classList.remove("is-active"));
+            list.querySelectorAll("li").forEach((li) => li.classList.remove("is-highlighted"));
+            if (wasActive) return;
+            button.classList.add("is-active");
+            list.querySelectorAll(`li[data-band-${band}="1"]`).forEach((li) => li.classList.add("is-highlighted"));
+        });
+    }
     for (const button of root.querySelectorAll("[data-hud-dice-attack-adjust]")) {
         button.addEventListener("click", (event) => {
             if (!token?.actor) return;

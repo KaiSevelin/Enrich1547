@@ -246,6 +246,34 @@
               "style": "sheet"
             }
           ]
+        },
+        {
+          "key": "SupportGenerationPanel",
+          "type": "panel",
+          "title": "Support Tables",
+          "titleStyle": "default",
+          "flow": "vertical",
+          "align": "left",
+          "verticalAlign": "top",
+          "collapsible": false,
+          "defaultCollapsed": false,
+          "contents": [
+            {
+              "key": "SupportRollTable",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Support Roll Table:",
+              "defaultValue": ""
+            },
+            {
+              "key": "SupportRollNotes",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Support Notes:",
+              "defaultValue": "",
+              "style": "sheet"
+            }
+          ]
         }
       ],
       "key": "custom_body",

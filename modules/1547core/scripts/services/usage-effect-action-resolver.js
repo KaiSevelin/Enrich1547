@@ -1,3 +1,6 @@
+import { buildAdvanceStatUpdateFromProps } from "./primary-stats.js";
+import { isManualSpellItem } from "./spell-manual-support.js";
+
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
 const USAGE_EFFECT_TEMPLATE_ID = "mwPqEYUoOfzXpyT9";
@@ -445,6 +448,13 @@ function resolveDirectTargetPath(effect) {
         return { kind: "property", path: `system.props.${propKey}` };
     }
 
+    const primaryStatStepsMatch = /^PrimaryStat:([A-Za-z]+):steps$/i.exec(target);
+    if (primaryStatStepsMatch) {
+        const statLabel = normalizeStatLabel(primaryStatStepsMatch[1]);
+        if (!statLabel) return { kind: "invalid", reason: `Unknown primary stat '${primaryStatStepsMatch[1]}'.` };
+        return { kind: "primary-stat-steps", statLabel };
+    }
+
     const resourceMatch = /^Resource:([A-Za-z0-9_]+)$/i.exec(target);
     if (resourceMatch) return { kind: "property", path: `system.props.${resourceMatch[1]}` };
 
@@ -468,6 +478,22 @@ function resolveDirectTargetPath(effect) {
     return { kind: "invalid", reason: `Unsupported direct data target '${target}'.` };
 }
 
+function buildPrimaryStatStepUpdate(targetDoc, statLabel, operation, amount) {
+    const props = targetDoc?.system?.props ?? {};
+    if (!STAT_KEY_MAP[statLabel]) {
+        return { update: null, reason: `Unknown primary stat '${statLabel}'.` };
+    }
+    if (!Number.isFinite(amount)) {
+        return { update: null, reason: `Primary-stat step changes require a numeric PayloadValue for '${statLabel}'.` };
+    }
+
+    const signedSteps = ["decrease", "subtract"].includes(operation)
+        ? -Math.abs(amount)
+        : Math.trunc(amount);
+    const { update } = buildAdvanceStatUpdateFromProps(props, statLabel, signedSteps);
+    return { update, reason: "" };
+}
+
 function buildDirectDocumentUpdate(effect, targetDoc) {
     const target = String(effect.PayloadTarget ?? "").trim();
     const operation = String(effect.PayloadOperation ?? "Apply").trim().toLowerCase();
@@ -476,6 +502,10 @@ function buildDirectDocumentUpdate(effect, targetDoc) {
 
     const resolvedTarget = resolveDirectTargetPath(effect);
     if (resolvedTarget.kind === "invalid") return { update: null, reason: resolvedTarget.reason };
+
+    if (resolvedTarget.kind === "primary-stat-steps") {
+        return buildPrimaryStatStepUpdate(targetDoc, resolvedTarget.statLabel, operation, amount);
+    }
 
     if (resolvedTarget.kind === "property") {
         if (!Number.isFinite(amount)) {
@@ -861,6 +891,7 @@ async function handleResolveEffectsClick(item) {
 function addResolveEffectsHeaderButton(app, buttons) {
     const item = app?.object;
     if (!isSupportedCarrierItem(item)) return;
+    if (String(item?.system?.template ?? "") === "2kiWw3Cv5Zk1lZxn" && isManualSpellItem(item)) return;
     if (!collectUsageEffectsFromCarrier(item).length) return;
     buttons.unshift({
         class: "resolve-effects",

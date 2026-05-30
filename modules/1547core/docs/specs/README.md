@@ -41,6 +41,7 @@ Current documents:
 - `nature-spirit-base-starter-spec-v1.md`
 - `ritual-step-roll-tables-spec-v1.md`
 - `spell-failure-roll-tables-spec-v1.md`
+- `spell-automation-tracking-spec-v1.md`
 - `status-effects-guide.md`
 - `spell-usage-effect-mapping-spec-v1.md`
 - `the-unseen-base-starter-spec-v1.md`

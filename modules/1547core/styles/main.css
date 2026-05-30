@@ -376,6 +376,28 @@ a.enricher-1547::before {
   font-weight: 700;
 }
 
+.actor-hud-1547 .hud-pill-button {
+  cursor: pointer;
+  font: inherit;
+  appearance: none;
+}
+
+.actor-hud-1547 .hud-pill-button:hover {
+  background: rgba(201, 171, 113, 0.28);
+  border-color: rgba(201, 171, 113, 0.5);
+}
+
+.actor-hud-1547 .hud-pill-button.is-active {
+  background: rgba(201, 171, 113, 0.5);
+  border-color: rgba(255, 249, 238, 0.7);
+}
+
+.actor-hud-1547 .hud-range-bands [data-hud-range-list] li.is-highlighted {
+  background: rgba(201, 171, 113, 0.18);
+  border-left: 2px solid rgba(255, 249, 238, 0.8);
+  padding-left: 0.3rem;
+}
+
 .actor-hud-1547 .hud-list {
   margin: 0;
   padding: 0;

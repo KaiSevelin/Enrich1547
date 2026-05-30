@@ -288,16 +288,7 @@ function buildConditionTree(data, deps = {}) {
 
 function buildOverviewTree(data, deps = {}) {
     const { escapeHtml, formatCurrentMax } = deps;
-    const equippedRows = [];
-    for (const weapon of data.equippedWeapons) {
-        const weaponValue = [weapon.equipped ? "Equipped" : "Carried", weapon.rangeSummary ? `R ${weapon.rangeSummary}` : ""].filter(Boolean).join(" - ");
-        equippedRows.push(`<li><span class="hud-tree-key">${escapeHtml(weapon.name)}</span><span class="hud-tree-value">${escapeHtml(weaponValue)}</span></li>`);
-    }
-    for (const armor of data.equippedArmor) {
-        equippedRows.push(`<li><span class="hud-tree-key">${escapeHtml(armor.name)}</span><span class="hud-tree-value">${escapeHtml(armor.defense || "Equipped")}</span></li>`);
-    }
 
-    const statusRows = data.conditions.map((condition) => `<li><span class="hud-tree-key">${escapeHtml(condition)}</span><span class="hud-tree-value">Active</span></li>`);
     const hpDisplay = formatCurrentMax(data.hitPoints, data.maxHitPoints);
     const pointRows = data.pointPools.map((resource) => `
         <li class="hud-point-cell">
@@ -308,23 +299,27 @@ function buildOverviewTree(data, deps = {}) {
     const riskRows = data.riskAndCritical.map((resource) => `
         <li><span class="hud-tree-key">${escapeHtml(resource.label)}</span><span class="hud-tree-value">${escapeHtml(resource.display)}</span></li>
     `).join("");
-    const attackAdvantageRows = [
-        { label: "Advantage", value: Number(data.weaponRollContext?.advantageDice ?? 0) || 0 },
-        { label: "Risk", value: Number(data.weaponRollContext?.riskDice ?? 0) || 0 },
-        { label: "Main Dice", value: Number(data.weaponRollContext?.addMainDice ?? 0) || 0 },
-        { label: "Multiplier", value: Number(data.weaponRollContext?.addMultiplierDice ?? 0) || 0 },
-        ...Object.entries(data.weaponRollContext?.extraDiceCounts ?? {}).map(([dieKey, count]) => ({
-            label: `${dieKey}`,
-            value: Number(count ?? 0) || 0,
-        })),
-    ].filter((entry) => entry.value > 0).map((entry) => `
-        <li><span class="hud-tree-key">${escapeHtml(entry.label)}</span><span class="hud-tree-value">+${escapeHtml(entry.value)}</span></li>
-    `).join("");
-    const skillAdvantageRows = [
-        { label: "Base Advantage", value: Number(data.rollContext?.advantageDice ?? 0) || 0 },
-        { label: "Staged d6", value: Number(data.rollContext?.extraD6 ?? 0) || 0 },
-    ].filter((entry) => entry.value > 0).map((entry) => `
-        <li><span class="hud-tree-key">${escapeHtml(entry.label)}</span><span class="hud-tree-value">+${escapeHtml(entry.value)}</span></li>
+    // Combined Advantage block: attack and skill/stat advantage on one block.
+    // Each non-zero entry shows once, prefixed by Attack: or Skill: so the
+    // single line can be scanned without two headers.
+    const advantageEntries = [
+        ...[
+            { label: "Advantage", value: Number(data.weaponRollContext?.advantageDice ?? 0) || 0 },
+            { label: "Risk", value: Number(data.weaponRollContext?.riskDice ?? 0) || 0 },
+            { label: "Main Dice", value: Number(data.weaponRollContext?.addMainDice ?? 0) || 0 },
+            { label: "Multiplier", value: Number(data.weaponRollContext?.addMultiplierDice ?? 0) || 0 },
+            ...Object.entries(data.weaponRollContext?.extraDiceCounts ?? {}).map(([dieKey, count]) => ({
+                label: `${dieKey}`,
+                value: Number(count ?? 0) || 0,
+            })),
+        ].map((e) => ({ ...e, prefix: "Attack" })),
+        ...[
+            { label: "Base Advantage", value: Number(data.rollContext?.advantageDice ?? 0) || 0 },
+            { label: "Staged d6", value: Number(data.rollContext?.extraD6 ?? 0) || 0 },
+        ].map((e) => ({ ...e, prefix: "Skill" })),
+    ].filter((entry) => entry.value > 0);
+    const advantageRows = advantageEntries.map((entry) => `
+        <li><span class="hud-tree-key">${escapeHtml(`${entry.prefix}: ${entry.label}`)}</span><span class="hud-tree-value">+${escapeHtml(entry.value)}</span></li>
     `).join("");
     const liveRiskCritRows = [
         { label: "Attack Risk Dice", value: Number(data.weaponRollContext?.riskDice ?? 0) || 0 },
@@ -338,16 +333,20 @@ function buildOverviewTree(data, deps = {}) {
     `).join("");
     const rangedWeapons = data.equippedWeapons.filter((weapon) => weapon.rangeSummary);
     const activeEffectRows = (data.activePersistentEffects ?? []).map((effect) => `<li><span class="hud-tree-key">${escapeHtml(effect.label)}</span><span class="hud-tree-value">${escapeHtml(effect.duration || "Active")}</span></li>`).join("");
+    // Range-band pills are clickable: clicking "Short" highlights weapon rows
+    // whose shortRange > 0, etc. Click the same band again to clear. The
+    // weapon list carries data-band-{short|long|max} flags so hud-bindings
+    // can toggle .is-highlighted on matching <li> elements.
     const rangeLegend = rangedWeapons.length ? `
-        <div class="hud-tree-block">
+        <div class="hud-tree-block hud-range-bands">
             <div class="hud-section-title">Range Bands</div>
             <div class="hud-pill-row">
-                <span class="hud-pill"><span class="hud-pill-label">Short</span><span class="hud-pill-value">Normal</span></span>
-                <span class="hud-pill"><span class="hud-pill-label">Long</span><span class="hud-pill-value">Disadvantage</span></span>
-                <span class="hud-pill"><span class="hud-pill-label">Max</span><span class="hud-pill-value">Maneuvers</span></span>
+                <button type="button" class="hud-pill hud-pill-button" data-hud-range-band="short"><span class="hud-pill-label">Short</span><span class="hud-pill-value">Normal</span></button>
+                <button type="button" class="hud-pill hud-pill-button" data-hud-range-band="long"><span class="hud-pill-label">Long</span><span class="hud-pill-value">Disadvantage</span></button>
+                <button type="button" class="hud-pill hud-pill-button" data-hud-range-band="max"><span class="hud-pill-label">Max</span><span class="hud-pill-value">Maneuvers</span></button>
             </div>
-            <ul class="hud-tree-children hud-tree-compact">
-                ${rangedWeapons.map((weapon) => `<li><span class="hud-tree-key">${escapeHtml(weapon.name)}</span><span class="hud-tree-value">${escapeHtml(weapon.rangeSummary)}</span></li>`).join("")}
+            <ul class="hud-tree-children hud-tree-compact" data-hud-range-list>
+                ${rangedWeapons.map((weapon) => `<li data-band-short="${Number(weapon.shortRange) > 0 ? "1" : ""}" data-band-long="${Number(weapon.longRange) > 0 ? "1" : ""}" data-band-max="${Number(weapon.maxRange) > 0 ? "1" : ""}"><span class="hud-tree-key">${escapeHtml(weapon.name)}</span><span class="hud-tree-value">${escapeHtml(weapon.rangeSummary)}</span></li>`).join("")}
             </ul>
         </div>
     ` : "";
@@ -367,26 +366,14 @@ function buildOverviewTree(data, deps = {}) {
                 <ul class="hud-tree-children hud-tree-compact">${liveRiskCritRows || '<li class="hud-empty-row">None</li>'}</ul>
             </div>
             <div class="hud-tree-block hud-overview-block">
-                <div class="hud-section-title">Attack Advantage Dice</div>
-                <ul class="hud-tree-children hud-tree-compact">${attackAdvantageRows || '<li class="hud-empty-row">None</li>'}</ul>
-            </div>
-            <div class="hud-tree-block hud-overview-block">
-                <div class="hud-section-title">Skill / Stat Advantage Dice</div>
-                <ul class="hud-tree-children hud-tree-compact">${skillAdvantageRows || '<li class="hud-empty-row">None</li>'}</ul>
+                <div class="hud-section-title">Advantage</div>
+                <ul class="hud-tree-children hud-tree-compact">${advantageRows || '<li class="hud-empty-row">None</li>'}</ul>
             </div>
         </div>
         ${rangeLegend}
         <div class="hud-tree-block">
             <div class="hud-section-title">Active Effects</div>
             <ul class="hud-tree-children hud-tree-compact">${activeEffectRows || '<li class="hud-empty-row">None</li>'}</ul>
-        </div>
-        <div class="hud-tree-block">
-            <div class="hud-section-title">Equipped</div>
-            <ul class="hud-tree-children hud-tree-compact">${equippedRows.join("") || '<li class="hud-empty-row">None</li>'}</ul>
-        </div>
-        <div class="hud-tree-block">
-            <div class="hud-section-title">Status</div>
-            <ul class="hud-tree-children hud-tree-compact">${statusRows.join("") || '<li class="hud-empty-row">None</li>'}</ul>
         </div>
     `;
 }

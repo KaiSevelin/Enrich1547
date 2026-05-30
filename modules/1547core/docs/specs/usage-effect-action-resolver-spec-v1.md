@@ -191,6 +191,7 @@ Recommended first-pass target grammar:
 - `system.props.<PropName>`
 - `PrimaryStat:<Stat>:mod`
 - `PrimaryStat:<Stat>:dice`
+- `PrimaryStat:<Stat>:steps`
 - `Resource:<PropName>`
 - `FlagTrait:<Slug>`
 - `FlagTag:<Slug>`
@@ -199,9 +200,37 @@ Examples:
 
 - `system.props.PowerPoints`
 - `PrimaryStat:Strength:mod`
+- `PrimaryStat:Power:steps`
 - `Resource:StaminaPoints`
 - `FlagTrait:visible-tell`
 - `FlagTag:curse-proof`
+
+### Primary Stat Step Ladder
+
+`PrimaryStat:<Stat>:steps` must advance or reduce a stat on the d6 ladder:
+
+- `1d6`
+- `1d6 + 1`
+- `1d6 + 2`
+- `1d6 + 3`
+- `2d6`
+- `2d6 + 1`
+- `2d6 + 2`
+- `2d6 + 3`
+- `3d6`
+- and so on
+
+Each increase is `+1` step.
+
+Each decrease is `-1` step.
+
+Example:
+
+- `1d6 + 3` with `PayloadTarget = PrimaryStat:Strength:steps` and
+  `PayloadValue = 1`
+  becomes `2d6`
+- `2d6` with `PayloadValue = -1`
+  becomes `1d6 + 3`
 
 If a `DirectDataChange` effect does not provide one of these explicit targets,
 the runtime resolver should **not** guess. It should fail safely and report

@@ -16,6 +16,9 @@ It separates 3 different kinds of state:
 These should not be mixed together in Foundry even if they may all appear in the
 HUD.
 
+This document also records proposed spell-facing active effects that should be
+editable system states rather than hidden one-off runtime payloads.
+
 ## State Categories
 
 ### Conditions
@@ -224,6 +227,56 @@ and dropped-item state are already tracked correctly.
     remains active
   - if the owner becomes the target of an attack, `braced` is spoiled and the
     persistent effect is removed unless a later rule explicitly says otherwise
+
+## Proposed Spell Active Effects
+
+These are not yet fully formalized combat conditions. They are proposed
+editable system active effects for spells, blessings, curses, and occult
+transformations.
+
+### Blessings And Protections
+
+- `Blessed`
+- `Consumption Oath`
+- `Curse Protection`
+- `Danger Sense`
+- `Dream Warded`
+- `Evil Eye Protection`
+- `Friendly`
+- `Love Bound`
+- `Deep Love Bound`
+- `Oath Bound`
+- `Protected`
+- `Ritual Protection`
+- `Sanctified`
+- `Spirit Protection`
+- `Spirit Sight`
+- `Threshold Sense`
+- `Truthful`
+
+### Curses, Control, And Afflictions
+
+- `Bad Luck`
+- `Confused`
+- `Cursed`
+- `Diseased`
+- `Doomed`
+- `Fear`
+- `Possessed`
+- `Shadowed`
+- `Silenced`
+- `Sleep Touched`
+- `Weakened`
+- `Withering`
+
+### Transformation And Special States
+
+- `Astral`
+- `Glamour`
+- `Shape Changed`
+
+These should remain editable and inspectable, with clear duration support and
+room for later rules text, rather than being hidden implementation details.
 
 ## Future Battlefield Effects
 

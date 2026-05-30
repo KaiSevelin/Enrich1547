@@ -18,6 +18,12 @@ export function buildSpellProps(spell) {
     const complexity = spell.complexity ?? "Medium";
     const failureProfile = spell.failureProfile ?? "Minor";
     const failureTable = String(spell.failureTable ?? "").trim() || `SpellFailure_${failureProfile}`;
+    const supportRollTable = String(spell.supportRollTable ?? "").trim()
+        || (spell.name === "Angelic Boon" ? "AngelicBoons" : "");
+    const supportRollNotes = String(spell.supportRollNotes ?? "").trim()
+        || (spell.name === "Angelic Boon"
+            ? "Roll once on the authored Angelic Boons table and present the result in chat or apply it manually."
+            : "");
     const randomStepRollFormula = spell.randomStepRollFormula
         ?? (complexity === "Easy" ? "1d2" : complexity === "Hard" ? "1d6" : "1d3");
     return {
@@ -42,6 +48,8 @@ export function buildSpellProps(spell) {
         FailureTable: failureTable,
         FailureEscalationTable: spell.failureEscalationTable ?? "",
         FailureNotes: spell.failureNotes ?? "",
+        SupportRollTable: supportRollTable,
+        SupportRollNotes: supportRollNotes,
         School_Alchemy: schoolSet.has("Alchemy"),
         School_Astrology: schoolSet.has("Astrology"),
         School_Divination: schoolSet.has("Divination"),
@@ -103,8 +111,8 @@ function slugify(value) {
 
 async function main() {
     const [template, source] = await Promise.all([
-        fs.readFile(TEMPLATE_PATH, "utf8").then((text) => JSON.parse(text)),
-        fs.readFile(SOURCE_PATH, "utf8").then((text) => JSON.parse(text))
+        fs.readFile(TEMPLATE_PATH, "utf8").then((text) => JSON.parse(text.replace(/^\uFEFF/, ""))),
+        fs.readFile(SOURCE_PATH, "utf8").then((text) => JSON.parse(text.replace(/^\uFEFF/, "")))
     ]);
 
     const docs = source.map((spell) => makeItemDoc(spell, template));

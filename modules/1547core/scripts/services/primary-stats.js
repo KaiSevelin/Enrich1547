@@ -28,6 +28,12 @@ export const PRIMARY_STATS = [
     "Power"
 ];
 
+export const HIT_POINT_DRIVING_STATS = [
+    "Strength",
+    "Stamina",
+    "Dexterity"
+];
+
 export function statIndex(dice, mod) {
     return (dice - 1) * 4 + mod;
 }
@@ -50,38 +56,82 @@ export function getStatRating(actor, characteristic) {
     };
 }
 
-export async function advanceStat(actor, characteristic, steps) {
+export function getDefaultMaxHitPointsFromProps(props = {}) {
+    return Math.max(
+        0,
+        Number(props?.Stats_StrengthDice ?? 1)
+        + Number(props?.Stats_StaminaDice ?? 1)
+        + Number(props?.Stats_DexterityDice ?? 1)
+    );
+}
+
+export function getStoredOrDefaultMaxHitPoints(actorOrProps) {
+    const props = actorOrProps?.system?.props ?? actorOrProps ?? {};
+    const stored = Number(props?.MaxHitPoints);
+    return Number.isFinite(stored) ? stored : getDefaultMaxHitPointsFromProps(props);
+}
+
+function isHitPointDrivingStat(characteristic) {
+    return HIT_POINT_DRIVING_STATS.includes(String(characteristic ?? ""));
+}
+
+export function buildAdvanceStatUpdateFromProps(props = {}, characteristic, steps) {
     const dKey = `Stats_${characteristic}Dice`;
     const mKey = `Stats_${characteristic}Mod`;
 
-    const props = actor.system?.props ?? {};
     const beforeDice = Number(props[dKey] ?? 1);
     const beforeMod = Number(props[mKey] ?? 0);
-
     const beforeIndex = statIndex(beforeDice, beforeMod);
     const afterIndex = Math.max(0, beforeIndex + Number(steps ?? 0));
-
     const { dice, mod } = indexToStat(afterIndex);
 
-    await actor.update({
+    const update = {
         [`system.props.${dKey}`]: dice,
         [`system.props.${mKey}`]: mod
-    });
+    };
+
+    if (isHitPointDrivingStat(characteristic)) {
+        const currentMax = getStoredOrDefaultMaxHitPoints(props);
+        const nextMax = Math.max(0, currentMax + (dice - beforeDice));
+        update["system.props.MaxHitPoints"] = nextMax;
+    }
+
+    return { update, dice, mod };
+}
+
+export function buildSetStatUpdateFromProps(props = {}, characteristic, dice, mod) {
+    const dKey = `Stats_${characteristic}Dice`;
+    const mKey = `Stats_${characteristic}Mod`;
+
+    const beforeDice = Number(props[dKey] ?? 1);
+    const clampedDice = Math.max(1, Math.floor(Number(dice ?? 1)));
+    const clampedMod = Math.max(0, Math.min(3, Math.floor(Number(mod ?? 0))));
+
+    const update = {
+        [`system.props.${dKey}`]: clampedDice,
+        [`system.props.${mKey}`]: clampedMod
+    };
+
+    if (isHitPointDrivingStat(characteristic)) {
+        const currentMax = getStoredOrDefaultMaxHitPoints(props);
+        const nextMax = Math.max(0, currentMax + (clampedDice - beforeDice));
+        update["system.props.MaxHitPoints"] = nextMax;
+    }
+
+    return { update, dice: clampedDice, mod: clampedMod };
+}
+
+export async function advanceStat(actor, characteristic, steps) {
+    const props = actor.system?.props ?? {};
+    const { update, dice, mod } = buildAdvanceStatUpdateFromProps(props, characteristic, steps);
+    await actor.update(update);
 
     return { dice, mod };
 }
 
 export async function setStat(actor, characteristic, dice, mod) {
-    const dKey = `Stats_${characteristic}Dice`;
-    const mKey = `Stats_${characteristic}Mod`;
-
-    const clampedDice = Math.max(1, Math.floor(Number(dice ?? 1)));
-    const clampedMod = Math.max(0, Math.min(3, Math.floor(Number(mod ?? 0))));
-
-    await actor.update({
-        [`system.props.${dKey}`]: clampedDice,
-        [`system.props.${mKey}`]: clampedMod
-    });
-
-    return { dice: clampedDice, mod: clampedMod };
+    const props = actor.system?.props ?? {};
+    const result = buildSetStatUpdateFromProps(props, characteristic, dice, mod);
+    await actor.update(result.update);
+    return { dice: result.dice, mod: result.mod };
 }

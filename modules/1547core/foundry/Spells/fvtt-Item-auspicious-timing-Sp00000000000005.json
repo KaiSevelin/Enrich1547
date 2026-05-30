@@ -160,100 +160,28 @@
                 },
                 {
                     "key": "StaticRitualSteps",
-                    "type": "dynamicTable",
+                    "type": "itemContainer",
                     "contents": [],
-                    "rowLayout": [
-                        {
-                            "key": "StepScope",
-                            "type": "select",
-                            "size": "full-size",
-                            "defaultValue": "Mandatory",
-                            "selectedOptionType": "custom",
-                            "options": [
-                                {
-                                    "key": "Mandatory",
-                                    "value": "Mandatory"
-                                },
-                                {
-                                    "key": "Alternative",
-                                    "value": "Alternative"
-                                }
-                            ],
-                            "colName": "Scope"
-                        },
-                        {
-                            "key": "AlternativeGroup",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Alt Group"
-                        },
-                        {
-                            "key": "StepType",
-                            "type": "select",
-                            "size": "full-size",
-                            "defaultValue": "StaticSkill",
-                            "selectedOptionType": "custom",
-                            "options": [
-                                {
-                                    "key": "StaticSkill",
-                                    "value": "StaticSkill"
-                                },
-                                {
-                                    "key": "Naming",
-                                    "value": "Naming"
-                                },
-                                {
-                                    "key": "Preparation",
-                                    "value": "Preparation"
-                                },
-                                {
-                                    "key": "Witness",
-                                    "value": "Witness"
-                                },
-                                {
-                                    "key": "Purity",
-                                    "value": "Purity"
-                                }
-                            ],
-                            "colName": "Type"
-                        },
-                        {
-                            "key": "StepText",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Step"
-                        },
-                        {
-                            "key": "SkillCheck",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Check"
-                        },
-                        {
-                            "key": "Difficulty",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Difficulty"
-                        },
-                        {
-                            "key": "StepNotes",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Notes"
-                        }
-                    ],
+                    "rowLayout": [],
                     "head": false,
                     "deleteWarning": false,
-                    "labelWhenEmpty": "",
-                    "predefinedLines": [],
-                    "canPlayerAdd": true,
+                    "labelWhenEmpty": "No static ritual steps.",
+                    "title": "Static Ritual Steps",
+                    "hideEmpty": false,
                     "hiddenColumns": [],
                     "sortOption": "manual",
+                    "headDisplay": true,
+                    "showCreate": true,
+                    "defaultTemplate": "R7sTu4Qn2Lp8Vx5K",
+                    "createItemDialogShowTemplateList": false,
+                    "showDelete": true,
+                    "statusIcon": false,
+                    "nameAlign": "left",
+                    "nameLabel": "Step",
+                    "templateFilter": [
+                        "R7sTu4Qn2Lp8Vx5K"
+                    ],
+                    "itemFilterFormula": "",
                     "sortPredicates": []
                 },
                 {
@@ -361,6 +289,34 @@
                             "type": "textArea",
                             "size": "full-size",
                             "label": "Failure Notes:",
+                            "defaultValue": "",
+                            "style": "sheet"
+                        }
+                    ]
+                },
+                {
+                    "key": "SupportGenerationPanel",
+                    "type": "panel",
+                    "title": "Support Tables",
+                    "titleStyle": "default",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "SupportRollTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Support Roll Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "SupportRollNotes",
+                            "type": "textArea",
+                            "size": "full-size",
+                            "label": "Support Notes:",
                             "defaultValue": "",
                             "style": "sheet"
                         }
@@ -673,76 +629,7 @@
                     "StepNotes": "Static core school requirement."
                 }
             ],
-            "SuccessEffects": [
-                {
-                    "Description": "Auspicious Timing: Revelation/Omen",
-                    "ApplicationMode": "NarrativeOnly",
-                    "EffectType": "Revelation",
-                    "EffectSubtype": "Omen",
-                    "Visible": true,
-                    "TargetType": "Descriptive",
-                    "TargetCount": "1",
-                    "TargetRange": "",
-                    "TargetFilter": "",
-                    "TargetDescription": "Question, decision, or near future.",
-                    "CheckType": "None",
-                    "CheckFormula": "",
-                    "ResistanceType": "",
-                    "ResistanceFormula": "",
-                    "OnPartial": "",
-                    "OnFailure": "",
-                    "DetectionCheck": "",
-                    "PayloadTarget": "Omen meaning",
-                    "PayloadOperation": "Reveal",
-                    "PayloadValue": "Omen",
-                    "PayloadDice": "",
-                    "PayloadTag": "",
-                    "PayloadTraitName": "",
-                    "PayloadTraitText": "",
-                    "GrantedItemTemplate": "",
-                    "GrantedItemName": "",
-                    "PayloadNotes": "Reveals whether forces are favorable, dangerous, or ill-starred.",
-                    "DurationType": "Instant",
-                    "DurationValue": "",
-                    "ExpiryTrigger": "",
-                    "RemovalMethod": "",
-                    "SuppressedBy": ""
-                },
-                {
-                    "Description": "Auspicious Timing: Status/Blessed",
-                    "ApplicationMode": "CreateActiveEffect",
-                    "EffectType": "Status",
-                    "EffectSubtype": "Blessed",
-                    "Visible": true,
-                    "TargetType": "Actor",
-                    "TargetCount": "1",
-                    "TargetRange": "",
-                    "TargetFilter": "",
-                    "TargetDescription": "",
-                    "CheckType": "None",
-                    "CheckFormula": "",
-                    "ResistanceType": "",
-                    "ResistanceFormula": "",
-                    "OnPartial": "",
-                    "OnFailure": "",
-                    "DetectionCheck": "",
-                    "PayloadTarget": "Status",
-                    "PayloadOperation": "Apply",
-                    "PayloadValue": "Blessed",
-                    "PayloadDice": "",
-                    "PayloadTag": "",
-                    "PayloadTraitName": "",
-                    "PayloadTraitText": "",
-                    "GrantedItemTemplate": "",
-                    "GrantedItemName": "",
-                    "PayloadNotes": "A favorable supernatural condition.",
-                    "DurationType": "Days",
-                    "DurationValue": "1",
-                    "ExpiryTrigger": "",
-                    "RemovalMethod": "",
-                    "SuppressedBy": ""
-                }
-            ],
+            "SuccessEffects": [],
             "RitualStrengthTable": "",
             "RandomStepRollFormula": "1d3",
             "RitualStepTable": "RitualSteps_Medium",
@@ -751,6 +638,8 @@
             "FailureTable": "SpellFailure_Major",
             "FailureEscalationTable": "",
             "FailureNotes": "Failure is roll-table-driven per the magic source document.",
+            "SupportRollTable": "",
+            "SupportRollNotes": "",
             "School_Alchemy": false,
             "School_Astrology": true,
             "School_Divination": true,
@@ -801,76 +690,7 @@
                         "RequirementNotes": "Divinatory workings require a fixed subject or carefully held question."
                     }
                 ],
-                "successEffects": [
-                    {
-                        "Description": "Auspicious Timing: Revelation/Omen",
-                        "ApplicationMode": "NarrativeOnly",
-                        "EffectType": "Revelation",
-                        "EffectSubtype": "Omen",
-                        "Visible": true,
-                        "TargetType": "Descriptive",
-                        "TargetCount": "1",
-                        "TargetRange": "",
-                        "TargetFilter": "",
-                        "TargetDescription": "Question, decision, or near future.",
-                        "CheckType": "None",
-                        "CheckFormula": "",
-                        "ResistanceType": "",
-                        "ResistanceFormula": "",
-                        "OnPartial": "",
-                        "OnFailure": "",
-                        "DetectionCheck": "",
-                        "PayloadTarget": "Omen meaning",
-                        "PayloadOperation": "Reveal",
-                        "PayloadValue": "Omen",
-                        "PayloadDice": "",
-                        "PayloadTag": "",
-                        "PayloadTraitName": "",
-                        "PayloadTraitText": "",
-                        "GrantedItemTemplate": "",
-                        "GrantedItemName": "",
-                        "PayloadNotes": "Reveals whether forces are favorable, dangerous, or ill-starred.",
-                        "DurationType": "Instant",
-                        "DurationValue": "",
-                        "ExpiryTrigger": "",
-                        "RemovalMethod": "",
-                        "SuppressedBy": ""
-                    },
-                    {
-                        "Description": "Auspicious Timing: Status/Blessed",
-                        "ApplicationMode": "CreateActiveEffect",
-                        "EffectType": "Status",
-                        "EffectSubtype": "Blessed",
-                        "Visible": true,
-                        "TargetType": "Actor",
-                        "TargetCount": "1",
-                        "TargetRange": "",
-                        "TargetFilter": "",
-                        "TargetDescription": "",
-                        "CheckType": "None",
-                        "CheckFormula": "",
-                        "ResistanceType": "",
-                        "ResistanceFormula": "",
-                        "OnPartial": "",
-                        "OnFailure": "",
-                        "DetectionCheck": "",
-                        "PayloadTarget": "Status",
-                        "PayloadOperation": "Apply",
-                        "PayloadValue": "Blessed",
-                        "PayloadDice": "",
-                        "PayloadTag": "",
-                        "PayloadTraitName": "",
-                        "PayloadTraitText": "",
-                        "GrantedItemTemplate": "",
-                        "GrantedItemName": "",
-                        "PayloadNotes": "A favorable supernatural condition.",
-                        "DurationType": "Days",
-                        "DurationValue": "1",
-                        "ExpiryTrigger": "",
-                        "RemovalMethod": "",
-                        "SuppressedBy": ""
-                    }
-                ],
+                "successEffects": [],
                 "ritualStrengthTable": "",
                 "ritualStepTable": "RitualSteps_Medium",
                 "ritualModifierTable": "",

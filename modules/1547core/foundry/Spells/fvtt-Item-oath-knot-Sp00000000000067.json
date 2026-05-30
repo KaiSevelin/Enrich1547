@@ -160,100 +160,28 @@
                 },
                 {
                     "key": "StaticRitualSteps",
-                    "type": "dynamicTable",
+                    "type": "itemContainer",
                     "contents": [],
-                    "rowLayout": [
-                        {
-                            "key": "StepScope",
-                            "type": "select",
-                            "size": "full-size",
-                            "defaultValue": "Mandatory",
-                            "selectedOptionType": "custom",
-                            "options": [
-                                {
-                                    "key": "Mandatory",
-                                    "value": "Mandatory"
-                                },
-                                {
-                                    "key": "Alternative",
-                                    "value": "Alternative"
-                                }
-                            ],
-                            "colName": "Scope"
-                        },
-                        {
-                            "key": "AlternativeGroup",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Alt Group"
-                        },
-                        {
-                            "key": "StepType",
-                            "type": "select",
-                            "size": "full-size",
-                            "defaultValue": "StaticSkill",
-                            "selectedOptionType": "custom",
-                            "options": [
-                                {
-                                    "key": "StaticSkill",
-                                    "value": "StaticSkill"
-                                },
-                                {
-                                    "key": "Naming",
-                                    "value": "Naming"
-                                },
-                                {
-                                    "key": "Preparation",
-                                    "value": "Preparation"
-                                },
-                                {
-                                    "key": "Witness",
-                                    "value": "Witness"
-                                },
-                                {
-                                    "key": "Purity",
-                                    "value": "Purity"
-                                }
-                            ],
-                            "colName": "Type"
-                        },
-                        {
-                            "key": "StepText",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Step"
-                        },
-                        {
-                            "key": "SkillCheck",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Check"
-                        },
-                        {
-                            "key": "Difficulty",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Difficulty"
-                        },
-                        {
-                            "key": "StepNotes",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Notes"
-                        }
-                    ],
+                    "rowLayout": [],
                     "head": false,
                     "deleteWarning": false,
-                    "labelWhenEmpty": "",
-                    "predefinedLines": [],
-                    "canPlayerAdd": true,
+                    "labelWhenEmpty": "No static ritual steps.",
+                    "title": "Static Ritual Steps",
+                    "hideEmpty": false,
                     "hiddenColumns": [],
                     "sortOption": "manual",
+                    "headDisplay": true,
+                    "showCreate": true,
+                    "defaultTemplate": "R7sTu4Qn2Lp8Vx5K",
+                    "createItemDialogShowTemplateList": false,
+                    "showDelete": true,
+                    "statusIcon": false,
+                    "nameAlign": "left",
+                    "nameLabel": "Step",
+                    "templateFilter": [
+                        "R7sTu4Qn2Lp8Vx5K"
+                    ],
+                    "itemFilterFormula": "",
                     "sortPredicates": []
                 },
                 {
@@ -361,6 +289,34 @@
                             "type": "textArea",
                             "size": "full-size",
                             "label": "Failure Notes:",
+                            "defaultValue": "",
+                            "style": "sheet"
+                        }
+                    ]
+                },
+                {
+                    "key": "SupportGenerationPanel",
+                    "type": "panel",
+                    "title": "Support Tables",
+                    "titleStyle": "default",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "SupportRollTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Support Roll Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "SupportRollNotes",
+                            "type": "textArea",
+                            "size": "full-size",
+                            "label": "Support Notes:",
                             "defaultValue": "",
                             "style": "sheet"
                         }
@@ -656,10 +612,10 @@
             ],
             "SuccessEffects": [
                 {
-                    "Description": "Oath Knot: Binding/BindByOath",
-                    "ApplicationMode": "Hybrid",
-                    "EffectType": "Binding",
-                    "EffectSubtype": "BindByOath",
+                    "Description": "Oath Knot: Status/Oath Bound",
+                    "ApplicationMode": "CreateActiveEffect",
+                    "EffectType": "Status",
+                    "EffectSubtype": "Oath Bound",
                     "Visible": true,
                     "TargetType": "Actor",
                     "TargetCount": "1",
@@ -673,52 +629,18 @@
                     "OnPartial": "",
                     "OnFailure": "",
                     "DetectionCheck": "",
-                    "PayloadTarget": "Oath binding",
-                    "PayloadOperation": "Apply",
-                    "PayloadValue": "Bound by oath",
-                    "PayloadDice": "",
-                    "PayloadTag": "",
-                    "PayloadTraitName": "",
-                    "PayloadTraitText": "",
-                    "GrantedItemTemplate": "",
-                    "GrantedItemName": "",
-                    "PayloadNotes": "Compels through sworn witness, vow, or ritual promise.",
-                    "DurationType": "UntilBroken",
-                    "DurationValue": "",
-                    "ExpiryTrigger": "",
-                    "RemovalMethod": "",
-                    "SuppressedBy": ""
-                },
-                {
-                    "Description": "Oath Knot: Status/TruthBound",
-                    "ApplicationMode": "CreateActiveEffect",
-                    "EffectType": "Status",
-                    "EffectSubtype": "TruthBound",
-                    "Visible": true,
-                    "TargetType": "Actor",
-                    "TargetCount": "1",
-                    "TargetRange": "",
-                    "TargetFilter": "",
-                    "TargetDescription": "",
-                    "CheckType": "Contest",
-                    "CheckFormula": "caster Power",
-                    "ResistanceType": "Faith",
-                    "ResistanceFormula": "target Faith",
-                    "OnPartial": "",
-                    "OnFailure": "",
-                    "DetectionCheck": "",
                     "PayloadTarget": "Status",
                     "PayloadOperation": "Apply",
-                    "PayloadValue": "Truth-Bound",
+                    "PayloadValue": "Oath Bound",
                     "PayloadDice": "",
                     "PayloadTag": "",
                     "PayloadTraitName": "",
                     "PayloadTraitText": "",
                     "GrantedItemTemplate": "",
                     "GrantedItemName": "",
-                    "PayloadNotes": "Lying, dissembling, or oath-breaking becomes difficult.",
-                    "DurationType": "Days",
-                    "DurationValue": "1d6",
+                    "PayloadNotes": "Empty editable shell for 'Oath Bound'. Detailed changes will be authored later.",
+                    "DurationType": "UntilBroken",
+                    "DurationValue": "",
                     "ExpiryTrigger": "",
                     "RemovalMethod": "",
                     "SuppressedBy": ""
@@ -732,6 +654,8 @@
             "FailureTable": "SpellFailure_Major",
             "FailureEscalationTable": "",
             "FailureNotes": "Failure is roll-table-driven per the magic source document.",
+            "SupportRollTable": "",
+            "SupportRollNotes": "",
             "School_Alchemy": false,
             "School_Astrology": false,
             "School_Divination": false,
@@ -777,10 +701,10 @@
                 ],
                 "successEffects": [
                     {
-                        "Description": "Oath Knot: Binding/BindByOath",
-                        "ApplicationMode": "Hybrid",
-                        "EffectType": "Binding",
-                        "EffectSubtype": "BindByOath",
+                        "Description": "Oath Knot: Status/Oath Bound",
+                        "ApplicationMode": "CreateActiveEffect",
+                        "EffectType": "Status",
+                        "EffectSubtype": "Oath Bound",
                         "Visible": true,
                         "TargetType": "Actor",
                         "TargetCount": "1",
@@ -794,52 +718,18 @@
                         "OnPartial": "",
                         "OnFailure": "",
                         "DetectionCheck": "",
-                        "PayloadTarget": "Oath binding",
-                        "PayloadOperation": "Apply",
-                        "PayloadValue": "Bound by oath",
-                        "PayloadDice": "",
-                        "PayloadTag": "",
-                        "PayloadTraitName": "",
-                        "PayloadTraitText": "",
-                        "GrantedItemTemplate": "",
-                        "GrantedItemName": "",
-                        "PayloadNotes": "Compels through sworn witness, vow, or ritual promise.",
-                        "DurationType": "UntilBroken",
-                        "DurationValue": "",
-                        "ExpiryTrigger": "",
-                        "RemovalMethod": "",
-                        "SuppressedBy": ""
-                    },
-                    {
-                        "Description": "Oath Knot: Status/TruthBound",
-                        "ApplicationMode": "CreateActiveEffect",
-                        "EffectType": "Status",
-                        "EffectSubtype": "TruthBound",
-                        "Visible": true,
-                        "TargetType": "Actor",
-                        "TargetCount": "1",
-                        "TargetRange": "",
-                        "TargetFilter": "",
-                        "TargetDescription": "",
-                        "CheckType": "Contest",
-                        "CheckFormula": "caster Power",
-                        "ResistanceType": "Faith",
-                        "ResistanceFormula": "target Faith",
-                        "OnPartial": "",
-                        "OnFailure": "",
-                        "DetectionCheck": "",
                         "PayloadTarget": "Status",
                         "PayloadOperation": "Apply",
-                        "PayloadValue": "Truth-Bound",
+                        "PayloadValue": "Oath Bound",
                         "PayloadDice": "",
                         "PayloadTag": "",
                         "PayloadTraitName": "",
                         "PayloadTraitText": "",
                         "GrantedItemTemplate": "",
                         "GrantedItemName": "",
-                        "PayloadNotes": "Lying, dissembling, or oath-breaking becomes difficult.",
-                        "DurationType": "Days",
-                        "DurationValue": "1d6",
+                        "PayloadNotes": "Empty editable shell for 'Oath Bound'. Detailed changes will be authored later.",
+                        "DurationType": "UntilBroken",
+                        "DurationValue": "",
                         "ExpiryTrigger": "",
                         "RemovalMethod": "",
                         "SuppressedBy": ""

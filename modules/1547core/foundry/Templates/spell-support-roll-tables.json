@@ -1,0 +1,57 @@
+[
+  {
+    "id": "AngelicBoons",
+    "name": "Angelic Boons",
+    "family": "Blessing",
+    "entries": [
+      {
+        "id": "AB01",
+        "resultText": "A mantle of courage settles over the blessed target. Fear, dread, and hesitation feel more distant for a time.",
+        "resultTag": "Courage",
+        "resultNotes": "Good manual fit for bravery, morale, or fear resistance."
+      },
+      {
+        "id": "AB02",
+        "resultText": "A quiet guard stands at the target's shoulder. Ill intent, omen-born harm, and spiteful workings struggle to take hold.",
+        "resultTag": "Guarding",
+        "resultNotes": "Good manual fit for protection against curses or hostile magic."
+      },
+      {
+        "id": "AB03",
+        "resultText": "A light of discernment sharpens the blessed target. Deception, false signs, and tempting lies become easier to resist.",
+        "resultTag": "Discernment",
+        "resultNotes": "Good manual fit for truth, clarity, and divinatory steadiness."
+      },
+      {
+        "id": "AB04",
+        "resultText": "A mercy of strength restores the weary. The target feels steadier in body, less burdened by fatigue, and harder to cast down.",
+        "resultTag": "Restoration",
+        "resultNotes": "Good manual fit for recovery, fortitude, or relief from weakness."
+      },
+      {
+        "id": "AB05",
+        "resultText": "A holy calm settles on the blessed one. Panic, rage, and spiritual unrest are soothed beneath the boon.",
+        "resultTag": "Calm",
+        "resultNotes": "Good manual fit for composure, social steadiness, or resisting manipulation."
+      },
+      {
+        "id": "AB06",
+        "resultText": "A sign of favor marks the target. Social dealings, rightful petitions, and honest requests seem to meet kinder hearing.",
+        "resultTag": "Favor",
+        "resultNotes": "Good manual fit for friendly reactions or grace in conversation."
+      },
+      {
+        "id": "AB07",
+        "resultText": "A ward of clean flame burns away taint. The blessed target is briefly harder to trouble with curses, spirits, or corrupt influences.",
+        "resultTag": "Purity",
+        "resultNotes": "Good manual fit for cleansing, sanctity, or spirit defense."
+      },
+      {
+        "id": "AB08",
+        "resultText": "A guiding sign is granted. The target receives a brief, useful sense of the right next step, path, or choice.",
+        "resultTag": "Guidance",
+        "resultNotes": "Good manual fit for omens, decisions, and protective direction."
+      }
+    ]
+  }
+]

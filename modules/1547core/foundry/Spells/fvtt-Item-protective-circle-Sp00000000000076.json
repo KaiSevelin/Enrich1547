@@ -160,100 +160,28 @@
                 },
                 {
                     "key": "StaticRitualSteps",
-                    "type": "dynamicTable",
+                    "type": "itemContainer",
                     "contents": [],
-                    "rowLayout": [
-                        {
-                            "key": "StepScope",
-                            "type": "select",
-                            "size": "full-size",
-                            "defaultValue": "Mandatory",
-                            "selectedOptionType": "custom",
-                            "options": [
-                                {
-                                    "key": "Mandatory",
-                                    "value": "Mandatory"
-                                },
-                                {
-                                    "key": "Alternative",
-                                    "value": "Alternative"
-                                }
-                            ],
-                            "colName": "Scope"
-                        },
-                        {
-                            "key": "AlternativeGroup",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Alt Group"
-                        },
-                        {
-                            "key": "StepType",
-                            "type": "select",
-                            "size": "full-size",
-                            "defaultValue": "StaticSkill",
-                            "selectedOptionType": "custom",
-                            "options": [
-                                {
-                                    "key": "StaticSkill",
-                                    "value": "StaticSkill"
-                                },
-                                {
-                                    "key": "Naming",
-                                    "value": "Naming"
-                                },
-                                {
-                                    "key": "Preparation",
-                                    "value": "Preparation"
-                                },
-                                {
-                                    "key": "Witness",
-                                    "value": "Witness"
-                                },
-                                {
-                                    "key": "Purity",
-                                    "value": "Purity"
-                                }
-                            ],
-                            "colName": "Type"
-                        },
-                        {
-                            "key": "StepText",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Step"
-                        },
-                        {
-                            "key": "SkillCheck",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Check"
-                        },
-                        {
-                            "key": "Difficulty",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Difficulty"
-                        },
-                        {
-                            "key": "StepNotes",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Notes"
-                        }
-                    ],
+                    "rowLayout": [],
                     "head": false,
                     "deleteWarning": false,
-                    "labelWhenEmpty": "",
-                    "predefinedLines": [],
-                    "canPlayerAdd": true,
+                    "labelWhenEmpty": "No static ritual steps.",
+                    "title": "Static Ritual Steps",
+                    "hideEmpty": false,
                     "hiddenColumns": [],
                     "sortOption": "manual",
+                    "headDisplay": true,
+                    "showCreate": true,
+                    "defaultTemplate": "R7sTu4Qn2Lp8Vx5K",
+                    "createItemDialogShowTemplateList": false,
+                    "showDelete": true,
+                    "statusIcon": false,
+                    "nameAlign": "left",
+                    "nameLabel": "Step",
+                    "templateFilter": [
+                        "R7sTu4Qn2Lp8Vx5K"
+                    ],
+                    "itemFilterFormula": "",
                     "sortPredicates": []
                 },
                 {
@@ -361,6 +289,34 @@
                             "type": "textArea",
                             "size": "full-size",
                             "label": "Failure Notes:",
+                            "defaultValue": "",
+                            "style": "sheet"
+                        }
+                    ]
+                },
+                {
+                    "key": "SupportGenerationPanel",
+                    "type": "panel",
+                    "title": "Support Tables",
+                    "titleStyle": "default",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "SupportRollTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Support Roll Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "SupportRollNotes",
+                            "type": "textArea",
+                            "size": "full-size",
+                            "label": "Support Notes:",
                             "defaultValue": "",
                             "style": "sheet"
                         }
@@ -681,48 +637,14 @@
             ],
             "SuccessEffects": [
                 {
-                    "Description": "Protective Circle: Ward/Barrier",
-                    "ApplicationMode": "GrantItem",
-                    "EffectType": "Ward",
-                    "EffectSubtype": "Barrier",
-                    "Visible": true,
-                    "TargetType": "Area",
-                    "TargetCount": "1 border or circle",
-                    "TargetRange": "Placed",
-                    "TargetFilter": "",
-                    "TargetDescription": "",
-                    "CheckType": "None",
-                    "CheckFormula": "",
-                    "ResistanceType": "",
-                    "ResistanceFormula": "",
-                    "OnPartial": "",
-                    "OnFailure": "",
-                    "DetectionCheck": "",
-                    "PayloadTarget": "Barrier",
-                    "PayloadOperation": "Apply",
-                    "PayloadValue": "Protected line",
-                    "PayloadDice": "",
-                    "PayloadTag": "",
-                    "PayloadTraitName": "",
-                    "PayloadTraitText": "",
-                    "GrantedItemTemplate": "WardAnchor",
-                    "GrantedItemName": "Barrier Ward",
-                    "PayloadNotes": "Creates a magical line, circle, or shell that resists crossing.",
-                    "DurationType": "UntilBroken",
-                    "DurationValue": "",
-                    "ExpiryTrigger": "",
-                    "RemovalMethod": "",
-                    "SuppressedBy": ""
-                },
-                {
-                    "Description": "Protective Circle: Ward/Sanctuary",
+                    "Description": "Protective Circle: Status/Ritual Protection",
                     "ApplicationMode": "CreateActiveEffect",
-                    "EffectType": "Ward",
-                    "EffectSubtype": "Sanctuary",
+                    "EffectType": "Status",
+                    "EffectSubtype": "Ritual Protection",
                     "Visible": true,
-                    "TargetType": "Area",
-                    "TargetCount": "1 sanctified place",
-                    "TargetRange": "Placed",
+                    "TargetType": "Actor",
+                    "TargetCount": "1",
+                    "TargetRange": "",
                     "TargetFilter": "",
                     "TargetDescription": "",
                     "CheckType": "None",
@@ -732,18 +654,18 @@
                     "OnPartial": "",
                     "OnFailure": "",
                     "DetectionCheck": "",
-                    "PayloadTarget": "Sanctuary",
+                    "PayloadTarget": "Status",
                     "PayloadOperation": "Apply",
-                    "PayloadValue": "Sanctified ground",
+                    "PayloadValue": "Ritual Protection",
                     "PayloadDice": "",
                     "PayloadTag": "",
                     "PayloadTraitName": "",
                     "PayloadTraitText": "",
                     "GrantedItemTemplate": "",
                     "GrantedItemName": "",
-                    "PayloadNotes": "Makes a place harder to touch with hostile magic.",
-                    "DurationType": "UntilBroken",
-                    "DurationValue": "",
+                    "PayloadNotes": "Empty editable shell for 'Ritual Protection'. Detailed changes will be authored later.",
+                    "DurationType": "Days",
+                    "DurationValue": "1",
                     "ExpiryTrigger": "",
                     "RemovalMethod": "",
                     "SuppressedBy": ""
@@ -757,6 +679,8 @@
             "FailureTable": "SpellFailure_Major",
             "FailureEscalationTable": "",
             "FailureNotes": "Failure is roll-table-driven per the magic source document.",
+            "SupportRollTable": "",
+            "SupportRollNotes": "",
             "School_Alchemy": false,
             "School_Astrology": false,
             "School_Divination": false,
@@ -815,48 +739,14 @@
                 ],
                 "successEffects": [
                     {
-                        "Description": "Protective Circle: Ward/Barrier",
-                        "ApplicationMode": "GrantItem",
-                        "EffectType": "Ward",
-                        "EffectSubtype": "Barrier",
-                        "Visible": true,
-                        "TargetType": "Area",
-                        "TargetCount": "1 border or circle",
-                        "TargetRange": "Placed",
-                        "TargetFilter": "",
-                        "TargetDescription": "",
-                        "CheckType": "None",
-                        "CheckFormula": "",
-                        "ResistanceType": "",
-                        "ResistanceFormula": "",
-                        "OnPartial": "",
-                        "OnFailure": "",
-                        "DetectionCheck": "",
-                        "PayloadTarget": "Barrier",
-                        "PayloadOperation": "Apply",
-                        "PayloadValue": "Protected line",
-                        "PayloadDice": "",
-                        "PayloadTag": "",
-                        "PayloadTraitName": "",
-                        "PayloadTraitText": "",
-                        "GrantedItemTemplate": "WardAnchor",
-                        "GrantedItemName": "Barrier Ward",
-                        "PayloadNotes": "Creates a magical line, circle, or shell that resists crossing.",
-                        "DurationType": "UntilBroken",
-                        "DurationValue": "",
-                        "ExpiryTrigger": "",
-                        "RemovalMethod": "",
-                        "SuppressedBy": ""
-                    },
-                    {
-                        "Description": "Protective Circle: Ward/Sanctuary",
+                        "Description": "Protective Circle: Status/Ritual Protection",
                         "ApplicationMode": "CreateActiveEffect",
-                        "EffectType": "Ward",
-                        "EffectSubtype": "Sanctuary",
+                        "EffectType": "Status",
+                        "EffectSubtype": "Ritual Protection",
                         "Visible": true,
-                        "TargetType": "Area",
-                        "TargetCount": "1 sanctified place",
-                        "TargetRange": "Placed",
+                        "TargetType": "Actor",
+                        "TargetCount": "1",
+                        "TargetRange": "",
                         "TargetFilter": "",
                         "TargetDescription": "",
                         "CheckType": "None",
@@ -866,18 +756,18 @@
                         "OnPartial": "",
                         "OnFailure": "",
                         "DetectionCheck": "",
-                        "PayloadTarget": "Sanctuary",
+                        "PayloadTarget": "Status",
                         "PayloadOperation": "Apply",
-                        "PayloadValue": "Sanctified ground",
+                        "PayloadValue": "Ritual Protection",
                         "PayloadDice": "",
                         "PayloadTag": "",
                         "PayloadTraitName": "",
                         "PayloadTraitText": "",
                         "GrantedItemTemplate": "",
                         "GrantedItemName": "",
-                        "PayloadNotes": "Makes a place harder to touch with hostile magic.",
-                        "DurationType": "UntilBroken",
-                        "DurationValue": "",
+                        "PayloadNotes": "Empty editable shell for 'Ritual Protection'. Detailed changes will be authored later.",
+                        "DurationType": "Days",
+                        "DurationValue": "1",
                         "ExpiryTrigger": "",
                         "RemovalMethod": "",
                         "SuppressedBy": ""

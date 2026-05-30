@@ -2448,10 +2448,10 @@
                                                                             "type":  "numberField",
                                                                             "size":  "full-size",
                                                                             "label":  "HP:",
-                                                                            "defaultValue":  "${Stats_StrengthDice+Stats_StaminaDice+Stats_DexterityDice}$",
+                                                                            "defaultValue":  "${MaxHitPoints}$",
                                                                             "allowDecimal":  false,
                                                                             "minVal":  "0",
-                                                                            "maxVal":  "${Stats_StrengthDice+Stats_StaminaDice+Stats_DexterityDice}$",
+                                                                            "maxVal":  "${MaxHitPoints}$",
                                                                             "allowRelative":  false,
                                                                             "showControls":  true,
                                                                             "controlsStyle":  "hover",
@@ -2473,7 +2473,7 @@
                                                                             "type":  "label",
                                                                             "size":  "full-size",
                                                                             "icon":  "heart",
-                                                                            "value":  "${Stats_StrengthDice+Stats_StaminaDice+Stats_DexterityDice}$",
+                                                                            "value":  "${MaxHitPoints}$",
                                                                             "prefix":  "",
                                                                             "suffix":  "",
                                                                             "rollMessage":  "",
@@ -2928,6 +2928,10 @@
                                   {
                                       "name":  "AvailableAdvantagePoints",
                                       "value":  "${MaxAdvantagePoints - SpentAdvantagePoints - ReservedAdvantagePoints}$"
+                                  },
+                                  {
+                                      "name":  "MaxHitPoints",
+                                      "value":  "${Stats_StrengthDice+Stats_StaminaDice+Stats_DexterityDice}$"
                                   },
                                   {
                                       "name":  "MaxStrengthPoints",

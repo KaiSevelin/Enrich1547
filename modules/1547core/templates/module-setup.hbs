@@ -41,6 +41,11 @@
     </div>
 
     <div class="form-group">
+      <label>Stored Spell Support Roll Tables</label>
+      <div>{{storedSpellSupportRollTableCount}}</div>
+    </div>
+
+    <div class="form-group">
       <label>Stored Monsters</label>
       <div>{{storedMonsterCount}}</div>
     </div>
@@ -67,7 +72,7 @@
 
     <p class="notes">
       Setup Data loads the module's maneuver, weapon, armor, ammunition,
-      spell, ritual-step roll table, spell-failure roll table, monster, change set, change, and
+      spell, ritual-step roll table, spell-failure roll table, spell-support roll table, monster, change set, change, and
       requirement datasets into world settings, writes the live templates,
       creates the managed Actor, Item, and RollTable folder structure, and
       immediately syncs matching world documents from that source data.

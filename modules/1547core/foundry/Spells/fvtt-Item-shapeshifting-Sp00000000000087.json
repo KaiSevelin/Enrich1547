@@ -160,100 +160,28 @@
                 },
                 {
                     "key": "StaticRitualSteps",
-                    "type": "dynamicTable",
+                    "type": "itemContainer",
                     "contents": [],
-                    "rowLayout": [
-                        {
-                            "key": "StepScope",
-                            "type": "select",
-                            "size": "full-size",
-                            "defaultValue": "Mandatory",
-                            "selectedOptionType": "custom",
-                            "options": [
-                                {
-                                    "key": "Mandatory",
-                                    "value": "Mandatory"
-                                },
-                                {
-                                    "key": "Alternative",
-                                    "value": "Alternative"
-                                }
-                            ],
-                            "colName": "Scope"
-                        },
-                        {
-                            "key": "AlternativeGroup",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Alt Group"
-                        },
-                        {
-                            "key": "StepType",
-                            "type": "select",
-                            "size": "full-size",
-                            "defaultValue": "StaticSkill",
-                            "selectedOptionType": "custom",
-                            "options": [
-                                {
-                                    "key": "StaticSkill",
-                                    "value": "StaticSkill"
-                                },
-                                {
-                                    "key": "Naming",
-                                    "value": "Naming"
-                                },
-                                {
-                                    "key": "Preparation",
-                                    "value": "Preparation"
-                                },
-                                {
-                                    "key": "Witness",
-                                    "value": "Witness"
-                                },
-                                {
-                                    "key": "Purity",
-                                    "value": "Purity"
-                                }
-                            ],
-                            "colName": "Type"
-                        },
-                        {
-                            "key": "StepText",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Step"
-                        },
-                        {
-                            "key": "SkillCheck",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Check"
-                        },
-                        {
-                            "key": "Difficulty",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Difficulty"
-                        },
-                        {
-                            "key": "StepNotes",
-                            "type": "textField",
-                            "size": "full-size",
-                            "defaultValue": "",
-                            "colName": "Notes"
-                        }
-                    ],
+                    "rowLayout": [],
                     "head": false,
                     "deleteWarning": false,
-                    "labelWhenEmpty": "",
-                    "predefinedLines": [],
-                    "canPlayerAdd": true,
+                    "labelWhenEmpty": "No static ritual steps.",
+                    "title": "Static Ritual Steps",
+                    "hideEmpty": false,
                     "hiddenColumns": [],
                     "sortOption": "manual",
+                    "headDisplay": true,
+                    "showCreate": true,
+                    "defaultTemplate": "R7sTu4Qn2Lp8Vx5K",
+                    "createItemDialogShowTemplateList": false,
+                    "showDelete": true,
+                    "statusIcon": false,
+                    "nameAlign": "left",
+                    "nameLabel": "Step",
+                    "templateFilter": [
+                        "R7sTu4Qn2Lp8Vx5K"
+                    ],
+                    "itemFilterFormula": "",
                     "sortPredicates": []
                 },
                 {
@@ -361,6 +289,34 @@
                             "type": "textArea",
                             "size": "full-size",
                             "label": "Failure Notes:",
+                            "defaultValue": "",
+                            "style": "sheet"
+                        }
+                    ]
+                },
+                {
+                    "key": "SupportGenerationPanel",
+                    "type": "panel",
+                    "title": "Support Tables",
+                    "titleStyle": "default",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "SupportRollTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Support Roll Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "SupportRollNotes",
+                            "type": "textArea",
+                            "size": "full-size",
+                            "label": "Support Notes:",
                             "defaultValue": "",
                             "style": "sheet"
                         }
@@ -675,10 +631,10 @@
             ],
             "SuccessEffects": [
                 {
-                    "Description": "Shapeshifting: Transformation/Self",
-                    "ApplicationMode": "Hybrid",
-                    "EffectType": "Transformation",
-                    "EffectSubtype": "Self",
+                    "Description": "Shapeshifting: Status/Shape Changed",
+                    "ApplicationMode": "CreateActiveEffect",
+                    "EffectType": "Status",
+                    "EffectSubtype": "Shape Changed",
                     "Visible": true,
                     "TargetType": "Self",
                     "TargetCount": "1",
@@ -692,51 +648,17 @@
                     "OnPartial": "",
                     "OnFailure": "",
                     "DetectionCheck": "",
-                    "PayloadTarget": "Form / body / occult state",
+                    "PayloadTarget": "Status",
                     "PayloadOperation": "Apply",
-                    "PayloadValue": "Self transformed",
+                    "PayloadValue": "Shape Changed",
                     "PayloadDice": "",
                     "PayloadTag": "",
                     "PayloadTraitName": "",
                     "PayloadTraitText": "",
                     "GrantedItemTemplate": "",
                     "GrantedItemName": "",
-                    "PayloadNotes": "Use for bodily alteration, shapeshifting, alchemical refinement, or occult self-remaking.",
-                    "DurationType": "Permanent",
-                    "DurationValue": "",
-                    "ExpiryTrigger": "",
-                    "RemovalMethod": "",
-                    "SuppressedBy": ""
-                },
-                {
-                    "Description": "Shapeshifting: Trait/VisibleTell",
-                    "ApplicationMode": "DirectDataChange",
-                    "EffectType": "Trait",
-                    "EffectSubtype": "VisibleTell",
-                    "Visible": true,
-                    "TargetType": "Actor",
-                    "TargetCount": "1",
-                    "TargetRange": "",
-                    "TargetFilter": "",
-                    "TargetDescription": "",
-                    "CheckType": "None",
-                    "CheckFormula": "",
-                    "ResistanceType": "",
-                    "ResistanceFormula": "",
-                    "OnPartial": "",
-                    "OnFailure": "",
-                    "DetectionCheck": "",
-                    "PayloadTarget": "FlagTrait:visible-tell",
-                    "PayloadOperation": "Apply",
-                    "PayloadValue": "",
-                    "PayloadDice": "",
-                    "PayloadTag": "",
-                    "PayloadTraitName": "Visible Tell",
-                    "PayloadTraitText": "A visible magical sign, stain, or uncanny tell remains.",
-                    "GrantedItemTemplate": "",
-                    "GrantedItemName": "",
-                    "PayloadNotes": "Readable visible magical feature.",
-                    "DurationType": "Permanent",
+                    "PayloadNotes": "Empty editable shell for 'Shape Changed'. Detailed changes will be authored later.",
+                    "DurationType": "Scene",
                     "DurationValue": "",
                     "ExpiryTrigger": "",
                     "RemovalMethod": "",
@@ -751,6 +673,8 @@
             "FailureTable": "SpellFailure_Catastrophic",
             "FailureEscalationTable": "",
             "FailureNotes": "Failure is roll-table-driven per the magic source document.",
+            "SupportRollTable": "",
+            "SupportRollNotes": "",
             "School_Alchemy": false,
             "School_Astrology": false,
             "School_Divination": true,
@@ -803,10 +727,10 @@
                 ],
                 "successEffects": [
                     {
-                        "Description": "Shapeshifting: Transformation/Self",
-                        "ApplicationMode": "Hybrid",
-                        "EffectType": "Transformation",
-                        "EffectSubtype": "Self",
+                        "Description": "Shapeshifting: Status/Shape Changed",
+                        "ApplicationMode": "CreateActiveEffect",
+                        "EffectType": "Status",
+                        "EffectSubtype": "Shape Changed",
                         "Visible": true,
                         "TargetType": "Self",
                         "TargetCount": "1",
@@ -820,51 +744,17 @@
                         "OnPartial": "",
                         "OnFailure": "",
                         "DetectionCheck": "",
-                        "PayloadTarget": "Form / body / occult state",
+                        "PayloadTarget": "Status",
                         "PayloadOperation": "Apply",
-                        "PayloadValue": "Self transformed",
+                        "PayloadValue": "Shape Changed",
                         "PayloadDice": "",
                         "PayloadTag": "",
                         "PayloadTraitName": "",
                         "PayloadTraitText": "",
                         "GrantedItemTemplate": "",
                         "GrantedItemName": "",
-                        "PayloadNotes": "Use for bodily alteration, shapeshifting, alchemical refinement, or occult self-remaking.",
-                        "DurationType": "Permanent",
-                        "DurationValue": "",
-                        "ExpiryTrigger": "",
-                        "RemovalMethod": "",
-                        "SuppressedBy": ""
-                    },
-                    {
-                        "Description": "Shapeshifting: Trait/VisibleTell",
-                        "ApplicationMode": "DirectDataChange",
-                        "EffectType": "Trait",
-                        "EffectSubtype": "VisibleTell",
-                        "Visible": true,
-                        "TargetType": "Actor",
-                        "TargetCount": "1",
-                        "TargetRange": "",
-                        "TargetFilter": "",
-                        "TargetDescription": "",
-                        "CheckType": "None",
-                        "CheckFormula": "",
-                        "ResistanceType": "",
-                        "ResistanceFormula": "",
-                        "OnPartial": "",
-                        "OnFailure": "",
-                        "DetectionCheck": "",
-                        "PayloadTarget": "FlagTrait:visible-tell",
-                        "PayloadOperation": "Apply",
-                        "PayloadValue": "",
-                        "PayloadDice": "",
-                        "PayloadTag": "",
-                        "PayloadTraitName": "Visible Tell",
-                        "PayloadTraitText": "A visible magical sign, stain, or uncanny tell remains.",
-                        "GrantedItemTemplate": "",
-                        "GrantedItemName": "",
-                        "PayloadNotes": "Readable visible magical feature.",
-                        "DurationType": "Permanent",
+                        "PayloadNotes": "Empty editable shell for 'Shape Changed'. Detailed changes will be authored later.",
+                        "DurationType": "Scene",
                         "DurationValue": "",
                         "ExpiryTrigger": "",
                         "RemovalMethod": "",
