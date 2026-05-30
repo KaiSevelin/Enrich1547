@@ -1050,6 +1050,15 @@ a.enricher-1547::before {
   flex-shrink: 0;
 }
 
+.actor-hud-1547 .hud-weapon-range-pills {
+  margin-top: 0.25rem;
+}
+
+.actor-hud-1547 .hud-mini-button.is-active {
+  background: rgba(201, 171, 113, 0.4);
+  border-color: rgba(255, 249, 238, 0.6);
+}
+
 .actor-hud-1547 .hud-dice-row {
   display: flex;
   align-items: center;

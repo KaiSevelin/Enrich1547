@@ -127,6 +127,19 @@
             void renderHudForSelection();
         });
     }
+    for (const button of root.querySelectorAll("[data-hud-weapon-range]")) {
+        button.addEventListener("click", (event) => {
+            const weaponId = event.currentTarget.dataset.hudWeaponRange;
+            if (!weaponId) return;
+            HUD_STATE.weaponRangeShownIds = { ...(HUD_STATE.weaponRangeShownIds ?? {}) };
+            if (HUD_STATE.weaponRangeShownIds[weaponId]) {
+                delete HUD_STATE.weaponRangeShownIds[weaponId];
+            } else {
+                HUD_STATE.weaponRangeShownIds[weaponId] = true;
+            }
+            void renderHudForSelection();
+        });
+    }
     // Range-band buttons: toggle .is-highlighted on weapon rows whose
     // data-band-<key> is set. Click the same band again to clear. Switching
     // bands swaps the highlight without re-rendering the HUD.

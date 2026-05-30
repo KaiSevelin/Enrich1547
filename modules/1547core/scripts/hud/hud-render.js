@@ -98,13 +98,32 @@ function buildEquippedTree(data, deps = {}) {
             const inlineProfilePicker = weapon.attackProfiles.length > 1
                 ? `<div class="hud-chip-row hud-chip-row-inline">${profileButtons}</div>`
                 : "";
+            // Range/reach pills hide behind a Range button so two ranged
+            // weapons don't crowd the equipped tab with always-on numbers.
+            const hasReach = Number(weapon.minReach) > 0 || Number(weapon.maxReach) > 0;
+            const hasRangeBands = Number(weapon.shortRange) > 0 || Number(weapon.longRange) > 0 || Number(weapon.maxRange) > 0;
+            const hasRangeOrReach = hasReach || hasRangeBands;
+            const rangeShown = Boolean(deps.HUD_STATE?.weaponRangeShownIds?.[weapon.id]);
+            const rangePills = (() => {
+                const parts = [];
+                if (hasReach) {
+                    const min = Number(weapon.minReach) || 0;
+                    const max = Number(weapon.maxReach) || min;
+                    const label = max && max !== min ? `${min}-${max}` : String(min || max);
+                    parts.push(`<span class="hud-pill"><span class="hud-pill-label">Reach</span><span class="hud-pill-value">${escapeHtml(label)}</span></span>`);
+                }
+                if (Number(weapon.shortRange) > 0) parts.push(`<span class="hud-pill"><span class="hud-pill-label">Short</span><span class="hud-pill-value">${escapeHtml(weapon.shortRange)}</span></span>`);
+                if (Number(weapon.longRange) > 0) parts.push(`<span class="hud-pill"><span class="hud-pill-label">Long</span><span class="hud-pill-value">${escapeHtml(weapon.longRange)}</span></span>`);
+                if (Number(weapon.maxRange) > 0) parts.push(`<span class="hud-pill"><span class="hud-pill-label">Max</span><span class="hud-pill-value">${escapeHtml(weapon.maxRange)}</span></span>`);
+                return parts.join("");
+            })();
             return `
                 <li class="hud-tree-item hud-weapon-card">
                     <div class="hud-weapon-title-row">
                         <div class="hud-row-main">${escapeHtml(`${weapon.name}${ammoSuffix}`)}</div>
                         ${inlineProfilePicker}
                     </div>
-                    <div class="hud-row-sub">${escapeHtml([weapon.equipped ? "Equipped" : "Carried", weapon.type, weapon.rangeSummary ? `Range ${weapon.rangeSummary}` : ""].filter(Boolean).join(" - "))}</div>
+                    <div class="hud-row-sub">${escapeHtml([weapon.equipped ? "Equipped" : "Carried", weapon.type].filter(Boolean).join(" - "))}</div>
                     <div class="hud-weapon-action-strip">
                         <button
                             type="button"
@@ -113,6 +132,15 @@ function buildEquippedTree(data, deps = {}) {
                         >
                             Attack
                         </button>
+                        ${hasRangeOrReach ? `
+                            <button
+                                type="button"
+                                class="hud-mini-button${rangeShown ? " is-active" : ""}"
+                                data-hud-weapon-range="${escapeHtml(weapon.id)}"
+                            >
+                                Range
+                            </button>
+                        ` : ""}
                         ${weapon.usesAmmo ? `
                             <button
                                 type="button"
@@ -132,6 +160,7 @@ function buildEquippedTree(data, deps = {}) {
                             </button>
                         `}
                     </div>
+                    ${rangeShown && rangePills ? `<div class="hud-pill-row hud-weapon-range-pills">${rangePills}</div>` : ""}
                     <div class="hud-weapon-action-status ${weapon.attackState?.status === "valid" ? "is-valid" : "is-invalid"}">${escapeHtml(weapon.attackState?.label || "Unavailable")}</div>
                     <div class="hud-row-sub">${escapeHtml(weapon.attackState?.reason || "")}</div>
                     <ul class="hud-tree-children hud-tree-compact">

@@ -17,6 +17,11 @@
     reactionWindow: null,
     damageTakenWindow: null,
     selectedAmmoByWeapon: {},
+    // Per-weapon toggle for the inline range-band pills. Off by default so two
+    // ranged weapons don't both crowd their range numbers into the equipped
+    // tab; click the Range button on a weapon row to reveal that weapon's
+    // bands.
+    weaponRangeShownIds: {},
     inventoryFilter: "all",
     maneuverFilter: "all",
     maneuverShowAll: false,
