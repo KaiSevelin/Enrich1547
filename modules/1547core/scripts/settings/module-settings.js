@@ -465,6 +465,48 @@ function buildWorldSpellRitualStepDocs(spellSources, spellDocs, ritualStepTempla
     return out;
 }
 
+function buildMonsterMagicProps(magic) {
+    return {
+        Description: magic.description ?? "",
+        MagicKind: magic.magicKind ?? "Aura",
+        UseMode: magic.useMode ?? "Activated",
+        TriggerText: magic.triggerText ?? "",
+        RangeText: magic.rangeText ?? "",
+        CostText: magic.costText ?? "",
+        FamilyNotes: magic.familyNotes ?? "",
+        MagicNotes: magic.magicNotes ?? "",
+    };
+}
+
+// Per-power UsageEffectTemplate child docs, one per `magicEffects` entry.
+// Same pattern as spell SuccessEffects: source data is already in PascalCase
+// matching the template's prop keys, so it's passed through verbatim.
+function buildWorldMonsterMagicEffectDocs(monsterMagicSources, monsterMagicDocs, usageEffectTemplate, folderId) {
+    if (!usageEffectTemplate) return [];
+    const docsById = new Map(monsterMagicDocs.map((doc) => [doc._id, doc]));
+    const out = [];
+    for (const magic of monsterMagicSources) {
+        const carrierDoc = docsById.get(magic._id);
+        if (!carrierDoc) continue;
+        const effects = Array.isArray(magic.magicEffects) ? magic.magicEffects : [];
+        effects.forEach((effectSource, index) => {
+            const props = foundry.utils.deepClone(effectSource ?? {});
+            const baseName = String(effectSource?.Description ?? effectSource?.EffectType ?? "Effect").trim() || "Effect";
+            out.push(buildChildItemDoc({
+                id: deriveFoundryIdFromText(`mmusage:${carrierDoc._id}:${index}`),
+                name: `${carrierDoc.name} — ${baseName}`,
+                parentId: carrierDoc._id,
+                templateDoc: usageEffectTemplate,
+                props,
+                folderId,
+                folderHint: "Usage Effects",
+                sourceData: effectSource,
+            }));
+        });
+    }
+    return out;
+}
+
 function buildSpellProps(spell) {
     const schoolSet = new Set((spell.schools ?? []).map((entry) => String(entry ?? "").trim()));
     const complexity = spell.complexity ?? "Medium";
@@ -1251,6 +1293,14 @@ export function register1547ModuleSettings() {
         default: []
     });
 
+    game.settings.register(MODULE_ID, "monsterMagicData", {
+        name: "Monster Magic Data",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: []
+    });
+
     game.settings.register(MODULE_ID, "changeSetData", {
         name: "Change Set Data",
         scope: "world",
@@ -1424,6 +1474,7 @@ function createModuleSetupFormApplicationClass() {
                     spellFailureRollTables,
                     spellSupportRollTables,
                     monsters,
+                    monsterMagic,
                     changeSets,
                     changes,
                     requirements
@@ -1440,6 +1491,7 @@ function createModuleSetupFormApplicationClass() {
                     spellFailureRollTables,
                     spellSupportRollTables,
                     monsters,
+                    monsterMagic,
                     changeSets,
                     changes,
                     requirements
@@ -1518,7 +1570,7 @@ function createModuleSetupFormApplicationClass() {
         }
 
         async #loadSourceBackedData() {
-            const [maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, monsters, changeSets, changes, requirements] = await Promise.all([
+            const [maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, monsters, monsterMagic, changeSets, changes, requirements] = await Promise.all([
                 this.#loadDataset("maneuvers.json"),
                 this.#loadDataset("weapons.json"),
                 this.#loadDataset("armors.json"),
@@ -1529,6 +1581,7 @@ function createModuleSetupFormApplicationClass() {
                 this.#loadDataset("spell-failure-roll-tables.json"),
                 this.#loadDataset("spell-support-roll-tables.json"),
                 this.#loadDataset("monsters.json"),
+                this.#loadDataset("monster-magic.json"),
                 this.#loadDataset("changesets.json"),
                 this.#loadDataset("changes.json"),
                 this.#loadDataset("requirements.json")
@@ -1545,13 +1598,14 @@ function createModuleSetupFormApplicationClass() {
                 game.settings.set(MODULE_ID, "spellFailureRollTableData", spellFailureRollTables),
                 game.settings.set(MODULE_ID, "spellSupportRollTableData", spellSupportRollTables),
                 game.settings.set(MODULE_ID, "monsterData", monsters),
+                game.settings.set(MODULE_ID, "monsterMagicData", monsterMagic),
                 game.settings.set(MODULE_ID, "changeSetData", changeSets),
                 game.settings.set(MODULE_ID, "changeData", changes),
                 game.settings.set(MODULE_ID, "requirementData", requirements),
                 game.settings.set(MODULE_ID, "lastDataSetupAt", new Date().toISOString())
             ]);
 
-            return { maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, monsters, changeSets, changes, requirements };
+            return { maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, monsters, monsterMagic, changeSets, changes, requirements };
         }
 
         /**
@@ -1635,6 +1689,7 @@ function createModuleSetupFormApplicationClass() {
             const spellsFolder = await this.#getOrCreateFolder({ folderName: "Spells", type: "Item", parentId: coreItemFolder.id });
             const ritualStepsFolder = await this.#getOrCreateFolder({ folderName: "Ritual Steps", type: "Item", parentId: spellsFolder.id });
             const usageEffectsFolder = await this.#getOrCreateFolder({ folderName: "Usage Effects", type: "Item", parentId: coreItemFolder.id });
+            const monsterMagicFolder = await this.#getOrCreateFolder({ folderName: "Monster Magic", type: "Item", parentId: coreItemFolder.id });
             const ritualStepRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Ritual Step Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#5b6276" });
             const spellFailureRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Spell Failure Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#6d5b5b" });
             const spellSupportRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Spell Support Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#5b6d63" });
@@ -1686,6 +1741,7 @@ function createModuleSetupFormApplicationClass() {
                 spellsFolder,
                 ritualStepsFolder,
                 usageEffectsFolder,
+                monsterMagicFolder,
                 ritualStepRollTablesFolder,
                 spellFailureRollTablesFolder,
                 spellSupportRollTablesFolder,
@@ -1698,7 +1754,7 @@ function createModuleSetupFormApplicationClass() {
             };
         }
 
-        async #importItemsFromData({ maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, monsters, changeSets, changes, requirements }) {
+        async #importItemsFromData({ maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, monsters, monsterMagic, changeSets, changes, requirements }) {
             const [actorTemplate, maneuverTemplate, weaponTemplate, armorTemplate, ammoTemplate, weaponModifierTemplate, onHitEffectTemplate, supernaturalMarkTemplate, monsterMagicTemplate, spellTemplate, pactTemplate, ritualTemplate, ritualStepTemplate, usageEffectTemplate, changeSetTemplate, changeTemplate, requirementTemplate] = await Promise.all([
                 this.#loadTemplate(TEMPLATE_FILES.actorTemplate),
                 this.#loadTemplate(TEMPLATE_FILES.maneuver),
@@ -1785,6 +1841,16 @@ function createModuleSetupFormApplicationClass() {
                 spellDocs,
                 ritualStepTemplate,
                 folders.ritualStepsFolder.id
+            );
+            const normalizedMonsterMagic = (monsterMagic ?? []).map((m) => normalizeSourceEntry(m, "monsterMagic"));
+            const monsterMagicDocs = normalizedMonsterMagic.map((magic) =>
+                makeItemDoc(magic, monsterMagicTemplate, magic.img ?? monsterMagicTemplate.img ?? "icons/svg/explosion.svg", buildMonsterMagicProps, folders.monsterMagicFolder.id, "Monster Magic")
+            );
+            const monsterMagicEffectDocs = buildWorldMonsterMagicEffectDocs(
+                normalizedMonsterMagic,
+                monsterMagicDocs,
+                usageEffectTemplate,
+                folders.usageEffectsFolder.id
             );
             const ritualStepRollTableDocs = ritualStepRollTables.map((table) =>
                 buildRitualStepRollTableDoc(table, folders.ritualStepRollTablesFolder.id, "Ritual Step Tables")
@@ -1913,9 +1979,18 @@ function createModuleSetupFormApplicationClass() {
             });
             await pruneManagedFolderItems({
                 folderId: folders.usageEffectsFolder.id,
-                validIds: new Set(spellUsageEffectDocs.map((doc) => doc._id)),
+                validIds: new Set([
+                    ...spellUsageEffectDocs.map((doc) => doc._id),
+                    ...monsterMagicEffectDocs.map((doc) => doc._id),
+                ]),
                 templateId: usageEffectTemplate._id,
                 folderHint: "Usage Effects"
+            });
+            await pruneManagedFolderItems({
+                folderId: folders.monsterMagicFolder.id,
+                validIds: new Set(monsterMagicDocs.map((doc) => doc._id)),
+                templateId: monsterMagicTemplate._id,
+                folderHint: "Monster Magic"
             });
             await pruneManagedFolderRollTables({
                 folderId: folders.ritualStepRollTablesFolder.id,
@@ -1993,6 +2068,8 @@ function createModuleSetupFormApplicationClass() {
                 ...spellDocs,
                 ...spellUsageEffectDocs,
                 ...spellRitualStepDocs,
+                ...monsterMagicDocs,
+                ...monsterMagicEffectDocs,
                 ...changeSetDocs,
                 ...changeDocs,
                 ...requirementDocs

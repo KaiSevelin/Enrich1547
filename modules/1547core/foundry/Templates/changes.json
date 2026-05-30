@@ -49,5 +49,49 @@
     "traitDescription": "It can seem beautiful, monstrous, half-seen, or wholly natural until it chooses to reveal that the place itself is watching.",
     "notes": "Tone-setting trait for local uncanny presence.",
     "parentChangeSetId": "NsBaseChassis001"
+  },
+  {
+    "_id": "NsBaseGrantCall0",
+    "name": "Grant: Call of the Place",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": {
+      "MmCall0fPlace001": { "name": "Call of the Place", "id": "MmCall0fPlace001", "uuid": "Item.MmCall0fPlace001" }
+    },
+    "notes": "Grants the Call of the Place power.",
+    "parentChangeSetId": "NsBaseChassis001"
+  },
+  {
+    "_id": "NsBaseGrantGrasp",
+    "name": "Grant: Grasp of Root and Stone",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": {
+      "MmGraspRootStn01": { "name": "Grasp of Root and Stone", "id": "MmGraspRootStn01", "uuid": "Item.MmGraspRootStn01" }
+    },
+    "notes": "Grants the Grasp of Root and Stone power.",
+    "parentChangeSetId": "NsBaseChassis001"
+  },
+  {
+    "_id": "NsBaseGrantSlip0",
+    "name": "Grant: Slip Into the Land",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": {
+      "MmSlipIntoLand01": { "name": "Slip Into the Land", "id": "MmSlipIntoLand01", "uuid": "Item.MmSlipIntoLand01" }
+    },
+    "notes": "Grants the Slip Into the Land power.",
+    "parentChangeSetId": "NsBaseChassis001"
+  },
+  {
+    "_id": "NsBaseGrantBless",
+    "name": "Grant: Blessing of the Place",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": {
+      "MmBlessOfPlace01": { "name": "Blessing of the Place", "id": "MmBlessOfPlace01", "uuid": "Item.MmBlessOfPlace01" }
+    },
+    "notes": "Grants the (optional) Blessing of the Place power.",
+    "parentChangeSetId": "NsBaseChassis001"
   }
 ]
