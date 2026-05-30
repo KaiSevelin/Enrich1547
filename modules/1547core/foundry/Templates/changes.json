@@ -1142,5 +1142,195 @@
   { "_id": "MtFuCuCuGnt00001", "name": "Grant: The Pattern Repeats", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmPatternRpt0001": { "name": "The Pattern Repeats", "id": "MmPatternRpt0001", "uuid": "Item.MmPatternRpt0001" } }, "parentChangeSetId": "MtFuCuCu00000001" },
 
   { "_id": "MtMZonZcTrt00001", "name": "Manifest the Zone (ZoneColossus) — Trait", "kind": "Trait", "traitName": "Manifest the Zone", "traitDescription": "Not predation alone, but active making-real of warped locality at immense scale.", "parentChangeSetId": "MtMZonZc00000001" },
-  { "_id": "MtMZonZcGnt00001", "name": "Grant: Bring the Wrongness With It", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmBringWrongns01": { "name": "Bring the Wrongness With It", "id": "MmBringWrongns01", "uuid": "Item.MmBringWrongns01" } }, "parentChangeSetId": "MtMZonZc00000001" }
+  { "_id": "MtMZonZcGnt00001", "name": "Grant: Bring the Wrongness With It", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmBringWrongns01": { "name": "Bring the Wrongness With It", "id": "MmBringWrongns01", "uuid": "Item.MmBringWrongns01" } }, "parentChangeSetId": "MtMZonZc00000001" },
+
+  { "_id": "DmWoodHfTag00001", "name": "Wood (HiddenFolk) — Tag", "kind": "Tag", "tagName": "WoodlandBound", "parentChangeSetId": "DmWoodHf00000001" },
+  { "_id": "DmWoodHfTrt00001", "name": "Wood (HiddenFolk) — Trait", "kind": "Trait", "traitName": "Of Hidden Track and Canopy", "traitDescription": "Elder parallel inhabitants of forest margins and hidden paths.", "parentChangeSetId": "DmWoodHf00000001" },
+  { "_id": "DmWoodHfSta00001", "name": "Wood (HiddenFolk) — MoveClimb +1", "kind": "Stat", "statTarget": "MoveClimb", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmWoodHf00000001" },
+  { "_id": "DmWoodHfGnt00001", "name": "Grant: Lead Astray", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmLeadAstray0001": { "name": "Lead Astray", "id": "MmLeadAstray0001", "uuid": "Item.MmLeadAstray0001" } }, "parentChangeSetId": "DmWoodHf00000001" },
+
+  { "_id": "DmWoodNsTag00001", "name": "Wood (NatureSpirit) — Tag", "kind": "Tag", "tagName": "WoodlandBound", "parentChangeSetId": "DmWoodNs00000001" },
+  { "_id": "DmWoodNsTrt00001", "name": "Wood (NatureSpirit) — Trait", "kind": "Trait", "traitName": "Of Root and Canopy", "traitDescription": "Skogsra, dryads, wood-wives, grove spirits watchful through forest cover.", "parentChangeSetId": "DmWoodNs00000001" },
+  { "_id": "DmWoodNsSta00001", "name": "Wood (NatureSpirit) — MoveClimb +2", "kind": "Stat", "statTarget": "MoveClimb", "statOp": "Add", "statValue": 2, "parentChangeSetId": "DmWoodNs00000001" },
+  { "_id": "DmWoodNsGnt00001", "name": "Grant: Turn the Path", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmTurnThePath001": { "name": "Turn the Path", "id": "MmTurnThePath001", "uuid": "Item.MmTurnThePath001" } }, "parentChangeSetId": "DmWoodNs00000001" },
+
+  { "_id": "DmWoodBsTag00001", "name": "Wood (Beast) — Tag", "kind": "Tag", "tagName": "LivingCreature", "parentChangeSetId": "DmWoodBs00000001" },
+  { "_id": "DmWoodBsTrt00001", "name": "Wood (Beast) — Trait", "kind": "Trait", "traitName": "At Home in Cover and Track", "traitDescription": "Natural, territorial, scent-driven, hard to corner in cover.", "parentChangeSetId": "DmWoodBs00000001" },
+  { "_id": "DmWoodBsSta00001", "name": "Wood (Beast) — MoveGround +1", "kind": "Stat", "statTarget": "MoveGround", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmWoodBs00000001" },
+  { "_id": "DmWoodBsGnt00001", "name": "Grant: Break from the Brush", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmBreakFrmBrush1": { "name": "Break from the Brush", "id": "MmBreakFrmBrush1", "uuid": "Item.MmBreakFrmBrush1" } }, "parentChangeSetId": "DmWoodBs00000001" },
+
+  { "_id": "DmWatrHfTag00001", "name": "Water (HiddenFolk) — Tag", "kind": "Tag", "tagName": "WaterBound", "parentChangeSetId": "DmWatrHf00000001" },
+  { "_id": "DmWatrHfTrt00001", "name": "Water (HiddenFolk) — Trait", "kind": "Trait", "traitName": "Of Hidden Ford and Reflection", "traitDescription": "Brook-side and ford-dwelling hidden folk, quick to answer disrespect with magical reprisal.", "parentChangeSetId": "DmWatrHf00000001" },
+  { "_id": "DmWatrHfSta00001", "name": "Water (HiddenFolk) — MoveSwim 5", "kind": "Stat", "statTarget": "MoveSwim", "statOp": "Override", "statValue": 5, "parentChangeSetId": "DmWatrHf00000001" },
+  { "_id": "DmWatrHfGnt00001", "name": "Grant: Mirror-Lure", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmMirrorLure0001": { "name": "Mirror-Lure", "id": "MmMirrorLure0001", "uuid": "Item.MmMirrorLure0001" } }, "parentChangeSetId": "DmWatrHf00000001" },
+
+  { "_id": "DmWatrNsTag00001", "name": "Water (NatureSpirit) — Tag", "kind": "Tag", "tagName": "WaterBound", "parentChangeSetId": "DmWatrNs00000001" },
+  { "_id": "DmWatrNsTrt00001", "name": "Water (NatureSpirit) — Trait", "kind": "Trait", "traitName": "Of Current and Depth", "traitDescription": "River wives, ford spirits, spring maidens — inviting and dangerous.", "parentChangeSetId": "DmWatrNs00000001" },
+  { "_id": "DmWatrNsSta00001", "name": "Water (NatureSpirit) — MoveSwim 6", "kind": "Stat", "statTarget": "MoveSwim", "statOp": "Override", "statValue": 6, "parentChangeSetId": "DmWatrNs00000001" },
+  { "_id": "DmWatrNsGnt00001", "name": "Grant: Beckoning Reflection", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmBecknRefln0001": { "name": "Beckoning Reflection", "id": "MmBecknRefln0001", "uuid": "Item.MmBecknRefln0001" } }, "parentChangeSetId": "DmWatrNs00000001" },
+
+  { "_id": "DmWatrUsTag00001", "name": "Water (TheUnseen) — Tag", "kind": "Tag", "tagName": "WaterBound", "parentChangeSetId": "DmWatrUs00000001" },
+  { "_id": "DmWatrUsTrt00001", "name": "Water (TheUnseen) — Trait", "kind": "Trait", "traitName": "Of Depth and Crossing", "traitDescription": "Water sovereigns, ford maidens of high rank, mist-and-depth rulers.", "parentChangeSetId": "DmWatrUs00000001" },
+  { "_id": "DmWatrUsSta00001", "name": "Water (TheUnseen) — MoveSwim 6", "kind": "Stat", "statTarget": "MoveSwim", "statOp": "Override", "statValue": 6, "parentChangeSetId": "DmWatrUs00000001" },
+  { "_id": "DmWatrUsGnt00001", "name": "Grant: Drowning Summons", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmDrwnSummns0001": { "name": "Drowning Summons", "id": "MmDrwnSummns0001", "uuid": "Item.MmDrwnSummns0001" } }, "parentChangeSetId": "DmWatrUs00000001" },
+
+  { "_id": "DmWatrClTag00001", "name": "Water (Colossal) — Tag", "kind": "Tag", "tagName": "Massive", "parentChangeSetId": "DmWatrCl00000001" },
+  { "_id": "DmWatrClTrt00001", "name": "Water (Colossal) — Trait", "kind": "Trait", "traitName": "Of Depth and Open Water", "traitDescription": "Leviathans, kraken, immense sea-beasts whose presence turns water into catastrophe.", "parentChangeSetId": "DmWatrCl00000001" },
+  { "_id": "DmWatrClSta00001", "name": "Water (Colossal) — MoveSwim 7", "kind": "Stat", "statTarget": "MoveSwim", "statOp": "Override", "statValue": 7, "parentChangeSetId": "DmWatrCl00000001" },
+  { "_id": "DmWatrClGnt00001", "name": "Grant: Break the Hull", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmBreakTheHull01": { "name": "Break the Hull", "id": "MmBreakTheHull01", "uuid": "Item.MmBreakTheHull01" } }, "parentChangeSetId": "DmWatrCl00000001" },
+
+  { "_id": "DmHillHfTag00001", "name": "Hill (HiddenFolk) — Tag", "kind": "Tag", "tagName": "EarthBound", "parentChangeSetId": "DmHillHf00000001" },
+  { "_id": "DmHillHfTrt00001", "name": "Hill (HiddenFolk) — Trait", "kind": "Trait", "traitName": "Of Mound and Hollow Hill", "traitDescription": "Barrow folk, mound-dwellers, elder hidden communities of hill and hollow.", "parentChangeSetId": "DmHillHf00000001" },
+  { "_id": "DmHillHfSta00001", "name": "Hill (HiddenFolk) — Faith +1", "kind": "Stat", "statTarget": "Stats_FaithMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmHillHf00000001" },
+  { "_id": "DmHillHfGnt00001", "name": "Grant: Barrow Glamour", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmBarrowGlamr001": { "name": "Barrow Glamour", "id": "MmBarrowGlamr001", "uuid": "Item.MmBarrowGlamr001" } }, "parentChangeSetId": "DmHillHf00000001" },
+
+  { "_id": "DmHillNsTag00001", "name": "Hill (NatureSpirit) — Tag", "kind": "Tag", "tagName": "StoneBound", "parentChangeSetId": "DmHillNs00000001" },
+  { "_id": "DmHillNsTrt00001", "name": "Hill (NatureSpirit) — Trait", "kind": "Trait", "traitName": "Of Hill and Slope", "traitDescription": "Hill trolls, cliff-haunters, old stone slope wardens — heavy, enduring, territorial.", "parentChangeSetId": "DmHillNs00000001" },
+  { "_id": "DmHillNsSta00001", "name": "Hill (NatureSpirit) — Faith +1", "kind": "Stat", "statTarget": "Stats_FaithMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmHillNs00000001" },
+  { "_id": "DmHillNsGnt00001", "name": "Grant: Old Curse", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmOldCurse000001": { "name": "Old Curse", "id": "MmOldCurse000001", "uuid": "Item.MmOldCurse000001" } }, "parentChangeSetId": "DmHillNs00000001" },
+
+  { "_id": "DmHrthHfTag00001", "name": "Hearth (HiddenFolk) — Tag", "kind": "Tag", "tagName": "HearthBound", "parentChangeSetId": "DmHrthHf00000001" },
+  { "_id": "DmHrthHfTrt00001", "name": "Hearth (HiddenFolk) — Trait", "kind": "Trait", "traitName": "Beside the Human Fire", "traitDescription": "Hidden folk whose parallel habitation presses close against human hearth, hall, byre, and boundary.", "parentChangeSetId": "DmHrthHf00000001" },
+  { "_id": "DmHrthHfSta00001", "name": "Hearth (HiddenFolk) — Intelligence +1", "kind": "Stat", "statTarget": "Stats_IntelligenceMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmHrthHf00000001" },
+  { "_id": "DmHrthHfGnt00001", "name": "Grant: Household Blessing", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmHouseholdBls01": { "name": "Household Blessing", "id": "MmHouseholdBls01", "uuid": "Item.MmHouseholdBls01" } }, "parentChangeSetId": "DmHrthHf00000001" },
+
+  { "_id": "DmHrthUsTag00001", "name": "Hearth (TheUnseen) — Tag", "kind": "Tag", "tagName": "HearthBound", "parentChangeSetId": "DmHrthUs00000001" },
+  { "_id": "DmHrthUsTrt00001", "name": "Hearth (TheUnseen) — Trait", "kind": "Trait", "traitName": "Judge of House and Labor", "traitDescription": "Winter matrons, household judges, domestic sovereign powers.", "parentChangeSetId": "DmHrthUs00000001" },
+  { "_id": "DmHrthUsSta00001", "name": "Hearth (TheUnseen) — Faith +1", "kind": "Stat", "statTarget": "Stats_FaithMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmHrthUs00000001" },
+  { "_id": "DmHrthUsGnt00001", "name": "Grant: Household Judgment", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmHouseholdJdg01": { "name": "Household Judgment", "id": "MmHouseholdJdg01", "uuid": "Item.MmHouseholdJdg01" } }, "parentChangeSetId": "DmHrthUs00000001" },
+
+  { "_id": "DmSetlHfTag00001", "name": "Settlement (HiddenFolk) — Tag", "kind": "Tag", "tagName": "HearthBound", "parentChangeSetId": "DmSetlHf00000001" },
+  { "_id": "DmSetlHfTrt00001", "name": "Settlement (HiddenFolk) — Trait", "kind": "Trait", "traitName": "Of Yard, Lane, and Hidden Threshold", "traitDescription": "Hidden settlements, routes, and courts overlapping with roads, holdings, byres, lanes, and village edges.", "parentChangeSetId": "DmSetlHf00000001" },
+  { "_id": "DmSetlHfSta00001", "name": "Settlement (HiddenFolk) — Intelligence +1", "kind": "Stat", "statTarget": "Stats_IntelligenceMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmSetlHf00000001" },
+  { "_id": "DmSetlHfGnt00001", "name": "Grant: Spoil the Work", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmSpoilTheWork01": { "name": "Spoil the Work", "id": "MmSpoilTheWork01", "uuid": "Item.MmSpoilTheWork01" } }, "parentChangeSetId": "DmSetlHf00000001" },
+
+  { "_id": "DmSetlNsTag00001", "name": "Settlement (NatureSpirit) — Tag", "kind": "Tag", "tagName": "ThresholdAware", "parentChangeSetId": "DmSetlNs00000001" },
+  { "_id": "DmSetlNsTrt00001", "name": "Settlement (NatureSpirit) — Trait", "kind": "Trait", "traitName": "Warden of the Holding", "traitDescription": "Tomte-like beings, farmstead guardians, shrine spirits — protective, local, easily turned dangerous.", "parentChangeSetId": "DmSetlNs00000001" },
+  { "_id": "DmSetlNsSta00001", "name": "Settlement (NatureSpirit) — Faith +1", "kind": "Stat", "statTarget": "Stats_FaithMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmSetlNs00000001" },
+  { "_id": "DmSetlNsGnt00001", "name": "Grant: Blessing of the Holding", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmBlessHolding01": { "name": "Blessing of the Holding", "id": "MmBlessHolding01", "uuid": "Item.MmBlessHolding01" } }, "parentChangeSetId": "DmSetlNs00000001" },
+
+  { "_id": "DmSetlPeTag00001", "name": "Settlement (People) — Tag", "kind": "Tag", "tagName": "SocialCreature", "parentChangeSetId": "DmSetlPe00000001" },
+  { "_id": "DmSetlPeTrt00001", "name": "Settlement (People) — Trait", "kind": "Trait", "traitName": "Of Street, Yard, and Holding", "traitDescription": "Villagers, guards, thieves, town watch, retainers — socially legible and locally bound.", "parentChangeSetId": "DmSetlPe00000001" },
+  { "_id": "DmSetlPeSta00001", "name": "Settlement (People) — Charisma +1", "kind": "Stat", "statTarget": "Stats_CharismaMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmSetlPe00000001" },
+  { "_id": "DmSetlPeGnt00001", "name": "Grant: Raise the Alarm", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmRaiseAlarm0001": { "name": "Raise the Alarm", "id": "MmRaiseAlarm0001", "uuid": "Item.MmRaiseAlarm0001" } }, "parentChangeSetId": "DmSetlPe00000001" },
+
+  { "_id": "DmBtlfPeTag00001", "name": "Battlefield (People) — Tag", "kind": "Tag", "tagName": "SocialCreature", "parentChangeSetId": "DmBtlfPe00000001" },
+  { "_id": "DmBtlfPeTrt00001", "name": "Battlefield (People) — Trait", "kind": "Trait", "traitName": "Of Banner and Line", "traitDescription": "Soldiers, mercenaries, raiders, and disciplined armed opposition rooted in camp, march, and line of battle.", "parentChangeSetId": "DmBtlfPe00000001" },
+  { "_id": "DmBtlfPeSta00001", "name": "Battlefield (People) — Stamina +1", "kind": "Stat", "statTarget": "Stats_StaminaMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmBtlfPe00000001" },
+  { "_id": "DmBtlfPeGnt00001", "name": "Grant: Advance in Line", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmAdvanceInLine1": { "name": "Advance in Line", "id": "MmAdvanceInLine1", "uuid": "Item.MmAdvanceInLine1" } }, "parentChangeSetId": "DmBtlfPe00000001" },
+
+  { "_id": "DmBtlfUnTag00001", "name": "Battlefield (Undead) — Tag", "kind": "Tag", "tagName": "Undead", "parentChangeSetId": "DmBtlfUn00000001" },
+  { "_id": "DmBtlfUnTrt00001", "name": "Battlefield (Undead) — Trait", "kind": "Trait", "traitName": "Still on the Field", "traitDescription": "Battle-dead, execution-dead, dead that return from slaughter fields and broken lines.", "parentChangeSetId": "DmBtlfUn00000001" },
+  { "_id": "DmBtlfUnSta00001", "name": "Battlefield (Undead) — Power +1", "kind": "Stat", "statTarget": "Stats_PowerMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmBtlfUn00000001" },
+  { "_id": "DmBtlfUnGnt00001", "name": "Grant: Rise Among the Fallen", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmRiseFallen0001": { "name": "Rise Among the Fallen", "id": "MmRiseFallen0001", "uuid": "Item.MmRiseFallen0001" } }, "parentChangeSetId": "DmBtlfUn00000001" },
+
+  { "_id": "DmDpZnZoTag00001", "name": "Deep Zone (Zone) — Tag", "kind": "Tag", "tagName": "Otherworldly", "parentChangeSetId": "DmDpZnZo00000001" },
+  { "_id": "DmDpZnZoTrt00001", "name": "Deep Zone (Zone) — Trait", "kind": "Trait", "traitName": "Of the Inner Wrongness", "traitDescription": "Deep stalkers, manifestations, and predators of warped interiors where human sense has fully failed.", "parentChangeSetId": "DmDpZnZo00000001" },
+  { "_id": "DmDpZnZoSta00001", "name": "Deep Zone (Zone) — Power +1", "kind": "Stat", "statTarget": "Stats_PowerMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmDpZnZo00000001" },
+  { "_id": "DmDpZnZoGnt00001", "name": "Grant: Erase the Track", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmEraseTrack0001": { "name": "Erase the Track", "id": "MmEraseTrack0001", "uuid": "Item.MmEraseTrack0001" } }, "parentChangeSetId": "DmDpZnZo00000001" },
+
+  { "_id": "DmDpZnZcTag00001", "name": "Deep Zone (ZoneColossus) — Tag", "kind": "Tag", "tagName": "Massive", "parentChangeSetId": "DmDpZnZc00000001" },
+  { "_id": "DmDpZnZcTrt00001", "name": "Deep Zone (ZoneColossus) — Trait", "kind": "Trait", "traitName": "The Inner Zone Has Risen", "traitDescription": "Immense manifestations moving through the deep Zone as if the land itself had become catastrophic anatomy.", "parentChangeSetId": "DmDpZnZc00000001" },
+  { "_id": "DmDpZnZcSta00001", "name": "Deep Zone (ZoneColossus) — Strength +1", "kind": "Stat", "statTarget": "Stats_StrengthMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmDpZnZc00000001" },
+  { "_id": "DmDpZnZcGnt00001", "name": "Grant: Tear Up the Ground", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmTearUpGround01": { "name": "Tear Up the Ground", "id": "MmTearUpGround01", "uuid": "Item.MmTearUpGround01" } }, "parentChangeSetId": "DmDpZnZc00000001" },
+
+  { "_id": "DmUndgHfTag00001", "name": "Underground (HiddenFolk) — Tag", "kind": "Tag", "tagName": "EarthBound", "parentChangeSetId": "DmUndgHf00000001" },
+  { "_id": "DmUndgHfTrt00001", "name": "Underground (HiddenFolk) — Trait", "kind": "Trait", "traitName": "Of Hall, Root, and Stone Below", "traitDescription": "Under-earth hidden folk, chamber-dwellers, tunnel-haunters keeping roads and halls below the human world.", "parentChangeSetId": "DmUndgHf00000001" },
+  { "_id": "DmUndgHfSta00001", "name": "Underground (HiddenFolk) — Intelligence +1", "kind": "Stat", "statTarget": "Stats_IntelligenceMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmUndgHf00000001" },
+  { "_id": "DmUndgHfGnt00001", "name": "Grant: Call Below", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmCallBelow00001": { "name": "Call Below", "id": "MmCallBelow00001", "uuid": "Item.MmCallBelow00001" } }, "parentChangeSetId": "DmUndgHf00000001" },
+
+  { "_id": "DmBog0NsTag00001", "name": "Bog (NatureSpirit) — Tag", "kind": "Tag", "tagName": "RotTouched", "parentChangeSetId": "DmBog0Ns00000001" },
+  { "_id": "DmBog0NsTrt00001", "name": "Bog (NatureSpirit) — Trait", "kind": "Trait", "traitName": "Of Mire and Preservation", "traitDescription": "Mire spirits, marsh-lights, fen wardens, reed and rot beings.", "parentChangeSetId": "DmBog0Ns00000001" },
+  { "_id": "DmBog0NsSta00001", "name": "Bog (NatureSpirit) — Stamina +1", "kind": "Stat", "statTarget": "Stats_StaminaMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmBog0Ns00000001" },
+  { "_id": "DmBog0NsGnt00001", "name": "Grant: Mire-Clutch", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmMireClutch0001": { "name": "Mire-Clutch", "id": "MmMireClutch0001", "uuid": "Item.MmMireClutch0001" } }, "parentChangeSetId": "DmBog0Ns00000001" },
+
+  { "_id": "DmStneNsTag00001", "name": "Stone (NatureSpirit) — Tag", "kind": "Tag", "tagName": "StoneBound", "parentChangeSetId": "DmStneNs00000001" },
+  { "_id": "DmStneNsTrt00001", "name": "Stone (NatureSpirit) — Trait", "kind": "Trait", "traitName": "Of Stone and Silence", "traitDescription": "Standing-stone wardens, cave-mouth beings, cairn spirits, stone-bound trolls.", "parentChangeSetId": "DmStneNs00000001" },
+  { "_id": "DmStneNsSta00001", "name": "Stone (NatureSpirit) — Strength +1", "kind": "Stat", "statTarget": "Stats_StrengthMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmStneNs00000001" },
+  { "_id": "DmStneNsGnt00001", "name": "Grant: Stone-Handed Blow", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmStoneHandBlw01": { "name": "Stone-Handed Blow", "id": "MmStoneHandBlw01", "uuid": "Item.MmStoneHandBlw01" } }, "parentChangeSetId": "DmStneNs00000001" },
+
+  { "_id": "DmMtn0NsTag00001", "name": "Mountain (NatureSpirit) — Tag", "kind": "Tag", "tagName": "WeatherBound", "parentChangeSetId": "DmMtn0Ns00000001" },
+  { "_id": "DmMtn0NsTrt00001", "name": "Mountain (NatureSpirit) — Trait", "kind": "Trait", "traitName": "Of Height and Exposure", "traitDescription": "Highland spirits, avalanche wardens, summit presences — vast, cold, punishing through height and weather.", "parentChangeSetId": "DmMtn0Ns00000001" },
+  { "_id": "DmMtn0NsSta00001", "name": "Mountain (NatureSpirit) — MoveClimb +3", "kind": "Stat", "statTarget": "MoveClimb", "statOp": "Add", "statValue": 3, "parentChangeSetId": "DmMtn0Ns00000001" },
+  { "_id": "DmMtn0NsGnt00001", "name": "Grant: Avalanche Warning", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmAvalncheWrn001": { "name": "Avalanche Warning", "id": "MmAvalncheWrn001", "uuid": "Item.MmAvalncheWrn001" } }, "parentChangeSetId": "DmMtn0Ns00000001" },
+
+  { "_id": "DmCrrpNsTag00001", "name": "Corrupted (NatureSpirit) — Tag", "kind": "Tag", "tagName": "Corruptive", "parentChangeSetId": "DmCrrpNs00000001" },
+  { "_id": "DmCrrpNsTrt00001", "name": "Corrupted (NatureSpirit) — Trait", "kind": "Trait", "traitName": "The Land Has Turned", "traitDescription": "Blighted guardians, spirits whose bond to place has become poisoned rather than severed.", "parentChangeSetId": "DmCrrpNs00000001" },
+  { "_id": "DmCrrpNsSta00001", "name": "Corrupted (NatureSpirit) — Power +1", "kind": "Stat", "statTarget": "Stats_PowerMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmCrrpNs00000001" },
+  { "_id": "DmCrrpNsGnt00001", "name": "Grant: Lead Into Ruin", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmLeadIntoRuin01": { "name": "Lead Into Ruin", "id": "MmLeadIntoRuin01", "uuid": "Item.MmLeadIntoRuin01" } }, "parentChangeSetId": "DmCrrpNs00000001" },
+
+  { "_id": "DmSvrdNsTag00001", "name": "Severed (NatureSpirit) — Tag", "kind": "Tag", "tagName": "Otherworldly", "parentChangeSetId": "DmSvrdNs00000001" },
+  { "_id": "DmSvrdNsTrt00001", "name": "Severed (NatureSpirit) — Trait", "kind": "Trait", "traitName": "No Longer Held", "traitDescription": "Uprooted, displaced, land-lost spirits no longer capable of healthy guardianship.", "parentChangeSetId": "DmSvrdNs00000001" },
+  { "_id": "DmSvrdNsSta00001", "name": "Severed (NatureSpirit) — Power +1", "kind": "Stat", "statTarget": "Stats_PowerMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmSvrdNs00000001" },
+  { "_id": "DmSvrdNsGnt00001", "name": "Grant: Wander the Wrong Way", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmWandrWrongWy01": { "name": "Wander the Wrong Way", "id": "MmWandrWrongWy01", "uuid": "Item.MmWandrWrongWy01" } }, "parentChangeSetId": "DmSvrdNs00000001" },
+
+  { "_id": "DmGravUnTag00001", "name": "Grave (Undead) — Tag", "kind": "Tag", "tagName": "Undead", "parentChangeSetId": "DmGravUn00000001" },
+  { "_id": "DmGravUnTrt00001", "name": "Grave (Undead) — Trait", "kind": "Trait", "traitName": "Bound to Tomb and Earth", "traitDescription": "Revenants, draugr, dead bound to mound, tomb, or churchyard.", "parentChangeSetId": "DmGravUn00000001" },
+  { "_id": "DmGravUnSta00001", "name": "Grave (Undead) — Faith +1", "kind": "Stat", "statTarget": "Stats_FaithMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmGravUn00000001" },
+  { "_id": "DmGravUnGnt00001", "name": "Grant: Rise from the Grave", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmRiseFrmGrve001": { "name": "Rise from the Grave", "id": "MmRiseFrmGrve001", "uuid": "Item.MmRiseFrmGrve001" } }, "parentChangeSetId": "DmGravUn00000001" },
+
+  { "_id": "DmMnBdCuTag00001", "name": "Moon-Bound (Cursed) — Tag", "kind": "Tag", "tagName": "Cursed", "parentChangeSetId": "DmMnBdCu00000001" },
+  { "_id": "DmMnBdCuTrt00001", "name": "Moon-Bound (Cursed) — Trait", "kind": "Trait", "traitName": "Ruled by the Returning Moon", "traitDescription": "Werewolves, cyclical beast-transformations, night-ruled curse-beings.", "parentChangeSetId": "DmMnBdCu00000001" },
+  { "_id": "DmMnBdCuSta00001", "name": "Moon-Bound (Cursed) — Dexterity +1", "kind": "Stat", "statTarget": "Stats_DexterityMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmMnBdCu00000001" },
+  { "_id": "DmMnBdCuGnt00001", "name": "Grant: Turn Under Moonlight", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmTurnMoonlit001": { "name": "Turn Under Moonlight", "id": "MmTurnMoonlit001", "uuid": "Item.MmTurnMoonlit001" } }, "parentChangeSetId": "DmMnBdCu00000001" },
+
+  { "_id": "DmWtMdCuTag00001", "name": "Witch-Made (Cursed) — Tag", "kind": "Tag", "tagName": "Cursed", "parentChangeSetId": "DmWtMdCu00000001" },
+  { "_id": "DmWtMdCuTrt00001", "name": "Witch-Made (Cursed) — Trait", "kind": "Trait", "traitName": "Shaped by Witchcraft", "traitDescription": "Witch-made beasts, transformed toads, hares, or dogs, curse-creatures shaped by malediction or sympathetic craft.", "parentChangeSetId": "DmWtMdCu00000001" },
+  { "_id": "DmWtMdCuSta00001", "name": "Witch-Made (Cursed) — Power +1", "kind": "Stat", "statTarget": "Stats_PowerMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmWtMdCu00000001" },
+  { "_id": "DmWtMdCuGnt00001", "name": "Grant: Mark of Malediction", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmMrkMaledictn01": { "name": "Mark of Malediction", "id": "MmMrkMaledictn01", "uuid": "Item.MmMrkMaledictn01" } }, "parentChangeSetId": "DmWtMdCu00000001" },
+
+  { "_id": "DmInfnNuTag00001", "name": "Infernal (Unnatural) — Tag", "kind": "Tag", "tagName": "Otherworldly", "parentChangeSetId": "DmInfnNu00000001" },
+  { "_id": "DmInfnNuTrt00001", "name": "Infernal (Unnatural) — Trait", "kind": "Trait", "traitName": "Of Contract and Damnation", "traitDescription": "Devils, contract-demons, tempters of hierarchy and corruption.", "parentChangeSetId": "DmInfnNu00000001" },
+  { "_id": "DmInfnNuSta00001", "name": "Infernal (Unnatural) — Charisma +1", "kind": "Stat", "statTarget": "Stats_CharismaMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmInfnNu00000001" },
+  { "_id": "DmInfnNuGnt00001", "name": "Grant: Seal the Bargain", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmSealBargain001": { "name": "Seal the Bargain", "id": "MmSealBargain001", "uuid": "Item.MmSealBargain001" } }, "parentChangeSetId": "DmInfnNu00000001" },
+
+  { "_id": "DmAnglNuTag00001", "name": "Angelic (Unnatural) — Tag", "kind": "Tag", "tagName": "Otherworldly", "parentChangeSetId": "DmAnglNu00000001" },
+  { "_id": "DmAnglNuTrt00001", "name": "Angelic (Unnatural) — Trait", "kind": "Trait", "traitName": "Of Radiance and Sentence", "traitDescription": "Cherubic war-servitors, seraphic messengers, rival faction powers of revelation, judgment, or terrible order.", "parentChangeSetId": "DmAnglNu00000001" },
+  { "_id": "DmAnglNuSta00001", "name": "Angelic (Unnatural) — Faith +1", "kind": "Stat", "statTarget": "Stats_FaithMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmAnglNu00000001" },
+  { "_id": "DmAnglNuGnt00001", "name": "Grant: Announce the Sentence", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmAnncSentnce001": { "name": "Announce the Sentence", "id": "MmAnncSentnce001", "uuid": "Item.MmAnncSentnce001" } }, "parentChangeSetId": "DmAnglNu00000001" },
+
+  { "_id": "DmBdrZZoTag00001", "name": "Border Zone (Zone) — Tag", "kind": "Tag", "tagName": "HalfSeen", "parentChangeSetId": "DmBdrZZo00000001" },
+  { "_id": "DmBdrZZoTrt00001", "name": "Border Zone (Zone) — Trait", "kind": "Trait", "traitName": "At the Edge of Wrongness", "traitDescription": "Threshold stalkers, edge-haunters, wrong things that prey where the safe world thins.", "parentChangeSetId": "DmBdrZZo00000001" },
+  { "_id": "DmBdrZZoSta00001", "name": "Border Zone (Zone) — Dexterity +1", "kind": "Stat", "statTarget": "Stats_DexterityMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmBdrZZo00000001" },
+  { "_id": "DmBdrZZoGnt00001", "name": "Grant: Call from the Verge", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmCallFromVrg001": { "name": "Call from the Verge", "id": "MmCallFromVrg001", "uuid": "Item.MmCallFromVrg001" } }, "parentChangeSetId": "DmBdrZZo00000001" },
+
+  { "_id": "DmGlemCnTag00001", "name": "Golem (Construct) — Tag", "kind": "Tag", "tagName": "Durable", "parentChangeSetId": "DmGlemCn00000001" },
+  { "_id": "DmGlemCnTrt00001", "name": "Golem (Construct) — Trait", "kind": "Trait", "traitName": "Of Clay and Command", "traitDescription": "Clay guardians, laboring wards, letter-bound protectors, heavy obedient artifices.", "parentChangeSetId": "DmGlemCn00000001" },
+  { "_id": "DmGlemCnSta00001", "name": "Golem (Construct) — Strength +1", "kind": "Stat", "statTarget": "Stats_StrengthMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmGlemCn00000001" },
+  { "_id": "DmGlemCnGnt00001", "name": "Grant: Guard the Threshold", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmGuardThresh001": { "name": "Guard the Threshold", "id": "MmGuardThresh001", "uuid": "Item.MmGuardThresh001" } }, "parentChangeSetId": "DmGlemCn00000001" },
+
+  { "_id": "DmHmncCnTag00001", "name": "Homunculus (Construct) — Tag", "kind": "Tag", "tagName": "Artificial", "parentChangeSetId": "DmHmncCn00000001" },
+  { "_id": "DmHmncCnTrt00001", "name": "Homunculus (Construct) — Trait", "kind": "Trait", "traitName": "Vessel-Born Life", "traitDescription": "Alchemical servants, whispering assistants, hidden messengers, small artificial life-forms.", "parentChangeSetId": "DmHmncCn00000001" },
+  { "_id": "DmHmncCnSta00001", "name": "Homunculus (Construct) — Dexterity +1", "kind": "Stat", "statTarget": "Stats_DexterityMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmHmncCn00000001" },
+  { "_id": "DmHmncCnGnt00001", "name": "Grant: Whispering Service", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmWhispringSvc01": { "name": "Whispering Service", "id": "MmWhispringSvc01", "uuid": "Item.MmWhispringSvc01" } }, "parentChangeSetId": "DmHmncCn00000001" },
+
+  { "_id": "DmBrzHCnTag00001", "name": "Brazen Head (Construct) — Tag", "kind": "Tag", "tagName": "SocialCreature", "parentChangeSetId": "DmBrzHCn00000001" },
+  { "_id": "DmBrzHCnTrt00001", "name": "Brazen Head (Construct) — Trait", "kind": "Trait", "traitName": "Speaks with Forged Mouth", "traitDescription": "Warded oracle heads, speaking gate relics, learned magical watchers, doom-speaking artifices.", "parentChangeSetId": "DmBrzHCn00000001" },
+  { "_id": "DmBrzHCnSta00001", "name": "Brazen Head (Construct) — Intelligence +1", "kind": "Stat", "statTarget": "Stats_IntelligenceMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmBrzHCn00000001" },
+  { "_id": "DmBrzHCnGnt00001", "name": "Grant: Pronounce the Doom", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmPronounceDoom1": { "name": "Pronounce the Doom", "id": "MmPronounceDoom1", "uuid": "Item.MmPronounceDoom1" } }, "parentChangeSetId": "DmBrzHCn00000001" },
+
+  { "_id": "DmWxSvCnTag00001", "name": "Wax Servitor (Construct) — Tag", "kind": "Tag", "tagName": "Artificial", "parentChangeSetId": "DmWxSvCn00000001" },
+  { "_id": "DmWxSvCnTrt00001", "name": "Wax Servitor (Construct) — Trait", "kind": "Trait", "traitName": "Shaped in Wax and Intention", "traitDescription": "Likeness-dolls made animate, witch-made helpers, hidden domestic spies, targeted malice-servitors.", "parentChangeSetId": "DmWxSvCn00000001" },
+  { "_id": "DmWxSvCnSta00001", "name": "Wax Servitor (Construct) — Dexterity +1", "kind": "Stat", "statTarget": "Stats_DexterityMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmWxSvCn00000001" },
+  { "_id": "DmWxSvCnGnt00001", "name": "Grant: Likeness Prick", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmLikenessPrk001": { "name": "Likeness Prick", "id": "MmLikenessPrk001", "uuid": "Item.MmLikenessPrk001" } }, "parentChangeSetId": "DmWxSvCn00000001" },
+
+  { "_id": "DmCrtlUsTag00001", "name": "Courtly (TheUnseen) — Tag", "kind": "Tag", "tagName": "Glamour", "parentChangeSetId": "DmCrtlUs00000001" },
+  { "_id": "DmCrtlUsTrt00001", "name": "Courtly (TheUnseen) — Trait", "kind": "Trait", "traitName": "Courtly Radiance", "traitDescription": "Sidhe nobles, fairy kings and queens, barrow-court royalty, lords and ladies of the hollow hill.", "parentChangeSetId": "DmCrtlUs00000001" },
+  { "_id": "DmCrtlUsSta00001", "name": "Courtly (TheUnseen) — Charisma +1", "kind": "Stat", "statTarget": "Stats_CharismaMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmCrtlUs00000001" },
+  { "_id": "DmCrtlUsGnt00001", "name": "Grant: Courtly Favor", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmCourtlyFavr001": { "name": "Courtly Favor", "id": "MmCourtlyFavr001", "uuid": "Item.MmCourtlyFavr001" } }, "parentChangeSetId": "DmCrtlUs00000001" },
+
+  { "_id": "DmHuntUsTag00001", "name": "Hunt (TheUnseen) — Tag", "kind": "Tag", "tagName": "FearAura", "parentChangeSetId": "DmHuntUs00000001" },
+  { "_id": "DmHuntUsTrt00001", "name": "Hunt (TheUnseen) — Trait", "kind": "Trait", "traitName": "Heard Before Seen", "traitDescription": "Erlking, leaders of the Wild Hunt, spectral riders of rank — relentless, hard to flee once marked.", "parentChangeSetId": "DmHuntUs00000001" },
+  { "_id": "DmHuntUsSta00001", "name": "Hunt (TheUnseen) — MoveGround +2", "kind": "Stat", "statTarget": "MoveGround", "statOp": "Add", "statValue": 2, "parentChangeSetId": "DmHuntUs00000001" },
+  { "_id": "DmHuntUsGnt00001", "name": "Grant: Mark the Quarry", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmMarkTheQurry01": { "name": "Mark the Quarry", "id": "MmMarkTheQurry01", "uuid": "Item.MmMarkTheQurry01" } }, "parentChangeSetId": "DmHuntUs00000001" },
+
+  { "_id": "DmSmkFUsTag00001", "name": "Smokeless Fire (TheUnseen) — Tag", "kind": "Tag", "tagName": "FireVulnerable", "parentChangeSetId": "DmSmkFUs00000001" },
+  { "_id": "DmSmkFUsTrt00001", "name": "Smokeless Fire (TheUnseen) — Trait", "kind": "Trait", "traitName": "Fire That Answers Fire", "traitDescription": "Jinn, ruin spirits of rank, beings of heat, smoke, bargain, and invisible fire.", "parentChangeSetId": "DmSmkFUs00000001" },
+  { "_id": "DmSmkFUsSta00001", "name": "Smokeless Fire (TheUnseen) — Power +1", "kind": "Stat", "statTarget": "Stats_PowerMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmSmkFUs00000001" },
+  { "_id": "DmSmkFUsGnt00001", "name": "Grant: Smoke Passage", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmSmokePassage01": { "name": "Smoke Passage", "id": "MmSmokePassage01", "uuid": "Item.MmSmokePassage01" } }, "parentChangeSetId": "DmSmkFUs00000001" },
+
+  { "_id": "DmWntrUsTag00001", "name": "Winter (TheUnseen) — Tag", "kind": "Tag", "tagName": "HearthBound", "parentChangeSetId": "DmWntrUs00000001" },
+  { "_id": "DmWntrUsTrt00001", "name": "Winter (TheUnseen) — Trait", "kind": "Trait", "traitName": "Judge of House and Labor", "traitDescription": "Winter queens, snow matrons, rulers of sleep, labor, and harsh blessing.", "parentChangeSetId": "DmWntrUs00000001" },
+  { "_id": "DmWntrUsSta00001", "name": "Winter (TheUnseen) — Faith +1", "kind": "Stat", "statTarget": "Stats_FaithMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "DmWntrUs00000001" },
+  { "_id": "DmWntrUsGnt00001", "name": "Grant: Snow Blessing", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmSnowBlessing01": { "name": "Snow Blessing", "id": "MmSnowBlessing01", "uuid": "Item.MmSnowBlessing01" } }, "parentChangeSetId": "DmWntrUs00000001" }
 ]
