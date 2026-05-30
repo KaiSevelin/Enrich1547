@@ -121,6 +121,8 @@ export {
     mergeDefinedProps,
     buildRitualStepRollTableDoc,
     buildSpellFailureRollTableDoc,
+    pruneDuplicateTemplates,
+    OBSOLETE_TEMPLATE_NAMES,
 };
 
 function normalizeTypeList(values) {
@@ -702,7 +704,10 @@ async function upsertWorldItems(docs) {
     }
 
     if (toCreate.length > 0) {
-        await Item.createDocuments(toCreate);
+        // keepId:true → honour the explicit `_id` from source data. Without it
+        // Foundry drops the _id and assigns a random one, so each Setup Data
+        // run creates a duplicate instead of matching/updating the prior doc.
+        await Item.createDocuments(toCreate, { keepId: true });
     }
 
     if (toUpdate.length > 0) {
@@ -741,7 +746,7 @@ async function upsertWorldActors(docs) {
     }
 
     if (toCreate.length > 0) {
-        await Actor.createDocuments(toCreate);
+        await Actor.createDocuments(toCreate, { keepId: true });
     }
 
     if (toUpdate.length > 0) {
@@ -777,7 +782,7 @@ async function upsertWorldRollTables(docs) {
     }
 
     if (toCreate.length > 0) {
-        await RollTable.createDocuments(toCreate);
+        await RollTable.createDocuments(toCreate, { keepId: true });
     }
 
     if (toUpdate.length > 0) {
@@ -788,6 +793,36 @@ async function upsertWorldRollTables(docs) {
         created: toCreate.length,
         updated: toUpdate.length
     };
+}
+
+// Names of CSB templates this module used to ship but no longer does. Orphan
+// docs left over in upgraded worlds are deleted by pruneDuplicateTemplates.
+const OBSOLETE_TEMPLATE_NAMES = new Set([
+    "RecipeTemplate",
+    "PowerTemplate",
+]);
+
+// Delete CSB template items that aren't the canonical doc: duplicates from
+// pre-{keepId:true} runs (same name, random _id) and orphans for templates
+// removed from source (e.g. RecipeTemplate). Conservative — only matches on
+// known template names so unrelated user content is untouched.
+async function pruneDuplicateTemplates(canonicalDocs) {
+    const canonicalIds = new Set(canonicalDocs.map((doc) => doc._id));
+    const canonicalNames = new Set(canonicalDocs.map((doc) => doc.name));
+    const staleIds = game.items
+        .filter((item) => String(item.type ?? "").endsWith("Template"))
+        .filter((item) => {
+            const name = String(item.name ?? "");
+            if (OBSOLETE_TEMPLATE_NAMES.has(name)) return true;
+            return canonicalNames.has(name) && !canonicalIds.has(item.id);
+        })
+        .map((item) => item.id);
+
+    if (staleIds.length > 0) {
+        await Item.deleteDocuments(staleIds);
+    }
+
+    return { removed: staleIds.length };
 }
 
 async function pruneManagedFolderItems({ folderId, validIds, templateId, folderHint }) {
@@ -1380,7 +1415,7 @@ function createModuleSetupFormApplicationClass() {
                 this.#loadTemplate(TEMPLATE_FILES.requirement)
             ]);
 
-            await upsertWorldItems([
+            const templateDocs = [
                 makeTemplateDoc(weaponTemplate),
                 makeTemplateDoc(armorTemplate),
                 makeTemplateDoc(maneuverTemplate),
@@ -1396,7 +1431,9 @@ function createModuleSetupFormApplicationClass() {
                 makeTemplateDoc(changeSetTemplate),
                 makeTemplateDoc(changeTemplate),
                 makeTemplateDoc(requirementTemplate)
-            ]);
+            ];
+            await upsertWorldItems(templateDocs);
+            await pruneDuplicateTemplates(templateDocs);
 
             const folders = await this.#buildManagedFolderTree();
 

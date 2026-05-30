@@ -84,4 +84,38 @@ console.log("module-settings pure helpers...");
     console.log("  ✓ build*RollTableDoc: carries sourceKey for key-based resolution");
 }
 
+{
+    // pruneDuplicateTemplates deletes wrong-_id duplicates (same name, random _id
+    // left over from pre-keepId runs) and orphans of removed templates.
+    const { pruneDuplicateTemplates } = await import("../settings/module-settings.js");
+
+    const worldItems = [
+        // canonical — keep
+        { id: "WmP9Ld3Qs7Nk2FvR", name: "WeaponModifierTemplate", type: "_equippableItemTemplate" },
+        // duplicate of WeaponModifierTemplate with a random _id — delete
+        { id: "RandomXXXXXXXXXX", name: "WeaponModifierTemplate", type: "_equippableItemTemplate" },
+        // obsolete (removed from source) — delete
+        { id: "OldRecipeIdXXXXX", name: "RecipeTemplate", type: "_equippableItemTemplate" },
+        // unrelated user content — keep
+        { id: "UserTemplate1234", name: "Chargen Option Template", type: "_equippableItemTemplate" },
+        // wrong type (not a CSB template) — keep
+        { id: "RegularItemXXXXX", name: "WeaponModifierTemplate", type: "equippableItem" },
+    ];
+    const deleted = [];
+    globalThis.game = { items: { filter: (fn) => worldItems.filter(fn) } };
+    globalThis.Item = { deleteDocuments: async (ids) => { deleted.push(...ids); } };
+
+    const canonicalDocs = [
+        { _id: "WmP9Ld3Qs7Nk2FvR", name: "WeaponModifierTemplate" },
+        { _id: "2kiWw3Cv5Zk1lZxn", name: "SpellTemplate" },
+    ];
+    const result = await pruneDuplicateTemplates(canonicalDocs);
+    assert.deepStrictEqual(deleted.sort(), ["OldRecipeIdXXXXX", "RandomXXXXXXXXXX"]);
+    assert.strictEqual(result.removed, 2);
+
+    delete globalThis.game;
+    delete globalThis.Item;
+    console.log("  ✓ pruneDuplicateTemplates: deletes wrong-id duplicates and removed-template orphans, preserves unrelated content");
+}
+
 console.log("\nAll module-settings pure-helper tests passed.");
