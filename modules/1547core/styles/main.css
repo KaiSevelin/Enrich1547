@@ -985,6 +985,12 @@ a.enricher-1547::before {
   opacity: 0.78;
   cursor: default;
 }
+.actor-hud-1547 .hud-dice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.16rem 0.6rem;
+}
+
 .actor-hud-1547 .hud-dice-row {
   display: flex;
   align-items: center;

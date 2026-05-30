@@ -181,7 +181,11 @@
     for (const button of root.querySelectorAll("[data-hud-dice-attack-clear]")) {
         button.addEventListener("click", () => {
             if (!token?.actor || button.disabled) return;
+            // Clear resets both the staged "next attack" dice AND the live
+            // per-row selection counts back to 0. Previously only the staged
+            // pending set was cleared, leaving the row counters stuck.
             clearPendingNextAttackDice(token.actor.id);
+            clearDiceTabAttackSelection(token.actor.id);
             void renderHudForSelection();
         });
     }
@@ -208,6 +212,7 @@
         button.addEventListener("click", () => {
             if (!token?.actor || button.disabled) return;
             clearPendingNextSkillDice(token.actor.id);
+            clearDiceTabSkillDice(token.actor.id);
             void renderHudForSelection();
         });
     }    for (const button of root.querySelectorAll("[data-hud-side-ready]")) {

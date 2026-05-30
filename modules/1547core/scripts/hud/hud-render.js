@@ -424,16 +424,17 @@ function buildDiceTree(data, deps = {}) {
     const skillSelectionLabel = diceTab.skillSelectionLabel || "0d6";
     const pendingSkillLabel = diceTab.pendingSkillLabel || "0d6";
 
+    const hasAnyAttackToClear = diceTab.hasAttackSelection || diceTab.hasPendingAttackDice;
     return `
         <div class="hud-tree-block">
             <div class="hud-section-title">Attack Advantage Dice</div>
-            <ul class="hud-list hud-tree-list">${attackRows || '<li class="hud-empty-row">No attack dice</li>'}</ul>
+            <ul class="hud-list hud-tree-list hud-dice-grid">${attackRows || '<li class="hud-empty-row">No attack dice</li>'}</ul>
             <div class="hud-dice-preview-row"><span class="hud-tree-key">Selected</span><span class="hud-tree-value">${escapeHtml(attackSelectionLabel)}</span></div>
             <div class="hud-dice-preview-row"><span class="hud-tree-key">Next attack</span><span class="hud-tree-value">${escapeHtml(pendingAttackLabel)}</span></div>
             <div class="hud-weapon-action-strip hud-dice-action-strip">
                 <button type="button" class="hud-mini-button hud-mini-button-primary" data-hud-dice-attack-roll${diceTab.hasAttackSelection ? "" : " disabled"}>Roll</button>
                 <button type="button" class="hud-mini-button" data-hud-dice-attack-add${diceTab.hasAttackSelection ? "" : " disabled"}>Add</button>
-                <button type="button" class="hud-mini-button" data-hud-dice-attack-clear${diceTab.hasPendingAttackDice ? "" : " disabled"}>Clear</button>
+                <button type="button" class="hud-mini-button" data-hud-dice-attack-clear${hasAnyAttackToClear ? "" : " disabled"}>Clear</button>
             </div>
         </div>
         <div class="hud-tree-block">
@@ -451,7 +452,7 @@ function buildDiceTree(data, deps = {}) {
             <div class="hud-weapon-action-strip hud-dice-action-strip">
                 <button type="button" class="hud-mini-button hud-mini-button-primary" data-hud-dice-skill-roll${diceTab.hasSkillSelection ? "" : " disabled"}>Roll</button>
                 <button type="button" class="hud-mini-button" data-hud-dice-skill-add${diceTab.hasSkillSelection ? "" : " disabled"}>Add</button>
-                <button type="button" class="hud-mini-button" data-hud-dice-skill-clear${diceTab.hasPendingSkillDice ? "" : " disabled"}>Clear</button>
+                <button type="button" class="hud-mini-button" data-hud-dice-skill-clear${diceTab.hasSkillSelection || diceTab.hasPendingSkillDice ? "" : " disabled"}>Clear</button>
             </div>
         </div>
     `;
