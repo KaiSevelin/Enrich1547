@@ -123,7 +123,6 @@ const CSB_TEMPLATE_IDS = {
 };
 const MANEUVER_FILTER_OPTIONS = [
     { value: "all", label: "All" },
-    { value: "usable", label: "Usable" },
     { value: "pre", label: "Pre" },
     { value: "full-turn", label: "Full turn" },
     { value: "post", label: "Post" },
@@ -302,7 +301,6 @@ function getManeuverFilterOptions() {
 function matchesManeuverFilter(maneuver, filterValue) {
     const normalized = String(filterValue ?? "all").trim().toLowerCase() || "all";
     if (normalized === "all") return true;
-    if (normalized === "usable") return maneuver?.usable === true;
     return String(maneuver?.timingKey ?? "").trim().toLowerCase() === normalized;
 }
 

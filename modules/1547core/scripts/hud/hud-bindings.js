@@ -115,6 +115,12 @@
             void renderHudForSelection();
         });
     }
+    for (const checkbox of root.querySelectorAll("[data-hud-maneuver-show-all]")) {
+        checkbox.addEventListener("change", (event) => {
+            HUD_STATE.maneuverShowAll = !!event.currentTarget.checked;
+            void renderHudForSelection();
+        });
+    }
     for (const button of root.querySelectorAll("[data-hud-collapse-toggle]")) {
         button.addEventListener("click", () => {
             HUD_STATE.collapsed = !HUD_STATE.collapsed;

@@ -10,6 +10,7 @@
     selectedAmmoByWeapon: {},
     inventoryFilter: "all",
     maneuverFilter: "all",
+    maneuverShowAll: false,
     selectedPreManeuverIdsByActor: {},
     selectedFullTurnManeuverIdByActor: {},
     ignoredCostManeuverIdsByActor: {},

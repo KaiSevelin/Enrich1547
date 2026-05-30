@@ -564,7 +564,13 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                     reason: "Use from the post-maneuver prompt when available.",
                 }));
                 const allManeuvers = [...(data.maneuvers ?? []), ...(data.fullTurnManeuvers ?? []), ...postList, ...reactionList];
-                const filtered = allManeuvers.filter((maneuver) => deps.matchesManeuverFilter ? deps.matchesManeuverFilter(maneuver, activeFilter) : true);
+                // Default behaviour hides anything not currently usable so the
+                // list stays short; the "View all" checkbox below relaxes the
+                // gate when the player wants the full menu (browse mode).
+                const showAll = HUD_STATE?.maneuverShowAll === true;
+                const filtered = allManeuvers
+                    .filter((maneuver) => deps.matchesManeuverFilter ? deps.matchesManeuverFilter(maneuver, activeFilter) : true)
+                    .filter((maneuver) => showAll || maneuver?.usable === true);
                 const rows = buildTreeList(filtered, (maneuver) => {
                     const title = escapeHtml(maneuver.tooltip || "");
                     const subtitle = maneuver.reason || maneuver.summaryLine || maneuver.costSummary || "";
@@ -620,6 +626,10 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                                     <option value="${escapeHtml(option.value)}"${option.value === activeFilter ? " selected" : ""}>${escapeHtml(option.label)}</option>
                                 `).join("")}
                             </select>
+                        </label>
+                        <label class="hud-counter-roll-toggle">
+                            <input type="checkbox" data-hud-maneuver-show-all${showAll ? " checked" : ""}>
+                            <span>View all</span>
                         </label>
                     </div>
                     <div class="hud-tree-block">
