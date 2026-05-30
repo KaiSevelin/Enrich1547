@@ -62,5 +62,37 @@
     "forTypeAny": false,
     "ForType_Construct": true,
     "notes": "Chassis for Constructs: made beings (golems, homunculi, animated guardians, laboratory things, crafted servitors) given force, motion, and purpose by human or nonhuman craft. Provides identity Tags and Traits plus three default powers. Golem / Homunculus / Brazen Head / Wax Servitor Domain ChangeSets layer on top."
+  },
+  {
+    "_id": "ColossusChass001",
+    "name": "Colossus Base",
+    "group": "Base",
+    "forTypeAny": false,
+    "ForType_Colossal": true,
+    "notes": "Chassis for Colossi: rare immense beings (dragons, kraken, leviathans) defined by overwhelming scale, force, dormancy, hunger, and catastrophic presence. Provides identity Tags and Traits plus three default powers. Dragon / Sea Colossus / Abyssal / Ancient Cunning ChangeSets layer on top."
+  },
+  {
+    "_id": "ZoneBaseChassis1",
+    "name": "Zone Base",
+    "group": "Base",
+    "forTypeAny": false,
+    "ForType_Zone": true,
+    "notes": "Chassis for Zone creatures: eerie stalking beings tied to warped pockets of reality, known more by signs and partial glimpses than clear sight. Provides identity Tags and Traits plus three default powers. Manifestation / Echo Person / Zone Predator / Warped Servitor / Boundary Haunter ChangeSets layer on top."
+  },
+  {
+    "_id": "ZoneCollChass001",
+    "name": "Zone Colossus Base",
+    "group": "Base",
+    "forTypeAny": false,
+    "ForType_ZoneColossus": true,
+    "notes": "Chassis for Zone Colossi: singular immense Zone beings (the severed hand, impossible disasters) defined by colossal scale fused with warped locality. Provides identity Tags and Traits plus three default powers. Severed Hand / Crawling Ruin / Watching Mass / Buried Colossus ChangeSets layer on top."
+  },
+  {
+    "_id": "PeopleChassis001",
+    "name": "People Base",
+    "group": "Base",
+    "forTypeAny": false,
+    "ForType_People": true,
+    "notes": "Chassis for People: human opposition built as monster archetypes (guards, commoners, men-at-arms, knights, raiders) rather than full PC sheets. Provides identity Tags and Traits plus three default powers. Commoner / Guard / Raider / Man-at-Arms / Knight ChangeSets layer on top."
   }
 ]
