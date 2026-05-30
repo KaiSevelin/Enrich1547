@@ -6,5 +6,13 @@
     "forTypeAny": false,
     "ForType_NatureSpirit": true,
     "notes": "Chassis for Nature Spirits: place-bound guardian beings tied to a specific natural seat (grove, spring, hill, marsh, etc.). Provides identity Tags and Traits. Domain / Motivation / Loadout / Quirk ChangeSets layer on top to specialise the spirit."
+  },
+  {
+    "_id": "BeastChassis0001",
+    "name": "Beast Base",
+    "group": "Base",
+    "forTypeAny": false,
+    "ForType_Beast": true,
+    "notes": "Chassis for Beasts: dangerous natural animals (wolves, bears, boars, great cats, etc.) driven by hunger, fear, territory, or pack instinct. Provides identity Tags and Traits plus three default powers. Pack-Hunter / Brute-Predator / Ambush-Hunter / Scavenger ChangeSets layer on top to specialise."
   }
 ]

@@ -93,5 +93,89 @@
     },
     "notes": "Grants the (optional) Blessing of the Place power.",
     "parentChangeSetId": "NsBaseChassis001"
+  },
+  {
+    "_id": "BeastTag1Natur00",
+    "name": "Natural Creature — Tag",
+    "kind": "Tag",
+    "tagName": "LivingCreature",
+    "notes": "The being is a natural animal, not an inherently supernatural entity.",
+    "parentChangeSetId": "BeastChassis0001"
+  },
+  {
+    "_id": "BeastTrt1Natur00",
+    "name": "Natural Creature — Trait",
+    "kind": "Trait",
+    "traitName": "Natural Creature",
+    "traitDescription": "This is a living animal shaped by body, instinct, and environment rather than by glamour, curse, or mythic office.",
+    "notes": "Core identity trait for Beasts.",
+    "parentChangeSetId": "BeastChassis0001"
+  },
+  {
+    "_id": "BeastTag2Sense00",
+    "name": "Keen Senses — Tag",
+    "kind": "Tag",
+    "tagName": "SenseLiving",
+    "notes": "The animal notices scent, sound, movement, and weakness quickly.",
+    "parentChangeSetId": "BeastChassis0001"
+  },
+  {
+    "_id": "BeastTrt2Sense00",
+    "name": "Keen Senses — Trait",
+    "kind": "Trait",
+    "traitName": "Keen Senses",
+    "traitDescription": "It relies on scent, hearing, movement, and instinctive awareness to track danger, prey, or intrusion.",
+    "notes": "Core perception and pursuit trait for Beasts.",
+    "parentChangeSetId": "BeastChassis0001"
+  },
+  {
+    "_id": "BeastTag3Claw000",
+    "name": "Tooth and Claw — Tag",
+    "kind": "Tag",
+    "tagName": "NaturalWeapons",
+    "notes": "The creature's body is itself a weapon.",
+    "parentChangeSetId": "BeastChassis0001"
+  },
+  {
+    "_id": "BeastTrt3Claw000",
+    "name": "Tooth and Claw — Trait",
+    "kind": "Trait",
+    "traitName": "Tooth and Claw",
+    "traitDescription": "It attacks with bite, claw, horn, tusk, trampling force, or other natural weaponry rather than crafted arms.",
+    "notes": "Core attack-shape trait for Beasts.",
+    "parentChangeSetId": "BeastChassis0001"
+  },
+  {
+    "_id": "BeastGrantRush00",
+    "name": "Grant: Savage Rush",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": {
+      "MmSavageRush0001": { "name": "Savage Rush", "id": "MmSavageRush0001", "uuid": "Item.MmSavageRush0001" }
+    },
+    "notes": "Grants the Savage Rush power.",
+    "parentChangeSetId": "BeastChassis0001"
+  },
+  {
+    "_id": "BeastGrantMaul00",
+    "name": "Grant: Maul",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": {
+      "MmMaul0000000001": { "name": "Maul", "id": "MmMaul0000000001", "uuid": "Item.MmMaul0000000001" }
+    },
+    "notes": "Grants the Maul power.",
+    "parentChangeSetId": "BeastChassis0001"
+  },
+  {
+    "_id": "BeastGrantBreak0",
+    "name": "Grant: Break Away",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": {
+      "MmBreakAway00001": { "name": "Break Away", "id": "MmBreakAway00001", "uuid": "Item.MmBreakAway00001" }
+    },
+    "notes": "Grants the Break Away power.",
+    "parentChangeSetId": "BeastChassis0001"
   }
 ]
