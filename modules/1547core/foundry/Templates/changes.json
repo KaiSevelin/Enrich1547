@@ -1060,5 +1060,87 @@
   { "_id": "LdGpZcoTag000000", "name": "Grasping (ZoneColossus) — Tag", "kind": "Tag", "tagName": "Massive", "parentChangeSetId": "LoadoutGpZcoll01" },
   { "_id": "LdGpZcoTrt000000", "name": "Grasping (ZoneColossus) — Trait", "kind": "Trait", "traitName": "The Grasp That Covers Ground", "traitDescription": "Catastrophic grasp, crushing capture, and the horror of being taken by something too large to understand.", "parentChangeSetId": "LoadoutGpZcoll01" },
   { "_id": "LdGpZcoSta000000", "name": "Grasping (ZoneColossus) — Power +1", "kind": "Stat", "statTarget": "Stats_PowerMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutGpZcoll01" },
-  { "_id": "LdGpZcoGnt000000", "name": "Grant: Colossal Grasp", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmColossalGrasp1": { "name": "Colossal Grasp", "id": "MmColossalGrasp1", "uuid": "Item.MmColossalGrasp1" } }, "parentChangeSetId": "LoadoutGpZcoll01" }
+  { "_id": "LdGpZcoGnt000000", "name": "Grant: Colossal Grasp", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmColossalGrasp1": { "name": "Colossal Grasp", "id": "MmColossalGrasp1", "uuid": "Item.MmColossalGrasp1" } }, "parentChangeSetId": "LoadoutGpZcoll01" },
+
+  { "_id": "MtGardNsTrt00001", "name": "Guardian (NatureSpirit) — Trait", "kind": "Trait", "traitName": "Guardian", "traitDescription": "Defends grove, stream, homestead, or sacred patch. Warns before punishing.", "parentChangeSetId": "MtGardNs00000001" },
+  { "_id": "MtGardNsGnt00001", "name": "Grant: Turn Back the Threat", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmTurnBackThret1": { "name": "Turn Back the Threat", "id": "MmTurnBackThret1", "uuid": "Item.MmTurnBackThret1" } }, "parentChangeSetId": "MtGardNs00000001" },
+
+  { "_id": "MtGardPeTrt00001", "name": "Guardian (People) — Trait", "kind": "Trait", "traitName": "Guardian", "traitDescription": "Guard-post loyalty, watch duty, defense of charge or holding.", "parentChangeSetId": "MtGardPe00000001" },
+  { "_id": "MtGardPeGnt00001", "name": "Grant: Stand the Post", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmStandThePost01": { "name": "Stand the Post", "id": "MmStandThePost01", "uuid": "Item.MmStandThePost01" } }, "parentChangeSetId": "MtGardPe00000001" },
+
+  { "_id": "MtGardCnTrt00001", "name": "Guardian (Construct) — Trait", "kind": "Trait", "traitName": "Guardian", "traitDescription": "Imposed warding function, no fear of harm to itself.", "parentChangeSetId": "MtGardCn00000001" },
+  { "_id": "MtGardCnGnt00001", "name": "Grant: Hold to the Command", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmHoldToCmd00001": { "name": "Hold to the Command", "id": "MmHoldToCmd00001", "uuid": "Item.MmHoldToCmd00001" } }, "parentChangeSetId": "MtGardCn00000001" },
+
+  { "_id": "MtHuntBsTrt00001", "name": "Hunter (Beast) — Trait", "kind": "Trait", "traitName": "Hunter", "traitDescription": "Prey-driven, instinctive, and physical.", "parentChangeSetId": "MtHuntBs00000001" },
+  { "_id": "MtHuntBsGnt00001", "name": "Grant: Follow the Quarry", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmFollowQuarry01": { "name": "Follow the Quarry", "id": "MmFollowQuarry01", "uuid": "Item.MmFollowQuarry01" } }, "parentChangeSetId": "MtHuntBs00000001" },
+
+  { "_id": "MtHuntUsTrt00001", "name": "Hunter (TheUnseen) — Trait", "kind": "Trait", "traitName": "Hunter", "traitDescription": "Sovereign pursuit, chosen quarry, and terrible inevitability.", "parentChangeSetId": "MtHuntUs00000001" },
+  { "_id": "MtHuntUsGnt00001", "name": "Grant: Mark the Chosen Prey", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmMarkChosen0001": { "name": "Mark the Chosen Prey", "id": "MmMarkChosen0001", "uuid": "Item.MmMarkChosen0001" } }, "parentChangeSetId": "MtHuntUs00000001" },
+
+  { "_id": "MtHuntZoTrt00001", "name": "Hunter (Zone) — Trait", "kind": "Trait", "traitName": "Hunter", "traitDescription": "Patient stalking, isolation pressure, and sudden overtaking.", "parentChangeSetId": "MtHuntZo00000001" },
+  { "_id": "MtHuntZoGnt00001", "name": "Grant: Never Lose the Trail", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmNeverLoseTrl01": { "name": "Never Lose the Trail", "id": "MmNeverLoseTrl01", "uuid": "Item.MmNeverLoseTrl01" } }, "parentChangeSetId": "MtHuntZo00000001" },
+
+  { "_id": "MtLureNsTrt00001", "name": "Lurer (NatureSpirit) — Trait", "kind": "Trait", "traitName": "Lurer", "traitDescription": "Misleads threats into water, bog, cold, roots, or getting lost.", "parentChangeSetId": "MtLureNs00000001" },
+  { "_id": "MtLureNsGnt00001", "name": "Grant: Lead to the Bad Ground", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmLeadBadGrnd001": { "name": "Lead to the Bad Ground", "id": "MmLeadBadGrnd001", "uuid": "Item.MmLeadBadGrnd001" } }, "parentChangeSetId": "MtLureNs00000001" },
+
+  { "_id": "MtLureZoTrt00001", "name": "Lurer (Zone) — Trait", "kind": "Trait", "traitName": "Lurer", "traitDescription": "False rescue, wrong voice, impossible near-at-hand pull.", "parentChangeSetId": "MtLureZo00000001" },
+  { "_id": "MtLureZoGnt00001", "name": "Grant: Let Them Follow", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmLetThemFollw01": { "name": "Let Them Follow", "id": "MmLetThemFollw01", "uuid": "Item.MmLetThemFollw01" } }, "parentChangeSetId": "MtLureZo00000001" },
+
+  { "_id": "MtLureHfTrt00001", "name": "Lurer (HiddenFolk) — Trait", "kind": "Trait", "traitName": "Lurer", "traitDescription": "Seduction, testing, mockery, or dangerous invitation under elder custom.", "parentChangeSetId": "MtLureHf00000001" },
+  { "_id": "MtLureHfGnt00001", "name": "Grant: Offer the Wrong Welcome", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmOfferWrngWel01": { "name": "Offer the Wrong Welcome", "id": "MmOfferWrngWel01", "uuid": "Item.MmOfferWrngWel01" } }, "parentChangeSetId": "MtLureHf00000001" },
+
+  { "_id": "MtTerrBsTrt00001", "name": "Territorial (Beast) — Trait", "kind": "Trait", "traitName": "Territorial", "traitDescription": "Den, range, young, and feeding ground defense.", "parentChangeSetId": "MtTerrBs00000001" },
+  { "_id": "MtTerrBsGnt00001", "name": "Grant: Drive from the Range", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmDriveFromRng01": { "name": "Drive from the Range", "id": "MmDriveFromRng01", "uuid": "Item.MmDriveFromRng01" } }, "parentChangeSetId": "MtTerrBs00000001" },
+
+  { "_id": "MtTerrNsTrt00001", "name": "Territorial (NatureSpirit) — Trait", "kind": "Trait", "traitName": "Territorial", "traitDescription": "Place-bonded response to intrusion, damage, neglect, or desecration.", "parentChangeSetId": "MtTerrNs00000001" },
+  { "_id": "MtTerrNsGnt00001", "name": "Grant: The Place Rejects You", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmPlaceRejcts001": { "name": "The Place Rejects You", "id": "MmPlaceRejcts001", "uuid": "Item.MmPlaceRejcts001" } }, "parentChangeSetId": "MtTerrNs00000001" },
+
+  { "_id": "MtTerrHfTrt00001", "name": "Territorial (HiddenFolk) — Trait", "kind": "Trait", "traitName": "Territorial", "traitDescription": "Old claim, parallel possession, offense at trespass into overlapping ground.", "parentChangeSetId": "MtTerrHf00000001" },
+  { "_id": "MtTerrHfGnt00001", "name": "Grant: Assert the Older Claim", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmAssertClaim001": { "name": "Assert the Older Claim", "id": "MmAssertClaim001", "uuid": "Item.MmAssertClaim001" } }, "parentChangeSetId": "MtTerrHf00000001" },
+
+  { "_id": "MtVengUnTrt00001", "name": "Vengeful (Undead) — Trait", "kind": "Trait", "traitName": "Vengeful", "traitDescription": "Unfinished grievance, return for a wrong, selective punishment.", "parentChangeSetId": "MtVengUn00000001" },
+  { "_id": "MtVengUnGnt00001", "name": "Grant: Name the Wrongdoer", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmNameWrongdoer1": { "name": "Name the Wrongdoer", "id": "MmNameWrongdoer1", "uuid": "Item.MmNameWrongdoer1" } }, "parentChangeSetId": "MtVengUn00000001" },
+
+  { "_id": "MtVengCuTrt00001", "name": "Vengeful (Cursed) — Trait", "kind": "Trait", "traitName": "Vengeful", "traitDescription": "Curse-driven retaliation against maker, betrayer, or target-class.", "parentChangeSetId": "MtVengCu00000001" },
+  { "_id": "MtVengCuGnt00001", "name": "Grant: Strike the One Who Caused This", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmStrikeCause001": { "name": "Strike the One Who Caused This", "id": "MmStrikeCause001", "uuid": "Item.MmStrikeCause001" } }, "parentChangeSetId": "MtVengCu00000001" },
+
+  { "_id": "MtVengPeTrt00001", "name": "Vengeful (People) — Trait", "kind": "Trait", "traitName": "Vengeful", "traitDescription": "Feud, blood-price, revenge, or social wrong pursued into violence.", "parentChangeSetId": "MtVengPe00000001" },
+  { "_id": "MtVengPeGnt00001", "name": "Grant: Settle the Wrong", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmSettleWrong001": { "name": "Settle the Wrong", "id": "MmSettleWrong001", "uuid": "Item.MmSettleWrong001" } }, "parentChangeSetId": "MtVengPe00000001" },
+
+  { "_id": "MtHungBsTrt00001", "name": "Hungry (Beast) — Trait", "kind": "Trait", "traitName": "Hungry", "traitDescription": "Ordinary predation intensified by famine, season, or risk.", "parentChangeSetId": "MtHungBs00000001" },
+  { "_id": "MtHungBsGnt00001", "name": "Grant: Commit to the Kill", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmCommitToKill01": { "name": "Commit to the Kill", "id": "MmCommitToKill01", "uuid": "Item.MmCommitToKill01" } }, "parentChangeSetId": "MtHungBs00000001" },
+
+  { "_id": "MtHungClTrt00001", "name": "Hungry (Colossal) — Trait", "kind": "Trait", "traitName": "Hungry", "traitDescription": "Catastrophe-beast feeding drive, ship-breaking appetite, and disaster through need.", "parentChangeSetId": "MtHungCl00000001" },
+  { "_id": "MtHungClGnt00001", "name": "Grant: Feed at Any Cost", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmFeedAtAnyCst01": { "name": "Feed at Any Cost", "id": "MmFeedAtAnyCst01", "uuid": "Item.MmFeedAtAnyCst01" } }, "parentChangeSetId": "MtHungCl00000001" },
+
+  { "_id": "MtHungUnTrt00001", "name": "Hungry (Undead) — Trait", "kind": "Trait", "traitName": "Hungry", "traitDescription": "Life-force hunger, corpse-hunger, or warmth-hunger that overrides caution.", "parentChangeSetId": "MtHungUn00000001" },
+  { "_id": "MtHungUnGnt00001", "name": "Grant: Devour the Living", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmDevourLiving01": { "name": "Devour the Living", "id": "MmDevourLiving01", "uuid": "Item.MmDevourLiving01" } }, "parentChangeSetId": "MtHungUn00000001" },
+
+  { "_id": "MtPrtkPeTrt00001", "name": "Protector of Kin (People) — Trait", "kind": "Trait", "traitName": "Protector of Kin", "traitDescription": "Household, children, spouse, band, or retainers defended at personal cost.", "parentChangeSetId": "MtPrtkPe00000001" },
+  { "_id": "MtPrtkPeGnt00001", "name": "Grant: Step Between Them", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmStepBetween001": { "name": "Step Between Them", "id": "MmStepBetween001", "uuid": "Item.MmStepBetween001" } }, "parentChangeSetId": "MtPrtkPe00000001" },
+
+  { "_id": "MtPrtkBsTrt00001", "name": "Protector of Kin (Beast) — Trait", "kind": "Trait", "traitName": "Protector of Kin", "traitDescription": "Young defense, mate defense, and den-rage.", "parentChangeSetId": "MtPrtkBs00000001" },
+  { "_id": "MtPrtkBsGnt00001", "name": "Grant: Defend the Young", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmDefendYoung001": { "name": "Defend the Young", "id": "MmDefendYoung001", "uuid": "Item.MmDefendYoung001" } }, "parentChangeSetId": "MtPrtkBs00000001" },
+
+  { "_id": "MtHDwpPeTrt00001", "name": "High Drive When Pressed (People) — Trait", "kind": "Trait", "traitName": "High Drive When Pressed", "traitDescription": "Mortal conviction hardens when kin, faith, oath, or honor is directly challenged. Increase Drive in social battles when the challenge touches the specific loyalty or duty named.", "notes": "Drive guidance only — no granted power per spec.", "parentChangeSetId": "MtHDwpPe00000001" },
+  { "_id": "MtHDwpUnTrt00001", "name": "High Drive When Pressed (Undead) — Trait", "kind": "Trait", "traitName": "High Drive When Pressed", "traitDescription": "An unquiet dead thing becomes harder to turn aside when its grievance, grave, or unfinished purpose is named or obstructed. Increase Drive in social battles when opposed in the very matter that anchors its return.", "notes": "Drive guidance only — no granted power per spec.", "parentChangeSetId": "MtHDwpUn00000001" },
+  { "_id": "MtHDwpNuTrt00001", "name": "High Drive When Pressed (Unnatural) — Trait", "kind": "Trait", "traitName": "High Drive When Pressed", "traitDescription": "Outsider resolve intensifies when recruitment, command, doctrine, or factional purpose is resisted. Increase Drive in social battles when the target resists the outsider's central mission.", "notes": "Drive guidance only — no granted power per spec.", "parentChangeSetId": "MtHDwpNu00000001" },
+
+  { "_id": "MtRecrNuTrt00001", "name": "Recruiter (Unnatural) — Trait", "kind": "Trait", "traitName": "Recruiter", "traitDescription": "Active pressure to win allegiance rather than merely kill or frighten.", "parentChangeSetId": "MtRecrNu00000001" },
+  { "_id": "MtRecrNuGnt00001", "name": "Grant: Offer the Side", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmOfferTheSide01": { "name": "Offer the Side", "id": "MmOfferTheSide01", "uuid": "Item.MmOfferTheSide01" } }, "parentChangeSetId": "MtRecrNu00000001" },
+
+  { "_id": "MtPHOdUsTrt00001", "name": "Preserve the Hidden Order (TheUnseen) — Trait", "kind": "Trait", "traitName": "Preserve the Hidden Order", "traitDescription": "Civilizational preservation, magical continuity, and harsh judgment toward threats to the hidden order.", "parentChangeSetId": "MtPHOdUs00000001" },
+  { "_id": "MtPHOdUsGnt00001", "name": "Grant: Command in the Name of the Old Order", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmCmdInOldOrd001": { "name": "Command in the Name of the Old Order", "id": "MmCmdInOldOrd001", "uuid": "Item.MmCmdInOldOrd001" } }, "parentChangeSetId": "MtPHOdUs00000001" },
+
+  { "_id": "MtASumCnTrt00001", "name": "Await the Summons (Construct) — Trait", "kind": "Trait", "traitName": "Await the Summons", "traitDescription": "Unnatural patience, dormancy, and sudden total obedience once triggered.", "parentChangeSetId": "MtASumCn00000001" },
+  { "_id": "MtASumCnGnt00001", "name": "Grant: Wake to Command", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmWakeToCmd00001": { "name": "Wake to Command", "id": "MmWakeToCmd00001", "uuid": "Item.MmWakeToCmd00001" } }, "parentChangeSetId": "MtASumCn00000001" },
+
+  { "_id": "MtRetHUnTrt00001", "name": "Return to the House (Undead) — Trait", "kind": "Trait", "traitName": "Return to the House", "traitDescription": "Tragic repetition, domestic wrongness, and attachment to household identity after death.", "parentChangeSetId": "MtRetHUn00000001" },
+  { "_id": "MtRetHUnGnt00001", "name": "Grant: Resume the Old Habit", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmResumeOldHab01": { "name": "Resume the Old Habit", "id": "MmResumeOldHab01", "uuid": "Item.MmResumeOldHab01" } }, "parentChangeSetId": "MtRetHUn00000001" },
+
+  { "_id": "MtFuCuCuTrt00001", "name": "Fulfill the Curse (Cursed) — Trait", "kind": "Trait", "traitName": "Fulfill the Curse", "traitDescription": "Inescapable compulsion, recurrence, and partial loss of choice under imposed magical fate.", "parentChangeSetId": "MtFuCuCu00000001" },
+  { "_id": "MtFuCuCuGnt00001", "name": "Grant: The Pattern Repeats", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmPatternRpt0001": { "name": "The Pattern Repeats", "id": "MmPatternRpt0001", "uuid": "Item.MmPatternRpt0001" } }, "parentChangeSetId": "MtFuCuCu00000001" },
+
+  { "_id": "MtMZonZcTrt00001", "name": "Manifest the Zone (ZoneColossus) — Trait", "kind": "Trait", "traitName": "Manifest the Zone", "traitDescription": "Not predation alone, but active making-real of warped locality at immense scale.", "parentChangeSetId": "MtMZonZc00000001" },
+  { "_id": "MtMZonZcGnt00001", "name": "Grant: Bring the Wrongness With It", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmBringWrongns01": { "name": "Bring the Wrongness With It", "id": "MmBringWrongns01", "uuid": "Item.MmBringWrongns01" } }, "parentChangeSetId": "MtMZonZc00000001" }
 ]
