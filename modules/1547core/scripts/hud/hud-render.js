@@ -398,7 +398,7 @@ function buildChecksHeader(data, deps = {}) {
             ? HUD_STATE.checkStatTarget
             : (target.stats[0]?.label ?? "");
         const statOptions = target.stats.map((s) => `
-            <option value="${escapeHtml(s.label)}"${currentStat === s.label ? " selected" : ""}>${escapeHtml(`${s.label} (${s.formula})`)}</option>
+            <option value="${escapeHtml(s.label)}"${currentStat === s.label ? " selected" : ""}>${escapeHtml(s.label)}</option>
         `).join("");
         expansion = `
             <div class="hud-check-expansion">
@@ -409,14 +409,17 @@ function buildChecksHeader(data, deps = {}) {
             </div>
         `;
     } else if (mode === "skill") {
-        const skillRows = target.skills.length
-            ? target.skills.map((s) => `
+        // Hide skills whose target has no roll formula — they can't act as a
+        // counter check, so showing them would just be noise.
+        const checkableSkills = target.skills.filter((s) => Boolean(s.formula));
+        const skillRows = checkableSkills.length
+            ? checkableSkills.map((s) => `
                 <label class="hud-check-skill-row">
                     <input type="radio" name="hud-check-target-skill" value="${escapeHtml(s.name)}"${HUD_STATE.checkSkillTarget === s.name ? " checked" : ""} data-hud-check-skill="${escapeHtml(s.name)}">
-                    <span>${escapeHtml(`${s.name} (${s.formula || "—"})`)}</span>
+                    <span>${escapeHtml(s.name)}</span>
                 </label>
             `).join("")
-            : `<div class="hud-empty-row">Target has no skills</div>`;
+            : `<div class="hud-empty-row">Target has no checkable skills</div>`;
         expansion = `
             <div class="hud-check-expansion">
                 <div class="hud-section-title">${escapeHtml(target.name ?? "Target")} skills</div>
