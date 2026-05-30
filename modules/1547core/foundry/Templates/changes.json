@@ -389,5 +389,265 @@
     "itemGrantRef": { "MmCursePressure1": { "name": "Curse Pressure", "id": "MmCursePressure1", "uuid": "Item.MmCursePressure1" } },
     "notes": "Grants the Curse Pressure power.",
     "parentChangeSetId": "CursedChassis001"
+  },
+  {
+    "_id": "UnseenTag1Hghr00",
+    "name": "Of Higher Order — Tag",
+    "kind": "Tag",
+    "tagName": "HigherOrder",
+    "notes": "The being stands above ordinary Hidden Folk in power, age, and significance.",
+    "parentChangeSetId": "UnseenChassis001"
+  },
+  {
+    "_id": "UnseenTrt1Hghr00",
+    "name": "Of Higher Order — Trait",
+    "kind": "Trait",
+    "traitName": "Of Higher Order",
+    "traitDescription": "This is not an ordinary hidden creature but one of the elder great beings of the parallel civilization, set apart by age, magical force, and consequence.",
+    "notes": "Core status trait for old-god-like powers among the Hidden Folk world.",
+    "parentChangeSetId": "UnseenChassis001"
+  },
+  {
+    "_id": "UnseenTag2Mjsty0",
+    "name": "Majesty or Dread — Tag",
+    "kind": "Tag",
+    "tagName": "UnsettlingPresence",
+    "notes": "Mortals are unsettled merely by being near the being.",
+    "parentChangeSetId": "UnseenChassis001"
+  },
+  {
+    "_id": "UnseenTrt2Mjsty0",
+    "name": "Majesty or Dread — Trait",
+    "kind": "Trait",
+    "traitName": "Majesty or Dread",
+    "traitDescription": "Mortals and lesser Hidden Folk alike feel awe, fascination, pressure, or terror in its presence even when it is calm.",
+    "notes": "Core emotional pressure aura for the Unseen.",
+    "parentChangeSetId": "UnseenChassis001"
+  },
+  {
+    "_id": "UnseenTag3Law000",
+    "name": "Bound by Ancient Law — Tag",
+    "kind": "Tag",
+    "tagName": "OathBound",
+    "notes": "The being is powerful through and constrained by old law.",
+    "parentChangeSetId": "UnseenChassis001"
+  },
+  {
+    "_id": "UnseenTrt3Law000",
+    "name": "Bound by Ancient Law — Trait",
+    "kind": "Trait",
+    "traitName": "Bound by Ancient Law",
+    "traitDescription": "Bargains, names, invitations, thresholds, oaths, and older hidden obligations carry real force when dealing with it.",
+    "notes": "Core folklore-law rule for powerful singular beings.",
+    "parentChangeSetId": "UnseenChassis001"
+  },
+  {
+    "_id": "UnseenTag4Comp00",
+    "name": "Not Meant for Common Company — Tag",
+    "kind": "Tag",
+    "tagName": "SeeInvisible",
+    "notes": "Concealment and ordinary obscurity are less effective before the being.",
+    "parentChangeSetId": "UnseenChassis001"
+  },
+  {
+    "_id": "UnseenTrt4Comp00",
+    "name": "Not Meant for Common Company — Trait",
+    "kind": "Trait",
+    "traitName": "Not Meant for Common Company",
+    "traitDescription": "Prolonged contact with the being disturbs mortal judgment, fortune, sleep, piety, or allegiance, and concealment is less reliable before it.",
+    "notes": "Combines old-god-like presence with superior supernatural perception.",
+    "parentChangeSetId": "UnseenChassis001"
+  },
+  {
+    "_id": "UnseenGrantSover",
+    "name": "Grant: Sovereign Presence",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmSovPresence001": { "name": "Sovereign Presence", "id": "MmSovPresence001", "uuid": "Item.MmSovPresence001" } },
+    "notes": "Grants the Sovereign Presence power.",
+    "parentChangeSetId": "UnseenChassis001"
+  },
+  {
+    "_id": "UnseenGrantWord0",
+    "name": "Grant: Word of Binding",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmWordOfBind0001": { "name": "Word of Binding", "id": "MmWordOfBind0001", "uuid": "Item.MmWordOfBind0001" } },
+    "notes": "Grants the Word of Binding power.",
+    "parentChangeSetId": "UnseenChassis001"
+  },
+  {
+    "_id": "UnseenGrantPass0",
+    "name": "Grant: Pass Unbarred",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmPassUnbarred01": { "name": "Pass Unbarred", "id": "MmPassUnbarred01", "uuid": "Item.MmPassUnbarred01" } },
+    "notes": "Grants the Pass Unbarred power.",
+    "parentChangeSetId": "UnseenChassis001"
+  },
+  {
+    "_id": "UnseenGrantBest0",
+    "name": "Grant: Bestow or Withhold",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmBestowWithhol1": { "name": "Bestow or Withhold", "id": "MmBestowWithhol1", "uuid": "Item.MmBestowWithhol1" } },
+    "notes": "Grants the (optional) Bestow or Withhold power.",
+    "parentChangeSetId": "UnseenChassis001"
+  },
+  {
+    "_id": "UnnaturalTag1Out",
+    "name": "Summoned Outsider — Tag",
+    "kind": "Tag",
+    "tagName": "Otherworldly",
+    "notes": "The being does not properly belong to the world and has entered it from elsewhere.",
+    "parentChangeSetId": "UnnaturalChass01"
+  },
+  {
+    "_id": "UnnaturalTrt1Out",
+    "name": "Summoned Outsider — Trait",
+    "kind": "Trait",
+    "traitName": "Summoned Outsider",
+    "traitDescription": "It is not merely strange, foreign, or magical, but a being from another existence brought or loosed into the world by summoning, breach, invitation, or unlawful passage.",
+    "notes": "Core origin trait for Unnaturals.",
+    "parentChangeSetId": "UnnaturalChass01"
+  },
+  {
+    "_id": "UnnaturalTag2Prs",
+    "name": "Factional Pressure — Tag",
+    "kind": "Tag",
+    "tagName": "UnsettlingPresence",
+    "notes": "Contact with the being puts pressure on conscience, desire, allegiance, fear, or faith.",
+    "parentChangeSetId": "UnnaturalChass01"
+  },
+  {
+    "_id": "UnnaturalTrt2Prs",
+    "name": "Factional Pressure — Trait",
+    "kind": "Trait",
+    "traitName": "Factional Pressure",
+    "traitDescription": "Its presence brings temptation, dread, zeal, condemnation, or spiritual pressure because every encounter with it is entangled in a larger factional struggle for souls, service, and allegiance.",
+    "notes": "Core emotional and spiritual pressure trait for Unnaturals as war agents rather than isolated beings.",
+    "parentChangeSetId": "UnnaturalChass01"
+  },
+  {
+    "_id": "UnnaturalTag3Pur",
+    "name": "Bound to Hierarchy — Tag",
+    "kind": "Tag",
+    "tagName": "OathBound",
+    "notes": "The being acts according to hierarchy, doctrine, command, hunger, law, or factional purpose.",
+    "parentChangeSetId": "UnnaturalChass01"
+  },
+  {
+    "_id": "UnnaturalTrt3Pur",
+    "name": "Bound to Hierarchy — Trait",
+    "kind": "Trait",
+    "traitName": "Bound to Hierarchy",
+    "traitDescription": "It is not merely capricious. Even when seductive, merciful, or destructive, it acts under a factional order of rank, doctrine, command, or appetite that reaches beyond the mortal world.",
+    "notes": "Core hierarchy trait for Unnaturals.",
+    "parentChangeSetId": "UnnaturalChass01"
+  },
+  {
+    "_id": "UnnaturalGrantPr",
+    "name": "Grant: Presence of the Outer War",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmOuterWarPres01": { "name": "Presence of the Outer War", "id": "MmOuterWarPres01", "uuid": "Item.MmOuterWarPres01" } },
+    "notes": "Grants the Presence of the Outer War power.",
+    "parentChangeSetId": "UnnaturalChass01"
+  },
+  {
+    "_id": "UnnaturalGrantWd",
+    "name": "Grant: Word of Temptation or Command",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmWordOfTempt001": { "name": "Word of Temptation or Command", "id": "MmWordOfTempt001", "uuid": "Item.MmWordOfTempt001" } },
+    "notes": "Grants the Word of Temptation or Command power.",
+    "parentChangeSetId": "UnnaturalChass01"
+  },
+  {
+    "_id": "UnnaturalGrantEn",
+    "name": "Grant: Enter Unbidden",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmEnterUnbid0001": { "name": "Enter Unbidden", "id": "MmEnterUnbid0001", "uuid": "Item.MmEnterUnbid0001" } },
+    "notes": "Grants the Enter Unbidden power.",
+    "parentChangeSetId": "UnnaturalChass01"
+  },
+  {
+    "_id": "ConstructTag1Mad",
+    "name": "Made Thing — Tag",
+    "kind": "Tag",
+    "tagName": "Artificial",
+    "notes": "The being is crafted, assembled, or shaped into existence rather than naturally born.",
+    "parentChangeSetId": "ConstructChass01"
+  },
+  {
+    "_id": "ConstructTrt1Mad",
+    "name": "Made Thing — Trait",
+    "kind": "Trait",
+    "traitName": "Made Thing",
+    "traitDescription": "It is a fabricated being, produced by hands, tools, formulae, rite, or inscription rather than by ordinary generation.",
+    "notes": "Core identity trait for Constructs.",
+    "parentChangeSetId": "ConstructChass01"
+  },
+  {
+    "_id": "ConstructTag2Pur",
+    "name": "Bound to Purpose — Tag",
+    "kind": "Tag",
+    "tagName": "OathBound",
+    "notes": "The being exists to perform a function, obey a command, or maintain a task.",
+    "parentChangeSetId": "ConstructChass01"
+  },
+  {
+    "_id": "ConstructTrt2Pur",
+    "name": "Bound to Purpose — Trait",
+    "kind": "Trait",
+    "traitName": "Bound to Purpose",
+    "traitDescription": "It is driven by command, inscription, design, or imprinted labor rather than by ordinary appetite, fear, kinship, or ambition.",
+    "notes": "Core directive trait for Constructs.",
+    "parentChangeSetId": "ConstructChass01"
+  },
+  {
+    "_id": "ConstructTag3End",
+    "name": "Artificed Endurance — Tag",
+    "kind": "Tag",
+    "tagName": "Durable",
+    "notes": "The being endures strain in an unnatural, mechanical, or fabricated way.",
+    "parentChangeSetId": "ConstructChass01"
+  },
+  {
+    "_id": "ConstructTrt3End",
+    "name": "Artificed Endurance — Trait",
+    "kind": "Trait",
+    "traitName": "Artificed Endurance",
+    "traitDescription": "Its body bears force as crafted matter, stitched form, animated material, or reinforced shell rather than as ordinary flesh alone.",
+    "notes": "Core durability trait for Constructs.",
+    "parentChangeSetId": "ConstructChass01"
+  },
+  {
+    "_id": "ConstructGrantOb",
+    "name": "Grant: Obey the Imprint",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmObeyImprint001": { "name": "Obey the Imprint", "id": "MmObeyImprint001", "uuid": "Item.MmObeyImprint001" } },
+    "notes": "Grants the Obey the Imprint power.",
+    "parentChangeSetId": "ConstructChass01"
+  },
+  {
+    "_id": "ConstructGrantCr",
+    "name": "Grant: Crafted Strike",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmCraftedStrk001": { "name": "Crafted Strike", "id": "MmCraftedStrk001", "uuid": "Item.MmCraftedStrk001" } },
+    "notes": "Grants the Crafted Strike power.",
+    "parentChangeSetId": "ConstructChass01"
+  },
+  {
+    "_id": "ConstructGrantTr",
+    "name": "Grant: Tireless Function",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmTirelessFnc001": { "name": "Tireless Function", "id": "MmTirelessFnc001", "uuid": "Item.MmTirelessFnc001" } },
+    "notes": "Grants the Tireless Function power.",
+    "parentChangeSetId": "ConstructChass01"
   }
 ]

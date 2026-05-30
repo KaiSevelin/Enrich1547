@@ -38,5 +38,29 @@
     "forTypeAny": false,
     "ForType_Cursed": true,
     "notes": "Chassis for Cursed beings: creatures transformed by curse, witchcraft, or corrupt generation (werewolves, basilisks, witch-made animals, strigoi, etc.). Provides identity Tags and Traits plus three default powers. Bestial / Petrifying / Venomous / Moon-Bound / Familiar / Monstrous-Generation ChangeSets layer on top."
+  },
+  {
+    "_id": "UnseenChassis001",
+    "name": "The Unseen Base",
+    "group": "Base",
+    "forTypeAny": false,
+    "ForType_TheUnseen": true,
+    "notes": "Chassis for The Unseen: singular elder powers of the Hidden Folk civilization (Jinn, Lady of the Lake, Sidhe nobles, Erlking, Frau Holle, Wild Hunt leaders). Provides identity Tags and Traits plus four default powers. Courtly / Water Sovereign / Winter Matron / Hunt Master / Smokeless Fire ChangeSets layer on top."
+  },
+  {
+    "_id": "UnnaturalChass01",
+    "name": "Unnatural Base",
+    "group": "Base",
+    "forTypeAny": false,
+    "ForType_Unnatural": true,
+    "notes": "Chassis for Unnaturals: outsider entities (devils, demons, angels, soul-drinkers, possessors, messengers) from another existence brought into the world by summoning, breach, invitation, or unlawful passage. Provides identity Tags and Traits plus three default powers. Angelic / Infernal / Demonic / Tempter / Possessor / Familiar / Soul Drinker / Messenger / Commander ChangeSets layer on top."
+  },
+  {
+    "_id": "ConstructChass01",
+    "name": "Construct Base",
+    "group": "Base",
+    "forTypeAny": false,
+    "ForType_Construct": true,
+    "notes": "Chassis for Constructs: made beings (golems, homunculi, animated guardians, laboratory things, crafted servitors) given force, motion, and purpose by human or nonhuman craft. Provides identity Tags and Traits plus three default powers. Golem / Homunculus / Brazen Head / Wax Servitor Domain ChangeSets layer on top."
   }
 ]
