@@ -55,9 +55,7 @@
     "name": "Grant: Call of the Place",
     "kind": "ItemGrant",
     "itemGrantMode": "Direct",
-    "itemGrantRef": {
-      "MmCall0fPlace001": { "name": "Call of the Place", "id": "MmCall0fPlace001", "uuid": "Item.MmCall0fPlace001" }
-    },
+    "itemGrantRef": { "MmCall0fPlace001": { "name": "Call of the Place", "id": "MmCall0fPlace001", "uuid": "Item.MmCall0fPlace001" } },
     "notes": "Grants the Call of the Place power.",
     "parentChangeSetId": "NsBaseChassis001"
   },
@@ -66,9 +64,7 @@
     "name": "Grant: Grasp of Root and Stone",
     "kind": "ItemGrant",
     "itemGrantMode": "Direct",
-    "itemGrantRef": {
-      "MmGraspRootStn01": { "name": "Grasp of Root and Stone", "id": "MmGraspRootStn01", "uuid": "Item.MmGraspRootStn01" }
-    },
+    "itemGrantRef": { "MmGraspRootStn01": { "name": "Grasp of Root and Stone", "id": "MmGraspRootStn01", "uuid": "Item.MmGraspRootStn01" } },
     "notes": "Grants the Grasp of Root and Stone power.",
     "parentChangeSetId": "NsBaseChassis001"
   },
@@ -77,9 +73,7 @@
     "name": "Grant: Slip Into the Land",
     "kind": "ItemGrant",
     "itemGrantMode": "Direct",
-    "itemGrantRef": {
-      "MmSlipIntoLand01": { "name": "Slip Into the Land", "id": "MmSlipIntoLand01", "uuid": "Item.MmSlipIntoLand01" }
-    },
+    "itemGrantRef": { "MmSlipIntoLand01": { "name": "Slip Into the Land", "id": "MmSlipIntoLand01", "uuid": "Item.MmSlipIntoLand01" } },
     "notes": "Grants the Slip Into the Land power.",
     "parentChangeSetId": "NsBaseChassis001"
   },
@@ -88,9 +82,7 @@
     "name": "Grant: Blessing of the Place",
     "kind": "ItemGrant",
     "itemGrantMode": "Direct",
-    "itemGrantRef": {
-      "MmBlessOfPlace01": { "name": "Blessing of the Place", "id": "MmBlessOfPlace01", "uuid": "Item.MmBlessOfPlace01" }
-    },
+    "itemGrantRef": { "MmBlessOfPlace01": { "name": "Blessing of the Place", "id": "MmBlessOfPlace01", "uuid": "Item.MmBlessOfPlace01" } },
     "notes": "Grants the (optional) Blessing of the Place power.",
     "parentChangeSetId": "NsBaseChassis001"
   },
@@ -150,9 +142,7 @@
     "name": "Grant: Savage Rush",
     "kind": "ItemGrant",
     "itemGrantMode": "Direct",
-    "itemGrantRef": {
-      "MmSavageRush0001": { "name": "Savage Rush", "id": "MmSavageRush0001", "uuid": "Item.MmSavageRush0001" }
-    },
+    "itemGrantRef": { "MmSavageRush0001": { "name": "Savage Rush", "id": "MmSavageRush0001", "uuid": "Item.MmSavageRush0001" } },
     "notes": "Grants the Savage Rush power.",
     "parentChangeSetId": "BeastChassis0001"
   },
@@ -161,9 +151,7 @@
     "name": "Grant: Maul",
     "kind": "ItemGrant",
     "itemGrantMode": "Direct",
-    "itemGrantRef": {
-      "MmMaul0000000001": { "name": "Maul", "id": "MmMaul0000000001", "uuid": "Item.MmMaul0000000001" }
-    },
+    "itemGrantRef": { "MmMaul0000000001": { "name": "Maul", "id": "MmMaul0000000001", "uuid": "Item.MmMaul0000000001" } },
     "notes": "Grants the Maul power.",
     "parentChangeSetId": "BeastChassis0001"
   },
@@ -172,10 +160,234 @@
     "name": "Grant: Break Away",
     "kind": "ItemGrant",
     "itemGrantMode": "Direct",
-    "itemGrantRef": {
-      "MmBreakAway00001": { "name": "Break Away", "id": "MmBreakAway00001", "uuid": "Item.MmBreakAway00001" }
-    },
+    "itemGrantRef": { "MmBreakAway00001": { "name": "Break Away", "id": "MmBreakAway00001", "uuid": "Item.MmBreakAway00001" } },
     "notes": "Grants the Break Away power.",
     "parentChangeSetId": "BeastChassis0001"
+  },
+  {
+    "_id": "HfBaseTag1HalfS0",
+    "name": "Half-Seen — Tag",
+    "kind": "Tag",
+    "tagName": "Glamour",
+    "notes": "Hidden Folk are difficult to clearly perceive.",
+    "parentChangeSetId": "HfBaseChassis001"
+  },
+  {
+    "_id": "HfBaseTrt1HalfS0",
+    "name": "Half-Seen — Trait",
+    "kind": "Trait",
+    "traitName": "Half-Seen",
+    "traitDescription": "The being is difficult to clearly make out because it dwells partly in hidden parallel to ordinary human sight, revealing itself only by choice, pressure, or failure of concealment.",
+    "notes": "Paired with the Glamour tag.",
+    "parentChangeSetId": "HfBaseChassis001"
+  },
+  {
+    "_id": "HfBaseTag2Cust00",
+    "name": "Bound to Custom — Tag",
+    "kind": "Tag",
+    "tagName": "ThresholdAware",
+    "notes": "Hidden Folk react to trespass and broken custom.",
+    "parentChangeSetId": "HfBaseChassis001"
+  },
+  {
+    "_id": "HfBaseTrt2Cust00",
+    "name": "Bound to Custom — Trait",
+    "kind": "Trait",
+    "traitName": "Bound to Custom",
+    "traitDescription": "It reacts strongly to trespass, insult, theft, broken hospitality, oath-breaking, and other violations of the older rules by which its people deal with the world.",
+    "notes": "Core folklore-law rule for Hidden Folk.",
+    "parentChangeSetId": "HfBaseChassis001"
+  },
+  {
+    "_id": "HfBaseTrt3Para00",
+    "name": "Elder Parallel People — Trait",
+    "kind": "Trait",
+    "traitName": "Elder Parallel People",
+    "traitDescription": "It belongs to an older hidden people that still occupies the land beside humanity, with pride, memory, and purposes that do not center human needs.",
+    "notes": "Tone-setting trait for Hidden Folk as a parallel elder nation rather than a mere local oddity.",
+    "parentChangeSetId": "HfBaseChassis001"
+  },
+  {
+    "_id": "HfBaseGrantBrush",
+    "name": "Grant: Brush of Glamour",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmBrushGlamour01": { "name": "Brush of Glamour", "id": "MmBrushGlamour01", "uuid": "Item.MmBrushGlamour01" } },
+    "notes": "Grants the Brush of Glamour power.",
+    "parentChangeSetId": "HfBaseChassis001"
+  },
+  {
+    "_id": "HfBaseGrantCold0",
+    "name": "Grant: Cold Hand",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmColdHand000001": { "name": "Cold Hand", "id": "MmColdHand000001", "uuid": "Item.MmColdHand000001" } },
+    "notes": "Grants the Cold Hand power.",
+    "parentChangeSetId": "HfBaseChassis001"
+  },
+  {
+    "_id": "HfBaseGrantSlip0",
+    "name": "Grant: Slip Aside",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmSlipAside00001": { "name": "Slip Aside", "id": "MmSlipAside00001", "uuid": "Item.MmSlipAside00001" } },
+    "notes": "Grants the Slip Aside power.",
+    "parentChangeSetId": "HfBaseChassis001"
+  },
+  {
+    "_id": "UndeadTag1Unpas0",
+    "name": "Unpassed Dead — Tag",
+    "kind": "Tag",
+    "tagName": "Undead",
+    "notes": "The being is dead, or should be dead, and yet remains active in the world.",
+    "parentChangeSetId": "UndeadChassis001"
+  },
+  {
+    "_id": "UndeadTrt1Unpas0",
+    "name": "Unpassed Dead — Trait",
+    "kind": "Trait",
+    "traitName": "Unpassed Dead",
+    "traitDescription": "It did not pass properly out of the world. Whether corpse, spirit, echo, or false continuation, it remains because death was denied, disrupted, or refused.",
+    "notes": "Core identity trait for Undead.",
+    "parentChangeSetId": "UndeadChassis001"
+  },
+  {
+    "_id": "UndeadTag2Cause0",
+    "name": "Bound by the Cause of Return — Tag",
+    "kind": "Tag",
+    "tagName": "OathBound",
+    "notes": "The being remains tied to a cause, grievance, pact, rite, impurity, or unfinished purpose.",
+    "parentChangeSetId": "UndeadChassis001"
+  },
+  {
+    "_id": "UndeadTrt2Cause0",
+    "name": "Bound by the Cause of Return — Trait",
+    "kind": "Trait",
+    "traitName": "Bound by the Cause of Return",
+    "traitDescription": "Its continued presence is anchored in hatred, grief, injustice, oath, wrong burial, unclean spirit, magic, or some other unresolved cause that gives shape to its return.",
+    "notes": "Core motive and anchor trait for Undead.",
+    "parentChangeSetId": "UndeadChassis001"
+  },
+  {
+    "_id": "UndeadTag3Wrong0",
+    "name": "Grave Wrongness — Tag",
+    "kind": "Tag",
+    "tagName": "UnsettlingPresence",
+    "notes": "The being carries the pressure of death not being at rest.",
+    "parentChangeSetId": "UndeadChassis001"
+  },
+  {
+    "_id": "UndeadTrt3Wrong0",
+    "name": "Grave Wrongness — Trait",
+    "kind": "Trait",
+    "traitName": "Grave Wrongness",
+    "traitDescription": "Its presence brings dread, chill, sorrow, sacrilege, corruption, or the sense that something about death has gone uncleanly wrong.",
+    "notes": "Core emotional and spiritual pressure trait for Undead.",
+    "parentChangeSetId": "UndeadChassis001"
+  },
+  {
+    "_id": "UndeadGrantRetn0",
+    "name": "Grant: Return Unbidden",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmReturnUnbid001": { "name": "Return Unbidden", "id": "MmReturnUnbid001", "uuid": "Item.MmReturnUnbid001" } },
+    "notes": "Grants the Return Unbidden power.",
+    "parentChangeSetId": "UndeadChassis001"
+  },
+  {
+    "_id": "UndeadGrantTouch",
+    "name": "Grant: Touch of the Grave",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmTouchOfGrav001": { "name": "Touch of the Grave", "id": "MmTouchOfGrav001", "uuid": "Item.MmTouchOfGrav001" } },
+    "notes": "Grants the Touch of the Grave power.",
+    "parentChangeSetId": "UndeadChassis001"
+  },
+  {
+    "_id": "UndeadGrantUnq00",
+    "name": "Grant: Presence of the Unquiet",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmPresUnquiet001": { "name": "Presence of the Unquiet", "id": "MmPresUnquiet001", "uuid": "Item.MmPresUnquiet001" } },
+    "notes": "Grants the Presence of the Unquiet power.",
+    "parentChangeSetId": "UndeadChassis001"
+  },
+  {
+    "_id": "CursedTag1Twist0",
+    "name": "Twisted From Rightful Shape — Tag",
+    "kind": "Tag",
+    "tagName": "Cursed",
+    "notes": "The being has been altered from its proper form or condition.",
+    "parentChangeSetId": "CursedChassis001"
+  },
+  {
+    "_id": "CursedTrt1Twist0",
+    "name": "Twisted From Rightful Shape — Trait",
+    "kind": "Trait",
+    "traitName": "Twisted From Rightful Shape",
+    "traitDescription": "It bears a condition forced by curse, corruption, punishment, or magical distortion rather than by ordinary nature.",
+    "notes": "Core identity trait for Cursed beings.",
+    "parentChangeSetId": "CursedChassis001"
+  },
+  {
+    "_id": "CursedTag2Insta0",
+    "name": "Instability of Form or Will — Tag",
+    "kind": "Tag",
+    "tagName": "UnsettlingPresence",
+    "notes": "The being is marked by visible wrongness, volatility, or pressure on mind and body.",
+    "parentChangeSetId": "CursedChassis001"
+  },
+  {
+    "_id": "CursedTrt2Insta0",
+    "name": "Instability of Form or Will — Trait",
+    "kind": "Trait",
+    "traitName": "Instability of Form or Will",
+    "traitDescription": "Its body, appetite, senses, or judgment may be unstable, overdriven, or bent toward an imposed condition that is difficult to master.",
+    "notes": "Core volatility trait for Cursed beings.",
+    "parentChangeSetId": "CursedChassis001"
+  },
+  {
+    "_id": "CursedTag3Contg0",
+    "name": "Carries the Curse Forward — Tag",
+    "kind": "Tag",
+    "tagName": "Corruptive",
+    "notes": "Contact with the being may spread, deepen, or awaken harmful transformation.",
+    "parentChangeSetId": "CursedChassis001"
+  },
+  {
+    "_id": "CursedTrt3Contg0",
+    "name": "Carries the Curse Forward — Trait",
+    "kind": "Trait",
+    "traitName": "Carries the Curse Forward",
+    "traitDescription": "Harm, gaze, blood, bite, venom, or proximity to the creature may transmit its condition, worsen an existing taint, or impose a lesser version of its corruption.",
+    "notes": "Core transmission and consequence trait for Cursed beings.",
+    "parentChangeSetId": "CursedChassis001"
+  },
+  {
+    "_id": "CursedGrantViol0",
+    "name": "Grant: Violent Transformation",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmViolTransfor01": { "name": "Violent Transformation", "id": "MmViolTransfor01", "uuid": "Item.MmViolTransfor01" } },
+    "notes": "Grants the Violent Transformation power.",
+    "parentChangeSetId": "CursedChassis001"
+  },
+  {
+    "_id": "CursedGrantCurs0",
+    "name": "Grant: Curse-Borne Attack",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmCurseBornAtk01": { "name": "Curse-Borne Attack", "id": "MmCurseBornAtk01", "uuid": "Item.MmCurseBornAtk01" } },
+    "notes": "Grants the Curse-Borne Attack power.",
+    "parentChangeSetId": "CursedChassis001"
+  },
+  {
+    "_id": "CursedGrantPres0",
+    "name": "Grant: Curse Pressure",
+    "kind": "ItemGrant",
+    "itemGrantMode": "Direct",
+    "itemGrantRef": { "MmCursePressure1": { "name": "Curse Pressure", "id": "MmCursePressure1", "uuid": "Item.MmCursePressure1" } },
+    "notes": "Grants the Curse Pressure power.",
+    "parentChangeSetId": "CursedChassis001"
   }
 ]

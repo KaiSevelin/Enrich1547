@@ -14,5 +14,29 @@
     "forTypeAny": false,
     "ForType_Beast": true,
     "notes": "Chassis for Beasts: dangerous natural animals (wolves, bears, boars, great cats, etc.) driven by hunger, fear, territory, or pack instinct. Provides identity Tags and Traits plus three default powers. Pack-Hunter / Brute-Predator / Ambush-Hunter / Scavenger ChangeSets layer on top to specialise."
+  },
+  {
+    "_id": "HfBaseChassis001",
+    "name": "Hidden Folk Base",
+    "group": "Base",
+    "forTypeAny": false,
+    "ForType_HiddenFolk": true,
+    "notes": "Chassis for Hidden Folk: elder parallel people occupying the land beside humanity, dangerous through glamour, influence, and folklore-law rather than violence. Provides identity Tags and Traits plus three default powers. Hill / Hearth / Wood / Water ChangeSets layer on top to specialise."
+  },
+  {
+    "_id": "UndeadChassis001",
+    "name": "Undead Base",
+    "group": "Base",
+    "forTypeAny": false,
+    "ForType_Undead": true,
+    "notes": "Chassis for Undead: beings that failed to pass out of the world in death (revenants, draugr, ghosts, hauntings, fetches, etc.). Provides identity Tags and Traits plus three default powers. Restless / Ghost / Unquiet / Living-Dead / Haunting / Fetch ChangeSets layer on top to specialise."
+  },
+  {
+    "_id": "CursedChassis001",
+    "name": "Cursed Base",
+    "group": "Base",
+    "forTypeAny": false,
+    "ForType_Cursed": true,
+    "notes": "Chassis for Cursed beings: creatures transformed by curse, witchcraft, or corrupt generation (werewolves, basilisks, witch-made animals, strigoi, etc.). Provides identity Tags and Traits plus three default powers. Bestial / Petrifying / Venomous / Moon-Bound / Familiar / Monstrous-Generation ChangeSets layer on top."
   }
 ]
