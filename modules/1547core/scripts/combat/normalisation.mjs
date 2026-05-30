@@ -335,7 +335,10 @@ export function normalizeWeaponModifier(modifier) {
             ? [...source.appliesToProfiles]
             : parseCommaList(props.AppliesToProfiles),
         durationType: source.durationType ?? (String(props.DurationType ?? "").trim() || "Permanent"),
+        // Prefer the live `usesRemaining` flag so that subsequent normalizations
+        // reflect prior decrements; fall back to the source's initial value.
         durationValue: firstFiniteNumber([
+            modifier?.flags?.[SOURCE_FLAG_SCOPE]?.usesRemaining,
             source.durationValue,
             props.DurationValue,
         ]),

@@ -435,6 +435,15 @@ async function applyPatch(patch) {
             if (item?.update) await item.update(patch.data);
             return;
         }
+        case "item.delete": {
+            const actor = resolveActorById(patch.actorId);
+            const ids = Array.isArray(patch.itemIds) ? patch.itemIds : (patch.itemId ? [patch.itemId] : []);
+            const existingIds = ids.filter((id) => actor?.items?.get?.(id));
+            if (actor?.deleteEmbeddedDocuments && existingIds.length) {
+                await actor.deleteEmbeddedDocuments("Item", existingIds);
+            }
+            return;
+        }
         case "actor.setFlag": {
             const actor = resolveActorById(patch.actorId);
             if (actor?.setFlag) await actor.setFlag(patch.scope, patch.key, patch.value);

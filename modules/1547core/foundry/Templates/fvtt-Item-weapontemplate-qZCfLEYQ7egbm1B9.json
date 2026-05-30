@@ -1281,6 +1281,47 @@
                                                      "defaultCollapsed":  false,
                                                      "title":  "Fast",
                                                      "titleStyle":  "default"
+                                                 },
+                                                 {
+                                                     "key":  "AttachedModifiersPanel",
+                                                     "colSpan":  1,
+                                                     "rowSpan":  1,
+                                                     "cssClass":  "",
+                                                     "role":  0,
+                                                     "editRole":  0,
+                                                     "permission":  0,
+                                                     "tooltip":  "",
+                                                     "visibilityFormula":  "AttachedModifierSummary",
+                                                     "editableFormula":  "",
+                                                     "escapeHTML":  false,
+                                                     "type":  "panel",
+                                                     "contents":  [
+                                                                      {
+                                                                          "key":  "AttachedModifierSummary",
+                                                                          "colSpan":  1,
+                                                                          "rowSpan":  1,
+                                                                          "cssClass":  "",
+                                                                          "role":  0,
+                                                                          "editRole":  0,
+                                                                          "permission":  0,
+                                                                          "tooltip":  "",
+                                                                          "visibilityFormula":  "",
+                                                                          "editableFormula":  "",
+                                                                          "escapeHTML":  false,
+                                                                          "type":  "textArea",
+                                                                          "size":  "full-size",
+                                                                          "label":  "",
+                                                                          "defaultValue":  "",
+                                                                          "style":  "sheet"
+                                                                      }
+                                                                  ],
+                                                     "flow":  "vertical",
+                                                     "align":  "left",
+                                                     "verticalAlign":  "top",
+                                                     "collapsible":  false,
+                                                     "defaultCollapsed":  false,
+                                                     "title":  "Attached Modifiers",
+                                                     "titleStyle":  "default"
                                                  }
                                              ],
                                 "key":  "custom_body",

@@ -146,4 +146,40 @@ console.log("weapon-modifier-attachment-service...");
     console.log("  ✓ appends non-conflicting modifier stack");
 }
 
+{
+    // getEffectiveUsesRemaining: returns null for non-uses durations and reads
+    // the live `usesRemaining` flag in preference to the source initial value.
+    const permanent = { flags: { "1547Core": { sourceData: { durationType: "Permanent" } } } };
+    assert.strictEqual(service.getEffectiveUsesRemaining(permanent), null);
+
+    const fresh = { flags: { "1547Core": { sourceData: { durationType: "Uses", durationValue: 3 } } } };
+    assert.strictEqual(service.getEffectiveUsesRemaining(fresh), 3);
+
+    const decremented = { flags: { "1547Core": { sourceData: { durationType: "Uses", durationValue: 3 }, usesRemaining: 1 } } };
+    assert.strictEqual(service.getEffectiveUsesRemaining(decremented), 1);
+    console.log("  ✓ getEffectiveUsesRemaining: null for permanent; flag overrides initial");
+}
+
+{
+    // buildAttachedModifierSummary: pluralises 'use' / 'uses' correctly,
+    // omits uses for non-uses modifiers, and skips unknown ids.
+    const items = [
+        { id: "poison", name: "Poisoned", flags: { "1547Core": { sourceData: { durationType: "Uses", durationValue: 3 } } } },
+        { id: "silver", name: "Silvered", flags: { "1547Core": { sourceData: { durationType: "Permanent" } } } },
+        { id: "blessed", name: "Blessed", flags: { "1547Core": { sourceData: { durationType: "Uses", durationValue: 5 }, usesRemaining: 1 } } },
+    ];
+    const actor = makeActor(items);
+    assert.strictEqual(
+        service.buildAttachedModifierSummary(actor, ["poison", "silver", "blessed"]),
+        "Poisoned (3 uses), Silvered, Blessed (1 use)"
+    );
+    assert.strictEqual(
+        service.buildAttachedModifierSummary(actor, ["poison", "ghost"]),
+        "Poisoned (3 uses)",
+        "unknown ids are skipped without throwing"
+    );
+    assert.strictEqual(service.buildAttachedModifierSummary(actor, []), "");
+    console.log("  ✓ buildAttachedModifierSummary: name + (N uses), singular/plural, unknown ids skipped");
+}
+
 console.log("\nAll weapon-modifier-attachment-service tests passed.");

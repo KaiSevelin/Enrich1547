@@ -4,7 +4,7 @@ Covers the Foundry-coupled paths the Node test suite (`npm test`) cannot exercis
 the live HUD, item-sheet actions, document CRUD, roll tables, and the diagnostics
 button. This-session fixes are flagged **Regression**.
 
-_Current target: 1547core 0.2.14._
+_Current target: 1547core 0.2.17._
 
 ## Prerequisites
 
@@ -95,31 +95,41 @@ When I reload it says Reloaded crossbow with bolt, but loaded ammo is none
 
 ## E. Weapon-modifier attachment
 
-> Attached modifiers are stored as a Foundry flag (`flags["1547Core"].attachedModifierIds`), which CSB does not surface on the item sheet. As of 0.2.14 the module injects a read-only **"Attached modifiers: …"** notice at the top of weapon/ammo sheets so attachments are visible on the sheet as well as in the HUD.
+> Attached modifiers are stored as a Foundry flag (`flags["1547Core"].attachedModifierIds`). As of 0.2.17 the **WeaponTemplate** and **AmmunitionTemplate** both have an "Attached Modifiers" panel (CSB-native) that renders `system.props.AttachedModifierSummary`. The attachment service mirrors a `Name (N uses)` summary into that prop, and an `updateItem` hook keeps the summary in sync as attached/usesRemaining flags change. Note: re-run **Setup Data** after upgrading so the new panel appears on existing world weapon/ammo template instances.
 
 ### E1 — Drop auto-attaches
 1. Drag a seeded weapon-modifier item onto an actor that owns a weapon.
 2. Open the target weapon's item sheet.
 
 **Expected:**
-- The weapon sheet displays an injected **"Attached modifiers: \<name\>"** notice listing the new modifier.
+- The weapon sheet shows an **"Attached Modifiers"** panel listing the new modifier name. If the modifier has a `durationType: "Uses"` with `durationValue: N`, the entry reads `Name (N uses)`.
 - The HUD weapon row shows the modifier in `weaponModifierNames`.
 - Console verification (optional):
   ```js
   const a = canvas.tokens.controlled[0].actor;
   const w = a.items.find(i => i.name === "Dagger");
-  console.log(w.flags["1547Core"].attachedModifierIds);
+  console.log("ids:    ", w.flags["1547Core"].attachedModifierIds);
+  console.log("summary:", w.system.props.AttachedModifierSummary);
   ```
-  prints `[<modifier-id>]`.
 
 ### E2 — Stack replace
 1. With one modifier already attached (E1), drag a second modifier that has the **same `stackKey`** onto the actor.
 2. Re-open the target weapon's sheet.
 
 **Expected:**
-- The "Attached modifiers" notice still lists exactly one modifier — the **new** one replaces the previous same-key modifier; other (different-key) modifiers are preserved.
-- The HUD reflects the same list.
-- `attachedModifierIds` in flags contains one id where it previously contained the old one.
+- The "Attached Modifiers" panel still lists exactly one modifier — the **new** one replaces the previous same-key modifier; other (different-key) modifiers are preserved.
+- `attachedModifierIds` and the summary both reflect the new state.
+
+### E3 — Multi-use decrement and auto-removal — **Regression** (0.2.17 lifecycle)
+1. Attach a modifier whose source data has `durationType: "Uses"` and `durationValue: 3`.
+2. Perform attacks that trigger the modifier's `onHitEffects` (e.g. an `automatic` rider with damage).
+3. After **each** attack, re-open (or re-render) the weapon sheet and watch the panel.
+
+**Expected:**
+- After attack 1: panel reads `Name (2 uses)`. The modifier item still exists on the actor.
+- After attack 2: panel reads `Name (1 use)`.
+- After attack 3: the modifier is **detached and the modifier item is deleted from the actor**; the panel hides (visibility tied to `AttachedModifierSummary`).
+- The HUD's "Modifiers" row mirrors the same lifecycle.
 ---
 
 ## F. Combat on-hit effects — **Regression** (`save` resolution)

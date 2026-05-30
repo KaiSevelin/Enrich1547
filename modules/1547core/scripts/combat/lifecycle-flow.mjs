@@ -180,26 +180,45 @@ function collectTriggeredModifierEffects(pendingAttack, context) {
 function planConsumeTriggeredModifier(parentActor, modifier) {
     if (!parentActor?.id || !modifier?.attachedToItemId || !modifier?._id) return [];
     const durationType = String(modifier.durationType ?? "").trim().toLowerCase();
-    const durationValue = Number(modifier.durationValue ?? 0) || 0;
-    if (durationType !== "uses" || durationValue > 1) return [];
+    if (durationType !== "uses") return [];
+    const currentRemaining = Number(modifier.durationValue ?? 0) || 0;
+    if (currentRemaining <= 0) return [];
+    const nextRemaining = currentRemaining - 1;
 
+    if (nextRemaining > 0) {
+        // Multi-use modifier with charges left: just decrement.
+        return [{
+            kind: "item.update",
+            actorId: parentActor.id,
+            itemId: modifier._id,
+            data: { [`flags.${SOURCE_FLAG_SCOPE}.usesRemaining`]: nextRemaining },
+        }];
+    }
+
+    // Last charge consumed: detach from the parent AND delete the modifier item.
+    const patches = [];
     const parentItem = parentActor?.items?.get?.(modifier.attachedToItemId) ?? null;
-    if (!parentItem?.id) return [];
-
-    const currentAttached = parentItem?.flags?.[SOURCE_FLAG_SCOPE]?.attachedModifierIds
-        ?? parentItem?.flags?.[MODULE_ID]?.attachedModifierIds
-        ?? parentItem?.system?.props?.AttachedModifierIds
-        ?? parentItem?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData?.attachedModifierIds
-        ?? [];
-    const nextAttached = normalizeAttachedModifierIdList(currentAttached)
-        .filter((entry) => entry && entry !== modifier._id);
-
-    return [{
-        kind: "item.update",
+    if (parentItem?.id) {
+        const currentAttached = parentItem?.flags?.[SOURCE_FLAG_SCOPE]?.attachedModifierIds
+            ?? parentItem?.flags?.[MODULE_ID]?.attachedModifierIds
+            ?? parentItem?.system?.props?.AttachedModifierIds
+            ?? parentItem?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData?.attachedModifierIds
+            ?? [];
+        const nextAttached = normalizeAttachedModifierIdList(currentAttached)
+            .filter((entry) => entry && entry !== modifier._id);
+        patches.push({
+            kind: "item.update",
+            actorId: parentActor.id,
+            itemId: parentItem.id,
+            data: { [`flags.${SOURCE_FLAG_SCOPE}.attachedModifierIds`]: nextAttached },
+        });
+    }
+    patches.push({
+        kind: "item.delete",
         actorId: parentActor.id,
-        itemId: parentItem.id,
-        data: { [`flags.${SOURCE_FLAG_SCOPE}.attachedModifierIds`]: nextAttached },
-    }];
+        itemId: modifier._id,
+    });
+    return patches;
 }
 
 // ─────────────────────────────────────────────────── declareAttackPhased ──

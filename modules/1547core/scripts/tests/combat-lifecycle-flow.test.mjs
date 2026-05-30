@@ -419,6 +419,65 @@ console.log("\nresolveAttackOutcomePhased...");
     console.log("  ✓ poison rider applies after blood-drawing hit and detaches one-use modifier");
 }
 
+{
+    // Multi-use modifier: each fire decrements `usesRemaining` and the
+    // attachment is preserved until the last charge is spent.
+    const threeUsePoison = {
+        _id: "mod-poison-3",
+        name: "Poisoned (3 uses)",
+        attachedToItemId: "w1",
+        durationType: "Uses",
+        durationValue: 3,
+        onHitEffects: [{
+            triggerMode: "onDamageApplied",
+            armorInteraction: "onlyIfBaseDamagePassed",
+            resolution: "automatic",
+            damageType: "Poison",
+            damageAmount: 1,
+        }],
+    };
+    const attacker = {
+        ...fakeActor({ id: "a", name: "Attacker" }),
+        items: {
+            get: (id) => id === "w1" ? { id: "w1", flags: { "1547Core": { attachedModifierIds: ["mod-poison-3"] } }, system: { props: {} } } : null,
+            contents: [],
+        },
+    };
+    const defender = { ...fakeActor({ id: "d", name: "Defender", hp: 10 }), system: { props: { CurrentHitPoints: 10 } } };
+    const pendingAttack = {
+        kind: "1547core.pendingAttack",
+        actor: attacker, target: defender,
+        weapon: fakeWeapon(),
+        profile: { id: "default", attackType: "melee", allowedAmmoTypes: [] },
+        loadedAmmo: null, committed: true, mergedModifiers: {}, metadata: {},
+        weaponModifiers: [threeUsePoison], ammoModifiers: [], attackModifiers: [threeUsePoison],
+    };
+    const fakeRun = makeFakeRun([
+        { cancelled: false, results: [] },
+        { cancelled: false, results: [] },
+    ]);
+    await resolveAttackOutcomePhased({
+        pendingAttack,
+        attackRoll: { damage: 5, protection: 0, crit: 0, fumble: 0, multiplier: 1 },
+        defenseRoll: { damage: 0, protection: 2, crit: 0, fumble: 0, multiplier: 1 },
+        buildDefaultDefenseRollSummary: () => null,
+    }, fakeRun);
+
+    const secondaryPhase = fakeRun.phases.find((p) => p.phase === "applySecondaryEffects");
+    assert.ok(secondaryPhase, "the rider fires and a secondary-effects phase is scheduled");
+    const consumePatches = secondaryPhase.patches.filter((p) => p.itemId === "mod-poison-3");
+    assert.deepStrictEqual(
+        consumePatches.map((p) => ({ kind: p.kind, data: p.data })),
+        [{ kind: "item.update", data: { "flags.1547Core.usesRemaining": 2 } }],
+        "decrements usesRemaining without detaching or deleting"
+    );
+    assert.ok(
+        !secondaryPhase.patches.some((p) => p.kind === "item.delete"),
+        "multi-use modifier is not deleted while charges remain"
+    );
+    console.log("  ✓ multi-use modifier: decrements usesRemaining, no detach/delete");
+}
+
 // ─────────────────────────────────────── resolveAttackOutcomePhased: save riders ──
 
 console.log("\nresolveAttackOutcomePhased (save riders)...");
