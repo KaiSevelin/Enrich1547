@@ -468,8 +468,14 @@ console.log("\nresolveAttackOutcomePhased...");
     const consumePatches = secondaryPhase.patches.filter((p) => p.itemId === "mod-poison-3");
     assert.deepStrictEqual(
         consumePatches.map((p) => ({ kind: p.kind, data: p.data })),
-        [{ kind: "item.update", data: { "flags.1547Core.usesRemaining": 2 } }],
-        "decrements usesRemaining without detaching or deleting"
+        [{
+            kind: "item.update",
+            data: {
+                "flags.1547Core.usesRemaining": 2,
+                "system.props.UsesRemaining": 2,
+            },
+        }],
+        "decrements both the legacy flag and the CSB UsesRemaining prop without detaching or deleting"
     );
     assert.ok(
         !secondaryPhase.patches.some((p) => p.kind === "item.delete"),

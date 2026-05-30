@@ -4,7 +4,7 @@ Covers the Foundry-coupled paths the Node test suite (`npm test`) cannot exercis
 the live HUD, item-sheet actions, document CRUD, roll tables, and the diagnostics
 button. This-session fixes are flagged **Regression**.
 
-_Current target: 1547core 0.2.18._
+_Current target: 1547core 0.2.19._
 
 ## Prerequisites
 
@@ -95,22 +95,23 @@ When I reload it says Reloaded crossbow with bolt, but loaded ammo is none
 
 ## E. Weapon-modifier attachment
 
-> Attached modifiers are stored as a Foundry flag (`flags["1547Core"].attachedModifierIds`). The **WeaponTemplate** and **AmmunitionTemplate** both have an "Attached Modifiers" panel (CSB-native) that renders `system.props.AttachedModifierSummary`. The attachment service mirrors a `Name (N uses)` summary into that prop, and an `updateItem` hook keeps the summary in sync as attached/usesRemaining flags change. A `renderItemSheet` hook then **replaces the textArea inside the panel with a clickable list** — each entry opens that modifier's item sheet on click. As of 0.2.18, **Setup Data also refreshes existing actor-owned items' bodies/headers/displays from the canonical template** (`refreshActorItemBodiesFromTemplates`), so template changes propagate to characters' equipped items without re-creating them. Re-run **Setup Data** after upgrading.
+> As of 0.2.19 the "Attached Modifiers" surface is a **CSB-native `itemContainer`** on the WeaponTemplate / AmmunitionTemplate (filtered to WeaponModifierTemplate). It renders the attached modifiers as clickable rows that open each modifier's sheet, and surfaces a **Uses remaining** column populated from `system.props.UsesRemaining`. On every fire, the consume path decrements both the legacy `flags["1547Core"].usesRemaining` (combat still reads it) and the new prop (so the column updates); when uses hit 0 the modifier item is deleted and CSB removes it from the container. A one-time `ready` migration (`runContainerMigration`) backfills `system.container` and `system.props.UsesRemaining` on existing attachments. Re-run **Setup Data** after upgrading so the templates pick up the new container component and the new prop field.
 
 ### E1 — Drop auto-attaches
 1. Drag a seeded weapon-modifier item onto an actor that owns a weapon.
 2. Open the target weapon's item sheet.
 
 **Expected:**
-- The weapon sheet shows an **"Attached Modifiers"** panel containing a clickable list with one entry per attached modifier. If the modifier has a `durationType: "Uses"` with `durationValue: N`, the entry reads `Name (N uses)`.
-- Clicking a name **opens the modifier item's sheet** (you can inspect its stats / uses there).
+- The weapon sheet shows the **"Attached Modifiers"** itemContainer with one row per attached modifier. Rows are CSB-native (clickable, deletable).
+- Clicking a row **opens the modifier item's sheet** — the "Uses remaining" field shows the current count.
+- If the modifier source has `durationType: "Uses"` and `durationValue: N`, the row's **Uses remaining** column shows `N` on the first attach.
 - The HUD weapon row shows the modifier in `weaponModifierNames`.
 - Console verification (optional):
   ```js
   const a = canvas.tokens.controlled[0].actor;
   const w = a.items.find(i => i.name === "Dagger");
-  console.log("ids:    ", w.flags["1547Core"].attachedModifierIds);
-  console.log("summary:", w.system.props.AttachedModifierSummary);
+  console.log("flag ids:", w.flags["1547Core"].attachedModifierIds);
+  console.log("contained:", a.items.contents.filter(i => i.system?.container === w.id).map(i => `${i.name} (${i.system?.props?.UsesRemaining ?? "—"})`));
   ```
 
 ### E2 — Stack replace
@@ -127,9 +128,9 @@ When I reload it says Reloaded crossbow with bolt, but loaded ammo is none
 3. After **each** attack, re-open (or re-render) the weapon sheet and watch the panel.
 
 **Expected:**
-- After attack 1: panel reads `Name (2 uses)`. The modifier item still exists on the actor.
-- After attack 2: panel reads `Name (1 use)`.
-- After attack 3: the modifier is **detached and the modifier item is deleted from the actor**; the panel hides (visibility tied to `AttachedModifierSummary`).
+- After attack 1: the row's **Uses remaining** column shows `2`. The modifier item still exists on the actor.
+- After attack 2: column shows `1`.
+- After attack 3: the modifier item is **deleted from the actor**; the container row vanishes (CSB removes it because `system.container` no longer resolves).
 - The HUD's "Modifiers" row mirrors the same lifecycle.
 ---
 

@@ -186,12 +186,18 @@ function planConsumeTriggeredModifier(parentActor, modifier) {
     const nextRemaining = currentRemaining - 1;
 
     if (nextRemaining > 0) {
-        // Multi-use modifier with charges left: just decrement.
+        // Multi-use modifier with charges left: just decrement. Write both
+        // the legacy `usesRemaining` flag (combat reads from here) and the
+        // `system.props.UsesRemaining` prop (CSB itemContainer surfaces it
+        // as a column on the parent weapon's sheet).
         return [{
             kind: "item.update",
             actorId: parentActor.id,
             itemId: modifier._id,
-            data: { [`flags.${SOURCE_FLAG_SCOPE}.usesRemaining`]: nextRemaining },
+            data: {
+                [`flags.${SOURCE_FLAG_SCOPE}.usesRemaining`]: nextRemaining,
+                "system.props.UsesRemaining": nextRemaining,
+            },
         }];
     }
 

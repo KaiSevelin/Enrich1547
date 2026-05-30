@@ -190,6 +190,18 @@ function shouldHandleModifierCreate(item, options) {
 
 async function handleModifierCreate(item, options) {
     if (!shouldHandleModifierCreate(item, options)) return;
+
+    // Seed the UsesRemaining prop from the source's initial durationValue so
+    // the CSB itemContainer column shows the right count from the first render.
+    const source = readSourceData(item);
+    if (String(source?.durationType ?? "").toLowerCase() === "uses") {
+        const initial = Number(source?.durationValue ?? 0);
+        const current = Number(item?.system?.props?.UsesRemaining);
+        if (Number.isFinite(initial) && initial > 0 && (!Number.isFinite(current) || current === 0)) {
+            await item.update({ "system.props.UsesRemaining": initial }, { [ATTACH_GUARD]: true });
+        }
+    }
+
     const targetItem = inferModifierAttachmentTarget(item);
     if (!targetItem) return;
     await attachWeaponModifierToItem(targetItem, item);

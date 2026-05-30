@@ -110,6 +110,11 @@ Hooks.once("ready", () => {
         (module) => module.runSchemaMigrations()
     );
     void runImportedModuleStep(
+        "runContainerMigration",
+        () => import("./migrations/container-migration.js"),
+        (module) => module.runContainerMigration()
+    );
+    void runImportedModuleStep(
         "register1547ActorHud",
         () => import("./hud/actor-hud.js"),
         (module) => module.register1547ActorHud()
