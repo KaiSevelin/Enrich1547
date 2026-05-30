@@ -961,5 +961,104 @@
     "itemGrantRef": { "MmFallBackHold01": { "name": "Fall Back or Hold", "id": "MmFallBackHold01", "uuid": "Item.MmFallBackHold01" } },
     "notes": "Grants the Fall Back or Hold power.",
     "parentChangeSetId": "PeopleChassis001"
-  }
+  },
+  { "_id": "LdNWBeaTag000000", "name": "Natural Weapons (Beast) — Tag", "kind": "Tag", "tagName": "NaturalWeapons", "parentChangeSetId": "LoadoutNWBeast01" },
+  { "_id": "LdNWBeaTrt000000", "name": "Natural Weapons (Beast) — Trait", "kind": "Trait", "traitName": "Built to Bite and Tear", "traitDescription": "The body is itself the weapon: bite, claw, horn, tusk, or trampling shape, without dependence on crafted gear.", "parentChangeSetId": "LoadoutNWBeast01" },
+  { "_id": "LdNWBeaSta000000", "name": "Natural Weapons (Beast) — Strength +1", "kind": "Stat", "statTarget": "Stats_StrengthMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutNWBeast01" },
+  { "_id": "LdNWBeaGnt000000", "name": "Grant: Rending Bite", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmRendingBite001": { "name": "Rending Bite", "id": "MmRendingBite001", "uuid": "Item.MmRendingBite001" } }, "parentChangeSetId": "LoadoutNWBeast01" },
+
+  { "_id": "LdHBConTag000000", "name": "Heavy Body (Construct) — Tag", "kind": "Tag", "tagName": "Durable", "parentChangeSetId": "LoadoutHBConst01" },
+  { "_id": "LdHBConTrt000000", "name": "Heavy Body (Construct) — Trait", "kind": "Trait", "traitName": "Reinforced Frame", "traitDescription": "A built frame braced for blunt force and slow irresistible pressure.", "parentChangeSetId": "LoadoutHBConst01" },
+  { "_id": "LdHBConSta000000", "name": "Heavy Body (Construct) — Stamina +1", "kind": "Stat", "statTarget": "Stats_StaminaMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutHBConst01" },
+  { "_id": "LdHBConGnt000000", "name": "Grant: Hammering Impact", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmHammerImpact01": { "name": "Hammering Impact", "id": "MmHammerImpact01", "uuid": "Item.MmHammerImpact01" } }, "parentChangeSetId": "LoadoutHBConst01" },
+
+  { "_id": "LdHBUndTag000000", "name": "Heavy Body (Undead) — Tag", "kind": "Tag", "tagName": "Undead", "parentChangeSetId": "LoadoutHBUnd0001" },
+  { "_id": "LdHBUndTrt000000", "name": "Heavy Body (Undead) — Trait", "kind": "Trait", "traitName": "Carries Grave Weight", "traitDescription": "Corpse-mass and grave weight give the body unclean persistence and pulling force.", "parentChangeSetId": "LoadoutHBUnd0001" },
+  { "_id": "LdHBUndSta000000", "name": "Heavy Body (Undead) — Strength +1", "kind": "Stat", "statTarget": "Stats_StrengthMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutHBUnd0001" },
+  { "_id": "LdHBUndGnt000000", "name": "Grant: Drag Down", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmDragDown000001": { "name": "Drag Down", "id": "MmDragDown000001", "uuid": "Item.MmDragDown000001" } }, "parentChangeSetId": "LoadoutHBUnd0001" },
+
+  { "_id": "LdHBColTag000000", "name": "Heavy Body (Colossal) — Tag", "kind": "Tag", "tagName": "Massive", "parentChangeSetId": "LoadoutHBColos01" },
+  { "_id": "LdHBColTrt000000", "name": "Heavy Body (Colossal) — Trait", "kind": "Trait", "traitName": "Weight of Ruin", "traitDescription": "Sheer catastrophic bulk that breaks lines, capsizes vessels, and crushes obstacles without armor or agility.", "parentChangeSetId": "LoadoutHBColos01" },
+  { "_id": "LdHBColSta000000", "name": "Heavy Body (Colossal) — Strength +1", "kind": "Stat", "statTarget": "Stats_StrengthMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutHBColos01" },
+  { "_id": "LdHBColGnt000000", "name": "Grant: Ground-Shaking Step", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmGrndShakeStep1": { "name": "Ground-Shaking Step", "id": "MmGrndShakeStep1", "uuid": "Item.MmGrndShakeStep1" } }, "parentChangeSetId": "LoadoutHBColos01" },
+
+  { "_id": "LdArPeoTag000000", "name": "Armed (People) — Tag", "kind": "Tag", "tagName": "SocialCreature", "parentChangeSetId": "LoadoutArPeople1" },
+  { "_id": "LdArPeoTrt000000", "name": "Armed (People) — Trait", "kind": "Trait", "traitName": "Carries the Tools of Violence", "traitDescription": "Practical weapons, discipline, and ordinary human combat readiness.", "parentChangeSetId": "LoadoutArPeople1" },
+  { "_id": "LdArPeoSta000000", "name": "Armed (People) — Dexterity +1", "kind": "Stat", "statTarget": "Stats_DexterityMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutArPeople1" },
+  { "_id": "LdArPeoGnt000000", "name": "Grant: Shield Bash", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmShieldBash0001": { "name": "Shield Bash", "id": "MmShieldBash0001", "uuid": "Item.MmShieldBash0001" } }, "parentChangeSetId": "LoadoutArPeople1" },
+
+  { "_id": "LdArUndTag000000", "name": "Armed (Undead) — Tag", "kind": "Tag", "tagName": "Undead", "parentChangeSetId": "LoadoutArUnd0001" },
+  { "_id": "LdArUndTrt000000", "name": "Armed (Undead) — Trait", "kind": "Trait", "traitName": "Dead Hand on the Hilt", "traitDescription": "Burial-retained arms, battlefield remnants, and dead hands still knowing violence.", "parentChangeSetId": "LoadoutArUnd0001" },
+  { "_id": "LdArUndSta000000", "name": "Armed (Undead) — Strength +1", "kind": "Stat", "statTarget": "Stats_StrengthMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutArUnd0001" },
+  { "_id": "LdArUndGnt000000", "name": "Grant: Rusting Cut", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmRustingCut0001": { "name": "Rusting Cut", "id": "MmRustingCut0001", "uuid": "Item.MmRustingCut0001" } }, "parentChangeSetId": "LoadoutArUnd0001" },
+
+  { "_id": "LdAwPeoTag000000", "name": "Armored (People) — Tag", "kind": "Tag", "tagName": "Durable", "parentChangeSetId": "LoadoutAwPeople1" },
+  { "_id": "LdAwPeoTrt000000", "name": "Armored (People) — Trait", "kind": "Trait", "traitName": "Harness and Protection", "traitDescription": "Trained fighters, guarded vital points, more confidence under pressure.", "parentChangeSetId": "LoadoutAwPeople1" },
+  { "_id": "LdAwPeoSta000000", "name": "Armored (People) — Stamina +1", "kind": "Stat", "statTarget": "Stats_StaminaMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutAwPeople1" },
+  { "_id": "LdAwPeoGnt000000", "name": "Grant: Brace Behind Armor", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmBraceArmor0001": { "name": "Brace Behind Armor", "id": "MmBraceArmor0001", "uuid": "Item.MmBraceArmor0001" } }, "parentChangeSetId": "LoadoutAwPeople1" },
+
+  { "_id": "LdAwUndTag000000", "name": "Armored (Undead) — Tag", "kind": "Tag", "tagName": "Undead", "parentChangeSetId": "LoadoutAwUnd0001" },
+  { "_id": "LdAwUndTrt000000", "name": "Armored (Undead) — Trait", "kind": "Trait", "traitName": "Mail of the Dead", "traitDescription": "Armor that remained after death, heavy and uncanny in its persistence.", "parentChangeSetId": "LoadoutAwUnd0001" },
+  { "_id": "LdAwUndSta000000", "name": "Armored (Undead) — Stamina +1", "kind": "Stat", "statTarget": "Stats_StaminaMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutAwUnd0001" },
+  { "_id": "LdAwUndGnt000000", "name": "Grant: Shrug the Blow", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmShrugBlow00001": { "name": "Shrug the Blow", "id": "MmShrugBlow00001", "uuid": "Item.MmShrugBlow00001" } }, "parentChangeSetId": "LoadoutAwUnd0001" },
+
+  { "_id": "LdAwConTag000000", "name": "Armored (Construct) — Tag", "kind": "Tag", "tagName": "Artificial", "parentChangeSetId": "LoadoutAwConst01" },
+  { "_id": "LdAwConTrt000000", "name": "Armored (Construct) — Trait", "kind": "Trait", "traitName": "Plated Construction", "traitDescription": "Plated shell, reinforced joints, and difficult-to-breach artificed protection.", "parentChangeSetId": "LoadoutAwConst01" },
+  { "_id": "LdAwConSta000000", "name": "Armored (Construct) — Stamina +1", "kind": "Stat", "statTarget": "Stats_StaminaMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutAwConst01" },
+  { "_id": "LdAwConGnt000000", "name": "Grant: Turn the Edge", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmTurnEdge000001": { "name": "Turn the Edge", "id": "MmTurnEdge000001", "uuid": "Item.MmTurnEdge000001" } }, "parentChangeSetId": "LoadoutAwConst01" },
+
+  { "_id": "LdMtPeoTag000000", "name": "Mounted (People) — Tag", "kind": "Tag", "tagName": "SocialCreature", "parentChangeSetId": "LoadoutMtPeople1" },
+  { "_id": "LdMtPeoTrt000000", "name": "Mounted (People) — Trait", "kind": "Trait", "traitName": "Horse and Rider", "traitDescription": "Horseman, raider, messenger, or knight with speed and shock advantage.", "parentChangeSetId": "LoadoutMtPeople1" },
+  { "_id": "LdMtPeoSta000000", "name": "Mounted (People) — MoveGround +2", "kind": "Stat", "statTarget": "MoveGround", "statOp": "Add", "statValue": 2, "parentChangeSetId": "LoadoutMtPeople1" },
+  { "_id": "LdMtPeoGnt000000", "name": "Grant: Ride Through", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmRideThrough001": { "name": "Ride Through", "id": "MmRideThrough001", "uuid": "Item.MmRideThrough001" } }, "parentChangeSetId": "LoadoutMtPeople1" },
+
+  { "_id": "LdMtUnsTag000000", "name": "Mounted (TheUnseen) — Tag", "kind": "Tag", "tagName": "Otherworldly", "parentChangeSetId": "LoadoutMtUnseen1" },
+  { "_id": "LdMtUnsTrt000000", "name": "Mounted (TheUnseen) — Trait", "kind": "Trait", "traitName": "Rides Beyond the Safe Path", "traitDescription": "Impossible rider, hunt-rank, or sovereign mounted presence.", "parentChangeSetId": "LoadoutMtUnseen1" },
+  { "_id": "LdMtUnsSta000000", "name": "Mounted (TheUnseen) — MoveGround +2", "kind": "Stat", "statTarget": "MoveGround", "statOp": "Add", "statValue": 2, "parentChangeSetId": "LoadoutMtUnseen1" },
+  { "_id": "LdMtUnsGnt000000", "name": "Grant: Ride Them Down", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmRideThemDown01": { "name": "Ride Them Down", "id": "MmRideThemDown01", "uuid": "Item.MmRideThemDown01" } }, "parentChangeSetId": "LoadoutMtUnseen1" },
+
+  { "_id": "LdRgPeoTag000000", "name": "Ranged (People) — Tag", "kind": "Tag", "tagName": "SocialCreature", "parentChangeSetId": "LoadoutRgPeople1" },
+  { "_id": "LdRgPeoTrt000000", "name": "Ranged (People) — Trait", "kind": "Trait", "traitName": "Missile-Ready", "traitDescription": "Bows, crossbows, stones, or thrown weapons handled by mortal skill.", "parentChangeSetId": "LoadoutRgPeople1" },
+  { "_id": "LdRgPeoSta000000", "name": "Ranged (People) — Dexterity +1", "kind": "Stat", "statTarget": "Stats_DexterityMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutRgPeople1" },
+  { "_id": "LdRgPeoGnt000000", "name": "Grant: Loose the Shot", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmLooseShot00001": { "name": "Loose the Shot", "id": "MmLooseShot00001", "uuid": "Item.MmLooseShot00001" } }, "parentChangeSetId": "LoadoutRgPeople1" },
+
+  { "_id": "LdRgConTag000000", "name": "Ranged (Construct) — Tag", "kind": "Tag", "tagName": "Artificial", "parentChangeSetId": "LoadoutRgConst01" },
+  { "_id": "LdRgConTrt000000", "name": "Ranged (Construct) — Trait", "kind": "Trait", "traitName": "Built for Projection", "traitDescription": "Dart-projector, alchemical spitter, or made thing designed for distance attack.", "parentChangeSetId": "LoadoutRgConst01" },
+  { "_id": "LdRgConSta000000", "name": "Ranged (Construct) — Power +1", "kind": "Stat", "statTarget": "Stats_PowerMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutRgConst01" },
+  { "_id": "LdRgConGnt000000", "name": "Grant: Launch the Dart", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmLaunchDart0001": { "name": "Launch the Dart", "id": "MmLaunchDart0001", "uuid": "Item.MmLaunchDart0001" } }, "parentChangeSetId": "LoadoutRgConst01" },
+
+  { "_id": "LdRgUnnTag000000", "name": "Ranged (Unnatural) — Tag", "kind": "Tag", "tagName": "Otherworldly", "parentChangeSetId": "LoadoutRgUnnat01" },
+  { "_id": "LdRgUnnTrt000000", "name": "Ranged (Unnatural) — Trait", "kind": "Trait", "traitName": "Distance Means Little", "traitDescription": "Distance-force expressed through command, radiance, fire, or spiritual assault.", "parentChangeSetId": "LoadoutRgUnnat01" },
+  { "_id": "LdRgUnnSta000000", "name": "Ranged (Unnatural) — Power +1", "kind": "Stat", "statTarget": "Stats_PowerMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutRgUnnat01" },
+  { "_id": "LdRgUnnGnt000000", "name": "Grant: Judging Bolt", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmJudgingBolt001": { "name": "Judging Bolt", "id": "MmJudgingBolt001", "uuid": "Item.MmJudgingBolt001" } }, "parentChangeSetId": "LoadoutRgUnnat01" },
+
+  { "_id": "LdSFHfkTag000000", "name": "Swift Fragile (HiddenFolk) — Tag", "kind": "Tag", "tagName": "Glamour", "parentChangeSetId": "LoadoutSFHfolk01" },
+  { "_id": "LdSFHfkTrt000000", "name": "Swift Fragile (HiddenFolk) — Trait", "kind": "Trait", "traitName": "Too Quick to Hold", "traitDescription": "Quick, elusive, half-seen, and hard to pin down.", "parentChangeSetId": "LoadoutSFHfolk01" },
+  { "_id": "LdSFHfkSta000000", "name": "Swift Fragile (HiddenFolk) — Dexterity +1", "kind": "Stat", "statTarget": "Stats_DexterityMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutSFHfolk01" },
+  { "_id": "LdSFHfkGnt000000", "name": "Grant: Slip Past the Gaze", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmSlipPastGaze01": { "name": "Slip Past the Gaze", "id": "MmSlipPastGaze01", "uuid": "Item.MmSlipPastGaze01" } }, "parentChangeSetId": "LoadoutSFHfolk01" },
+
+  { "_id": "LdSFConTag000000", "name": "Swift Fragile (Construct) — Tag", "kind": "Tag", "tagName": "Artificial", "parentChangeSetId": "LoadoutSFConst01" },
+  { "_id": "LdSFConTrt000000", "name": "Swift Fragile (Construct) — Trait", "kind": "Trait", "traitName": "Quick Little Servitor", "traitDescription": "Small made thing, quick assistant, thin frame, and low staying power.", "parentChangeSetId": "LoadoutSFConst01" },
+  { "_id": "LdSFConSta000000", "name": "Swift Fragile (Construct) — MoveGround +1", "kind": "Stat", "statTarget": "MoveGround", "statOp": "Add", "statValue": 1, "notes": "Spec also calls for Stamina -1; omitted here to keep one Stat Change per variant.", "parentChangeSetId": "LoadoutSFConst01" },
+  { "_id": "LdSFConGnt000000", "name": "Grant: Skitter Aside", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmSkitterAside01": { "name": "Skitter Aside", "id": "MmSkitterAside01", "uuid": "Item.MmSkitterAside01" } }, "parentChangeSetId": "LoadoutSFConst01" },
+
+  { "_id": "LdSFCurTag000000", "name": "Swift Fragile (Cursed) — Tag", "kind": "Tag", "tagName": "Cursed", "parentChangeSetId": "LoadoutSFCursed1" },
+  { "_id": "LdSFCurTrt000000", "name": "Swift Fragile (Cursed) — Trait", "kind": "Trait", "traitName": "Flesh Made Overquick", "traitDescription": "Transformed quickness, predatory reflex, and unstable speed.", "parentChangeSetId": "LoadoutSFCursed1" },
+  { "_id": "LdSFCurSta000000", "name": "Swift Fragile (Cursed) — Dexterity +1", "kind": "Stat", "statTarget": "Stats_DexterityMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutSFCursed1" },
+  { "_id": "LdSFCurGnt000000", "name": "Grant: Lunge in a Blur", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmLungeInBlur001": { "name": "Lunge in a Blur", "id": "MmLungeInBlur001", "uuid": "Item.MmLungeInBlur001" } }, "parentChangeSetId": "LoadoutSFCursed1" },
+
+  { "_id": "LdGpUndTag000000", "name": "Grasping (Undead) — Tag", "kind": "Tag", "tagName": "Undead", "parentChangeSetId": "LoadoutGpUnd0001" },
+  { "_id": "LdGpUndTrt000000", "name": "Grasping (Undead) — Trait", "kind": "Trait", "traitName": "Hands That Do Not Release", "traitDescription": "Dead hands, dragging grip, and refusal to let the living free.", "parentChangeSetId": "LoadoutGpUnd0001" },
+  { "_id": "LdGpUndSta000000", "name": "Grasping (Undead) — Strength +1", "kind": "Stat", "statTarget": "Stats_StrengthMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutGpUnd0001" },
+  { "_id": "LdGpUndGnt000000", "name": "Grant: Seize the Living", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmSeizeLiving001": { "name": "Seize the Living", "id": "MmSeizeLiving001", "uuid": "Item.MmSeizeLiving001" } }, "parentChangeSetId": "LoadoutGpUnd0001" },
+
+  { "_id": "LdGpConTag000000", "name": "Grasping (Construct) — Tag", "kind": "Tag", "tagName": "Artificial", "parentChangeSetId": "LoadoutGpConst01" },
+  { "_id": "LdGpConTrt000000", "name": "Grasping (Construct) — Trait", "kind": "Trait", "traitName": "Built to Hold Fast", "traitDescription": "Designed manipulator limbs, clamp-hands, and tool-like holding force.", "parentChangeSetId": "LoadoutGpConst01" },
+  { "_id": "LdGpConSta000000", "name": "Grasping (Construct) — Strength +1", "kind": "Stat", "statTarget": "Stats_StrengthMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutGpConst01" },
+  { "_id": "LdGpConGnt000000", "name": "Grant: Clamp and Hold", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmClampAndHold01": { "name": "Clamp and Hold", "id": "MmClampAndHold01", "uuid": "Item.MmClampAndHold01" } }, "parentChangeSetId": "LoadoutGpConst01" },
+
+  { "_id": "LdGpZcoTag000000", "name": "Grasping (ZoneColossus) — Tag", "kind": "Tag", "tagName": "Massive", "parentChangeSetId": "LoadoutGpZcoll01" },
+  { "_id": "LdGpZcoTrt000000", "name": "Grasping (ZoneColossus) — Trait", "kind": "Trait", "traitName": "The Grasp That Covers Ground", "traitDescription": "Catastrophic grasp, crushing capture, and the horror of being taken by something too large to understand.", "parentChangeSetId": "LoadoutGpZcoll01" },
+  { "_id": "LdGpZcoSta000000", "name": "Grasping (ZoneColossus) — Power +1", "kind": "Stat", "statTarget": "Stats_PowerMod", "statOp": "Add", "statValue": 1, "parentChangeSetId": "LoadoutGpZcoll01" },
+  { "_id": "LdGpZcoGnt000000", "name": "Grant: Colossal Grasp", "kind": "ItemGrant", "itemGrantMode": "Direct", "itemGrantRef": { "MmColossalGrasp1": { "name": "Colossal Grasp", "id": "MmColossalGrasp1", "uuid": "Item.MmColossalGrasp1" } }, "parentChangeSetId": "LoadoutGpZcoll01" }
 ]

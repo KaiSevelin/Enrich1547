@@ -94,5 +94,165 @@
     "forTypeAny": false,
     "ForType_People": true,
     "notes": "Chassis for People: human opposition built as monster archetypes (guards, commoners, men-at-arms, knights, raiders) rather than full PC sheets. Provides identity Tags and Traits plus three default powers. Commoner / Guard / Raider / Man-at-Arms / Knight ChangeSets layer on top."
+  },
+  {
+    "_id": "LoadoutNWBeast01",
+    "name": "Natural Weapons (Beast)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_Beast": true,
+    "notes": "Loadout: body as weapon. Bite, claw, horn, tusk, trampling shape. +1 Strength and a Rending Bite power."
+  },
+  {
+    "_id": "LoadoutHBConst01",
+    "name": "Heavy Body (Construct)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_Construct": true,
+    "notes": "Loadout: reinforced frame, blunt force, slow irresistible pressure. +1 Stamina and a Hammering Impact power."
+  },
+  {
+    "_id": "LoadoutHBUnd0001",
+    "name": "Heavy Body (Undead)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_Undead": true,
+    "notes": "Loadout: corpse-mass, grave weight, unclean persistence. +1 Strength and a Drag Down power."
+  },
+  {
+    "_id": "LoadoutHBColos01",
+    "name": "Heavy Body (Colossal)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_Colossal": true,
+    "notes": "Loadout: catastrophic bulk rather than armor or agility. +1 Strength and a Ground-Shaking Step power."
+  },
+  {
+    "_id": "LoadoutArPeople1",
+    "name": "Armed (People)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_People": true,
+    "notes": "Loadout: practical weapons, discipline, human martial readiness. +1 Dexterity and a Shield Bash power."
+  },
+  {
+    "_id": "LoadoutArUnd0001",
+    "name": "Armed (Undead)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_Undead": true,
+    "notes": "Loadout: burial-retained arms, battlefield remnants, dead hands still knowing violence. +1 Strength and a Rusting Cut power."
+  },
+  {
+    "_id": "LoadoutAwPeople1",
+    "name": "Armored (People)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_People": true,
+    "notes": "Loadout: trained fighters, guarded vital points, more confidence under pressure. +1 Stamina and a Brace Behind Armor power."
+  },
+  {
+    "_id": "LoadoutAwUnd0001",
+    "name": "Armored (Undead)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_Undead": true,
+    "notes": "Loadout: armor that remained after death, heavy and uncanny in its persistence. +1 Stamina and a Shrug the Blow power."
+  },
+  {
+    "_id": "LoadoutAwConst01",
+    "name": "Armored (Construct)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_Construct": true,
+    "notes": "Loadout: plated shell, reinforced joints, difficult-to-breach artificed protection. +1 Stamina and a Turn the Edge power."
+  },
+  {
+    "_id": "LoadoutMtPeople1",
+    "name": "Mounted (People)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_People": true,
+    "notes": "Loadout: horseman, raider, messenger, knight with speed and shock advantage. +2 MoveGround and a Ride Through power."
+  },
+  {
+    "_id": "LoadoutMtUnseen1",
+    "name": "Mounted (TheUnseen)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_TheUnseen": true,
+    "notes": "Loadout: impossible rider, hunt-rank, sovereign mounted presence. +2 MoveGround and a Ride Them Down power."
+  },
+  {
+    "_id": "LoadoutRgPeople1",
+    "name": "Ranged (People)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_People": true,
+    "notes": "Loadout: bows, crossbows, stones, thrown weapons handled by mortal skill. +1 Dexterity and a Loose the Shot power."
+  },
+  {
+    "_id": "LoadoutRgConst01",
+    "name": "Ranged (Construct)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_Construct": true,
+    "notes": "Loadout: dart-projector, alchemical spitter, made thing designed for distance attack. +1 Power and a Launch the Dart power."
+  },
+  {
+    "_id": "LoadoutRgUnnat01",
+    "name": "Ranged (Unnatural)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_Unnatural": true,
+    "notes": "Loadout: distance-force expressed through command, radiance, fire, or spiritual assault. +1 Power and a Judging Bolt power."
+  },
+  {
+    "_id": "LoadoutSFHfolk01",
+    "name": "Swift Fragile (HiddenFolk)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_HiddenFolk": true,
+    "notes": "Loadout: quick, elusive, half-seen, hard to pin down. +1 Dexterity and a Slip Past the Gaze power."
+  },
+  {
+    "_id": "LoadoutSFConst01",
+    "name": "Swift Fragile (Construct)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_Construct": true,
+    "notes": "Loadout: small made thing, quick assistant, thin frame, low staying power. +1 MoveGround / -1 Stamina and a Skitter Aside power."
+  },
+  {
+    "_id": "LoadoutSFCursed1",
+    "name": "Swift Fragile (Cursed)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_Cursed": true,
+    "notes": "Loadout: transformed quickness, predatory reflex, unstable speed. +1 Dexterity and a Lunge in a Blur power."
+  },
+  {
+    "_id": "LoadoutGpUnd0001",
+    "name": "Grasping (Undead)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_Undead": true,
+    "notes": "Loadout: dead hands, dragging grip, refusal to let the living free. +1 Strength and a Seize the Living power."
+  },
+  {
+    "_id": "LoadoutGpConst01",
+    "name": "Grasping (Construct)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_Construct": true,
+    "notes": "Loadout: designed manipulator limbs, clamp-hands, tool-like holding force. +1 Strength and a Clamp and Hold power."
+  },
+  {
+    "_id": "LoadoutGpZcoll01",
+    "name": "Grasping (ZoneColossus)",
+    "group": "Loadout",
+    "forTypeAny": false,
+    "ForType_ZoneColossus": true,
+    "notes": "Loadout: catastrophic grasp, crushing capture, horror of being taken by something too large to understand. +1 Power and a Colossal Grasp power."
   }
 ]
