@@ -410,27 +410,38 @@ function isWeaponSource(source) {
 // Only "item.update" is consumed today (by ammo-state); the others are
 // in the shape contract so later patch-returner modules slot in.
 
+// Resolve an actor by id, preferring a token-bound actor in the current scene.
+// Unlinked tokens have a synthetic actor whose items differ from the world
+// prototype's; updating game.actors.get(actorId).items there silently no-ops
+// because the token's items aren't on the prototype. Linked tokens resolve to
+// the same actor either way, so token-first is safe in both cases.
+function resolveActorById(actorId) {
+    if (!actorId) return null;
+    const tokenActor = canvas?.tokens?.placeables?.find?.((token) => token?.actor?.id === actorId)?.actor;
+    return tokenActor ?? game.actors?.get?.(actorId) ?? null;
+}
+
 async function applyPatch(patch) {
     if (!patch || !patch.kind) return;
     switch (patch.kind) {
         case "actor.update": {
-            const actor = game.actors?.get?.(patch.actorId);
+            const actor = resolveActorById(patch.actorId);
             if (actor?.update) await actor.update(patch.data);
             return;
         }
         case "item.update": {
-            const actor = game.actors?.get?.(patch.actorId);
+            const actor = resolveActorById(patch.actorId);
             const item = actor?.items?.get?.(patch.itemId);
             if (item?.update) await item.update(patch.data);
             return;
         }
         case "actor.setFlag": {
-            const actor = game.actors?.get?.(patch.actorId);
+            const actor = resolveActorById(patch.actorId);
             if (actor?.setFlag) await actor.setFlag(patch.scope, patch.key, patch.value);
             return;
         }
         case "actor.statusEffect": {
-            const actor = game.actors?.get?.(patch.actorId);
+            const actor = resolveActorById(patch.actorId);
             if (actor) await setActorStatusEffect(actor, patch.keyword, patch.active);
             return;
         }
