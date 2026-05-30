@@ -130,14 +130,29 @@ export async function attachWeaponModifierToItem(targetItem, modifierItem) {
     const currentIds = getAttachedModifierIds(targetItem);
     const currentSummary = String(targetItem?.system?.props?.AttachedModifierSummary ?? "");
     const nextSummary = buildAttachedModifierSummary(actor, nextIds);
-    if (JSON.stringify(currentIds) === JSON.stringify(nextIds) && currentSummary === nextSummary) return true;
+    const sameState = JSON.stringify(currentIds) === JSON.stringify(nextIds) && currentSummary === nextSummary;
 
-    await targetItem.update({
-        [`flags.${SOURCE_FLAG_SCOPE}.attachedModifierIds`]: nextIds,
-        "system.props.AttachedModifierSummary": nextSummary,
-    }, {
-        [ATTACH_GUARD]: true,
-    });
+    // Items dropped out of the flag list by a stack-key replacement still have
+    // `system.container = targetItem.id`, so the CSB itemContainer would keep
+    // showing them. Delete the displaced modifier items so the container and
+    // the flag stay in lockstep.
+    const displacedIds = currentIds.filter((id) => !nextIds.includes(id));
+    const newModifierId = String(modifierItem?.id ?? modifierItem?._id ?? "").trim();
+    const displacedExisting = displacedIds.filter((id) => id && id !== newModifierId && actor.items?.get?.(id));
+
+    if (sameState && !displacedExisting.length) return true;
+
+    if (!sameState) {
+        await targetItem.update({
+            [`flags.${SOURCE_FLAG_SCOPE}.attachedModifierIds`]: nextIds,
+            "system.props.AttachedModifierSummary": nextSummary,
+        }, {
+            [ATTACH_GUARD]: true,
+        });
+    }
+    if (displacedExisting.length && actor.deleteEmbeddedDocuments) {
+        await actor.deleteEmbeddedDocuments("Item", displacedExisting);
+    }
     return true;
 }
 
