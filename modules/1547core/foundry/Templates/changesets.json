@@ -350,5 +350,10 @@
 {"_id":"QrGrGfUn00000001","name":"Bound to the Grave-Gift (Undead)","group":"Quirk","forTypeAny":false,"ForType_Undead":true,"notes":"Bound to the Grave-Gift — Undead variant. Grants Reclaim the Gift."},
 {"_id":"QrNvWtCn00000001","name":"Never Stops Watching (Construct)","group":"Quirk","forTypeAny":false,"ForType_Construct":true,"notes":"Never Stops Watching — Construct variant. Grants Eyes Always Open."},
 {"_id":"QrTlShCl00000001","name":"Too Large for Shelter (Colossal)","group":"Quirk","forTypeAny":false,"ForType_Colossal":true,"notes":"Too Large for Shelter — Colossal variant. Grants Wreck the Doorway."},
-{"_id":"QrStMnCu00000001","name":"Strengthens in Moonlight (Cursed)","group":"Quirk","forTypeAny":false,"ForType_Cursed":true,"notes":"Strengthens in Moonlight — Cursed variant. Grants Wax with the Moon."}
+{"_id":"QrStMnCu00000001","name":"Strengthens in Moonlight (Cursed)","group":"Quirk","forTypeAny":false,"ForType_Cursed":true,"notes":"Strengthens in Moonlight — Cursed variant. Grants Wax with the Moon."},
+{"_id":"LoadoutHsZone001","name":"Half-Seen Body (Zone)","group":"Loadout","forTypeAny":false,"ForType_Zone":true,"notes":"Loadout: body refuses plain sight in the zone. +1 Dexterity and a Wear the Veil power."},
+{"_id":"LoadoutIbZcol001","name":"Impossible Bulk (ZoneColossus)","group":"Loadout","forTypeAny":false,"ForType_ZoneColossus":true,"notes":"Loadout: catastrophic scale beyond reckoning. +1 Strength and a Loom Over the Ground power."},
+{"_id":"LoadoutTbConst01","name":"Tool-Body (Construct)","group":"Loadout","forTypeAny":false,"ForType_Construct":true,"notes":"Loadout: body shaped as tool, no separate weapon. +1 Dexterity and a Drive the Built Edge power."},
+{"_id":"LoadoutCbUnd0001","name":"Corpse-Body (Undead)","group":"Loadout","forTypeAny":false,"ForType_Undead":true,"notes":"Loadout: body that is openly a corpse, indifferent to wounds. +1 Stamina and a Walk With Worse Wounds power."},
+{"_id":"LoadoutWhColos01","name":"Winged Horror (Colossal)","group":"Loadout","forTypeAny":false,"ForType_Colossal":true,"notes":"Loadout: winged catastrophic body. +2 MoveGround and a Sweep on Wing power."}
 ]
