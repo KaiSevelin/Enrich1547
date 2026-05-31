@@ -117,5 +117,13 @@
 {"_id":"QrPlBdZc00000001","name":"Place Rather Than Body","group":"Quirk","forTypeAny":false,"ForType_ZoneColossus":true,"notes":"Quirk: cannot be located as a single body. Grants Form as Place.","ForType_Zone":true},
 {"_id":"QrMkWtZc00000001","name":"Marks Witnesses Forever","group":"Quirk","forTypeAny":false,"ForType_ZoneColossus":true,"notes":"Quirk: marks witnesses for years. Grants Enduring Mark.","ForType_TheUnseen":true,"ForType_Cursed":true},
 {"_id":"MtCnHtZc00000001","name":"Continue the Hunt","group":"Motivation","forTypeAny":false,"ForType_ZoneColossus":true,"notes":"Motivation: must continue the hunt; chooses prey from those who watched. Grants Mark for the Chase.","ForType_TheUnseen":true},
-{"_id":"DmPlagZc00000001","name":"Plague","group":"Domain","forTypeAny":false,"ForType_ZoneColossus":true,"notes":"Domain: pestilence-zone. +1 Power, grants Spread the Sickness.","ForType_Undead":true}
+{"_id":"DmPlagZc00000001","name":"Plague","group":"Domain","forTypeAny":false,"ForType_ZoneColossus":true,"notes":"Domain: pestilence-zone. +1 Power, grants Spread the Sickness.","ForType_Undead":true},
+{"_id":"RoWolfBs00000001","name":"Wolf (Beast)","group":"Role","forTypeAny":false,"ForType_Beast":true,"notes":"Role: Wolf — pack-hunter beast species. +1 Dexterity, grants Pack-Take-Down."},
+{"_id":"RoBearBs00000001","name":"Bear (Beast)","group":"Role","forTypeAny":false,"ForType_Beast":true,"notes":"Role: Bear — solitary mauler beast species. +1 Strength, grants Maul."},
+{"_id":"RoBoarBs00000001","name":"Boar (Beast)","group":"Role","forTypeAny":false,"ForType_Beast":true,"notes":"Role: Boar — charging tusk-bearer beast species. +1 Stamina, grants Tusk Gore."},
+{"_id":"RoKngtPe00000001","name":"Knight (People)","group":"Role","forTypeAny":false,"ForType_People":true,"notes":"Role: Knight — sworn fighter of rank. +1 Stamina, grants Hold the Line."},
+{"_id":"RoSldrPe00000001","name":"Soldier (People)","group":"Role","forTypeAny":false,"ForType_People":true,"notes":"Role: Soldier — drilled mercenary or levy. +1 Dexterity, grants Form on the Captain."},
+{"_id":"RoBndtPe00000001","name":"Bandit (People)","group":"Role","forTypeAny":false,"ForType_People":true,"notes":"Role: Bandit — outlaw, highway robber. +1 Dexterity, grants Strike from the Roadside."},
+{"_id":"RoPsntPe00000001","name":"Peasant (People)","group":"Role","forTypeAny":false,"ForType_People":true,"notes":"Role: Peasant — rural land-bound commoner. +1 Stamina, grants Stand With the Village."},
+{"_id":"RoCmnrPe00000001","name":"Commoner (People)","group":"Role","forTypeAny":false,"ForType_People":true,"notes":"Role: Commoner — urban or town-dweller. +1 Charisma, grants Speak with the Watch."}
 ]
