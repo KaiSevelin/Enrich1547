@@ -477,5 +477,9 @@
 {"_id":"RoPrncNuTag00001","name":"Prince (Unnatural) — Tag","kind":"Tag","tagName":"PrinceRank","parentChangeSetId":"RoPrncNu00000001"},
 {"_id":"RoPrncNuTrt00001","name":"Prince (Unnatural) — Trait","kind":"Trait","traitName":"Of Royal Office","traitDescription":"Prince, king, or arch-power — the highest office of the outsider hierarchy, bearing the crown of their own cosmology.","parentChangeSetId":"RoPrncNu00000001"},
 {"_id":"RoPrncNuSta00001","name":"Prince (Unnatural) — Faith +1","kind":"Stat","statTarget":"Stats_FaithMod","statOp":"Add","statValue":1,"parentChangeSetId":"RoPrncNu00000001"},
-{"_id":"RoPrncNuGnt00001","name":"Grant: Issue the Decree","kind":"ItemGrant","itemGrantMode":"Direct","itemGrantRef":{"MmIssueDecree001":{"name":"Issue the Decree","id":"MmIssueDecree001","uuid":"Item.MmIssueDecree001"}},"parentChangeSetId":"RoPrncNu00000001"}
+{"_id":"RoPrncNuGnt00001","name":"Grant: Issue the Decree","kind":"ItemGrant","itemGrantMode":"Direct","itemGrantRef":{"MmIssueDecree001":{"name":"Issue the Decree","id":"MmIssueDecree001","uuid":"Item.MmIssueDecree001"}},"parentChangeSetId":"RoPrncNu00000001"},
+{"_id":"RoVtrnPeTag00001","name":"Veteran (People) — Tag","kind":"Tag","tagName":"Veteran","parentChangeSetId":"RoVtrnPe00000001"},
+{"_id":"RoVtrnPeTrt00001","name":"Veteran (People) — Trait","kind":"Trait","traitName":"Of Hard-Earned Knowledge","traitDescription":"Has seen the killing, the burning, the breaking — knows what is coming before it lands, and where to stand.","parentChangeSetId":"RoVtrnPe00000001"},
+{"_id":"RoVtrnPeSta00001","name":"Veteran (People) — Power +1","kind":"Stat","statTarget":"Stats_PowerMod","statOp":"Add","statValue":1,"parentChangeSetId":"RoVtrnPe00000001"},
+{"_id":"RoVtrnPeGnt00001","name":"Grant: Read the Fight","kind":"ItemGrant","itemGrantMode":"Direct","itemGrantRef":{"MmReadTheFight01":{"name":"Read the Fight","id":"MmReadTheFight01","uuid":"Item.MmReadTheFight01"}},"parentChangeSetId":"RoVtrnPe00000001"}
 ]

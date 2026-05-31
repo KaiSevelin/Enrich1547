@@ -50,7 +50,7 @@ actual.*
 | Field | Type | Notes |
 |---|---|---|
 | `_id` | identifier | `b7A1z6cSZO4dYTKT` |
-| Header → MonsterMetadata → `Group` | select | One of `Base`, `Size`, `Role`, `Domain`, `Motivation`, `Loadout`, `Quirk`, `Boost` |
+| Header → MonsterMetadata → `Group` | select | One of `Base`, `Role`, `Domain`, `Motivation`, `Loadout`, `Quirk`, `Boost` |
 | Header → MonsterMetadata → `ForTypeAny` | checkbox | When true, set is valid for any TypeDropdown |
 | Header → MonsterMetadata → ForTypeSelector → `ForType_<Type>` | checkbox × 12 | One per TypeDropdown value (Player / Spirit / HiddenFolk / TheUnseen / Beast / Undead / Colossal / Cursed / Unnatural / Construct / Zone / People) |
 | Header → `RequirementsDisplayer` | itemContainer (template-filtered to RequirementTemplate) | Holds Requirement child items |
@@ -109,7 +109,6 @@ monster-maker) holding the eight group containers in pipeline order:
 | Container key | Group | Role | Item filter formula |
 |---|---|---|---|
 | `BaseContainer` | Base | 0 (all) | `equalText(item.Group, 'Base')` |
-| `SizeContainer` | Size | 0 (all) | `equalText(item.Group, 'Size')` |
 | `RoleContainer` | Role | 0 | `equalText(item.Group, 'Role')` |
 | `DomainContainer` | Domain | 0 | `equalText(item.Group, 'Domain')` |
 | `MotivationContainer` | Motivation | 0 | `equalText(item.Group, 'Motivation')` |
@@ -121,7 +120,7 @@ All eight containers have `templateFilter: ["b7A1z6cSZO4dYTKT"]` so only
 ChangeSets can be dropped. The Boost container is `role: 3` so players
 cannot see it. `BaseContainer` holds the creature's chassis — its
 identity Tags, Traits, and granted powers — and is pipeline-ordered first
-so subsequent Size / Role / Domain / etc. ChangeSets layer on top of an
+so subsequent Role / Domain / etc. ChangeSets layer on top of an
 already-typed substrate. Cardinality is **at most one** (enforced by the
 drop hook) and **exactly one** for a well-formed monster (flagged as a
 warning by `validateMonster` when absent).
@@ -221,7 +220,7 @@ function deriveActor(actor):
   state.attacks = []
   state.description = [actor.system.props.Description ?? ""]
 
-  for group in [Base, Size, Role, Domain, Motivation, Loadout, Quirk, Boost]:
+  for group in [Base, Role, Domain, Motivation, Loadout, Quirk, Boost]:
     sets = actor.items
       .filter(i => i.system.template === "b7A1z6cSZO4dYTKT"
                 && i.system.props.Group === group)
@@ -302,7 +301,7 @@ Change item is deleted with its parent). Re-placing re-rolls.
 Implemented in `services/changeset-drop-hook.js`. The `preCreateItem`
 hook validates ChangeSet drops onto actors:
 
-1. **Cardinality**: Base, Size, Role, Domain accept at most one ChangeSet
+1. **Cardinality**: Base, Role, Domain accept at most one ChangeSet
    each. A second drop is rejected with a UI notification. Base is
    additionally expected to have exactly one — `validateMonster` warns
    when a monster has no Base attached.

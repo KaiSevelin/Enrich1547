@@ -26,8 +26,8 @@ const CHANGE_CONTAINER_KEY = "ChangeDisplayer";
 const REQUIREMENT_CONTAINER_KEY = "RequirementsDisplayer";
 
 // Base sits first so chassis Tags/Traits/Powers populate the cumulative state
-// before any layered customization (Size, Role, Domain, etc.) reads from it.
-const PIPELINE_ORDER = ["Base", "Size", "Role", "Domain", "Motivation", "Loadout", "Quirk", "Boost"];
+// before any layered customization (Role, Domain, etc.) reads from it.
+const PIPELINE_ORDER = ["Base", "Role", "Domain", "Motivation", "Loadout", "Quirk", "Boost"];
 
 // ============================================================================
 // Requirement Evaluation

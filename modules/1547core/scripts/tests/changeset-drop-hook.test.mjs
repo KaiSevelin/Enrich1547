@@ -119,7 +119,7 @@ console.log("validateChangeSetDrop: ForType...");
 // ============================================================================
 
 console.log("validateChangeSetDrop: cardinality...");
-for (const group of ["Size", "Role", "Domain"]) {
+for (const group of ["Role", "Domain"]) {
     resetNotifications();
     const existing = changeSet({ id: "existing", name: "Old", group });
     const incoming = changeSet({ id: "new", name: "New", group });
@@ -203,14 +203,14 @@ console.log("validateMonster: audits...");
 {
     const a = actor({
         items: [
-            changeSet({ id: "s1", name: "Big", group: "Size" }),
-            changeSet({ id: "s2", name: "Huge", group: "Size" })
+            changeSet({ id: "s1", name: "Wolf", group: "Role" }),
+            changeSet({ id: "s2", name: "Bear", group: "Role" })
         ]
     });
     const violations = validateMonster(a);
     const cardinalityV = violations.filter((v) => v.kind === "cardinality");
     assert.strictEqual(cardinalityV.length, 1);
-    assert.strictEqual(cardinalityV[0].group, "Size");
+    assert.strictEqual(cardinalityV[0].group, "Role");
     assert.strictEqual(cardinalityV[0].count, 2);
     console.log("  ✓ Detects duplicate singleton groups");
 }
@@ -228,7 +228,7 @@ console.log("validateMonster: audits...");
     console.log("  ✓ Detects ForType mismatches");
 }
 {
-    const a = actor({ type: "_template", items: [changeSet({ group: "Size" }), changeSet({ group: "Size" })] });
+    const a = actor({ type: "_template", items: [changeSet({ group: "Role" }), changeSet({ group: "Role" })] });
     assert.deepStrictEqual(validateMonster(a), []);
     console.log("  ✓ _template actor returns no violations");
 }

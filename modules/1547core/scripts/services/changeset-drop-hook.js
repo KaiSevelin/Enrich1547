@@ -23,7 +23,7 @@ const REQUIREMENT_CONTAINER_KEY = "RequirementsDisplayer";
 // exactly-one, which validateMonster reports separately as a missing-base
 // warning. Drop time can't enforce the lower bound — a freshly-created
 // actor legitimately starts with zero.
-const SINGLETON_GROUPS = new Set(["Base", "Size", "Role", "Domain"]);
+const SINGLETON_GROUPS = new Set(["Base", "Role", "Domain"]);
 
 function isChangeSet(item) {
     return item?.system?.template === CHANGESET_TEMPLATE_ID;

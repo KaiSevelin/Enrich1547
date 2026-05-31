@@ -30,7 +30,6 @@ console.log("  ✓ Empty items → 0");
 {
     const actor = {
         items: [
-            set("Size"),
             set("Role"),
             set("Domain"),
             set("Motivation"),
@@ -58,7 +57,7 @@ console.log("  ✓ Empty items → 0");
     const actor = {
         items: [
             set("Boost"),
-            set("Size"),
+            set("Domain"),
             set("Boost"),
             set("Role"),
             set("Boost")

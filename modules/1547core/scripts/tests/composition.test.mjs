@@ -110,11 +110,11 @@ console.log("Testing requirement evaluation...");
 {
     const actor = createMockActor();
     const cumulativeState = {
-        applicableChangeSets: { Size: "changeset-1" }
+        applicableChangeSets: { Domain: "changeset-1" }
     };
 
     const req = createMockRequirement("GroupPresent", {
-        GroupTarget: "Size"
+        GroupTarget: "Domain"
     });
 
     assert.strictEqual(evaluateRequirement(actor, req, cumulativeState), true);
@@ -127,7 +127,7 @@ console.log("Testing requirement evaluation...");
     console.log("✓ GroupPresent: group absent");
 
     const req3 = createMockRequirement("GroupPresent", {
-        GroupTarget: "Size",
+        GroupTarget: "Domain",
         negate: true
     });
     assert.strictEqual(evaluateRequirement(actor, req3, cumulativeState), false);
@@ -372,7 +372,7 @@ console.log("\nTesting full pipeline with real CSB data shape...");
         system: {
             template: "b7A1z6cSZO4dYTKT",
             props: {
-                Group: "Size",
+                Group: "Domain",
                 ForTypeAny: true,
                 ChangeDisplayer: { "ch-hp": { id: "ch-hp" } }
             }
