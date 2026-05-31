@@ -125,5 +125,9 @@
 {"_id":"RoAncnTu00000001","name":"Ancient (TheUnseen)","group":"Role","forTypeAny":false,"ForType_TheUnseen":true,"notes":"Role: Ancient — primordial outsider, jinn, smokeless fire. +1 Faith, grants Stand Older Than the Place."},
 {"_id":"RoLrkrZo00000001","name":"Lurker (Zone)","group":"Role","forTypeAny":false,"ForType_Zone":true,"notes":"Role: Lurker — small zone-being at threshold and edge. +1 Dex, grants Wait in the Wrong Corner."},
 {"_id":"RoColoZo00000001","name":"Colossus (Zone)","group":"Role","forTypeAny":false,"ForType_Zone":true,"notes":"Role: Colossus — catastrophic-scale zone-being. +1 Strength, grants Loom Across the Field."},
-{"_id":"DmCursBs00000001","name":"Cursed","group":"Domain","forTypeAny":false,"notes":"Domain: Cursed — multi-family (Beast, People, Undead). +1 Power, grants Bear the Curse.","ForType_Beast":true,"ForType_People":true,"ForType_Undead":true}
+{"_id":"DmCursBs00000001","name":"Cursed","group":"Domain","forTypeAny":false,"notes":"Domain: Cursed — multi-family (Beast, People, Undead). +1 Power, grants Bear the Curse.","ForType_Beast":true,"ForType_People":true,"ForType_Undead":true},
+{"_id":"RoMnorNu00000001","name":"Minor (Unnatural)","group":"Role","forTypeAny":false,"ForType_Unnatural":true,"notes":"Role: Minor — imp, wisp, summoned servant. Lesser outsider. +1 Dex, grants Pester the Mortal."},
+{"_id":"RoMjorNu00000001","name":"Major (Unnatural)","group":"Role","forTypeAny":false,"ForType_Unnatural":true,"notes":"Role: Major — named outsider, grimoire-listed demon or scriptural angel. +1 Power, grants Exert the Named Power."},
+{"_id":"RoNoblNu00000001","name":"Noble (Unnatural)","group":"Role","forTypeAny":false,"ForType_Unnatural":true,"notes":"Role: Noble — marquis, duke, count, principality. Court-rank outsider with retinue. +1 Cha, grants Command the Lesser."},
+{"_id":"RoPrncNu00000001","name":"Prince (Unnatural)","group":"Role","forTypeAny":false,"ForType_Unnatural":true,"notes":"Role: Prince — outsider royalty, king, arch-power. Highest office of the outsider hierarchy. +1 Faith, grants Issue the Decree."}
 ]
