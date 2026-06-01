@@ -56,6 +56,30 @@
               "label": "Broken When:",
               "defaultValue": "",
               "style": "sheet"
+            },
+            {
+              "key": "ActiveObligations",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Active Obligations:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "ObligationLog",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Obligation Log:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "EventLog",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Event Log:",
+              "defaultValue": "",
+              "style": "sheet"
             }
           ]
         },
