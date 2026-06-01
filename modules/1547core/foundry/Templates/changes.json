@@ -245,7 +245,7 @@
 {"_id":"DmSmkFUsSta00001","name":"Smokeless Fire (TheUnseen) — Power +1","kind":"Stat","statTarget":"Stats_PowerMod","statOp":"Add","statValue":1,"parentChangeSetId":"DmSmkFUs00000001","folder":"Monster Changes"},
 {"_id":"DmSmkFUsGnt00001","name":"Grant: Smoke Passage","kind":"ItemGrant","itemGrantMode":"Direct","itemGrantRef":{"MmSmokePassage01":{"name":"Smoke Passage","id":"MmSmokePassage01","uuid":"Item.MmSmokePassage01"}},"parentChangeSetId":"DmSmkFUs00000001","folder":"Monster Changes"},
 {"_id":"DmWntrUsTag00001","name":"Winter (TheUnseen) — Tag","kind":"Tag","tagName":"HearthBound","parentChangeSetId":"DmWntrUs00000001","folder":"Monster Changes"},
-{"_id":"DmWntrUsTrt00001","name":"Winter (TheUnseen) — Trait","kind":"Trait","traitName":"Judge of House and Labor","traitDescription":"Winter queens, snow matrons, rulers of sleep, labor, and harsh blessing.","parentChangeSetId":"DmWntrUs00000001","folder":"Monster Changes"},
+{"_id":"DmWntrUsTrt00001","name":"Winter (TheUnseen) — Trait","kind":"Trait","traitName":"Judge of Sleep and Snow","traitDescription":"Winter queens, snow matrons, rulers of sleep, labor, and harsh blessing.","parentChangeSetId":"DmWntrUs00000001","folder":"Monster Changes"},
 {"_id":"DmWntrUsSta00001","name":"Winter (TheUnseen) — Faith +1","kind":"Stat","statTarget":"Stats_FaithMod","statOp":"Add","statValue":1,"parentChangeSetId":"DmWntrUs00000001","folder":"Monster Changes"},
 {"_id":"DmWntrUsGnt00001","name":"Grant: Snow Blessing","kind":"ItemGrant","itemGrantMode":"Direct","itemGrantRef":{"MmSnowBlessing01":{"name":"Snow Blessing","id":"MmSnowBlessing01","uuid":"Item.MmSnowBlessing01"}},"parentChangeSetId":"DmWntrUs00000001","folder":"Monster Changes"},
 {"_id":"QrHlSnHfTag00001","name":"Half-Seen (HiddenFolk) — Tag","kind":"Tag","tagName":"HalfSeen","parentChangeSetId":"QrHlSnHf00000001","folder":"Monster Changes"},
@@ -614,5 +614,8 @@
 {"_id":"BoBWpDUvTag00001","name":"Boost: Weapon Die — Tag","kind":"Tag","tagName":"BoostedWeaponDie","parentChangeSetId":"BoBWpDUv00000001","folder":"Monster Changes"},
 {"_id":"BoBWpDUvTrt00001","name":"Boost: Weapon Die — Trait","kind":"Trait","traitName":"Sharper Edge","traitDescription":"Body-weapon hits harder — an extra Heavy die added to the natural weapon roll.","parentChangeSetId":"BoBWpDUv00000001","folder":"Monster Changes"},
 {"_id":"BoBArDUvTag00001","name":"Boost: Armor Die — Tag","kind":"Tag","tagName":"BoostedArmorDie","parentChangeSetId":"BoBArDUv00000001","folder":"Monster Changes"},
-{"_id":"BoBArDUvTrt00001","name":"Boost: Armor Die — Trait","kind":"Trait","traitName":"Thickened Hide","traitDescription":"Natural defense hardens — an extra Armor die added to the natural armor.","parentChangeSetId":"BoBArDUv00000001","folder":"Monster Changes"}
+{"_id":"BoBArDUvTrt00001","name":"Boost: Armor Die — Trait","kind":"Trait","traitName":"Thickened Hide","traitDescription":"Natural defense hardens — an extra Armor die added to the natural armor.","parentChangeSetId":"BoBArDUv00000001","folder":"Monster Changes"},
+{"_id":"DmInfnNuStaP0001","name":"Infernal — Power — Stats_PowerMod +1","kind":"Stat","statTarget":"Stats_PowerMod","statOp":"Add","statValue":1,"parentChangeSetId":"DmInfnNu00000001","folder":"Monster Changes"},
+{"_id":"DmAnglNuStaP0001","name":"Angelic — Power — Stats_PowerMod +1","kind":"Stat","statTarget":"Stats_PowerMod","statOp":"Add","statValue":1,"parentChangeSetId":"DmAnglNu00000001","folder":"Monster Changes"},
+{"_id":"DmGlemCnStaS0001","name":"Golem — Stamina — Stats_StaminaMod +1","kind":"Stat","statTarget":"Stats_StaminaMod","statOp":"Add","statValue":1,"parentChangeSetId":"DmGlemCn00000001","folder":"Monster Changes"}
 ]

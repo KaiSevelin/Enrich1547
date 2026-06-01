@@ -1,33 +1,108 @@
 const MODULE_ID = "1547core";
 const DEFAULT_IMAGE = "icons/svg/mystery-man.svg";
+const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
 
 /**
- * Resolve the portrait/image used for a composed monster actor.
+ * Resolve the portrait/image for an actor by walking the resolution ladder:
+ *   1. flags["1547core"].portraitOverride (explicit GM override)
+ *   2. PortraitKey lookup in registry (per-actor key set in flags or props)
+ *   3. Type:Domain:Role composition lookup
+ *   4. Type:Role composition lookup
+ *   5. Type:Domain composition lookup
+ *   6. Type composition lookup
+ *   7. actor.img (the Foundry portrait field)
+ *   8. mystery-man default
  *
- * Current policy:
- * - Image is derived, not granted by Change items.
- * - The actor's authored/base image remains the default resolved image.
- * - Future resolver layers may inspect composition state (type, domain, role,
- *   visual theme hints) before falling back to the base actor image.
+ * Registry source: world setting "1547core.portraitRegistry" — a flat map of
+ * colon-delimited keys to image paths, populated by Setup Data from
+ * `foundry/Templates/portrait-registry.json` ({ registry: { "Beast": ..., ... } }).
+ *
+ * If the registry is empty or no key matches, the resolver falls back to
+ * actor.img then mystery-man — so the system never breaks even without art.
  */
-export function resolveMonsterImage(actor, { state = null } = {}) {
+
+function isChangeSet(item) {
+    return item?.system?.template === CHANGESET_TEMPLATE_ID;
+}
+
+function extractConceptFromName(name) {
+    if (!name) return null;
+    const match = String(name).match(/^(.+?)\s*\(/);
+    return (match ? match[1] : String(name)).trim() || null;
+}
+
+function findGroupConcept(actor, groupName) {
+    for (const item of actor.items ?? []) {
+        if (!isChangeSet(item)) continue;
+        const itemGroup = String(item.system?.props?.Group ?? "").trim();
+        if (itemGroup !== groupName) continue;
+        return extractConceptFromName(item.name);
+    }
+    return null;
+}
+
+function getPortraitRegistry() {
+    try {
+        return game.settings?.get(MODULE_ID, "portraitRegistry") ?? {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function lookupRegistry(registry, ...parts) {
+    const filtered = parts.filter(p => typeof p === "string" && p.length > 0);
+    if (!filtered.length) return null;
+    const key = filtered.join(":");
+    const hit = registry?.[key];
+    return (typeof hit === "string" && hit.length > 0) ? hit : null;
+}
+
+export function resolveMonsterImage(actor) {
     if (!actor) return DEFAULT_IMAGE;
 
-    const resolvedState = state
-        ?? game.modules.get(MODULE_ID)?.api?.composition?.getEffectiveActorCached?.(actor)
-        ?? null;
-
+    // Step 1: explicit override
     const portraitOverride = String(actor.flags?.[MODULE_ID]?.portraitOverride ?? "").trim();
     if (portraitOverride) return portraitOverride;
 
-    const portraitKey = String(resolvedState?.effectiveProps?.PortraitKey ?? "").trim();
-    const visualTheme = String(resolvedState?.effectiveProps?.VisualTheme ?? "").trim();
+    const registry = getPortraitRegistry();
 
-    // Reserved for future lookup expansion.
-    void portraitKey;
-    void visualTheme;
+    // Step 2: PortraitKey (set on actor flags or props for one-off named portraits)
+    const portraitKey = String(actor.flags?.[MODULE_ID]?.portraitKey
+        ?? actor.system?.props?.PortraitKey
+        ?? "").trim();
+    if (portraitKey) {
+        const direct = lookupRegistry(registry, portraitKey);
+        if (direct) return direct;
+    }
 
-    return actor.img || DEFAULT_IMAGE;
+    // Steps 3-6: composition cascade
+    const baseKey = String(actor.system?.props?.TypeDropdown ?? "").trim() || null;
+    if (baseKey) {
+        const domainKey = findGroupConcept(actor, "Domain");
+        const roleKey = findGroupConcept(actor, "Role");
+
+        // 3. Type + Domain + Role (most specific)
+        const tdr = lookupRegistry(registry, baseKey, domainKey, roleKey);
+        if (tdr) return tdr;
+
+        // 4. Type + Role
+        const tr = lookupRegistry(registry, baseKey, roleKey);
+        if (tr) return tr;
+
+        // 5. Type + Domain
+        const td = lookupRegistry(registry, baseKey, domainKey);
+        if (td) return td;
+
+        // 6. Type only
+        const t = lookupRegistry(registry, baseKey);
+        if (t) return t;
+    }
+
+    // Step 7: actor.img (Foundry's default portrait field)
+    if (actor.img && actor.img !== DEFAULT_IMAGE) return actor.img;
+
+    // Step 8: mystery-man default — never breaks anything
+    return DEFAULT_IMAGE;
 }
 
 export function registerMonsterImageResolverService() {

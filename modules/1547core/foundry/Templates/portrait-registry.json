@@ -1,0 +1,9 @@
+{
+  "_comment": "Portrait registry — maps composition keys to image paths. Lookup order in monster-image-resolver-service.js: Type:Domain:Role → Type:Role → Type:Domain → Type → actor.img → mystery-man. Keys are colon-delimited. Type names match TypeDropdown values (HiddenFolk, Beast, Undead, etc.). Domain/Role names match ChangeSet concept names without the (Family) parenthetical (e.g., 'Wood', 'Wolf', 'Sidhe'). Add entries here; re-run Setup Data to load.",
+  "_example_keys": {
+    "HiddenFolk": "modules/1547core/art/portraits/hidden-folk.webp",
+    "Beast:Wolf": "modules/1547core/art/portraits/beast-wolf.webp",
+    "Beast:Wood:Wolf": "modules/1547core/art/portraits/beast-wood-wolf.webp"
+  },
+  "registry": {}
+}

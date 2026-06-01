@@ -1445,6 +1445,14 @@ export function register1547ModuleSettings() {
         default: []
     });
 
+    game.settings.register(MODULE_ID, "portraitRegistry", {
+        name: "Portrait Registry",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: {}
+    });
+
     game.settings.register(MODULE_ID, "monsterData", {
         name: "Monster Data",
         scope: "world",
@@ -1738,7 +1746,7 @@ function createModuleSetupFormApplicationClass() {
         }
 
         async #loadSourceBackedData() {
-            const [maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts] = await Promise.all([
+            const [maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts, portraitRegistryFile] = await Promise.all([
                 this.#loadDataset("maneuvers.json"),
                 this.#loadDataset("weapons.json"),
                 this.#loadDataset("armors.json"),
@@ -1754,7 +1762,8 @@ function createModuleSetupFormApplicationClass() {
                 this.#loadDataset("changesets.json"),
                 this.#loadDataset("changes.json"),
                 this.#loadDataset("requirements.json"),
-                this.#loadDataset("pacts.json")
+                this.#loadDataset("pacts.json"),
+                this.#loadDataset("portrait-registry.json").catch(() => ({ registry: {} }))
             ]);
 
             await Promise.all([
@@ -1774,6 +1783,7 @@ function createModuleSetupFormApplicationClass() {
                 game.settings.set(MODULE_ID, "changeData", changes),
                 game.settings.set(MODULE_ID, "requirementData", requirements),
                 game.settings.set(MODULE_ID, "pactData", pacts),
+                game.settings.set(MODULE_ID, "portraitRegistry", (portraitRegistryFile && portraitRegistryFile.registry) || {}),
                 game.settings.set(MODULE_ID, "lastDataSetupAt", new Date().toISOString())
             ]);
 
