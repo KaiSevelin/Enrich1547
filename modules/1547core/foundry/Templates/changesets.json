@@ -167,5 +167,15 @@
 {"_id":"MtMakrUv00000001","name":"Maker","group":"Motivation","forTypeAny":true,"notes":"Motivation (universal): Maker — compulsively creates. Grants Add to the Work.","folder":"Monster Motivations"},
 {"_id":"MtSprdUv00000001","name":"Spread the Word","group":"Motivation","forTypeAny":true,"notes":"Motivation (universal): Spread the Word — proselytizes for a doctrine. Grants Carry the Doctrine.","folder":"Monster Motivations"},
 {"_id":"MtSeekUv00000001","name":"Seek What Was Lost","group":"Motivation","forTypeAny":true,"notes":"Motivation (universal): Seek What Was Lost — quest-driven search. Grants Find the Trail.","folder":"Monster Motivations"},
-{"_id":"MtWtnsUv00000001","name":"Witness","group":"Motivation","forTypeAny":true,"notes":"Motivation (universal): Witness — observes, intervenes when crossed. Grants Note the Crossing.","folder":"Monster Motivations"}
+{"_id":"MtWtnsUv00000001","name":"Witness","group":"Motivation","forTypeAny":true,"notes":"Motivation (universal): Witness — observes, intervenes when crossed. Grants Note the Crossing.","folder":"Monster Motivations"},
+{"_id":"BoBStrUv00000001","name":"Boost: Strength","group":"Boost","forTypeAny":true,"notes":"Boost (universal, stackable): Strengthened. +1 Stats_StrengthMod.","folder":"Monster Boosts"},
+{"_id":"BoBDexUv00000001","name":"Boost: Dexterity","group":"Boost","forTypeAny":true,"notes":"Boost (universal, stackable): Quickened. +1 Stats_DexterityMod.","folder":"Monster Boosts"},
+{"_id":"BoBStaUv00000001","name":"Boost: Stamina","group":"Boost","forTypeAny":true,"notes":"Boost (universal, stackable): Hardened. +1 Stats_StaminaMod.","folder":"Monster Boosts"},
+{"_id":"BoBIntUv00000001","name":"Boost: Intelligence","group":"Boost","forTypeAny":true,"notes":"Boost (universal, stackable): Sharpened. +1 Stats_IntelligenceMod.","folder":"Monster Boosts"},
+{"_id":"BoBFthUv00000001","name":"Boost: Faith","group":"Boost","forTypeAny":true,"notes":"Boost (universal, stackable): Hallowed. +1 Stats_FaithMod.","folder":"Monster Boosts"},
+{"_id":"BoBPwrUv00000001","name":"Boost: Power","group":"Boost","forTypeAny":true,"notes":"Boost (universal, stackable): Made Mighty. +1 Stats_PowerMod.","folder":"Monster Boosts"},
+{"_id":"BoBChaUv00000001","name":"Boost: Charisma","group":"Boost","forTypeAny":true,"notes":"Boost (universal, stackable): Commanding. +1 Stats_CharismaMod.","folder":"Monster Boosts"},
+{"_id":"BoBMvtUv00000001","name":"Boost: Movement","group":"Boost","forTypeAny":true,"notes":"Boost (universal, stackable): Swift-Going. +1 MoveGround.","folder":"Monster Boosts"},
+{"_id":"BoBWpDUv00000001","name":"Boost: Weapon Die","group":"Boost","forTypeAny":true,"notes":"Boost (universal, stackable): adds a Heavy die to an equipped natural weapon. Rerolled if none equipped.","folder":"Monster Boosts"},
+{"_id":"BoBArDUv00000001","name":"Boost: Armor Die","group":"Boost","forTypeAny":true,"notes":"Boost (universal, stackable): adds an Armor die to equipped natural armor. Rerolled if none equipped.","folder":"Monster Boosts"}
 ]

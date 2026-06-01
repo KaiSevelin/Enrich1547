@@ -715,6 +715,50 @@ function buildSpellSupportRollTableDoc(table, folderId, folderHint = null) {
     };
 }
 
+function buildBoostRollTableDoc(table, folderId, folderHint = null) {
+    const normalized = normalizeSourceEntry(table, "boostRollTable", "RollTable");
+    const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
+    // Treat entry.roll as the d-result range (3d6 → roll in 3..18). Use entry.roll for both min and max.
+    const documentResultType = globalThis.CONST?.TABLE_RESULT_TYPES?.DOCUMENT ?? 1;
+
+    const results = entries.map((entry, index) => ({
+        _id: deriveFoundryIdFromText(`${normalized._id}:${entry.roll ?? index}:result`),
+        type: documentResultType,
+        documentCollection: "Item",
+        documentId: entry.boostId,
+        text: entry.label ?? `Boost ${index + 1}`,
+        img: "icons/svg/upgrade.svg",
+        weight: 1,
+        range: [entry.roll ?? (index + 1), entry.roll ?? (index + 1)],
+        drawn: false,
+        flags: {
+            [SOURCE_FLAG_SCOPE]: {
+                boostEntry: foundry.utils.deepClone(entry)
+            }
+        }
+    }));
+
+    return {
+        _id: normalized._id,
+        name: normalized.name,
+        description: `Roll ${normalized.drawFormula ?? "3d6"} on the standard boost table.`,
+        results,
+        formula: normalized.drawFormula ?? "3d6",
+        replacement: true,
+        displayRoll: true,
+        folder: folderId ?? null,
+        flags: {
+            [SOURCE_FLAG_SCOPE]: {
+                sourceKey: String(table?.id ?? table?.name ?? "").trim(),
+                folderHint: folderHint ?? normalized.folder ?? null,
+                sourceData: normalized,
+                drawFormula: normalized.drawFormula ?? "3d6"
+            }
+        },
+        ownership: { default: 0 }
+    };
+}
+
 function inferManeuverEffectFamily(maneuver) {
     const tags = new Set(maneuver.tags ?? []);
     if (maneuver.name === "Overwatch") return "prepared-effect";
@@ -1285,6 +1329,14 @@ export function register1547ModuleSettings() {
         default: []
     });
 
+    game.settings.register(MODULE_ID, "boostRollTableData", {
+        name: "Boost Roll Table Data",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: []
+    });
+
     game.settings.register(MODULE_ID, "monsterData", {
         name: "Monster Data",
         scope: "world",
@@ -1418,6 +1470,7 @@ function createModuleSetupFormApplicationClass() {
             const storedRitualStepRollTables = game.settings.get(MODULE_ID, "ritualStepRollTableData") ?? [];
             const storedSpellFailureRollTables = game.settings.get(MODULE_ID, "spellFailureRollTableData") ?? [];
             const storedSpellSupportRollTables = game.settings.get(MODULE_ID, "spellSupportRollTableData") ?? [];
+            const storedBoostRollTables = game.settings.get(MODULE_ID, "boostRollTableData") ?? [];
             const storedMonsters = game.settings.get(MODULE_ID, "monsterData") ?? [];
             const storedChangeSets = game.settings.get(MODULE_ID, "changeSetData") ?? [];
             const storedChanges = game.settings.get(MODULE_ID, "changeData") ?? [];
@@ -1435,6 +1488,7 @@ function createModuleSetupFormApplicationClass() {
                 storedRitualStepRollTableCount: Array.isArray(storedRitualStepRollTables) ? storedRitualStepRollTables.length : 0,
                 storedSpellFailureRollTableCount: Array.isArray(storedSpellFailureRollTables) ? storedSpellFailureRollTables.length : 0,
                 storedSpellSupportRollTableCount: Array.isArray(storedSpellSupportRollTables) ? storedSpellSupportRollTables.length : 0,
+                storedBoostRollTableCount: Array.isArray(storedBoostRollTables) ? storedBoostRollTables.length : 0,
                 storedMonsterCount: Array.isArray(storedMonsters) ? storedMonsters.length : 0,
                 storedChangeSetCount: Array.isArray(storedChangeSets) ? storedChangeSets.length : 0,
                 storedChangeCount: Array.isArray(storedChanges) ? storedChanges.length : 0,
@@ -1473,6 +1527,7 @@ function createModuleSetupFormApplicationClass() {
                     ritualStepRollTables,
                     spellFailureRollTables,
                     spellSupportRollTables,
+                    boostRollTables,
                     monsters,
                     monsterMagic,
                     changeSets,
@@ -1490,6 +1545,7 @@ function createModuleSetupFormApplicationClass() {
                     ritualStepRollTables,
                     spellFailureRollTables,
                     spellSupportRollTables,
+                    boostRollTables,
                     monsters,
                     monsterMagic,
                     changeSets,
@@ -1498,7 +1554,7 @@ function createModuleSetupFormApplicationClass() {
                 });
 
                 ui.notifications.info(
-                `1547 Core: stored and synced ${maneuvers.length} maneuvers, ${weapons.length} weapons, ${armors.length} armors, ${ammunition.length} ammunition items, ${weaponModifiers.length} weapon modifiers, ${spells.length} spells, ${ritualStepRollTables.length} ritual step roll tables, ${spellFailureRollTables.length} spell failure roll tables, ${spellSupportRollTables.length} spell support roll tables, ${monsters.length} monsters, ${changeSets.length} change sets, ${changes.length} changes, and ${requirements.length} requirements from source data.`
+                `1547 Core: stored and synced ${maneuvers.length} maneuvers, ${weapons.length} weapons, ${armors.length} armors, ${ammunition.length} ammunition items, ${weaponModifiers.length} weapon modifiers, ${spells.length} spells, ${ritualStepRollTables.length} ritual step roll tables, ${spellFailureRollTables.length} spell failure roll tables, ${spellSupportRollTables.length} spell support roll tables, ${boostRollTables.length} boost roll tables, ${monsters.length} monsters, ${changeSets.length} change sets, ${changes.length} changes, and ${requirements.length} requirements from source data.`
                 );
                 this.render(false);
             } catch (error) {
@@ -1570,7 +1626,7 @@ function createModuleSetupFormApplicationClass() {
         }
 
         async #loadSourceBackedData() {
-            const [maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, monsters, monsterMagic, changeSets, changes, requirements] = await Promise.all([
+            const [maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements] = await Promise.all([
                 this.#loadDataset("maneuvers.json"),
                 this.#loadDataset("weapons.json"),
                 this.#loadDataset("armors.json"),
@@ -1580,6 +1636,7 @@ function createModuleSetupFormApplicationClass() {
                 this.#loadDataset("ritual-step-roll-tables.json"),
                 this.#loadDataset("spell-failure-roll-tables.json"),
                 this.#loadDataset("spell-support-roll-tables.json"),
+                this.#loadDataset("boost-roll-tables.json"),
                 this.#loadDataset("monsters.json"),
                 this.#loadDataset("monster-magic.json"),
                 this.#loadDataset("changesets.json"),
@@ -1597,6 +1654,7 @@ function createModuleSetupFormApplicationClass() {
                 game.settings.set(MODULE_ID, "ritualStepRollTableData", ritualStepRollTables),
                 game.settings.set(MODULE_ID, "spellFailureRollTableData", spellFailureRollTables),
                 game.settings.set(MODULE_ID, "spellSupportRollTableData", spellSupportRollTables),
+                game.settings.set(MODULE_ID, "boostRollTableData", boostRollTables),
                 game.settings.set(MODULE_ID, "monsterData", monsters),
                 game.settings.set(MODULE_ID, "monsterMagicData", monsterMagic),
                 game.settings.set(MODULE_ID, "changeSetData", changeSets),
@@ -1605,7 +1663,7 @@ function createModuleSetupFormApplicationClass() {
                 game.settings.set(MODULE_ID, "lastDataSetupAt", new Date().toISOString())
             ]);
 
-            return { maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, monsters, monsterMagic, changeSets, changes, requirements };
+            return { maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements };
         }
 
         /**
@@ -1695,6 +1753,7 @@ function createModuleSetupFormApplicationClass() {
             const ritualStepRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Ritual Step Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#5b6276" });
             const spellFailureRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Spell Failure Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#6d5b5b" });
             const spellSupportRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Spell Support Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#5b6d63" });
+            const boostRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Boost Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#6d635b" });
             const changeSetsFolder = await this.#getOrCreateFolder({ folderName: "Change Sets", type: "Item", parentId: coreItemFolder.id, color: "#6d5b51" });
             const changesFolder = await this.#getOrCreateFolder({ folderName: "Changes", type: "Item", parentId: coreItemFolder.id, color: "#6d6551" });
             const requirementsFolder = await this.#getOrCreateFolder({ folderName: "Requirements", type: "Item", parentId: coreItemFolder.id, color: "#5b5b6d" });
@@ -1749,6 +1808,7 @@ function createModuleSetupFormApplicationClass() {
                 ritualStepRollTablesFolder,
                 spellFailureRollTablesFolder,
                 spellSupportRollTablesFolder,
+                boostRollTablesFolder,
                 changeSetsFolder,
                 changesFolder,
                 requirementsFolder,
@@ -1758,7 +1818,7 @@ function createModuleSetupFormApplicationClass() {
             };
         }
 
-        async #importItemsFromData({ maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, monsters, monsterMagic, changeSets, changes, requirements }) {
+        async #importItemsFromData({ maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements }) {
             const [actorTemplate, maneuverTemplate, weaponTemplate, armorTemplate, ammoTemplate, weaponModifierTemplate, onHitEffectTemplate, supernaturalMarkTemplate, monsterMagicTemplate, spellTemplate, pactTemplate, ritualTemplate, ritualStepTemplate, usageEffectTemplate, changeSetTemplate, changeTemplate, requirementTemplate] = await Promise.all([
                 this.#loadTemplate(TEMPLATE_FILES.actorTemplate),
                 this.#loadTemplate(TEMPLATE_FILES.maneuver),
@@ -1872,6 +1932,9 @@ function createModuleSetupFormApplicationClass() {
             );
             const spellSupportRollTableDocs = spellSupportRollTables.map((table) =>
                 buildSpellSupportRollTableDoc(table, folders.spellSupportRollTablesFolder.id, "Spell Support Tables")
+            );
+            const boostRollTableDocs = (boostRollTables ?? []).map((table) =>
+                buildBoostRollTableDoc(table, folders.boostRollTablesFolder.id, "Boost Tables")
             );
             const changeSetDocs = changeSets.map((changeSet) => {
                 const normalized = normalizeSourceEntry(changeSet, "changeset");
@@ -2019,6 +2082,11 @@ function createModuleSetupFormApplicationClass() {
                 validIds: new Set(spellSupportRollTableDocs.map((doc) => doc._id)),
                 folderHint: "Spell Support Tables"
             });
+            await pruneManagedFolderRollTables({
+                folderId: folders.boostRollTablesFolder.id,
+                validIds: new Set(boostRollTableDocs.map((doc) => doc._id)),
+                folderHint: "Boost Tables"
+            });
             for (const groupName of CHANGE_SET_GROUPS) {
                 const folder = folders.changeSetGroupFolders[groupName];
                 await pruneManagedFolderItems({
@@ -2086,11 +2154,12 @@ function createModuleSetupFormApplicationClass() {
                 ...changeDocs,
                 ...requirementDocs
             ];
-            const [itemResult, ritualRollTableResult, spellFailureRollTableResult, spellSupportRollTableResult, actorResult] = await Promise.all([
+            const [itemResult, ritualRollTableResult, spellFailureRollTableResult, spellSupportRollTableResult, boostRollTableResult, actorResult] = await Promise.all([
                 upsertWorldItems(docs),
                 upsertWorldRollTables(ritualStepRollTableDocs),
                 upsertWorldRollTables(spellFailureRollTableDocs),
                 upsertWorldRollTables(spellSupportRollTableDocs),
+                upsertWorldRollTables(boostRollTableDocs),
                 upsertWorldActors([
                     makeActorDoc(actorTemplate, null, "Actor Template"),
                     ...monsterDocs
@@ -2100,7 +2169,7 @@ function createModuleSetupFormApplicationClass() {
             return {
                 totalItems: docs.length,
                 totalActors: monsterDocs.length,
-                totalRollTables: ritualStepRollTableDocs.length + spellFailureRollTableDocs.length + spellSupportRollTableDocs.length,
+                totalRollTables: ritualStepRollTableDocs.length + spellFailureRollTableDocs.length + spellSupportRollTableDocs.length + boostRollTableDocs.length,
                 createdItems: itemResult.created,
                 updatedItems: itemResult.updated,
                 createdRollTables: ritualRollTableResult.created + spellFailureRollTableResult.created + spellSupportRollTableResult.created,
