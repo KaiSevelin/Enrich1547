@@ -783,6 +783,46 @@ function buildPactRollTableDoc(pact, folderId, folderHint = null) {
     };
 }
 
+function buildSupernaturalMarkProps(mark) {
+    const sources = Array.isArray(mark.markSource) ? mark.markSource : (mark.markSource ? [mark.markSource] : []);
+    const isBlessing = (mark.markNature ?? "") === "Blessing";
+    const isCurse = (mark.markNature ?? "") === "Curse";
+    const isMixed = (mark.markNature ?? "") === "Mixed";
+    return {
+        Description: mark.description ?? "",
+        MarkNature: mark.markNature ?? "Blessing",
+        Blessing: isBlessing,
+        Curse: isCurse,
+        Mixed: isMixed,
+        MarkScope: mark.markScope ?? "Minor",
+        Major: (mark.markScope ?? "Minor") === "Major",
+        Minor: (mark.markScope ?? "Minor") === "Minor",
+        MarkSource: sources.join(", "),
+        Bloodline: sources.includes("Bloodline"),
+        Faith: sources.includes("Faith"),
+        Pagan: sources.includes("Pagan"),
+        Ritual: sources.includes("Ritual"),
+        Zone: sources.includes("Zone"),
+        Mark: sources.includes("Mark"),
+        Pact: sources.includes("Pact"),
+        Visibility: mark.visibility ?? "Hidden",
+        Hidden: (mark.visibility ?? "Hidden") === "Hidden",
+        Visible: (mark.visibility ?? "Hidden") === "Visible",
+        VisibleTell: (mark.visibility ?? "Hidden") === "VisibleTell",
+        SocialStanding: mark.socialStanding ?? "Suspect",
+        Potency: mark.potency ?? "Manifest",
+        TriggerType: mark.triggerType ?? "Passive",
+        TriggerCondition: mark.triggerCondition ?? "",
+        TriggerResponse: mark.triggerResponse ?? "",
+        BearerNotes: mark.bearerNotes ?? "",
+        RemovalConditions: mark.removalConditions ?? "",
+        TransmissionNotes: mark.transmissionNotes ?? "",
+        SocialConsequences: mark.socialConsequences ?? "",
+        MarkEffects: Array.isArray(mark.markEffects) ? foundry.utils.deepClone(mark.markEffects) : [],
+        GrantedSpells: Array.isArray(mark.grantedSpells) ? foundry.utils.deepClone(mark.grantedSpells) : []
+    };
+}
+
 function buildPactProps(pact) {
     return {
         Description: pact.description ?? "",
@@ -1453,6 +1493,14 @@ export function register1547ModuleSettings() {
         default: {}
     });
 
+    game.settings.register(MODULE_ID, "supernaturalMarkData", {
+        name: "Supernatural Mark Data",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: []
+    });
+
     game.settings.register(MODULE_ID, "monsterData", {
         name: "Monster Data",
         scope: "world",
@@ -1588,6 +1636,7 @@ function createModuleSetupFormApplicationClass() {
             const storedSpellSupportRollTables = game.settings.get(MODULE_ID, "spellSupportRollTableData") ?? [];
             const storedBoostRollTables = game.settings.get(MODULE_ID, "boostRollTableData") ?? [];
             const storedPacts = game.settings.get(MODULE_ID, "pactData") ?? [];
+            const storedSupernaturalMarks = game.settings.get(MODULE_ID, "supernaturalMarkData") ?? [];
             const storedMonsters = game.settings.get(MODULE_ID, "monsterData") ?? [];
             const storedChangeSets = game.settings.get(MODULE_ID, "changeSetData") ?? [];
             const storedChanges = game.settings.get(MODULE_ID, "changeData") ?? [];
@@ -1607,6 +1656,7 @@ function createModuleSetupFormApplicationClass() {
                 storedSpellSupportRollTableCount: Array.isArray(storedSpellSupportRollTables) ? storedSpellSupportRollTables.length : 0,
                 storedBoostRollTableCount: Array.isArray(storedBoostRollTables) ? storedBoostRollTables.length : 0,
                 storedPactCount: Array.isArray(storedPacts) ? storedPacts.length : 0,
+                storedSupernaturalMarkCount: Array.isArray(storedSupernaturalMarks) ? storedSupernaturalMarks.length : 0,
                 storedMonsterCount: Array.isArray(storedMonsters) ? storedMonsters.length : 0,
                 storedChangeSetCount: Array.isArray(storedChangeSets) ? storedChangeSets.length : 0,
                 storedChangeCount: Array.isArray(storedChanges) ? storedChanges.length : 0,
@@ -1651,7 +1701,8 @@ function createModuleSetupFormApplicationClass() {
                     changeSets,
                     changes,
                     requirements,
-                    pacts
+                    pacts,
+                    supernaturalMarks
                 } = await this.#loadSourceBackedData();
 
                 await this.#importItemsFromData({
@@ -1670,11 +1721,12 @@ function createModuleSetupFormApplicationClass() {
                     changeSets,
                     changes,
                     requirements,
-                    pacts
+                    pacts,
+                    supernaturalMarks
                 });
 
                 ui.notifications.info(
-                `1547 Core: stored and synced ${maneuvers.length} maneuvers, ${weapons.length} weapons, ${armors.length} armors, ${ammunition.length} ammunition items, ${weaponModifiers.length} weapon modifiers, ${spells.length} spells, ${ritualStepRollTables.length} ritual step roll tables, ${spellFailureRollTables.length} spell failure roll tables, ${spellSupportRollTables.length} spell support roll tables, ${boostRollTables.length} boost roll tables, ${pacts.length} pacts, ${monsters.length} monsters, ${changeSets.length} change sets, ${changes.length} changes, and ${requirements.length} requirements from source data.`
+                `1547 Core: stored and synced ${maneuvers.length} maneuvers, ${weapons.length} weapons, ${armors.length} armors, ${ammunition.length} ammunition items, ${weaponModifiers.length} weapon modifiers, ${spells.length} spells, ${ritualStepRollTables.length} ritual step roll tables, ${spellFailureRollTables.length} spell failure roll tables, ${spellSupportRollTables.length} spell support roll tables, ${boostRollTables.length} boost roll tables, ${pacts.length} pacts, ${(supernaturalMarks ?? []).length} supernatural marks, ${monsters.length} monsters, ${changeSets.length} change sets, ${changes.length} changes, and ${requirements.length} requirements from source data.`
                 );
                 this.render(false);
             } catch (error) {
@@ -1746,7 +1798,7 @@ function createModuleSetupFormApplicationClass() {
         }
 
         async #loadSourceBackedData() {
-            const [maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts, portraitRegistryFile] = await Promise.all([
+            const [maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts, portraitRegistryFile, supernaturalMarks] = await Promise.all([
                 this.#loadDataset("maneuvers.json"),
                 this.#loadDataset("weapons.json"),
                 this.#loadDataset("armors.json"),
@@ -1763,7 +1815,8 @@ function createModuleSetupFormApplicationClass() {
                 this.#loadDataset("changes.json"),
                 this.#loadDataset("requirements.json"),
                 this.#loadDataset("pacts.json"),
-                this.#loadDataset("portrait-registry.json").catch(() => ({ registry: {} }))
+                this.#loadDataset("portrait-registry.json").catch(() => ({ registry: {} })),
+                this.#loadDataset("supernatural-marks.json").catch(() => [])
             ]);
 
             await Promise.all([
@@ -1784,10 +1837,11 @@ function createModuleSetupFormApplicationClass() {
                 game.settings.set(MODULE_ID, "requirementData", requirements),
                 game.settings.set(MODULE_ID, "pactData", pacts),
                 game.settings.set(MODULE_ID, "portraitRegistry", (portraitRegistryFile && portraitRegistryFile.registry) || {}),
+                game.settings.set(MODULE_ID, "supernaturalMarkData", supernaturalMarks ?? []),
                 game.settings.set(MODULE_ID, "lastDataSetupAt", new Date().toISOString())
             ]);
 
-            return { maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts };
+            return { maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts, supernaturalMarks: supernaturalMarks ?? [] };
         }
 
         /**
@@ -1873,6 +1927,9 @@ function createModuleSetupFormApplicationClass() {
             const spellsFolder = await this.#getOrCreateFolder({ folderName: "Spells", type: "Item", parentId: coreItemFolder.id });
             const ritualStepsFolder = await this.#getOrCreateFolder({ folderName: "Ritual Steps", type: "Item", parentId: spellsFolder.id });
             const pactsFolder = await this.#getOrCreateFolder({ folderName: "Pacts", type: "Item", parentId: coreItemFolder.id });
+            const supernaturalMarksFolder = await this.#getOrCreateFolder({ folderName: "Supernatural Marks", type: "Item", parentId: coreItemFolder.id });
+            const blessingsFolder = await this.#getOrCreateFolder({ folderName: "Blessings", type: "Item", parentId: supernaturalMarksFolder.id });
+            const cursesFolder = await this.#getOrCreateFolder({ folderName: "Curses", type: "Item", parentId: supernaturalMarksFolder.id });
             const usageEffectsFolder = await this.#getOrCreateFolder({ folderName: "Usage Effects", type: "Item", parentId: coreItemFolder.id });
             const monsterMagicFolder = await this.#getOrCreateFolder({ folderName: "Monster Magic", type: "Item", parentId: coreItemFolder.id });
             const ritualStepRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Ritual Step Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#5b6276" });
@@ -1930,6 +1987,9 @@ function createModuleSetupFormApplicationClass() {
                 spellsFolder,
                 ritualStepsFolder,
                 pactsFolder,
+                supernaturalMarksFolder,
+                blessingsFolder,
+                cursesFolder,
                 usageEffectsFolder,
                 monsterMagicFolder,
                 ritualStepRollTablesFolder,
@@ -1946,7 +2006,7 @@ function createModuleSetupFormApplicationClass() {
             };
         }
 
-        async #importItemsFromData({ maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts }) {
+        async #importItemsFromData({ maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts, supernaturalMarks }) {
             const [actorTemplate, maneuverTemplate, weaponTemplate, armorTemplate, ammoTemplate, weaponModifierTemplate, onHitEffectTemplate, supernaturalMarkTemplate, monsterMagicTemplate, spellTemplate, pactTemplate, ritualTemplate, ritualStepTemplate, usageEffectTemplate, changeSetTemplate, changeTemplate, requirementTemplate] = await Promise.all([
                 this.#loadTemplate(TEMPLATE_FILES.actorTemplate),
                 this.#loadTemplate(TEMPLATE_FILES.maneuver),
@@ -2037,6 +2097,12 @@ function createModuleSetupFormApplicationClass() {
             const pactRollTableDocs = (pacts ?? [])
                 .map((pact) => buildPactRollTableDoc(pact, folders.pactRollTablesFolder.id, "Pact Tables"))
                 .filter(Boolean);
+            const supernaturalMarkDocs = (supernaturalMarks ?? []).map((mark) => {
+                const normalized = normalizeSourceEntry(mark, "supernaturalMark");
+                const folderId = normalized.folder === "Curses" ? folders.cursesFolder.id : folders.blessingsFolder.id;
+                const folderHint = normalized.folder === "Curses" ? "Curses" : "Blessings";
+                return makeItemDoc(normalized, supernaturalMarkTemplate, normalized.img ?? supernaturalMarkTemplate.img ?? "icons/svg/holy-shield.svg", buildSupernaturalMarkProps, folderId, folderHint);
+            });
             const spellUsageEffectDocs = buildWorldSpellUsageEffectDocs(
                 normalizedSpells,
                 spellDocs,
@@ -2193,6 +2259,20 @@ function createModuleSetupFormApplicationClass() {
                 templateId: pactTemplate._id,
                 folderHint: "Pacts"
             });
+            const blessingIds = new Set(supernaturalMarkDocs.filter(d => d.folder === folders.blessingsFolder.id).map(d => d._id));
+            const curseIds = new Set(supernaturalMarkDocs.filter(d => d.folder === folders.cursesFolder.id).map(d => d._id));
+            await pruneManagedFolderItems({
+                folderId: folders.blessingsFolder.id,
+                validIds: blessingIds,
+                templateId: supernaturalMarkTemplate._id,
+                folderHint: "Blessings"
+            });
+            await pruneManagedFolderItems({
+                folderId: folders.cursesFolder.id,
+                validIds: curseIds,
+                templateId: supernaturalMarkTemplate._id,
+                folderHint: "Curses"
+            });
             await pruneManagedFolderItems({
                 folderId: folders.usageEffectsFolder.id,
                 validIds: new Set([
@@ -2295,6 +2375,7 @@ function createModuleSetupFormApplicationClass() {
                 ...spellUsageEffectDocs,
                 ...spellRitualStepDocs,
                 ...pactDocs,
+                ...supernaturalMarkDocs,
                 ...monsterMagicDocs,
                 ...monsterMagicEffectDocs,
                 ...changeSetDocs,
