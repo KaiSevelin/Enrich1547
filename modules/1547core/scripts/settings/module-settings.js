@@ -30,7 +30,6 @@ const ACTOR_TYPES = [
     "Beast",
     "Undead",
     "Colossal",
-    "Cursed",
     "Unnatural",
     "Construct",
     "Zone",
