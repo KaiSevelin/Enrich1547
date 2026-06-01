@@ -1682,7 +1682,9 @@ function createModuleSetupFormApplicationClass() {
             const monstersFolder = await this.#getOrCreateFolder({ folderName: "Monsters", type: "Actor", parentId: coreActorFolder.id, color: "#516d5b" });
             const maneuverFolder = await this.#getOrCreateFolder({ folderName: "Maneuvers", type: "Item", parentId: coreItemFolder.id });
             const weaponFolder = await this.#getOrCreateFolder({ folderName: "Weapons", type: "Item", parentId: coreItemFolder.id });
+            const naturalWeaponFolder = await this.#getOrCreateFolder({ folderName: "Natural Weapons", type: "Item", parentId: weaponFolder.id });
             const armorFolder = await this.#getOrCreateFolder({ folderName: "Armor", type: "Item", parentId: coreItemFolder.id });
+            const naturalArmorFolder = await this.#getOrCreateFolder({ folderName: "Natural Armor", type: "Item", parentId: armorFolder.id });
             const ammoFolder = await this.#getOrCreateFolder({ folderName: "Ammunition", type: "Item", parentId: coreItemFolder.id });
             const weaponModifierFolder = await this.#getOrCreateFolder({ folderName: "Weapon Modifiers", type: "Item", parentId: coreItemFolder.id });
             const onHitEffectsFolder = await this.#getOrCreateFolder({ folderName: "On-Hit Effects", type: "Item", parentId: weaponModifierFolder.id });
@@ -1734,7 +1736,9 @@ function createModuleSetupFormApplicationClass() {
                 monstersFolder,
                 maneuverFolder,
                 weaponFolder,
+                naturalWeaponFolder,
                 armorFolder,
+                naturalArmorFolder,
                 ammoFolder,
                 weaponModifierFolder,
                 onHitEffectsFolder,
@@ -1807,12 +1811,20 @@ function createModuleSetupFormApplicationClass() {
             const maneuverDocs = maneuvers.map((maneuver) =>
                 makeItemDoc(normalizeSourceEntry(maneuver, "maneuver"), maneuverTemplate, maneuver.img ?? maneuverTemplate.img ?? "icons/svg/combat.svg", buildManeuverProps, folders.maneuverFolder.id, "Maneuvers")
             );
-            const weaponDocs = weapons.map((weapon) =>
-                makeItemDoc(normalizeSourceEntry(weapon, "weapon"), weaponTemplate, weapon.img ?? weaponTemplate.img ?? "icons/svg/sword.svg", buildWeaponProps, folders.weaponFolder.id, "Weapons")
-            );
-            const armorDocs = armors.map((armor) =>
-                makeItemDoc(normalizeSourceEntry(armor, "armor"), armorTemplate, armor.img ?? armorTemplate.img ?? "icons/svg/holy-shield.svg", buildArmorProps, folders.armorFolder.id, "Armor")
-            );
+            const weaponDocs = weapons.map((weapon) => {
+                const normalized = normalizeSourceEntry(weapon, "weapon");
+                const isNatural = normalized.folder === "Natural Weapons";
+                const folderId = isNatural ? folders.naturalWeaponFolder.id : folders.weaponFolder.id;
+                const folderHint = isNatural ? "Natural Weapons" : "Weapons";
+                return makeItemDoc(normalized, weaponTemplate, weapon.img ?? weaponTemplate.img ?? "icons/svg/sword.svg", buildWeaponProps, folderId, folderHint);
+            });
+            const armorDocs = armors.map((armor) => {
+                const normalized = normalizeSourceEntry(armor, "armor");
+                const isNatural = normalized.folder === "Natural Armor";
+                const folderId = isNatural ? folders.naturalArmorFolder.id : folders.armorFolder.id;
+                const folderHint = isNatural ? "Natural Armor" : "Armor";
+                return makeItemDoc(normalized, armorTemplate, armor.img ?? armorTemplate.img ?? "icons/svg/holy-shield.svg", buildArmorProps, folderId, folderHint);
+            });
             const ammoDocs = ammunition.map((ammo) =>
                 makeItemDoc(normalizeSourceEntry(ammo, "ammo"), ammoTemplate, ammo.img ?? ammoTemplate.img ?? "icons/svg/item-bag.svg", buildAmmoProps, folders.ammoFolder.id, "Ammunition")
             );
