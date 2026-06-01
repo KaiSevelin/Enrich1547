@@ -84,7 +84,7 @@ export async function show1547RollDialog(formulas, titleLabel = "@1547") {
 
       <hr />
       <p class="hint" style="opacity: 0.8; font-size: 0.9em;">
-        Roll will combine everything into one roll (e.g. 1d6 + 2d4).
+        Roll will combine everything into one roll (e.g. 1d6 + 2d6).
       </p>
     </form>
   `;

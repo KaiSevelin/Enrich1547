@@ -686,23 +686,32 @@ function buildSpellFailureRollTableDoc(table, folderId, folderHint = null) {
 function buildSpellSupportRollTableDoc(table, folderId, folderHint = null) {
     const normalized = normalizeSourceEntry(table, "spellSupportRollTable", "RollTable");
     const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
-    const tableFormula = `1d${Math.max(entries.length, 1)}`;
+    // 3d6 bell-curve: 16 outcomes (3-18), distributed equally across entries.
+    const tableFormula = "3d6";
     const textResultType = globalThis.CONST?.TABLE_RESULT_TYPES?.TEXT ?? 0;
+    const total = Math.max(entries.length, 1);
+    const rangeWidth = Math.max(1, Math.floor(16 / total));
 
-    const results = entries.map((entry, index) => ({
-        _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
-        type: textResultType,
-        text: entry.resultText ?? `Support result ${index + 1}`,
-        img: "icons/magic/holy/angel-winged-humanoid-blue.webp",
-        weight: 1,
-        range: [index + 1, index + 1],
-        drawn: false,
-        flags: {
-            [SOURCE_FLAG_SCOPE]: {
-                spellSupportEntry: foundry.utils.deepClone(entry)
+    const results = entries.map((entry, index) => {
+        let min = 3 + index * rangeWidth;
+        let max = (index === entries.length - 1) ? 18 : (min + rangeWidth - 1);
+        if (min > 18) min = 18;
+        if (max > 18) max = 18;
+        return {
+            _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
+            type: textResultType,
+            text: entry.resultText ?? `Support result ${index + 1}`,
+            img: "icons/magic/holy/angel-winged-humanoid-blue.webp",
+            weight: 1,
+            range: [min, max],
+            drawn: false,
+            flags: {
+                [SOURCE_FLAG_SCOPE]: {
+                    spellSupportEntry: foundry.utils.deepClone(entry)
+                }
             }
-        }
-    }));
+        };
+    });
 
     return {
         _id: normalized._id,
