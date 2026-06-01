@@ -67,6 +67,11 @@ Hooks.once("init", () => {
         (module) => module.registerChangeSetCascadeService()
     );
     void runImportedModuleStep(
+        "registerBaseAutoApply",
+        () => import("./services/base-autoapply-service.js"),
+        (module) => module.registerBaseAutoApply()
+    );
+    void runImportedModuleStep(
         "registerItemGrantService",
         () => import("./services/item-grant-service.js"),
         (module) => module.registerItemGrantService()
