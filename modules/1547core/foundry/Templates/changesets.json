@@ -79,7 +79,6 @@
 {"_id":"QrStMnCu00000001","name":"Strengthens in Moonlight","group":"Quirk","forTypeAny":true,"notes":"Strengthens in Moonlight — Cursed variant. Grants Wax with the Moon."},
 {"_id":"LoadoutHsZone001","name":"Half-Seen Body","group":"Quirk","forTypeAny":true,"notes":"Quirk (universal, body-shape): Half-Seen Body. +1 Dex, grants Wear the Veil."},
 {"_id":"LoadoutIbZcol001","name":"Impossible Bulk","group":"Quirk","forTypeAny":true,"notes":"Quirk (universal, body-shape): Impossible Bulk. +1 Str, grants Loom Over the Ground."},
-{"_id":"LoadoutTbConst01","name":"Tool-Body","group":"Loadout","forTypeAny":true,"notes":"Loadout (universal): Tool-Body — limbs end in tools (blade, hook, hammer, drill). Grants Drive the Built Edge."},
 {"_id":"LoadoutCbUnd0001","name":"Corpse-Body","group":"Quirk","forTypeAny":true,"notes":"Quirk (universal, body-shape): Corpse-Body. +1 Sta, grants Walk With Worse Wounds."},
 {"_id":"LoadoutWhColos01","name":"Winged Horror","group":"Quirk","forTypeAny":true,"notes":"Quirk (universal, body-shape): Winged Horror. +2 MoveGround, grants Sweep on Wing."},
 {"_id":"QrSlpGCl00000001","name":"Sleeps for Generations","group":"Quirk","forTypeAny":true,"notes":"Quirk: wakes only once in generations. Grants Slow to Wake."},
