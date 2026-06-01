@@ -715,6 +715,35 @@ function buildSpellSupportRollTableDoc(table, folderId, folderHint = null) {
     };
 }
 
+function buildPactProps(pact) {
+    return {
+        Description: pact.description ?? "",
+        PactType: pact.pactType ?? "Other",
+        Patron: pact.patron ?? "",
+        BoonText: pact.boonText ?? "",
+        PriceText: pact.priceText ?? "",
+        ObligationText: pact.obligationText ?? "",
+        Tension: pact.tension ?? "",
+        DormantState: pact.dormantState ?? "",
+        ActiveState: pact.activeState ?? "",
+        StrainedState: pact.strainedState ?? "",
+        BrokenState: pact.brokenState ?? "",
+        FulfilledState: pact.fulfilledState ?? "",
+        CurrentStatus: pact.currentStatus ?? "Dormant",
+        Dormant: pact.currentStatus === "Dormant",
+        Active: pact.currentStatus === "Active",
+        Strained: pact.currentStatus === "Strained",
+        Broken: pact.currentStatus === "Broken",
+        Fulfilled: pact.currentStatus === "Fulfilled",
+        BreakText: pact.breakText ?? "",
+        FulfillmentText: pact.fulfillmentText ?? "",
+        BoonEffects: Array.isArray(pact.boonEffects) ? foundry.utils.deepClone(pact.boonEffects) : [],
+        PriceEffects: Array.isArray(pact.priceEffects) ? foundry.utils.deepClone(pact.priceEffects) : [],
+        StrainEffects: Array.isArray(pact.strainEffects) ? foundry.utils.deepClone(pact.strainEffects) : [],
+        BrokenEffects: Array.isArray(pact.brokenEffects) ? foundry.utils.deepClone(pact.brokenEffects) : []
+    };
+}
+
 function buildBoostRollTableDoc(table, folderId, folderHint = null) {
     const normalized = normalizeSourceEntry(table, "boostRollTable", "RollTable");
     const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
@@ -1337,6 +1366,14 @@ export function register1547ModuleSettings() {
         default: []
     });
 
+    game.settings.register(MODULE_ID, "pactData", {
+        name: "Pact Data",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: []
+    });
+
     game.settings.register(MODULE_ID, "monsterData", {
         name: "Monster Data",
         scope: "world",
@@ -1471,6 +1508,7 @@ function createModuleSetupFormApplicationClass() {
             const storedSpellFailureRollTables = game.settings.get(MODULE_ID, "spellFailureRollTableData") ?? [];
             const storedSpellSupportRollTables = game.settings.get(MODULE_ID, "spellSupportRollTableData") ?? [];
             const storedBoostRollTables = game.settings.get(MODULE_ID, "boostRollTableData") ?? [];
+            const storedPacts = game.settings.get(MODULE_ID, "pactData") ?? [];
             const storedMonsters = game.settings.get(MODULE_ID, "monsterData") ?? [];
             const storedChangeSets = game.settings.get(MODULE_ID, "changeSetData") ?? [];
             const storedChanges = game.settings.get(MODULE_ID, "changeData") ?? [];
@@ -1489,6 +1527,7 @@ function createModuleSetupFormApplicationClass() {
                 storedSpellFailureRollTableCount: Array.isArray(storedSpellFailureRollTables) ? storedSpellFailureRollTables.length : 0,
                 storedSpellSupportRollTableCount: Array.isArray(storedSpellSupportRollTables) ? storedSpellSupportRollTables.length : 0,
                 storedBoostRollTableCount: Array.isArray(storedBoostRollTables) ? storedBoostRollTables.length : 0,
+                storedPactCount: Array.isArray(storedPacts) ? storedPacts.length : 0,
                 storedMonsterCount: Array.isArray(storedMonsters) ? storedMonsters.length : 0,
                 storedChangeSetCount: Array.isArray(storedChangeSets) ? storedChangeSets.length : 0,
                 storedChangeCount: Array.isArray(storedChanges) ? storedChanges.length : 0,
@@ -1532,7 +1571,8 @@ function createModuleSetupFormApplicationClass() {
                     monsterMagic,
                     changeSets,
                     changes,
-                    requirements
+                    requirements,
+                    pacts
                 } = await this.#loadSourceBackedData();
 
                 await this.#importItemsFromData({
@@ -1550,11 +1590,12 @@ function createModuleSetupFormApplicationClass() {
                     monsterMagic,
                     changeSets,
                     changes,
-                    requirements
+                    requirements,
+                    pacts
                 });
 
                 ui.notifications.info(
-                `1547 Core: stored and synced ${maneuvers.length} maneuvers, ${weapons.length} weapons, ${armors.length} armors, ${ammunition.length} ammunition items, ${weaponModifiers.length} weapon modifiers, ${spells.length} spells, ${ritualStepRollTables.length} ritual step roll tables, ${spellFailureRollTables.length} spell failure roll tables, ${spellSupportRollTables.length} spell support roll tables, ${boostRollTables.length} boost roll tables, ${monsters.length} monsters, ${changeSets.length} change sets, ${changes.length} changes, and ${requirements.length} requirements from source data.`
+                `1547 Core: stored and synced ${maneuvers.length} maneuvers, ${weapons.length} weapons, ${armors.length} armors, ${ammunition.length} ammunition items, ${weaponModifiers.length} weapon modifiers, ${spells.length} spells, ${ritualStepRollTables.length} ritual step roll tables, ${spellFailureRollTables.length} spell failure roll tables, ${spellSupportRollTables.length} spell support roll tables, ${boostRollTables.length} boost roll tables, ${pacts.length} pacts, ${monsters.length} monsters, ${changeSets.length} change sets, ${changes.length} changes, and ${requirements.length} requirements from source data.`
                 );
                 this.render(false);
             } catch (error) {
@@ -1626,7 +1667,7 @@ function createModuleSetupFormApplicationClass() {
         }
 
         async #loadSourceBackedData() {
-            const [maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements] = await Promise.all([
+            const [maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts] = await Promise.all([
                 this.#loadDataset("maneuvers.json"),
                 this.#loadDataset("weapons.json"),
                 this.#loadDataset("armors.json"),
@@ -1641,7 +1682,8 @@ function createModuleSetupFormApplicationClass() {
                 this.#loadDataset("monster-magic.json"),
                 this.#loadDataset("changesets.json"),
                 this.#loadDataset("changes.json"),
-                this.#loadDataset("requirements.json")
+                this.#loadDataset("requirements.json"),
+                this.#loadDataset("pacts.json")
             ]);
 
             await Promise.all([
@@ -1660,10 +1702,11 @@ function createModuleSetupFormApplicationClass() {
                 game.settings.set(MODULE_ID, "changeSetData", changeSets),
                 game.settings.set(MODULE_ID, "changeData", changes),
                 game.settings.set(MODULE_ID, "requirementData", requirements),
+                game.settings.set(MODULE_ID, "pactData", pacts),
                 game.settings.set(MODULE_ID, "lastDataSetupAt", new Date().toISOString())
             ]);
 
-            return { maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements };
+            return { maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts };
         }
 
         /**
@@ -1748,6 +1791,7 @@ function createModuleSetupFormApplicationClass() {
             const onHitEffectsFolder = await this.#getOrCreateFolder({ folderName: "On-Hit Effects", type: "Item", parentId: weaponModifierFolder.id });
             const spellsFolder = await this.#getOrCreateFolder({ folderName: "Spells", type: "Item", parentId: coreItemFolder.id });
             const ritualStepsFolder = await this.#getOrCreateFolder({ folderName: "Ritual Steps", type: "Item", parentId: spellsFolder.id });
+            const pactsFolder = await this.#getOrCreateFolder({ folderName: "Pacts", type: "Item", parentId: coreItemFolder.id });
             const usageEffectsFolder = await this.#getOrCreateFolder({ folderName: "Usage Effects", type: "Item", parentId: coreItemFolder.id });
             const monsterMagicFolder = await this.#getOrCreateFolder({ folderName: "Monster Magic", type: "Item", parentId: coreItemFolder.id });
             const ritualStepRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Ritual Step Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#5b6276" });
@@ -1803,6 +1847,7 @@ function createModuleSetupFormApplicationClass() {
                 onHitEffectsFolder,
                 spellsFolder,
                 ritualStepsFolder,
+                pactsFolder,
                 usageEffectsFolder,
                 monsterMagicFolder,
                 ritualStepRollTablesFolder,
@@ -1818,7 +1863,7 @@ function createModuleSetupFormApplicationClass() {
             };
         }
 
-        async #importItemsFromData({ maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements }) {
+        async #importItemsFromData({ maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts }) {
             const [actorTemplate, maneuverTemplate, weaponTemplate, armorTemplate, ammoTemplate, weaponModifierTemplate, onHitEffectTemplate, supernaturalMarkTemplate, monsterMagicTemplate, spellTemplate, pactTemplate, ritualTemplate, ritualStepTemplate, usageEffectTemplate, changeSetTemplate, changeTemplate, requirementTemplate] = await Promise.all([
                 this.#loadTemplate(TEMPLATE_FILES.actorTemplate),
                 this.#loadTemplate(TEMPLATE_FILES.maneuver),
@@ -1902,6 +1947,10 @@ function createModuleSetupFormApplicationClass() {
             const spellDocs = normalizedSpells.map((spell) =>
                 makeItemDoc(spell, spellTemplate, spell.img ?? spellTemplate.img ?? "icons/svg/daze.svg", buildSpellProps, folders.spellsFolder.id, "Spells")
             );
+            const pactDocs = (pacts ?? []).map((pact) => {
+                const normalized = normalizeSourceEntry(pact, "pact");
+                return makeItemDoc(normalized, pactTemplate, normalized.img ?? pactTemplate.img ?? "icons/svg/mystery-man.svg", buildPactProps, folders.pactsFolder.id, "Pacts");
+            });
             const spellUsageEffectDocs = buildWorldSpellUsageEffectDocs(
                 normalizedSpells,
                 spellDocs,
@@ -2053,6 +2102,12 @@ function createModuleSetupFormApplicationClass() {
                 folderHint: "Ritual Steps"
             });
             await pruneManagedFolderItems({
+                folderId: folders.pactsFolder.id,
+                validIds: new Set(pactDocs.map((doc) => doc._id)),
+                templateId: pactTemplate._id,
+                folderHint: "Pacts"
+            });
+            await pruneManagedFolderItems({
                 folderId: folders.usageEffectsFolder.id,
                 validIds: new Set([
                     ...spellUsageEffectDocs.map((doc) => doc._id),
@@ -2148,6 +2203,7 @@ function createModuleSetupFormApplicationClass() {
                 ...spellDocs,
                 ...spellUsageEffectDocs,
                 ...spellRitualStepDocs,
+                ...pactDocs,
                 ...monsterMagicDocs,
                 ...monsterMagicEffectDocs,
                 ...changeSetDocs,
