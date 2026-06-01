@@ -10,12 +10,16 @@ import assert from "assert";
 if (typeof globalThis.game === "undefined") globalThis.game = { modules: { get: () => ({ api: {} }) } };
 if (typeof globalThis.Hooks === "undefined") globalThis.Hooks = { on: () => {}, off: () => {} };
 
-const { computeBoostTier } = await import("../services/tier-display-service.js");
+const { computeBoostTier, computeBoostSummary } = await import("../services/tier-display-service.js");
 
 const CHANGESET_ID = "b7A1z6cSZO4dYTKT";
 
-function set(group, { template = CHANGESET_ID } = {}) {
-    return { system: { template, props: { Group: group } } };
+function set(group, { template = CHANGESET_ID, name = group } = {}) {
+    return { name, system: { template, props: { Group: group } } };
+}
+
+function boost(name) {
+    return { name, system: { template: CHANGESET_ID, props: { Group: "Boost" } } };
 }
 
 console.log("computeBoostTier...");
@@ -88,6 +92,50 @@ console.log("  ✓ Empty items → 0");
     };
     assert.strictEqual(computeBoostTier(actor), 2);
     console.log("  ✓ Trims whitespace on Group");
+}
+
+console.log("\ncomputeBoostSummary...");
+
+assert.deepStrictEqual(computeBoostSummary(null), []);
+assert.deepStrictEqual(computeBoostSummary({}), []);
+assert.deepStrictEqual(computeBoostSummary({ items: [] }), []);
+console.log("  ✓ Defensive: null / empty → []");
+
+{
+    const actor = { items: [boost("Boost: Strength"), boost("Boost: Dexterity")] };
+    assert.deepStrictEqual(computeBoostSummary(actor), [
+        { name: "Strength", count: 1 },
+        { name: "Dexterity", count: 1 }
+    ]);
+    console.log("  ✓ Strips 'Boost:' prefix and preserves order");
+}
+
+{
+    const actor = {
+        items: [
+            boost("Boost: Strength"),
+            boost("Boost: Strength"),
+            boost("Boost: Dexterity"),
+            boost("Boost: Weapon Die"),
+            boost("Boost: Weapon Die"),
+            boost("Boost: Strength")
+        ]
+    };
+    assert.deepStrictEqual(computeBoostSummary(actor), [
+        { name: "Strength", count: 3 },
+        { name: "Dexterity", count: 1 },
+        { name: "Weapon Die", count: 2 }
+    ]);
+    console.log("  ✓ Groups by name and counts");
+}
+
+{
+    const actor = { items: [boost("Boost: Strength"), set("Role", { name: "Wolf" }), boost("Boost: Dexterity")] };
+    assert.deepStrictEqual(computeBoostSummary(actor), [
+        { name: "Strength", count: 1 },
+        { name: "Dexterity", count: 1 }
+    ]);
+    console.log("  ✓ Ignores non-Boost items in summary");
 }
 
 console.log("\nAll tier-display-service tests passed.");
