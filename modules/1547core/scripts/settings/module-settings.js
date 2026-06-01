@@ -715,6 +715,56 @@ function buildSpellSupportRollTableDoc(table, folderId, folderHint = null) {
     };
 }
 
+function buildPactRollTableDoc(pact, folderId, folderHint = null) {
+    const entries = Array.isArray(pact.rollTable) ? pact.rollTable : [];
+    if (!entries.length) return null;
+    const formula = String(pact.rollTableFormula ?? `1d${entries.length}`);
+    const formulaMatch = formula.match(/^(\d+)d\d+/i);
+    const startValue = formulaMatch ? Number(formulaMatch[1]) : 1;
+    const textResultType = globalThis.CONST?.TABLE_RESULT_TYPES?.TEXT ?? 0;
+    const tableId = deriveFoundryIdFromText(`${pact._id}:rolltable`);
+    const tableName = `${pact.name} — ${pact.rollTableTitle ?? "Table"}`;
+
+    const results = entries.map((entry, index) => {
+        const rollValue = startValue + index;
+        return {
+            _id: deriveFoundryIdFromText(`${tableId}:${rollValue}:result`),
+            type: textResultType,
+            text: String(entry),
+            img: "icons/svg/d20-grey.svg",
+            weight: 1,
+            range: [rollValue, rollValue],
+            drawn: false,
+            flags: {
+                [SOURCE_FLAG_SCOPE]: {
+                    pactRollEntry: { index, rollValue, text: String(entry) }
+                }
+            }
+        };
+    });
+
+    return {
+        _id: tableId,
+        name: tableName,
+        description: `${pact.rollTableTitle ?? "Roll table"} for ${pact.name}. Roll ${formula}.`,
+        results,
+        formula,
+        replacement: true,
+        displayRoll: true,
+        folder: folderId ?? null,
+        flags: {
+            [SOURCE_FLAG_SCOPE]: {
+                sourceKey: pact._id,
+                folderHint: folderHint ?? "Pact Tables",
+                sourcePactId: pact._id,
+                sourcePactName: pact.name,
+                drawFormula: formula
+            }
+        },
+        ownership: { default: 0 }
+    };
+}
+
 function buildPactProps(pact) {
     return {
         Description: pact.description ?? "",
@@ -1801,6 +1851,7 @@ function createModuleSetupFormApplicationClass() {
             const spellFailureRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Spell Failure Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#6d5b5b" });
             const spellSupportRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Spell Support Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#5b6d63" });
             const boostRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Boost Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#6d635b" });
+            const pactRollTablesFolder = await this.#getOrCreateFolder({ folderName: "Pact Tables", type: "RollTable", parentId: coreRollTableFolder.id, color: "#5b6d6d" });
             const changeSetsFolder = await this.#getOrCreateFolder({ folderName: "Change Sets", type: "Item", parentId: coreItemFolder.id, color: "#6d5b51" });
             const changesFolder = await this.#getOrCreateFolder({ folderName: "Changes", type: "Item", parentId: coreItemFolder.id, color: "#6d6551" });
             const requirementsFolder = await this.#getOrCreateFolder({ folderName: "Requirements", type: "Item", parentId: coreItemFolder.id, color: "#5b5b6d" });
@@ -1857,6 +1908,7 @@ function createModuleSetupFormApplicationClass() {
                 spellFailureRollTablesFolder,
                 spellSupportRollTablesFolder,
                 boostRollTablesFolder,
+                pactRollTablesFolder,
                 changeSetsFolder,
                 changesFolder,
                 requirementsFolder,
@@ -1954,6 +2006,9 @@ function createModuleSetupFormApplicationClass() {
                 const normalized = normalizeSourceEntry(pact, "pact");
                 return makeItemDoc(normalized, pactTemplate, normalized.img ?? pactTemplate.img ?? "icons/svg/mystery-man.svg", buildPactProps, folders.pactsFolder.id, "Pacts");
             });
+            const pactRollTableDocs = (pacts ?? [])
+                .map((pact) => buildPactRollTableDoc(pact, folders.pactRollTablesFolder.id, "Pact Tables"))
+                .filter(Boolean);
             const spellUsageEffectDocs = buildWorldSpellUsageEffectDocs(
                 normalizedSpells,
                 spellDocs,
@@ -2145,6 +2200,11 @@ function createModuleSetupFormApplicationClass() {
                 validIds: new Set(boostRollTableDocs.map((doc) => doc._id)),
                 folderHint: "Boost Tables"
             });
+            await pruneManagedFolderRollTables({
+                folderId: folders.pactRollTablesFolder.id,
+                validIds: new Set(pactRollTableDocs.map((doc) => doc._id)),
+                folderHint: "Pact Tables"
+            });
             for (const groupName of CHANGE_SET_GROUPS) {
                 const folder = folders.changeSetGroupFolders[groupName];
                 await pruneManagedFolderItems({
@@ -2213,12 +2273,13 @@ function createModuleSetupFormApplicationClass() {
                 ...changeDocs,
                 ...requirementDocs
             ];
-            const [itemResult, ritualRollTableResult, spellFailureRollTableResult, spellSupportRollTableResult, boostRollTableResult, actorResult] = await Promise.all([
+            const [itemResult, ritualRollTableResult, spellFailureRollTableResult, spellSupportRollTableResult, boostRollTableResult, pactRollTableResult, actorResult] = await Promise.all([
                 upsertWorldItems(docs),
                 upsertWorldRollTables(ritualStepRollTableDocs),
                 upsertWorldRollTables(spellFailureRollTableDocs),
                 upsertWorldRollTables(spellSupportRollTableDocs),
                 upsertWorldRollTables(boostRollTableDocs),
+                upsertWorldRollTables(pactRollTableDocs),
                 upsertWorldActors([
                     makeActorDoc(actorTemplate, null, "Actor Template"),
                     ...monsterDocs
@@ -2228,7 +2289,7 @@ function createModuleSetupFormApplicationClass() {
             return {
                 totalItems: docs.length,
                 totalActors: monsterDocs.length,
-                totalRollTables: ritualStepRollTableDocs.length + spellFailureRollTableDocs.length + spellSupportRollTableDocs.length + boostRollTableDocs.length,
+                totalRollTables: ritualStepRollTableDocs.length + spellFailureRollTableDocs.length + spellSupportRollTableDocs.length + boostRollTableDocs.length + pactRollTableDocs.length,
                 createdItems: itemResult.created,
                 updatedItems: itemResult.updated,
                 createdRollTables: ritualRollTableResult.created + spellFailureRollTableResult.created + spellSupportRollTableResult.created,
