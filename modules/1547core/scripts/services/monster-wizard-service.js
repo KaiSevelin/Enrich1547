@@ -60,7 +60,7 @@ class MonsterWizard extends Application {
             loadoutId: null,
             motivationId: null,
             quirkIds: [],
-            plannedBoosts: 0
+            actorId: null
         };
     }
 
@@ -83,7 +83,7 @@ class MonsterWizard extends Application {
 
     #renderStep() {
         const s = this.state;
-        const stepLabels = ["Name & Type", "Role", "Domain", "Loadout", "Motivation", "Quirks", "Boosts", "Review"];
+        const stepLabels = ["Name & Type", "Role", "Domain", "Loadout", "Motivation", "Quirks", "Review & Create", "Boosts (optional)"];
         const header = `<div class="mw-header"><strong>Step ${s.step + 1} of ${stepLabels.length}: ${stepLabels[s.step]}</strong></div>`;
         let body = "";
         switch (s.step) {
@@ -93,8 +93,8 @@ class MonsterWizard extends Application {
             case 3: body = this.#renderSingletonStep("Loadout", s.loadoutId); break;
             case 4: body = this.#renderSingletonStep("Motivation", s.motivationId); break;
             case 5: body = this.#renderQuirksStep(); break;
-            case 6: body = this.#renderBoostStep(); break;
-            case 7: body = this.#renderReview(); break;
+            case 6: body = this.#renderReview(); break;
+            case 7: body = this.#renderBoostStep(); break;
         }
         const nav = this.#renderNav();
         return `<form class="monster-wizard-1547core-form">${header}${body}${nav}</form>`;
@@ -164,15 +164,19 @@ class MonsterWizard extends Application {
     }
 
     #renderBoostStep() {
+        const actor = this.state.actorId ? game.actors?.get(this.state.actorId) : null;
+        const appliedBoosts = actor
+            ? actor.items.filter((it) => it.system?.props?.Group === "Boost").length
+            : 0;
+        const actorName = actor ? escapeHtml(actor.name) : "(actor missing)";
         return `
             <div class="mw-body">
-                <p class="mw-step-help">Roll boosts to scale the monster. Each click rolls once on the Standard Boost table. Boosts apply after the monster is created.</p>
+                <p class="mw-step-help">${actorName} is created. Click <strong>Roll Boost</strong> to roll once on the Standard Boost table — you'll see a preview and choose Apply or Skip. Roll as many as you like, or click <strong>Done</strong> to finish and open the sheet.</p>
                 <div class="mw-boost-controls">
-                    <button type="button" class="mw-boost-roll">Roll Boost</button>
-                    <span class="mw-boost-count">Planned boosts: <strong>${this.state.plannedBoosts}</strong></span>
-                    ${this.state.plannedBoosts > 0 ? '<button type="button" class="mw-boost-reset">Reset</button>' : ""}
+                    <button type="button" class="mw-boost-roll"${actor ? "" : " disabled"}>Roll Boost</button>
+                    <span class="mw-boost-count">Boosts applied: <strong>${appliedBoosts}</strong></span>
                 </div>
-                <p class="mw-step-help"><em>Tier (count of boosts) determines the monster's relative power. No cap.</em></p>
+                <p class="mw-step-help"><em>Each Roll Boost click resolves immediately — apply or skip the rolled boost before rolling again.</em></p>
             </div>
         `;
     }
@@ -190,25 +194,40 @@ class MonsterWizard extends Application {
             ["Domain", s.domainId ? lookupName(s.domainId) : "(skipped)"],
             ["Loadout", s.loadoutId ? lookupName(s.loadoutId) : "(skipped)"],
             ["Motivation", s.motivationId ? lookupName(s.motivationId) : "(skipped)"],
-            ["Quirks", s.quirkIds.length ? s.quirkIds.map(lookupName).join(", ") : "(none)"],
-            ["Planned boosts", String(s.plannedBoosts)]
+            ["Quirks", s.quirkIds.length ? s.quirkIds.map(lookupName).join(", ") : "(none)"]
         ];
         const rows = lines.map(([k, v]) => `<div class="mw-review-row"><span class="mw-review-key">${k}:</span> <span class="mw-review-val">${escapeHtml(v)}</span></div>`).join("");
-        return `<div class="mw-body"><h3>Review</h3>${rows}<p class="mw-step-help">Click <strong>Create Monster</strong> to finish — actor is created, ChangeSets attached, boosts rolled, sheet opened.</p></div>`;
+        const created = !!this.state.actorId;
+        const cta = created
+            ? `<p class="mw-step-help"><em>Actor already created — click Next to roll boosts, or Cancel to dismiss.</em></p>`
+            : `<p class="mw-step-help">Click <strong>Create Actor</strong> to build the monster — then you'll roll boosts in the next step.</p>`;
+        return `<div class="mw-body"><h3>Review</h3>${rows}${cta}</div>`;
     }
 
     #renderNav() {
-        const last = this.state.step === 7;
-        const first = this.state.step === 0;
-        const canFinish = this.state.typeKey && this.state.name.trim();
+        const step = this.state.step;
+        const first = step === 0;
+        const onReview = step === 6;
+        const onBoost = step === 7;
+        const canCreate = this.state.typeKey && this.state.name.trim();
+        const alreadyCreated = !!this.state.actorId;
+        const isSkippable = step > 0 && step < 6;
+        let primaryBtn;
+        if (onBoost) {
+            primaryBtn = `<button type="button" class="mw-done">Done</button>`;
+        } else if (onReview) {
+            primaryBtn = alreadyCreated
+                ? `<button type="button" class="mw-next">Next</button>`
+                : `<button type="button" class="mw-create"${canCreate ? "" : " disabled"}>Create Actor</button>`;
+        } else {
+            primaryBtn = `<button type="button" class="mw-next">Next</button>`;
+        }
         return `
             <div class="mw-nav">
                 <button type="button" class="mw-cancel">Cancel</button>
-                <button type="button" class="mw-back"${first ? " disabled" : ""}>Back</button>
-                ${this.state.step > 0 && this.state.step < 7 ? '<button type="button" class="mw-skip">Skip</button>' : ""}
-                ${last
-                    ? `<button type="button" class="mw-finish"${canFinish ? "" : " disabled"}>Create Monster</button>`
-                    : '<button type="button" class="mw-next">Next</button>'}
+                <button type="button" class="mw-back"${first || alreadyCreated ? " disabled" : ""}>Back</button>
+                ${isSkippable ? '<button type="button" class="mw-skip">Skip</button>' : ""}
+                ${primaryBtn}
             </div>
         `;
     }
@@ -222,7 +241,8 @@ class MonsterWizard extends Application {
         $(".mw-back")?.addEventListener("click", () => { this.state.step = Math.max(0, this.state.step - 1); this.render(true); });
         $(".mw-skip")?.addEventListener("click", () => { this.#clearStep(); this.state.step++; this.render(true); });
         $(".mw-next")?.addEventListener("click", () => this.#onNext());
-        $(".mw-finish")?.addEventListener("click", () => this.#onFinish());
+        $(".mw-create")?.addEventListener("click", () => this.#onCreate());
+        $(".mw-done")?.addEventListener("click", () => this.#onDone());
 
         // Step 0: name + type
         $("[name='mw-name']")?.addEventListener("input", (e) => { this.state.name = e.target.value; });
@@ -266,14 +286,25 @@ class MonsterWizard extends Application {
             });
         });
 
-        // Step 6: boost roll/reset
-        $(".mw-boost-roll")?.addEventListener("click", () => {
-            this.state.plannedBoosts++;
-            this.render(true);
-        });
-        $(".mw-boost-reset")?.addEventListener("click", () => {
-            this.state.plannedBoosts = 0;
-            this.render(true);
+        // Step 7: boost roll — calls boostActor immediately (apply/skip prompt is in that service)
+        $(".mw-boost-roll")?.addEventListener("click", async (ev) => {
+            const btn = ev.currentTarget;
+            if (!this.state.actorId) return;
+            btn.disabled = true;
+            try {
+                const moduleApi = game.modules.get(MODULE_ID)?.api;
+                if (typeof moduleApi?.boostActor !== "function") {
+                    ui.notifications.error("1547 Core: boost service not loaded.");
+                    return;
+                }
+                await moduleApi.boostActor(this.state.actorId);
+            } catch (err) {
+                console.error(`${MODULE_ID} | wizard boost roll failed`, err);
+                ui.notifications.error("1547 Core: boost roll failed — see console.");
+            } finally {
+                btn.disabled = false;
+                this.render(true);
+            }
         });
     }
 
@@ -294,17 +325,21 @@ class MonsterWizard extends Application {
         this.render(true);
     }
 
-    async #onFinish() {
+    async #onCreate() {
         const s = this.state;
         if (!s.name.trim() || !s.typeKey) {
             ui.notifications.warn("Monster requires a Name and Type.");
             return;
         }
+        if (s.actorId) {
+            // Already created — just advance to boost step.
+            this.state.step = 7;
+            this.render(true);
+            return;
+        }
         try {
-            // 1. Find or create Monsters folder under Actors
             const actorFolder = game.folders?.find((f) => f.type === "Actor" && f.name === "Monsters") ?? null;
 
-            // 2. Create the actor — auto-apply will add Base
             const actor = await Actor.create({
                 name: s.name,
                 type: "_template",
@@ -312,10 +347,9 @@ class MonsterWizard extends Application {
                 system: { props: { TypeDropdown: s.typeKey } }
             });
 
-            // 3. Wait briefly for Base auto-apply to settle
-            await new Promise((r) => setTimeout(r, 200));
+            // Wait briefly for Base auto-apply to settle so natural weapons/armor exist.
+            await new Promise((r) => setTimeout(r, 250));
 
-            // 4. Attach user-picked ChangeSets
             const picked = [s.roleId, s.domainId, s.loadoutId, s.motivationId, ...s.quirkIds].filter(Boolean);
             const itemDataArr = [];
             for (const id of picked) {
@@ -329,23 +363,21 @@ class MonsterWizard extends Application {
                 await actor.createEmbeddedDocuments("Item", itemDataArr);
             }
 
-            // 5. Apply planned boosts via the existing boost-service
-            const moduleApi = game.modules.get(MODULE_ID)?.api;
-            if (s.plannedBoosts > 0 && typeof moduleApi?.boostActor === "function") {
-                for (let i = 0; i < s.plannedBoosts; i++) {
-                    await moduleApi.boostActor(actor.id);
-                }
-            }
+            this.state.actorId = actor.id;
+            ui.notifications.info(`1547 Core: created ${actor.name} with ${itemDataArr.length} ChangeSet(s). Roll boosts or click Done.`);
 
-            ui.notifications.info(`1547 Core: created ${actor.name} with ${itemDataArr.length} ChangeSet(s) and ${s.plannedBoosts} boost(s).`);
-            this.close();
-
-            // 6. Open the actor sheet
-            actor.sheet?.render(true);
+            this.state.step = 7;
+            this.render(true);
         } catch (err) {
-            console.error(`${MODULE_ID} | Monster wizard finish failed`, err);
+            console.error(`${MODULE_ID} | Monster wizard create failed`, err);
             ui.notifications.error(`1547 Core: monster wizard failed — ${err.message}`);
         }
+    }
+
+    #onDone() {
+        const actor = this.state.actorId ? game.actors?.get(this.state.actorId) : null;
+        this.close();
+        actor?.sheet?.render(true);
     }
 }
 
