@@ -17,7 +17,6 @@ const STANDARD_BOOST_TABLE_NAME = "Standard Boost";
 const WEAPON_DIE_BOOST_ID = "BoBWpDUv00000001";
 const ARMOR_DIE_BOOST_ID = "BoBArDUv00000001";
 const BUTTON_CLASS = "boost-button-1547core";
-const MAX_REROLLS = 16;
 
 async function resolveBoostRollTable() {
     const uuid = game.settings.get(MODULE_ID, "boostRollTableUuid");
@@ -119,6 +118,24 @@ async function drawOneBoost(table) {
     return await resolveTableResultToItem(result);
 }
 
+function isWeaponDieResult(result) {
+    const id = result?.documentId ?? result?._source?.documentId;
+    return id === WEAPON_DIE_BOOST_ID;
+}
+
+function isArmorDieResult(result) {
+    const id = result?.documentId ?? result?._source?.documentId;
+    return id === ARMOR_DIE_BOOST_ID;
+}
+
+async function pickRandomStatBoost(table) {
+    const all = table.results?.contents ?? [...(table.results ?? [])];
+    const stats = all.filter((r) => !isWeaponDieResult(r) && !isArmorDieResult(r));
+    if (!stats.length) return null;
+    const pick = stats[Math.floor(Math.random() * stats.length)];
+    return await resolveTableResultToItem(pick);
+}
+
 export async function boostActor(actorId) {
     if (!game.user.isGM) {
         ui.notifications.warn("Only the GM can boost monsters.");
@@ -134,36 +151,39 @@ export async function boostActor(actorId) {
     const table = await resolveBoostRollTable();
     if (!table) return;
 
-    // Roll, rerolling if the outcome requires a natural weapon/armor and the actor has none.
-    let rolledItem = null;
+    // Roll once. If the outcome is a Weapon-Die or Armor-Die boost and the actor lacks
+    // the required natural weapon/armor, substitute a random stat boost from the same
+    // table (preserves the table's stat-distribution weighting).
+    let rolledItem = await drawOneBoost(table);
     let mutationKind = null; // "weapon" | "armor" | null
     let targetItem = null;
-    let attempts = 0;
-    while (attempts < MAX_REROLLS) {
-        attempts++;
-        rolledItem = await drawOneBoost(table);
-        if (!rolledItem) break;
+    let substituted = false;
 
-        if (rolledItem.id === WEAPON_DIE_BOOST_ID || rolledItem._id === WEAPON_DIE_BOOST_ID) {
+    if (rolledItem) {
+        const rolledId = rolledItem.id ?? rolledItem._id;
+        if (rolledId === WEAPON_DIE_BOOST_ID) {
             const weapon = findActorNaturalWeapon(actor);
-            if (!weapon) { rolledItem = null; continue; }
-            mutationKind = "weapon";
-            targetItem = weapon;
-            break;
-        }
-        if (rolledItem.id === ARMOR_DIE_BOOST_ID || rolledItem._id === ARMOR_DIE_BOOST_ID) {
+            if (weapon) {
+                mutationKind = "weapon";
+                targetItem = weapon;
+            } else {
+                rolledItem = await pickRandomStatBoost(table);
+                substituted = true;
+            }
+        } else if (rolledId === ARMOR_DIE_BOOST_ID) {
             const armor = findActorNaturalArmor(actor);
-            if (!armor) { rolledItem = null; continue; }
-            mutationKind = "armor";
-            targetItem = armor;
-            break;
+            if (armor) {
+                mutationKind = "armor";
+                targetItem = armor;
+            } else {
+                rolledItem = await pickRandomStatBoost(table);
+                substituted = true;
+            }
         }
-        // Stat boost — applicable to any actor
-        break;
     }
 
     if (!rolledItem) {
-        ui.notifications.warn(`1547 Core: no applicable boost rolled after ${MAX_REROLLS} attempts.`);
+        ui.notifications.warn(`1547 Core: no applicable boost available (table may be empty or misconfigured).`);
         return;
     }
 
@@ -172,10 +192,13 @@ export async function boostActor(actorId) {
         : mutationKind === "armor"
         ? `<p>Will add an <strong>Armor</strong> die to <strong>${targetItem.name}</strong>.</p>`
         : "";
+    const substituteNote = substituted
+        ? `<p><em>Original roll required a natural weapon/armor this actor doesn't have — substituted with a random stat boost.</em></p>`
+        : "";
 
     const accept = await Dialog.confirm({
         title: `Apply Boost: ${rolledItem.name}?`,
-        content: `<p>Rolled <strong>${rolledItem.name}</strong>.</p>${mutationNote}<p>Apply to <strong>${actor.name}</strong>?</p>`,
+        content: `<p>Rolled <strong>${rolledItem.name}</strong>.</p>${mutationNote}${substituteNote}<p>Apply to <strong>${actor.name}</strong>?</p>`,
         defaultYes: true
     });
     if (!accept) return;
