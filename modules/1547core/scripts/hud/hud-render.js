@@ -344,25 +344,7 @@ function buildOverviewTree(data, deps = {}) {
     ].map((entry) => `
         <li><span class="hud-tree-key">${escapeHtml(entry.label)}</span><span class="hud-tree-value">${entry.isDisplay ? escapeHtml(entry.value) : `+${escapeHtml(entry.value)}`}</span></li>
     `).join("");
-    const rangedWeapons = data.equippedWeapons.filter((weapon) => weapon.rangeSummary);
     const activeEffectRows = (data.activePersistentEffects ?? []).map((effect) => `<li><span class="hud-tree-key">${escapeHtml(effect.label)}</span><span class="hud-tree-value">${escapeHtml(effect.duration || "Active")}</span></li>`).join("");
-    // Range-band pills are clickable: clicking "Short" highlights weapon rows
-    // whose shortRange > 0, etc. Click the same band again to clear. The
-    // weapon list carries data-band-{short|long|max} flags so hud-bindings
-    // can toggle .is-highlighted on matching <li> elements.
-    const rangeLegend = rangedWeapons.length ? `
-        <div class="hud-tree-block hud-range-bands">
-            <div class="hud-section-title">Range Bands</div>
-            <div class="hud-pill-row">
-                <button type="button" class="hud-pill hud-pill-button" data-hud-range-band="short"><span class="hud-pill-label">Short</span><span class="hud-pill-value">Normal</span></button>
-                <button type="button" class="hud-pill hud-pill-button" data-hud-range-band="long"><span class="hud-pill-label">Long</span><span class="hud-pill-value">Disadvantage</span></button>
-                <button type="button" class="hud-pill hud-pill-button" data-hud-range-band="max"><span class="hud-pill-label">Max</span><span class="hud-pill-value">Maneuvers</span></button>
-            </div>
-            <ul class="hud-tree-children hud-tree-compact" data-hud-range-list>
-                ${rangedWeapons.map((weapon) => `<li data-band-short="${Number(weapon.shortRange) > 0 ? "1" : ""}" data-band-long="${Number(weapon.longRange) > 0 ? "1" : ""}" data-band-max="${Number(weapon.maxRange) > 0 ? "1" : ""}"><span class="hud-tree-key">${escapeHtml(weapon.name)}</span><span class="hud-tree-value">${escapeHtml(weapon.rangeSummary)}</span></li>`).join("")}
-            </ul>
-        </div>
-    ` : "";
 
     return `
         <div class="hud-overview-grid">
@@ -379,7 +361,6 @@ function buildOverviewTree(data, deps = {}) {
                 <ul class="hud-tree-children hud-tree-compact">${advantageRows || '<li class="hud-empty-row">None</li>'}</ul>
             </div>
         </div>
-        ${rangeLegend}
         <div class="hud-tree-block">
             <div class="hud-section-title">Active Effects</div>
             <ul class="hud-tree-children hud-tree-compact">${activeEffectRows || '<li class="hud-empty-row">None</li>'}</ul>
@@ -409,10 +390,10 @@ function buildChecksHeader(data, deps = {}) {
     const mode = allowed[requestedMode] ? requestedMode : "manual";
 
     const modes = [
-        { key: "manual", label: "Manual" },
-        { key: "stat", label: "Stat", disabled: !hasTarget, title: hasTarget ? "" : "Requires at least one target" },
-        { key: "skill", label: "Skill", disabled: !hasSingleTarget, title: hasSingleTarget ? "" : "Requires exactly one target" },
-        { key: "general", label: "General" },
+        { key: "manual", label: "Nothing" },
+        { key: "stat", label: "Target Stat", disabled: !hasTarget, title: hasTarget ? "" : "Requires at least one target" },
+        { key: "skill", label: "Target Skill", disabled: !hasSingleTarget, title: hasSingleTarget ? "" : "Requires exactly one target" },
+        { key: "general", label: "Difficulty" },
     ];
     const radioRow = modes.map((m) => `
         <label class="hud-check-radio${m.disabled ? " is-disabled" : ""}" title="${escapeHtml(m.title ?? "")}">
@@ -484,8 +465,8 @@ function buildChecksHeader(data, deps = {}) {
 
     return `
         <div class="hud-tree-block hud-check-bar">
-            <div class="hud-section-title">Checks</div>
-            <div class="hud-check-radio-row">${radioRow}</div>
+            <div class="hud-section-title">Roll versus</div>
+            <div class="hud-check-radio-row hud-check-radio-grid">${radioRow}</div>
             ${expansion}
         </div>
     `;

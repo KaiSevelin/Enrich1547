@@ -734,6 +734,12 @@ a.enricher-1547::before {
   gap: 0.6rem;
 }
 
+.actor-hud-1547 .hud-check-radio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem 0.6rem;
+}
+
 .actor-hud-1547 .hud-check-radio {
   display: inline-flex;
   align-items: center;
@@ -770,6 +776,26 @@ a.enricher-1547::before {
   padding-bottom: 0.28rem;
   margin-bottom: 0.12rem;
   background: linear-gradient(180deg, rgba(20, 25, 35, 0.94), rgba(20, 25, 35, 0.76), rgba(20, 25, 35, 0));
+}
+
+.actor-hud-1547 .hud-action-row[data-hud-skill] {
+  border-left: 3px solid #6b9ec8;
+  background: rgba(107, 158, 200, 0.08);
+}
+
+.actor-hud-1547 .hud-action-row[data-hud-skill]:hover {
+  background: rgba(107, 158, 200, 0.18);
+}
+
+.actor-hud-1547 .hud-action-row[data-hud-maneuver-select],
+.actor-hud-1547 .hud-action-row[data-hud-maneuver-timing] {
+  border-left: 3px solid #c89a6b;
+  background: rgba(200, 154, 107, 0.08);
+}
+
+.actor-hud-1547 .hud-action-row[data-hud-maneuver-select]:hover,
+.actor-hud-1547 .hud-action-row[data-hud-maneuver-timing]:hover {
+  background: rgba(200, 154, 107, 0.18);
 }
 
 .actor-hud-1547 .hud-empty-state {

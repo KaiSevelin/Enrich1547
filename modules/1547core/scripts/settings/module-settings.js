@@ -24,7 +24,6 @@ const TEMPLATE_FILES = {
 const VALID_FOUNDRY_ID = /^[A-Za-z0-9]{16}$/;
 const ACTOR_TYPES = [
     "Player",
-    "Spirit",
     "HiddenFolk",
     "TheUnseen",
     "Beast",
@@ -1670,7 +1669,25 @@ function createModuleSetupFormApplicationClass() {
 
             html.find("[data-action='setup-data']").on("click", async (event) => {
                 event.preventDefault();
-                await this.#setupData();
+                const button = event.currentTarget;
+                const originalText = button?.textContent ?? "";
+                if (button) {
+                    button.disabled = true;
+                    button.textContent = "Setting up… (this can take a minute)";
+                    button.style.opacity = "0.7";
+                    button.style.cursor = "wait";
+                }
+                ui.notifications.info("1547 Core: setup started — loading datasets, building items, upserting documents…");
+                try {
+                    await this.#setupData();
+                } finally {
+                    if (button) {
+                        button.disabled = false;
+                        button.textContent = originalText;
+                        button.style.opacity = "";
+                        button.style.cursor = "";
+                    }
+                }
             });
 
             html.find("[data-action='run-diagnostics']").on("click", async (event) => {
