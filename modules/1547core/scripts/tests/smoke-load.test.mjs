@@ -46,7 +46,15 @@ if (typeof globalThis.canvas === "undefined") {
     globalThis.canvas = { tokens: { controlled: [] } };
 }
 if (typeof globalThis.foundry === "undefined") {
-    globalThis.foundry = { utils: { deepClone: (v) => JSON.parse(JSON.stringify(v)) } };
+    globalThis.foundry = {
+        utils: {
+            deepClone: (v) => JSON.parse(JSON.stringify(v)),
+            mergeObject: (a, b) => Object.assign({}, a, b),
+        },
+    };
+}
+if (typeof globalThis.Application === "undefined") {
+    globalThis.Application = class { static get defaultOptions() { return {}; } };
 }
 
 const SERVICE_FILES = [
@@ -63,6 +71,7 @@ const SERVICE_FILES = [
     "combat-resolver-service.js",
     "csb-container-helpers.mjs",
     "composition-service.mjs",
+    "monster-wizard-service.js",
 ];
 
 const COMBAT_FILES = [

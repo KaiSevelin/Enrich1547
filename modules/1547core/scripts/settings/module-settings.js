@@ -994,6 +994,7 @@ function buildChangeSetProps(changeSet) {
     const allowedTypes = new Set(normalizeTypeList(changeSet.appliesTo ?? changeSet.forTypes));
     const props = {
         Notes: changeSet.notes ?? "",
+        Description: changeSet.description ?? "",
         Group: changeSet.group ?? changeSet.system?.props?.Group ?? "",
         ForTypeAny: changeSet.forTypeAny ?? allowedTypes.size === 0,
         RequirementsDisplayer: changeSet.requirementsDisplayer ?? changeSet.system?.props?.RequirementsDisplayer ?? {},

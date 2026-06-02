@@ -47,6 +47,11 @@ Hooks.once("init", () => {
         (module) => module.registerBoostService()
     );
     void runImportedModuleStep(
+        "registerMonsterWizard",
+        () => import("./services/monster-wizard-service.js"),
+        (module) => module.registerMonsterWizard()
+    );
+    void runImportedModuleStep(
         "registerCompositionService",
         () => import("./services/composition-service.mjs"),
         (module) => module.registerCompositionService()
