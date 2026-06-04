@@ -1,6 +1,10 @@
 {
   "type": "module",
   "scripts": {
-    "test": "node --test \"scripts/tests/*.test.mjs\""
+    "test": "node --test \"scripts/tests/*.test.mjs\"",
+    "build-packs": "node scripts/build/build-packs.mjs"
+  },
+  "devDependencies": {
+    "@foundryvtt/foundryvtt-cli": "^3.0.3"
   }
 }
