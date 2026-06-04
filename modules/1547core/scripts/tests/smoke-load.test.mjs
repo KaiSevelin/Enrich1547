@@ -83,6 +83,7 @@ const SERVICE_FILES = [
     "csb-container-helpers.mjs",
     "composition-service.mjs",
     "monster-wizard-service.js",
+    "compendium-import-hook.js",
     "skill-tree/node-logic.js",
     "skill-tree/node-editor.js",
     "skill-tree/skill-tree-service.js",
