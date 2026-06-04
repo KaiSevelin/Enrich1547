@@ -2,7 +2,7 @@
     "id":  "1547core",
     "title":  "1547 Core",
     "description":  "Core rules and shared runtime for 1547",
-    "version":  "0.3.1",
+    "version":  "0.3.2",
     "compatibility":  {
                           "minimum":  "11",
                           "verified":  "13.350"
@@ -26,6 +26,28 @@
                       }
                   ],
     "socket":  true,
+    "packFolders":  [
+                        {
+                            "name":  "1547 Rule Book",
+                            "sorting":  "m",
+                            "color":  "#7a4d1c",
+                            "packs":  [
+                                          "maneuvers",
+                                          "spells",
+                                          "monster-magic",
+                                          "weapons",
+                                          "armors",
+                                          "ammunition",
+                                          "weapon-modifiers",
+                                          "pacts",
+                                          "supernatural-marks",
+                                          "requirements",
+                                          "changesets",
+                                          "monsters",
+                                          "roll-tables"
+                                      ]
+                        }
+                    ],
     "packs":  [
                   {
                       "name":  "maneuvers",
