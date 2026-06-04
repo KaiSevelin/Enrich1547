@@ -19,12 +19,12 @@ export class DieArmor extends Die {
     /** @override */
     getResultLabel(result) {
         return {
-			"1": '<img src="modules/dice1547/images/fumble_chat.png" />',
-            "2": '<img src="modules/dice1547/images/blank_chat.png" />',
-            "3": '<img src="modules/dice1547/images/p1_chat.png" />',
-            "4": '<img src="modules/dice1547/images/p2_chat.png" />',
-			"5": '<img src="modules/dice1547/images/p4_chat.png" />',			
-            "6": '<img src="modules/dice1547/images/crit_chat.png" />'
+			"1": '<img src="modules/1547core/images/dice/fumble_chat.png" />',
+            "2": '<img src="modules/1547core/images/dice/blank_chat.png" />',
+            "3": '<img src="modules/1547core/images/dice/p1_chat.png" />',
+            "4": '<img src="modules/1547core/images/dice/p2_chat.png" />',
+			"5": '<img src="modules/1547core/images/dice/p4_chat.png" />',			
+            "6": '<img src="modules/1547core/images/dice/crit_chat.png" />'
         }[result.result];
     }
 }
