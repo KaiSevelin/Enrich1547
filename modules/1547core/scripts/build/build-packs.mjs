@@ -511,6 +511,37 @@ function buildWeaponModifierProps(modifier) {
     };
 }
 
+// --- Equipment (generic items: amulets, clothing, containers, etc.) -----
+// Source items are exported from a world via docs/export-equipment-macro.js;
+// they arrive already in Foundry doc shape. This builder normalises the IDs,
+// adds the `_exportFolderName` value to `system.props.Category` so the
+// compendium displays grouped, then ships them as-is.
+
+async function buildEquipmentPack() {
+    const items = loadJson(path.join(TEMPLATES_DIR, "equipment.json"));
+    const docs = (Array.isArray(items) ? items : []).map((src) => {
+        const id = isValidFoundryId(src._id) ? src._id : deriveFoundryIdFromText(`equipment:${src.name}`);
+        const category = String(src._exportFolderName ?? src.system?.props?.Category ?? "Equipment").trim();
+        const cleaned = deepClone(src);
+        delete cleaned._exportFolderName;
+        cleaned._id = id;
+        cleaned._key = `!items!${id}`;
+        cleaned.folder = null;
+        cleaned.system = cleaned.system ?? {};
+        cleaned.system.props = cleaned.system.props ?? {};
+        cleaned.system.props.Category = category;
+        cleaned.flags = cleaned.flags ?? {};
+        cleaned.flags[SOURCE_FLAG_SCOPE] = {
+            ...(cleaned.flags[SOURCE_FLAG_SCOPE] ?? {}),
+            folderHint: category,
+            sourceData: src
+        };
+        cleaned.ownership = cleaned.ownership ?? { default: 0 };
+        return cleaned;
+    });
+    await compilePackFromDocs("equipment", docs);
+}
+
 async function buildWeaponModifiersPack() {
     const modifiers = loadJson(path.join(TEMPLATES_DIR, "weapon-modifiers.json"));
     const template = loadJson(path.join(TEMPLATES_DIR, TEMPLATE_FILES.weaponModifier));
@@ -1011,6 +1042,7 @@ async function main() {
     await buildArmorsPack();
     await buildAmmunitionPack();
     await buildWeaponModifiersPack();
+    await buildEquipmentPack();
     await buildPactsPack();
     await buildSupernaturalMarksPack();
     await buildRequirementsPack();

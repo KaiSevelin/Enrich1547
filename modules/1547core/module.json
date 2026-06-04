@@ -2,7 +2,7 @@
     "id":  "1547core",
     "title":  "1547 Core",
     "description":  "Core rules and shared runtime for 1547",
-    "version":  "0.3.2",
+    "version":  "0.3.3",
     "compatibility":  {
                           "minimum":  "11",
                           "verified":  "13.350"
@@ -39,6 +39,7 @@
                                           "armors",
                                           "ammunition",
                                           "weapon-modifiers",
+                                          "equipment",
                                           "pacts",
                                           "supernatural-marks",
                                           "requirements",
@@ -119,6 +120,17 @@
                       "name":  "weapon-modifiers",
                       "label":  "1547 Weapon Modifiers",
                       "path":  "packs/weapon-modifiers",
+                      "type":  "Item",
+                      "system":  "custom-system-builder",
+                      "ownership":  {
+                                        "PLAYER":  "OBSERVER",
+                                        "ASSISTANT":  "OWNER"
+                                    }
+                  },
+                  {
+                      "name":  "equipment",
+                      "label":  "1547 Equipment",
+                      "path":  "packs/equipment",
                       "type":  "Item",
                       "system":  "custom-system-builder",
                       "ownership":  {
