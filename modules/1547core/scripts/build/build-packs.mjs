@@ -511,6 +511,54 @@ function buildWeaponModifierProps(modifier) {
     };
 }
 
+// --- Rule Book (JournalEntry with chapter pages) -------------------------
+// Source is a small JSON file with one or more JournalEntry-shaped objects,
+// each carrying a `pages: [{ title, content }]` array. The builder fills in
+// Foundry shape (type:"text", title display, sort order) and the embedded
+// _key fields the Foundry CLI needs for compendium compilation.
+
+async function buildRulebookPack() {
+    const entries = loadJson(path.join(TEMPLATES_DIR, "rulebook.json"));
+    const docs = (Array.isArray(entries) ? entries : []).map((entry) => {
+        const entryId = isValidFoundryId(entry._id)
+            ? entry._id
+            : deriveFoundryIdFromText(`rulebook:${entry.name}`);
+        const pageSources = Array.isArray(entry.pages) ? entry.pages : [];
+        const pages = pageSources.map((page, index) => {
+            const pageId = isValidFoundryId(page._id)
+                ? page._id
+                : deriveFoundryIdFromText(`rulebook:${entryId}:${page.title ?? index}`);
+            return {
+                _id: pageId,
+                _key: `!journal.pages!${entryId}.${pageId}`,
+                name: page.title ?? `Chapter ${index + 1}`,
+                type: "text",
+                title: { show: true, level: 1 },
+                text: { content: page.content ?? "", format: 1, markdown: "" },
+                video: { controls: true, volume: 0.5 },
+                src: null,
+                system: {},
+                sort: (index + 1) * 100000,
+                ownership: { default: -1 },
+                flags: {}
+            };
+        });
+        return {
+            _id: entryId,
+            _key: `!journal!${entryId}`,
+            name: entry.name ?? "Rule Book",
+            pages,
+            folder: null,
+            sort: 0,
+            flags: {
+                [SOURCE_FLAG_SCOPE]: { sourceData: entry }
+            },
+            ownership: { default: 0 }
+        };
+    });
+    await compilePackFromDocs("rulebook", docs);
+}
+
 // --- Equipment (generic items: amulets, clothing, containers, etc.) -----
 // Source items are exported from a world via docs/export-equipment-macro.js;
 // they arrive already in Foundry doc shape. This builder normalises the IDs,
@@ -1035,6 +1083,7 @@ async function buildRollTablesPack() {
 async function main() {
     console.log("Building compendium packs…");
     fs.mkdirSync(PACKS_ROOT, { recursive: true });
+    await buildRulebookPack();
     await buildManeuversPack();
     await buildSpellsPack();
     await buildMonsterMagicPack();
