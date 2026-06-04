@@ -39,7 +39,15 @@ const TEMPLATE_FILES = {
     weaponModifier: "fvtt-Item-weaponmodifiertemplate-WmP9Ld3Qs7Nk2FvR.json",
     pact: "fvtt-Item-pacttemplate-HPYYc2P0Ouagicmr.json",
     supernaturalMark: "fvtt-Item-supernaturalmarktemplate-w9ky0ZTDvXDs5Ce7.json",
-    requirement: "fvtt-Item-requirementtemplate-L4ujYgqhGBGcoo2P.json"
+    requirement: "fvtt-Item-requirementtemplate-L4ujYgqhGBGcoo2P.json",
+    changeSet: "fvtt-Item-changesettemplate-b7A1z6cSZO4dYTKT.json",
+    change: "fvtt-Item-changetemplate-WsrkfjBmudnIhvEK.json"
+};
+
+const ACTOR_TYPES = ["Player", "HiddenFolk", "TheUnseen", "Beast", "Undead", "Colossal", "Unnatural", "Construct", "Zone", "People"];
+const CHANGE_FOLDER_LABELS = {
+    Stat: "Stat (Numeric)", PrimaryStat: "Primary Stat", Skill: "Skill", Text: "Text",
+    ItemGrant: "Item Grant", Tag: "Tag", Trait: "Trait"
 };
 
 // --- Shared helpers ------------------------------------------------------
@@ -817,6 +825,111 @@ function buildPactRollTableDoc(pact) {
     });
 }
 
+// --- ChangeSets + Changes ------------------------------------------------
+// ChangeSets and their child Changes are SEPARATE top-level CSB items linked
+// via `system.container` on each Change (pointing to the parent ChangeSet's
+// _id). The parent ChangeSet additionally carries a `system.props.ChangeDisplayer`
+// map populated with refs to each child — that's what CSB's UI uses to render
+// the children inside the ChangeSet sheet.
+//
+// Both go into one "changesets" pack so they ship together; users should use
+// "Import All Content" rather than dragging individual ChangeSets to avoid
+// orphaned ChangeDisplayer refs.
+
+function normalizeTypeList(values) {
+    if (Array.isArray(values)) return values.map((e) => String(e ?? "").trim()).filter(Boolean);
+    if (typeof values === "string" && values.trim()) return [values.trim()];
+    return [];
+}
+
+function buildChangeSetProps(changeSet) {
+    const allowedTypes = new Set(normalizeTypeList(changeSet.appliesTo ?? changeSet.forTypes));
+    const props = {
+        Notes: changeSet.notes ?? "",
+        Description: changeSet.description ?? "",
+        Group: changeSet.group ?? changeSet.system?.props?.Group ?? "",
+        ForTypeAny: changeSet.forTypeAny ?? allowedTypes.size === 0,
+        RequirementsDisplayer: changeSet.requirementsDisplayer ?? changeSet.system?.props?.RequirementsDisplayer ?? {},
+        ChangeDisplayer: changeSet.changeDisplayer ?? changeSet.system?.props?.ChangeDisplayer ?? {}
+    };
+    for (const actorType of ACTOR_TYPES) {
+        props[`ForType_${actorType}`] = allowedTypes.has(actorType) || changeSet[`ForType_${actorType}`] === true;
+    }
+    return mergeDefinedProps(props, changeSet.props ?? changeSet.system?.props);
+}
+
+function buildChangeProps(change) {
+    const props = {
+        Kind: change.kind ?? change.system?.props?.Kind ?? "",
+        Notes: change.notes ?? "",
+        StatTarget: change.statTarget ?? "",
+        StatOp: change.statOp ?? "Add",
+        StatValue: change.statValue ?? 0,
+        PrimaryStatTarget: change.primaryStatTarget ?? "",
+        PrimaryStatOp: change.primaryStatOp ?? "Step",
+        PrimaryStatSteps: change.primaryStatSteps ?? 0,
+        PrimaryStatSetDice: change.primaryStatSetDice ?? 1,
+        PrimaryStatSetMod: change.primaryStatSetMod ?? 0,
+        SkillRef: change.skillRef ?? [],
+        SkillDelta: change.skillDelta ?? 0,
+        TextTarget: change.textTarget ?? "",
+        TextOp: change.textOp ?? "Append",
+        TextValue: change.textValue ?? "",
+        ItemGrantMode: change.itemGrantMode ?? "Direct",
+        ItemGrantRef: change.itemGrantRef ?? [],
+        ItemGrantRollTable: change.itemGrantRollTable ?? "",
+        TagName: change.tagName ?? "",
+        TraitName: change.traitName ?? "",
+        TraitDescription: change.traitDescription ?? "",
+        DurationValue: change.durationValue ?? 0,
+        DurationUnit: change.durationUnit ?? "Permanent"
+    };
+    return mergeDefinedProps(props, change.props ?? change.system?.props);
+}
+
+async function buildChangeSetsPack() {
+    const changeSets = loadJson(path.join(TEMPLATES_DIR, "changesets.json"));
+    const changes = loadJson(path.join(TEMPLATES_DIR, "changes.json"));
+    const csTemplate = loadJson(path.join(TEMPLATES_DIR, TEMPLATE_FILES.changeSet));
+    const chTemplate = loadJson(path.join(TEMPLATES_DIR, TEMPLATE_FILES.change));
+
+    // 1. Build Change docs first, stamping system.container with parent ChangeSet ID.
+    const changeDocs = changes.map((change) => {
+        const doc = makeItemDoc(
+            change,
+            chTemplate,
+            change.img ?? chTemplate.img ?? "icons/svg/item-bag.svg",
+            buildChangeProps,
+            CHANGE_FOLDER_LABELS[change.kind] ?? "Changes"
+        );
+        const parentId = change.parentChangeSetId ?? null;
+        if (parentId) doc.system.container = parentId;
+        return doc;
+    });
+
+    // 2. Build ChangeSet docs.
+    const changeSetDocs = changeSets.map((cs) =>
+        makeItemDoc(cs, csTemplate, cs.img ?? csTemplate.img ?? "icons/svg/upgrade.svg", buildChangeSetProps, "Change Sets")
+    );
+
+    // 3. Wire each ChangeSet's ChangeDisplayer with refs to its children.
+    const changeSetById = new Map(changeSetDocs.map((d) => [d._id, d]));
+    for (const changeDoc of changeDocs) {
+        const parentId = String(changeDoc.system?.container ?? "").trim();
+        if (!parentId) continue;
+        const parent = changeSetById.get(parentId);
+        if (!parent) continue;
+        parent.system.props.ChangeDisplayer = parent.system.props.ChangeDisplayer ?? {};
+        parent.system.props.ChangeDisplayer[changeDoc._id] = {
+            name: changeDoc.name,
+            id: changeDoc._id,
+            uuid: `Item.${changeDoc._id}`
+        };
+    }
+
+    await compilePackFromDocs("changesets", [...changeSetDocs, ...changeDocs]);
+}
+
 async function buildRollTablesPack() {
     const boostTables = loadJson(path.join(TEMPLATES_DIR, "boost-roll-tables.json"));
     const ritualStepTables = loadJson(path.join(TEMPLATES_DIR, "ritual-step-roll-tables.json"));
@@ -849,6 +962,7 @@ async function main() {
     await buildPactsPack();
     await buildSupernaturalMarksPack();
     await buildRequirementsPack();
+    await buildChangeSetsPack();
     await buildRollTablesPack();
     console.log("Done.");
 }
