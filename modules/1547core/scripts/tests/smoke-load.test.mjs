@@ -84,6 +84,7 @@ const SERVICE_FILES = [
     "composition-service.mjs",
     "monster-wizard-service.js",
     "compendium-import-hook.js",
+    "content-registry.js",
     "skill-tree/node-logic.js",
     "skill-tree/node-editor.js",
     "skill-tree/skill-tree-service.js",

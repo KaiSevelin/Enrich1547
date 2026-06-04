@@ -14,24 +14,16 @@
  * boosts are rolled and applied, then the actor sheet is opened.
  */
 
+import { findChangeSetsByGroup, getItemById } from "./content-registry.js";
+
 const MODULE_ID = "1547core";
-const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
 const ACTOR_TYPES = [
     "HiddenFolk", "TheUnseen", "Beast", "Undead", "Colossal",
     "Unnatural", "Construct", "Zone", "People"
 ];
 
 function getChangeSetsByGroup(group, typeFilter = null) {
-    const all = [...(game.items?.values() ?? [])].filter((item) => {
-        if (item.system?.template !== CHANGESET_TEMPLATE_ID) return false;
-        return String(item.system?.props?.Group ?? "").trim() === group;
-    });
-    if (!typeFilter) return all;
-    return all.filter((item) => {
-        const props = item.system?.props ?? {};
-        if (props.ForTypeAny === true) return true;
-        return props[`ForType_${typeFilter}`] === true;
-    });
+    return findChangeSetsByGroup(group, typeFilter);
 }
 
 function getChangeSetDescription(item) {
@@ -184,7 +176,7 @@ class MonsterWizard extends Application {
     #renderReview() {
         const s = this.state;
         function lookupName(id) {
-            const item = game.items?.get(id);
+            const item = getItemById(id);
             return item?.name ?? "(unknown)";
         }
         const lines = [
@@ -353,9 +345,9 @@ class MonsterWizard extends Application {
             const picked = [s.roleId, s.domainId, s.loadoutId, s.motivationId, ...s.quirkIds].filter(Boolean);
             const itemDataArr = [];
             for (const id of picked) {
-                const worldItem = game.items?.get(id);
-                if (!worldItem) continue;
-                const data = worldItem.toObject();
+                const sourceItem = getItemById(id);
+                if (!sourceItem) continue;
+                const data = sourceItem.toObject();
                 delete data._id;
                 itemDataArr.push(data);
             }

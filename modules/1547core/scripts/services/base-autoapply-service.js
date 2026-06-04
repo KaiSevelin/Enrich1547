@@ -10,6 +10,8 @@
  * Runs GM-side only (createEmbeddedDocuments / deleteEmbeddedDocuments).
  */
 
+import { findChangeSetsByGroup } from "./content-registry.js";
+
 const MODULE_ID = "1547core";
 const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
 
@@ -22,15 +24,10 @@ function getActorType(actor) {
 }
 
 function findBaseChangeSetForType(typeDropdown) {
-    if (!typeDropdown || !game.items) return null;
+    if (!typeDropdown) return null;
     const flag = `ForType_${typeDropdown}`;
-    for (const item of game.items.values()) {
-        if (!isChangeSet(item)) continue;
-        const props = item.system?.props ?? {};
-        if (String(props.Group ?? "").trim() !== "Base") continue;
-        if (props[flag] === true) return item;
-    }
-    return null;
+    const candidates = findChangeSetsByGroup("Base", typeDropdown);
+    return candidates.find((item) => item.system?.props?.[flag] === true) ?? null;
 }
 
 function findActorBaseItem(actor) {

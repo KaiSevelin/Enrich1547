@@ -130,6 +130,11 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", () => {
     void runImportedModuleStep(
+        "registerContentRegistry",
+        () => import("./services/content-registry.js"),
+        (module) => module.registerContentRegistry()
+    );
+    void runImportedModuleStep(
         "runReachMigration",
         () => import("./migrations/reach-migration.js"),
         (module) => void module.runReachMigration()
