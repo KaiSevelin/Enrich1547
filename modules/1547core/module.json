@@ -2,7 +2,7 @@
     "id":  "1547core",
     "title":  "1547 Core",
     "description":  "Core rules and shared runtime for 1547",
-    "version":  "0.2.97",
+    "version":  "0.2.98",
     "compatibility":  {
                           "minimum":  "11",
                           "verified":  "13.350"
@@ -45,6 +45,50 @@
                       "name":  "monster-magic",
                       "label":  "1547 Monster Powers",
                       "path":  "packs/monster-magic",
+                      "type":  "Item",
+                      "system":  "custom-system-builder",
+                      "ownership":  {
+                                        "PLAYER":  "OBSERVER",
+                                        "ASSISTANT":  "OWNER"
+                                    }
+                  },
+                  {
+                      "name":  "weapons",
+                      "label":  "1547 Weapons",
+                      "path":  "packs/weapons",
+                      "type":  "Item",
+                      "system":  "custom-system-builder",
+                      "ownership":  {
+                                        "PLAYER":  "OBSERVER",
+                                        "ASSISTANT":  "OWNER"
+                                    }
+                  },
+                  {
+                      "name":  "armors",
+                      "label":  "1547 Armors",
+                      "path":  "packs/armors",
+                      "type":  "Item",
+                      "system":  "custom-system-builder",
+                      "ownership":  {
+                                        "PLAYER":  "OBSERVER",
+                                        "ASSISTANT":  "OWNER"
+                                    }
+                  },
+                  {
+                      "name":  "ammunition",
+                      "label":  "1547 Ammunition",
+                      "path":  "packs/ammunition",
+                      "type":  "Item",
+                      "system":  "custom-system-builder",
+                      "ownership":  {
+                                        "PLAYER":  "OBSERVER",
+                                        "ASSISTANT":  "OWNER"
+                                    }
+                  },
+                  {
+                      "name":  "weapon-modifiers",
+                      "label":  "1547 Weapon Modifiers",
+                      "path":  "packs/weapon-modifiers",
                       "type":  "Item",
                       "system":  "custom-system-builder",
                       "ownership":  {

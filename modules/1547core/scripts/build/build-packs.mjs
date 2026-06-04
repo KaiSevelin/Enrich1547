@@ -32,7 +32,11 @@ const SOURCE_FLAG_SCOPE = "1547Core";
 const TEMPLATE_FILES = {
     maneuver: "fvtt-Item-maneuvertemplate-4owc4YQBlp94GbGs.json",
     spell: "fvtt-Item-spelltemplate-2kiWw3Cv5Zk1lZxn.json",
-    monsterMagic: "fvtt-Item-monstermagictemplate-M0nMgk7Yp2RsT5Vu.json"
+    monsterMagic: "fvtt-Item-monstermagictemplate-M0nMgk7Yp2RsT5Vu.json",
+    weapon: "fvtt-Item-weapontemplate-qZCfLEYQ7egbm1B9.json",
+    armor: "fvtt-Item-armortemplate-uLlgZXz3GlXPFtsj.json",
+    ammo: "fvtt-Item-ammunitiontemplate-389uqkKKn8M1SKux.json",
+    weaponModifier: "fvtt-Item-weaponmodifiertemplate-WmP9Ld3Qs7Nk2FvR.json"
 };
 
 // --- Shared helpers ------------------------------------------------------
@@ -277,6 +281,193 @@ async function buildMonsterMagicPack() {
     await compilePackFromDocs("monster-magic", docs);
 }
 
+// --- Weapons -------------------------------------------------------------
+
+function normalizeTraitKey(value) {
+    return String(value ?? "").replace(/[^A-Za-z0-9]/g, "");
+}
+
+function buildWeaponProps(weapon) {
+    const traitKeys = [
+        "Aiming", "ArmorBreaking", "Bracing", "Charging", "Control",
+        "Disarming", "Fast", "Fragile", "Heavy", "Hooking",
+        "Narrow", "Parrying", "PointBlank", "RigidBlade",
+        "Receiving", "Reloading", "Shield", "SmallShield", "Tactical"
+    ];
+    const normalizedTraits = new Set((weapon.traits ?? []).map(normalizeTraitKey));
+    const [a, b, c] = weapon.attackProfiles ?? [];
+
+    const profileText = (profile) => {
+        if (!profile) return "";
+        const diceText = Array.isArray(profile.dice) ? profile.dice.join(", ") : "";
+        return profile.name && profile.name !== "Default" ? `${profile.name}: ${diceText}` : diceText;
+    };
+    const profileAmmoText = (profile) => {
+        if (!profile || !weapon.usesAmmo) return "";
+        const allowedAmmoTypes = Array.isArray(profile.allowedAmmoTypes) && profile.allowedAmmoTypes.length > 0
+            ? profile.allowedAmmoTypes
+            : (weapon.ammoType ? [weapon.ammoType] : []);
+        return allowedAmmoTypes.join(", ");
+    };
+    const profileDamageType = (profile) => profile?.damageType ?? "";
+    const profileDamageQualifiers = (profile) => Array.isArray(profile?.damageQualifiers)
+        ? profile.damageQualifiers.join(", ") : "";
+
+    const availableProfiles = [a, b, c]
+        .map((profile, index) => profile ? ["Attack", "AttackB", "AttackC"][index] : null)
+        .filter(Boolean);
+    const sourceActiveProfile = String(weapon.activeAttackProfile ?? "").trim();
+    const activeAttackProfile = availableProfiles.includes(sourceActiveProfile)
+        ? sourceActiveProfile
+        : (availableProfiles[0] ?? "Attack");
+
+    const props = {
+        Description: "",
+        Weight: weapon.weight ?? 0,
+        Value: weapon.value ?? 0,
+        Equipped: Boolean(weapon.equipped),
+        WeaponType: weapon.category ?? "Blade",
+        MinReach: weapon.minReach ?? "",
+        MaxReach: weapon.maxReach ?? "",
+        ShortRange: weapon.shortRange ?? "",
+        LongRange: weapon.longRange ?? "",
+        MaxRange: weapon.maxRange ?? "",
+        UsesAmmo: Boolean(weapon.usesAmmo),
+        AmmoType: weapon.ammoType ?? "",
+        AmmoCapacity: weapon.ammoCapacity ?? 0,
+        AmmoLoaded: weapon.ammoLoaded ?? 0,
+        LoadedAmmoId: weapon.loadedAmmoId ?? "",
+        ReloadTime: weapon.reloadTime ?? 0,
+        ReloadProgress: weapon.reloadProgress ?? 0,
+        Attack: profileText(a),
+        AttackDamageType: profileDamageType(a),
+        AttackAmmo: profileAmmoText(a),
+        AttackDamageQualifiers: profileDamageQualifiers(a),
+        AttackB: profileText(b),
+        AttackBDamageType: profileDamageType(b),
+        AttackBAmmo: profileAmmoText(b),
+        AttackBDamageQualifiers: profileDamageQualifiers(b),
+        AttackC: profileText(c),
+        AttackCDamageType: profileDamageType(c),
+        AttackCAmmo: profileAmmoText(c),
+        AttackCDamageQualifiers: profileDamageQualifiers(c),
+        ActiveAttackProfile: activeAttackProfile
+    };
+    for (const key of traitKeys) props[`Traits_${key}`] = normalizedTraits.has(key);
+    return props;
+}
+
+async function buildWeaponsPack() {
+    const weapons = loadJson(path.join(TEMPLATES_DIR, "weapons.json"));
+    const template = loadJson(path.join(TEMPLATES_DIR, TEMPLATE_FILES.weapon));
+    const docs = weapons.map((src) =>
+        makeItemDoc(src, template, src.img ?? template.img ?? "icons/svg/sword.svg", buildWeaponProps, src.folder ?? "Weapons")
+    );
+    await compilePackFromDocs("weapons", docs);
+}
+
+// --- Armors --------------------------------------------------------------
+
+function buildArmorProps(armor) {
+    const traitKeys = ["Concealable", "Encumbering", "Flexible", "Noisy", "Soft", "Resistance", "VerySoft"];
+    const normalizedTraits = new Set((armor.traits ?? []).map(normalizeTraitKey));
+    const props = {
+        Description: "",
+        Weight: armor.weight ?? 0,
+        Value: armor.value ?? 0,
+        Equipped: Boolean(armor.equipped),
+        ArmorType: armor.armorClass ?? "Light",
+        Defense: Array.isArray(armor.defenseDice) ? armor.defenseDice.join(", ") : ""
+    };
+    for (const key of traitKeys) props[`Traits_${key}`] = normalizedTraits.has(key);
+    return props;
+}
+
+async function buildArmorsPack() {
+    const armors = loadJson(path.join(TEMPLATES_DIR, "armors.json"));
+    const template = loadJson(path.join(TEMPLATES_DIR, TEMPLATE_FILES.armor));
+    const docs = armors.map((src) =>
+        makeItemDoc(src, template, src.img ?? template.img ?? "icons/svg/shield.svg", buildArmorProps, src.folder ?? "Armors")
+    );
+    await compilePackFromDocs("armors", docs);
+}
+
+// --- Ammunition ----------------------------------------------------------
+
+function buildAmmoProps(ammo) {
+    const addDice = Array.isArray(ammo.addDice) ? ammo.addDice.join(", ") : "";
+    const addDamageQualifiers = Array.isArray(ammo.addDamageQualifiers) ? ammo.addDamageQualifiers.join(", ") : "";
+    const tags = Array.isArray(ammo.tags) ? ammo.tags.join(", ") : "";
+    const range = ammo.range
+        ?? (ammo.rangeOverride ? { mode: "override", ...ammo.rangeOverride } : null)
+        ?? (ammo.rangeModifier ? { mode: "modify", ...ammo.rangeModifier } : null)
+        ?? null;
+    return {
+        Description: ammo.description ?? "",
+        Weight: ammo.weight ?? 0,
+        Value: ammo.value ?? 0,
+        Quantity: ammo.quantity ?? 1,
+        AmmoType: ammo.ammoType ?? ammo.name ?? "",
+        AddDice: addDice,
+        AddDiceSummary: addDice,
+        AddDamageQualifiers: addDamageQualifiers,
+        OverrideDamageType: ammo.overrideDamageType ?? "",
+        Tags: tags,
+        TagsSummary: tags,
+        RangeModeOverride: String(range?.mode ?? "modify").trim().toLowerCase() === "override",
+        RangeShort: range?.shortRange ?? 0,
+        RangeMedium: range?.longRange ?? 0,
+        RangeLong: range?.maxRange ?? 0,
+        Range: range ? JSON.stringify(range, null, 2) : "",
+        ResultModifiers: JSON.stringify(ammo.resultModifiers ?? [], null, 2)
+    };
+}
+
+async function buildAmmunitionPack() {
+    const ammo = loadJson(path.join(TEMPLATES_DIR, "ammunition.json"));
+    const template = loadJson(path.join(TEMPLATES_DIR, TEMPLATE_FILES.ammo));
+    const docs = ammo.map((src) =>
+        makeItemDoc(src, template, src.img ?? template.img ?? "icons/svg/target.svg", buildAmmoProps, "Ammunition")
+    );
+    await compilePackFromDocs("ammunition", docs);
+}
+
+// --- Weapon Modifiers ----------------------------------------------------
+
+function buildWeaponModifierProps(modifier) {
+    const toCsv = (value) => Array.isArray(value) ? value.join(", ") : "";
+    return {
+        Description: modifier.description ?? "",
+        Weight: modifier.weight ?? 0,
+        Value: modifier.value ?? 0,
+        ModifierType: modifier.modifierType ?? "",
+        TargetKinds: toCsv(modifier.targetKinds),
+        AddDamageQualifiers: toCsv(modifier.addDamageQualifiers),
+        RemoveDamageQualifiers: toCsv(modifier.removeDamageQualifiers),
+        OverrideDamageType: modifier.overrideDamageType ?? "",
+        AddDice: toCsv(modifier.addDice),
+        RemoveDice: toCsv(modifier.removeDice),
+        ResultModifiers: JSON.stringify(modifier.resultModifiers ?? [], null, 2),
+        Tags: toCsv(modifier.tags),
+        OnHitEffects: JSON.stringify(modifier.onHitEffects ?? [], null, 2),
+        AppliesToProfiles: toCsv(modifier.appliesToProfiles),
+        DurationType: modifier.durationType ?? "",
+        DurationValue: modifier.durationValue ?? "",
+        StackKey: modifier.stackKey ?? "",
+        StackMode: modifier.stackMode ?? "",
+        Requirements: JSON.stringify(modifier.requirements ?? {}, null, 2)
+    };
+}
+
+async function buildWeaponModifiersPack() {
+    const modifiers = loadJson(path.join(TEMPLATES_DIR, "weapon-modifiers.json"));
+    const template = loadJson(path.join(TEMPLATES_DIR, TEMPLATE_FILES.weaponModifier));
+    const docs = modifiers.map((src) =>
+        makeItemDoc(src, template, src.img ?? template.img ?? "icons/svg/upgrade.svg", buildWeaponModifierProps, "Weapon Modifiers")
+    );
+    await compilePackFromDocs("weapon-modifiers", docs);
+}
+
 // --- Main ----------------------------------------------------------------
 
 async function main() {
@@ -285,6 +476,10 @@ async function main() {
     await buildManeuversPack();
     await buildSpellsPack();
     await buildMonsterMagicPack();
+    await buildWeaponsPack();
+    await buildArmorsPack();
+    await buildAmmunitionPack();
+    await buildWeaponModifiersPack();
     console.log("Done.");
 }
 
