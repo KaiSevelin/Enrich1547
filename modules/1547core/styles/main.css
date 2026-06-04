@@ -2684,3 +2684,330 @@ a.enricher-1547::before {
 			max-height: 280px;
 		}
 	}
+
+/* ============ Raceboard styles (migrated from raceboard in 0.3.1) ============ */
+/* RaceBoard module */
+
+/* --- Translucent floating window (canvas overlay) --- */
+
+.raceboard-app {
+  --rb-text: #f6f1e1;
+  --rb-text-dim: rgba(246, 241, 225, 0.75);
+  --rb-text-shadow: 0 0 4px rgba(0,0,0,0.85), 0 0 2px rgba(0,0,0,0.85);
+  --rb-row-bg: rgba(20, 20, 28, 0.45);
+  --rb-row-bg-won: rgba(38, 110, 64, 0.55);
+  --rb-btn-bg: rgba(20, 20, 28, 0.5);
+  --rb-btn-bg-hover: rgba(40, 40, 55, 0.7);
+  --rb-border: rgba(246, 241, 225, 0.25);
+}
+
+/* Strip the window frame's background entirely — fully transparent. */
+.raceboard-app,
+.raceboard-app .window-header,
+.raceboard-app .window-content {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  color: var(--rb-text);
+}
+
+.raceboard-app .window-content {
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.raceboard-app .window-title,
+.raceboard-app .window-header *,
+.raceboard-app .rb-doc-name,
+.raceboard-app .rb-row-label,
+.raceboard-app .rb-row-progress {
+  color: var(--rb-text) !important;
+  text-shadow: var(--rb-text-shadow);
+}
+
+/* Keep the frame controls (close, minimize) visible against any backdrop. */
+.raceboard-app .window-header a,
+.raceboard-app .window-header button {
+  color: var(--rb-text) !important;
+  text-shadow: var(--rb-text-shadow);
+}
+
+/* --- Page-sheet view (inside Journal, opaque to match) --- */
+
+.raceboard-page {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rb-header,
+.rb-page-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--color-border-light-tertiary, #999);
+  padding-bottom: 0.4rem;
+}
+
+.raceboard-app .rb-header {
+  border-bottom: 1px solid var(--rb-border);
+}
+
+.rb-header .rb-doc-name,
+.rb-page-header h2 {
+  flex: 1;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.rb-header-actions {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.rb-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rb-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.04);
+  transition: background 0.2s ease;
+}
+
+.raceboard-app .rb-row {
+  background: var(--rb-row-bg);
+}
+
+.rb-row.is-won {
+  background: rgba(42, 138, 79, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(42, 138, 79, 0.4);
+}
+
+.raceboard-app .rb-row.is-won {
+  background: var(--rb-row-bg-won);
+  box-shadow: inset 0 0 0 1px rgba(80, 200, 130, 0.55);
+}
+
+.rb-row-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  opacity: 0.95;
+}
+
+.raceboard-app .rb-row-label { color: var(--rb-text); }
+.raceboard-app .rb-row-progress { color: var(--rb-text-dim); }
+
+.rb-label-text {
+  cursor: default;
+  flex: 1;
+}
+
+.rb-rows:not(.rb-readonly) .rb-label-text[data-action="edit-label"] {
+  cursor: pointer;
+  border-bottom: 1px dashed transparent;
+}
+
+.rb-rows:not(.rb-readonly) .rb-label-text[data-action="edit-label"]:hover {
+  border-bottom-color: currentColor;
+}
+
+.rb-row-progress {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.rb-row-body {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rb-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.rb-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  font-size: 2.2rem;
+  border-radius: 6px;
+  user-select: none;
+}
+
+.rb-rows:not(.rb-readonly) .rb-box[data-action="tick"] {
+  cursor: pointer;
+  transition: background 0.1s ease, transform 0.1s ease;
+}
+
+.rb-rows:not(.rb-readonly) .rb-box[data-action="tick"]:hover {
+  background: rgba(0, 0, 0, 0.08);
+  transform: scale(1.06);
+}
+
+.raceboard-app .rb-rows:not(.rb-readonly) .rb-box[data-action="tick"]:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.rb-box.is-checked {
+  color: #2a8a4f;
+}
+
+.raceboard-app .rb-box {
+  color: var(--rb-text);
+  text-shadow: var(--rb-text-shadow);
+}
+
+.raceboard-app .rb-box.is-checked {
+  color: #6ce29b;
+  text-shadow: 0 0 6px rgba(0,0,0,0.85), 0 0 10px rgba(92, 208, 146, 0.55);
+}
+
+.rb-row-controls {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.rb-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  background: var(--color-bg-btn, rgba(0, 0, 0, 0.06));
+  border: 1px solid var(--color-border-light-primary, #888);
+  cursor: pointer;
+}
+
+.rb-btn:hover:not([disabled]) {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.raceboard-app .rb-btn {
+  background: var(--rb-btn-bg);
+  border-color: var(--rb-border);
+  color: var(--rb-text);
+}
+
+.raceboard-app .rb-btn:hover:not([disabled]) {
+  background: var(--rb-btn-bg-hover);
+}
+
+.rb-btn[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.rb-btn-icon {
+  padding: 0.25rem 0.4rem;
+  font-size: 0.8rem;
+}
+
+.rb-btn-danger {
+  color: #a33;
+}
+
+.rb-btn-primary {
+  background: #2a8a4f;
+  color: white;
+  border-color: #1c5f37;
+}
+
+.rb-btn-primary:hover:not([disabled]) {
+  background: #36a85f;
+}
+
+.rb-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-top: 1px solid var(--color-border-light-tertiary, #999);
+  padding-top: 0.5rem;
+}
+
+.raceboard-app .rb-footer {
+  border-top: 1px solid var(--rb-border);
+}
+
+.rb-footer-right {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.rb-ephemeral-tag {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.05rem 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+  border-radius: 4px;
+  background: rgba(212, 175, 55, 0.25);
+  color: #f3d56b;
+  text-shadow: var(--rb-text-shadow);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+}
+
+/* Sidebar button */
+.raceboard-new-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: 0.25rem;
+}
+
+/* Winner splash */
+.raceboard-winner-splash .window-content {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.rb-winner-splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rb-trophy {
+  font-size: 3rem;
+  color: #d4af37;
+}
+
+.rb-winner-headline {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.9rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.rb-winner-name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+}

@@ -1,0 +1,30 @@
+<div class="raceboard-page">
+  <header class="rb-page-header">
+    <h2>{{docName}}</h2>
+    {{#if canEdit}}
+      <button type="button" class="rb-btn" data-action="open-private">
+        <i class="fa-solid fa-up-right-from-square"></i> {{localize "RACEBOARD.OpenAsWindow"}}
+      </button>
+    {{/if}}
+  </header>
+
+  <div class="rb-rows rb-readonly">
+    {{#each rows}}
+      <div class="rb-row {{#if isWon}}is-won{{/if}}">
+        <div class="rb-row-label">
+          <span class="rb-label-text">{{label}}</span>
+          <span class="rb-row-progress">{{filled}}/{{total}}</span>
+        </div>
+        <div class="rb-row-body">
+          <div class="rb-boxes">
+            {{#each boxes}}
+              <span class="rb-box {{#if checked}}is-checked{{/if}}">
+                <i class="fa-{{#if checked}}solid{{else}}regular{{/if}} fa-square{{#if checked}}-check{{/if}}"></i>
+              </span>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>

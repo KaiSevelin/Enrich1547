@@ -1,0 +1,85 @@
+<div class="rb-body"><header class="rb-header">
+  <h2 class="rb-doc-name">
+    {{#if isEphemeral}}
+      <span class="rb-ephemeral-tag">{{localize "RACEBOARD.Unsaved"}}</span>
+    {{else}}
+      {{docName}}
+    {{/if}}
+  </h2>
+  {{#if canEdit}}
+    <div class="rb-header-actions">
+      <button type="button" class="rb-btn rb-btn-icon" data-action="reset"
+              title="{{localize "RACEBOARD.Reset"}}">
+        <i class="fa-solid fa-rotate-left"></i>
+      </button>
+      <button type="button" class="rb-btn rb-btn-icon rb-btn-danger" data-action="discard"
+              title="{{#if isEphemeral}}{{localize "RACEBOARD.CloseUnsaved"}}{{else}}{{localize "RACEBOARD.Discard"}}{{/if}}">
+        <i class="fa-solid fa-{{#if isEphemeral}}xmark{{else}}trash{{/if}}"></i>
+      </button>
+    </div>
+  {{/if}}
+</header>
+
+<div class="rb-rows">
+  {{#each rows}}
+    <div class="rb-row {{#if isWon}}is-won{{/if}}" data-row="{{idx}}">
+      <div class="rb-row-label">
+        <span class="rb-label-text"
+              {{#if ../canEdit}}data-action="edit-label" data-row="{{idx}}" title="{{localize "RACEBOARD.EditLabelTitle"}}"{{/if}}>
+          {{label}}
+        </span>
+        <span class="rb-row-progress">{{filled}}/{{total}}</span>
+      </div>
+
+      <div class="rb-row-body">
+        <div class="rb-boxes">
+          {{#each boxes}}
+            <span class="rb-box {{#if checked}}is-checked{{/if}}"
+                  {{#if ../../canEdit}}data-action="tick" data-row="{{../idx}}"{{/if}}>
+              <i class="fa-{{#if checked}}solid{{else}}regular{{/if}} fa-square{{#if checked}}-check{{/if}}"></i>
+            </span>
+          {{/each}}
+        </div>
+
+        {{#if ../canEdit}}
+          <div class="rb-row-controls">
+            <button type="button" class="rb-btn rb-btn-icon" data-action="row-remove-box" data-row="{{idx}}"
+                    {{#unless canRemoveBox}}disabled{{/unless}}
+                    title="{{localize "RACEBOARD.RemoveBox"}}">
+              <i class="fa-solid fa-minus"></i>
+            </button>
+            <button type="button" class="rb-btn rb-btn-icon" data-action="row-add-box" data-row="{{idx}}"
+                    title="{{localize "RACEBOARD.AddBox"}}">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+            <button type="button" class="rb-btn rb-btn-icon rb-btn-danger" data-action="row-delete" data-row="{{idx}}"
+                    {{#unless ../canDeleteRow}}disabled{{/unless}}
+                    title="{{localize "RACEBOARD.DeleteTrack"}}">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        {{/if}}
+      </div>
+    </div>
+  {{/each}}
+</div>
+
+{{#if canEdit}}
+  <footer class="rb-footer">
+    <button type="button" class="rb-btn" data-action="add-row"
+            {{#unless canAddRow}}disabled{{/unless}}>
+      <i class="fa-solid fa-plus"></i> {{localize "RACEBOARD.AddTrack"}}
+    </button>
+    <div class="rb-footer-right">
+      {{#if isEphemeral}}
+        <button type="button" class="rb-btn rb-btn-primary" data-action="save">
+          <i class="fa-solid fa-floppy-disk"></i> {{localize "RACEBOARD.SaveLabel"}}
+        </button>
+      {{/if}}
+      <button type="button" class="rb-btn rb-btn-primary" data-action="show-to-players">
+        <i class="fa-solid fa-tower-broadcast"></i> {{localize "RACEBOARD.ShowToPlayers"}}
+      </button>
+    </div>
+  </footer>
+{{/if}}
+</div>

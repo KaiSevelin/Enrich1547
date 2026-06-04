@@ -131,6 +131,11 @@ Hooks.once("init", () => {
         () => import("./chargen/chargen-service.js"),
         (module) => module.registerChargenService()
     );
+    void runImportedModuleStep(
+        "registerRaceboardService",
+        () => import("./raceboard/raceboard-service.js"),
+        (module) => module.registerRaceboardService()
+    );
 });
 
 Hooks.once("ready", () => {
@@ -193,5 +198,10 @@ Hooks.once("ready", () => {
         "refreshChargenApi",
         () => import("./chargen/chargen-service.js"),
         (module) => module.refreshChargenApi()
+    );
+    void runImportedModuleStep(
+        "refreshRaceboardApi",
+        () => import("./raceboard/raceboard-service.js"),
+        (module) => module.refreshRaceboardApi()
     );
 });
