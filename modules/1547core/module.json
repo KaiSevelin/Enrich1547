@@ -2,7 +2,7 @@
     "id":  "1547core",
     "title":  "1547 Core",
     "description":  "Core rules and shared runtime for 1547",
-    "version":  "0.2.99",
+    "version":  "0.2.100",
     "compatibility":  {
                           "minimum":  "11",
                           "verified":  "13.350"
@@ -124,6 +124,16 @@
                       "path":  "packs/requirements",
                       "type":  "Item",
                       "system":  "custom-system-builder",
+                      "ownership":  {
+                                        "PLAYER":  "OBSERVER",
+                                        "ASSISTANT":  "OWNER"
+                                    }
+                  },
+                  {
+                      "name":  "roll-tables",
+                      "label":  "1547 Roll Tables",
+                      "path":  "packs/roll-tables",
+                      "type":  "RollTable",
                       "ownership":  {
                                         "PLAYER":  "OBSERVER",
                                         "ASSISTANT":  "OWNER"

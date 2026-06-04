@@ -103,6 +103,46 @@ function safeFileName(doc) {
     return `${String(doc.name).replace(/[^A-Za-z0-9_-]/g, "_")}_${doc._id}.json`;
 }
 
+const VALID_FOUNDRY_ID = /^[A-Za-z0-9]{16}$/;
+
+function isValidFoundryId(value) {
+    return VALID_FOUNDRY_ID.test(String(value ?? ""));
+}
+
+function deriveFoundryIdFromText(text) {
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let hashA = 2166136261;
+    let hashB = 16777619;
+    const source = String(text ?? "1547CoreItem");
+    for (const ch of source) {
+        const code = ch.charCodeAt(0);
+        hashA ^= code;
+        hashA = Math.imul(hashA, 16777619) >>> 0;
+        hashB = (Math.imul(hashB ^ code, 2246822519) + 3266489917) >>> 0;
+    }
+    let output = "";
+    for (let i = 0; i < 16; i += 1) {
+        hashA = (Math.imul(hashA ^ (hashB >>> (i % 8)), 1664525) + 1013904223) >>> 0;
+        output += alphabet[hashA % alphabet.length];
+    }
+    return output;
+}
+
+function normalizeSourceEntry(source, kind, documentType = "Item") {
+    const normalized = deepClone(source);
+    let nextId = normalized._id;
+    const uuidSuffix = typeof normalized.uuid === "string" ? normalized.uuid.split(".").pop() : "";
+    if (!isValidFoundryId(nextId)) {
+        if (isValidFoundryId(normalized.id)) nextId = normalized.id;
+        else if (isValidFoundryId(uuidSuffix)) nextId = uuidSuffix;
+        else nextId = deriveFoundryIdFromText(`${kind}:${normalized.name}:${normalized.uuid ?? ""}`);
+    }
+    normalized._id = nextId;
+    normalized.id = nextId;
+    normalized.uuid = `${documentType}.${nextId}`;
+    return normalized;
+}
+
 async function compilePackFromDocs(packName, docs) {
     const sourceDir = path.join(PACK_SOURCE_ROOT, packName);
     const packDir = path.join(PACKS_ROOT, packName);
@@ -602,6 +642,198 @@ async function buildRequirementsPack() {
     await compilePackFromDocs("requirements", docs);
 }
 
+// --- Roll Tables ---------------------------------------------------------
+// Five flavors all going into one "roll-tables" pack:
+//   Boost (3d6 / 4d6 → Item document results)
+//   Ritual Step (1dN → text)
+//   Spell Failure (3d6 bell curve → text)
+//   Spell Support (3d6 bell curve → text)
+//   Pact-derived (per-pact 1dN → text, generated from pacts.json)
+//
+// In compendium packs, RollTable result keys use the `!tables.results!` prefix.
+// Each result's `_key` must be set explicitly because the official Foundry CLI
+// expects per-entry _key for embedded collections (results live inside the
+// parent RollTable, not as separate documents — Foundry CLI handles this).
+
+const TEXT_RESULT_TYPE = 0;
+const DOCUMENT_RESULT_TYPE = 1;
+
+function rollTableDoc({ _id, name, description, results, formula, replacement = true, displayRoll = true, flags }) {
+    // Decorate each result with the embedded `_key` Foundry expects.
+    const decoratedResults = results.map((r) => ({
+        ...r,
+        _key: `!tables.results!${_id}.${r._id}`
+    }));
+    return {
+        _id,
+        _key: `!tables!${_id}`,
+        name,
+        description,
+        results: decoratedResults,
+        formula,
+        replacement,
+        displayRoll,
+        folder: null,
+        flags: flags ?? {},
+        ownership: { default: 0 }
+    };
+}
+
+function buildBoostRollTableDoc(table) {
+    const normalized = normalizeSourceEntry(table, "boostRollTable", "RollTable");
+    const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
+    const results = entries.map((entry, index) => ({
+        _id: deriveFoundryIdFromText(`${normalized._id}:${entry.roll ?? index}:result`),
+        type: DOCUMENT_RESULT_TYPE,
+        documentCollection: "Item",
+        documentId: entry.boostId,
+        text: entry.label ?? `Boost ${index + 1}`,
+        img: "icons/svg/upgrade.svg",
+        weight: 1,
+        range: [entry.roll ?? (index + 1), entry.roll ?? (index + 1)],
+        drawn: false,
+        flags: { [SOURCE_FLAG_SCOPE]: { boostEntry: deepClone(entry) } }
+    }));
+    return rollTableDoc({
+        _id: normalized._id,
+        name: normalized.name,
+        description: `Roll ${normalized.drawFormula ?? "3d6"} on the standard boost table.`,
+        results,
+        formula: normalized.drawFormula ?? "3d6",
+        flags: {
+            [SOURCE_FLAG_SCOPE]: {
+                sourceKey: String(table?.id ?? table?.name ?? "").trim(),
+                folderHint: normalized.folder ?? null,
+                sourceData: normalized,
+                drawFormula: normalized.drawFormula ?? "3d6"
+            }
+        }
+    });
+}
+
+function buildRitualStepRollTableDoc(table) {
+    const normalized = normalizeSourceEntry(table, "ritualStepRollTable", "RollTable");
+    const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
+    const formula = `1d${Math.max(entries.length, 1)}`;
+    const results = entries.map((entry, index) => ({
+        _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
+        type: TEXT_RESULT_TYPE,
+        text: entry.stepText ?? `Ritual step ${index + 1}`,
+        img: "icons/svg/d20-grey.svg",
+        weight: 1,
+        range: [index + 1, index + 1],
+        drawn: false,
+        flags: { [SOURCE_FLAG_SCOPE]: { ritualStepEntry: deepClone(entry) } }
+    }));
+    const desc = [
+        `<p><strong>Complexity:</strong> ${normalized.complexity ?? "Medium"}</p>`,
+        normalized.drawFormula ? `<p><strong>Random ritual step draws:</strong> ${normalized.drawFormula}</p>` : "",
+        `<p><strong>Available entries:</strong> ${entries.length}</p>`,
+        "<p>This table is rolled to add variable ritual requirements after a spell's static ritual steps have been applied.</p>"
+    ].filter(Boolean).join("");
+    return rollTableDoc({
+        _id: normalized._id, name: normalized.name, description: desc, results, formula,
+        replacement: false,
+        flags: { [SOURCE_FLAG_SCOPE]: { sourceKey: String(table?.id ?? table?.name ?? "").trim(), sourceData: normalized, complexity: normalized.complexity ?? "", drawFormula: normalized.drawFormula ?? "", drawMode: normalized.drawMode ?? "distinct" } }
+    });
+}
+
+function buildBellCurveTextTableDoc(table, kind, entryKey, defaultText, img) {
+    const normalized = normalizeSourceEntry(table, kind, "RollTable");
+    const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
+    const total = Math.max(entries.length, 1);
+    const rangeWidth = Math.max(1, Math.floor(16 / total));
+    const results = entries.map((entry, index) => {
+        let min = 3 + index * rangeWidth;
+        let max = (index === entries.length - 1) ? 18 : (min + rangeWidth - 1);
+        if (min > 18) min = 18;
+        if (max > 18) max = 18;
+        return {
+            _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
+            type: TEXT_RESULT_TYPE,
+            text: entry.resultText ?? `${defaultText} ${index + 1}`,
+            img,
+            weight: 1,
+            range: [min, max],
+            drawn: false,
+            flags: { [SOURCE_FLAG_SCOPE]: { [entryKey]: deepClone(entry) } }
+        };
+    });
+    return { normalized, results };
+}
+
+function buildSpellFailureRollTableDoc(table) {
+    const { normalized, results } = buildBellCurveTextTableDoc(table, "spellFailureRollTable", "spellFailureEntry", "Failure result", "icons/svg/skull.svg");
+    const desc = [
+        `<p><strong>Severity:</strong> ${normalized.severity ?? "Minor"}</p>`,
+        `<p><strong>Available entries:</strong> ${(normalized.entries ?? []).length}</p>`,
+        "<p>This table is rolled when a spell cast fails and no more specific authored exception overrides the spell's default failure profile.</p>"
+    ].join("");
+    return rollTableDoc({
+        _id: normalized._id, name: normalized.name, description: desc, results, formula: "3d6",
+        flags: { [SOURCE_FLAG_SCOPE]: { sourceKey: String(table?.id ?? table?.name ?? "").trim(), sourceData: normalized, severity: normalized.severity ?? "" } }
+    });
+}
+
+function buildSpellSupportRollTableDoc(table) {
+    const { normalized, results } = buildBellCurveTextTableDoc(table, "spellSupportRollTable", "spellSupportEntry", "Support result", "icons/magic/holy/angel-winged-humanoid-blue.webp");
+    const desc = [
+        `<p><strong>Family:</strong> ${String(normalized.family ?? "General").trim() || "General"}</p>`,
+        `<p><strong>Available entries:</strong> ${(normalized.entries ?? []).length}</p>`,
+        "<p>This table supports authored spell outcomes that are best chosen through one flavorful roll instead of a fixed single payload.</p>"
+    ].join("");
+    return rollTableDoc({
+        _id: normalized._id, name: normalized.name, description: desc, results, formula: "3d6",
+        flags: { [SOURCE_FLAG_SCOPE]: { sourceKey: String(table?.id ?? table?.name ?? "").trim(), sourceData: normalized, family: normalized.family ?? "" } }
+    });
+}
+
+function buildPactRollTableDoc(pact) {
+    const entries = Array.isArray(pact.rollTable) ? pact.rollTable : [];
+    if (!entries.length) return null;
+    const formula = String(pact.rollTableFormula ?? `1d${entries.length}`);
+    const formulaMatch = formula.match(/^(\d+)d\d+/i);
+    const startValue = formulaMatch ? Number(formulaMatch[1]) : 1;
+    const tableId = deriveFoundryIdFromText(`${pact._id}:rolltable`);
+    const tableName = `${pact.name} — ${pact.rollTableTitle ?? "Table"}`;
+    const results = entries.map((entry, index) => {
+        const rollValue = startValue + index;
+        return {
+            _id: deriveFoundryIdFromText(`${tableId}:${rollValue}:result`),
+            type: TEXT_RESULT_TYPE,
+            text: String(entry),
+            img: "icons/svg/d20-grey.svg",
+            weight: 1,
+            range: [rollValue, rollValue],
+            drawn: false,
+            flags: { [SOURCE_FLAG_SCOPE]: { pactRollEntry: { index, rollValue, text: String(entry) } } }
+        };
+    });
+    return rollTableDoc({
+        _id: tableId, name: tableName,
+        description: `${pact.rollTableTitle ?? "Roll table"} for ${pact.name}. Roll ${formula}.`,
+        results, formula,
+        flags: { [SOURCE_FLAG_SCOPE]: { sourceKey: pact._id, folderHint: "Pact Tables", sourcePactId: pact._id, sourcePactName: pact.name, drawFormula: formula } }
+    });
+}
+
+async function buildRollTablesPack() {
+    const boostTables = loadJson(path.join(TEMPLATES_DIR, "boost-roll-tables.json"));
+    const ritualStepTables = loadJson(path.join(TEMPLATES_DIR, "ritual-step-roll-tables.json"));
+    const failureTables = loadJson(path.join(TEMPLATES_DIR, "spell-failure-roll-tables.json"));
+    const supportTables = loadJson(path.join(TEMPLATES_DIR, "spell-support-roll-tables.json"));
+    const pacts = loadJson(path.join(TEMPLATES_DIR, "pacts.json"));
+
+    const docs = [
+        ...boostTables.map(buildBoostRollTableDoc),
+        ...ritualStepTables.map(buildRitualStepRollTableDoc),
+        ...failureTables.map(buildSpellFailureRollTableDoc),
+        ...supportTables.map(buildSpellSupportRollTableDoc),
+        ...pacts.map(buildPactRollTableDoc).filter(Boolean)
+    ];
+    await compilePackFromDocs("roll-tables", docs);
+}
+
 // --- Main ----------------------------------------------------------------
 
 async function main() {
@@ -617,6 +849,7 @@ async function main() {
     await buildPactsPack();
     await buildSupernaturalMarksPack();
     await buildRequirementsPack();
+    await buildRollTablesPack();
     console.log("Done.");
 }
 
