@@ -2,7 +2,7 @@
     "id":  "1547core",
     "title":  "1547 Core",
     "description":  "Core rules and shared runtime for 1547",
-    "version":  "0.2.98",
+    "version":  "0.2.99",
     "compatibility":  {
                           "minimum":  "11",
                           "verified":  "13.350"
@@ -89,6 +89,39 @@
                       "name":  "weapon-modifiers",
                       "label":  "1547 Weapon Modifiers",
                       "path":  "packs/weapon-modifiers",
+                      "type":  "Item",
+                      "system":  "custom-system-builder",
+                      "ownership":  {
+                                        "PLAYER":  "OBSERVER",
+                                        "ASSISTANT":  "OWNER"
+                                    }
+                  },
+                  {
+                      "name":  "pacts",
+                      "label":  "1547 Pacts",
+                      "path":  "packs/pacts",
+                      "type":  "Item",
+                      "system":  "custom-system-builder",
+                      "ownership":  {
+                                        "PLAYER":  "OBSERVER",
+                                        "ASSISTANT":  "OWNER"
+                                    }
+                  },
+                  {
+                      "name":  "supernatural-marks",
+                      "label":  "1547 Supernatural Marks",
+                      "path":  "packs/supernatural-marks",
+                      "type":  "Item",
+                      "system":  "custom-system-builder",
+                      "ownership":  {
+                                        "PLAYER":  "OBSERVER",
+                                        "ASSISTANT":  "OWNER"
+                                    }
+                  },
+                  {
+                      "name":  "requirements",
+                      "label":  "1547 Requirements",
+                      "path":  "packs/requirements",
                       "type":  "Item",
                       "system":  "custom-system-builder",
                       "ownership":  {

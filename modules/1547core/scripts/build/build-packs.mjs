@@ -36,7 +36,10 @@ const TEMPLATE_FILES = {
     weapon: "fvtt-Item-weapontemplate-qZCfLEYQ7egbm1B9.json",
     armor: "fvtt-Item-armortemplate-uLlgZXz3GlXPFtsj.json",
     ammo: "fvtt-Item-ammunitiontemplate-389uqkKKn8M1SKux.json",
-    weaponModifier: "fvtt-Item-weaponmodifiertemplate-WmP9Ld3Qs7Nk2FvR.json"
+    weaponModifier: "fvtt-Item-weaponmodifiertemplate-WmP9Ld3Qs7Nk2FvR.json",
+    pact: "fvtt-Item-pacttemplate-HPYYc2P0Ouagicmr.json",
+    supernaturalMark: "fvtt-Item-supernaturalmarktemplate-w9ky0ZTDvXDs5Ce7.json",
+    requirement: "fvtt-Item-requirementtemplate-L4ujYgqhGBGcoo2P.json"
 };
 
 // --- Shared helpers ------------------------------------------------------
@@ -468,6 +471,137 @@ async function buildWeaponModifiersPack() {
     await compilePackFromDocs("weapon-modifiers", docs);
 }
 
+// --- Pacts ---------------------------------------------------------------
+
+function buildPactProps(pact) {
+    return {
+        Description: pact.description ?? "",
+        PactType: pact.pactType ?? "Other",
+        Patron: pact.patron ?? "",
+        BoonText: pact.boonText ?? "",
+        PriceText: pact.priceText ?? "",
+        ObligationText: pact.obligationText ?? "",
+        Tension: pact.tension ?? "",
+        DormantState: pact.dormantState ?? "",
+        ActiveState: pact.activeState ?? "",
+        StrainedState: pact.strainedState ?? "",
+        BrokenState: pact.brokenState ?? "",
+        FulfilledState: pact.fulfilledState ?? "",
+        CurrentStatus: pact.currentStatus ?? "Dormant",
+        Dormant: pact.currentStatus === "Dormant",
+        Active: pact.currentStatus === "Active",
+        Strained: pact.currentStatus === "Strained",
+        Broken: pact.currentStatus === "Broken",
+        Fulfilled: pact.currentStatus === "Fulfilled",
+        BreakText: pact.breakText ?? "",
+        FulfillmentText: pact.fulfillmentText ?? "",
+        ActiveObligations: pact.activeObligations ?? "",
+        ObligationLog: pact.obligationLog ?? "",
+        EventLog: pact.eventLog ?? "",
+        BoonEffects: Array.isArray(pact.boonEffects) ? deepClone(pact.boonEffects) : [],
+        PriceEffects: Array.isArray(pact.priceEffects) ? deepClone(pact.priceEffects) : [],
+        StrainEffects: Array.isArray(pact.strainEffects) ? deepClone(pact.strainEffects) : [],
+        BrokenEffects: Array.isArray(pact.brokenEffects) ? deepClone(pact.brokenEffects) : []
+    };
+}
+
+async function buildPactsPack() {
+    const pacts = loadJson(path.join(TEMPLATES_DIR, "pacts.json"));
+    const template = loadJson(path.join(TEMPLATES_DIR, TEMPLATE_FILES.pact));
+    const docs = pacts.map((src) =>
+        makeItemDoc(src, template, src.img ?? template.img ?? "icons/svg/oath.svg", buildPactProps, "Pacts")
+    );
+    await compilePackFromDocs("pacts", docs);
+}
+
+// --- Supernatural Marks --------------------------------------------------
+
+function buildSupernaturalMarkProps(mark) {
+    const sources = Array.isArray(mark.markSource) ? mark.markSource : (mark.markSource ? [mark.markSource] : []);
+    const isBlessing = (mark.markNature ?? "") === "Blessing";
+    const isCurse = (mark.markNature ?? "") === "Curse";
+    const isMixed = (mark.markNature ?? "") === "Mixed";
+    return {
+        Description: mark.description ?? "",
+        MarkNature: mark.markNature ?? "Blessing",
+        Blessing: isBlessing,
+        Curse: isCurse,
+        Mixed: isMixed,
+        MarkScope: mark.markScope ?? "Minor",
+        Major: (mark.markScope ?? "Minor") === "Major",
+        Minor: (mark.markScope ?? "Minor") === "Minor",
+        MarkSource: sources.join(", "),
+        Bloodline: sources.includes("Bloodline"),
+        Faith: sources.includes("Faith"),
+        Pagan: sources.includes("Pagan"),
+        Ritual: sources.includes("Ritual"),
+        Zone: sources.includes("Zone"),
+        Mark: sources.includes("Mark"),
+        Pact: sources.includes("Pact"),
+        Visibility: mark.visibility ?? "Hidden",
+        Hidden: (mark.visibility ?? "Hidden") === "Hidden",
+        Visible: (mark.visibility ?? "Hidden") === "Visible",
+        VisibleTell: (mark.visibility ?? "Hidden") === "VisibleTell",
+        SocialStanding: mark.socialStanding ?? "Suspect",
+        Potency: mark.potency ?? "Manifest",
+        TriggerType: mark.triggerType ?? "Passive",
+        TriggerCondition: mark.triggerCondition ?? "",
+        TriggerResponse: mark.triggerResponse ?? "",
+        BearerNotes: mark.bearerNotes ?? "",
+        RemovalConditions: mark.removalConditions ?? "",
+        TransmissionNotes: mark.transmissionNotes ?? "",
+        SocialConsequences: mark.socialConsequences ?? "",
+        MarkEffects: Array.isArray(mark.markEffects) ? deepClone(mark.markEffects) : [],
+        GrantedSpells: Array.isArray(mark.grantedSpells) ? deepClone(mark.grantedSpells) : []
+    };
+}
+
+async function buildSupernaturalMarksPack() {
+    const marks = loadJson(path.join(TEMPLATES_DIR, "supernatural-marks.json"));
+    const template = loadJson(path.join(TEMPLATES_DIR, TEMPLATE_FILES.supernaturalMark));
+    const docs = marks.map((src) =>
+        makeItemDoc(src, template, src.img ?? template.img ?? "icons/svg/holy-shield.svg", buildSupernaturalMarkProps, "Supernatural Marks")
+    );
+    await compilePackFromDocs("supernatural-marks", docs);
+}
+
+// --- Requirements --------------------------------------------------------
+
+function mergeDefinedProps(baseProps, overrideProps) {
+    const merged = { ...(baseProps ?? {}) };
+    for (const [key, value] of Object.entries(overrideProps ?? {})) {
+        if (value !== undefined) merged[key] = value;
+    }
+    return merged;
+}
+
+function buildRequirementProps(requirement) {
+    const props = {
+        PredicateType: requirement.predicateType ?? requirement.system?.props?.PredicateType ?? "",
+        Negate: requirement.negate ?? false,
+        Notes: requirement.notes ?? "",
+        GroupTarget: requirement.groupTarget ?? "",
+        TagName: requirement.tagName ?? "",
+        StatTarget: requirement.statTarget ?? "",
+        StatThreshold: requirement.statThreshold ?? 0,
+        PrimaryStatRequirementTarget: requirement.primaryStatRequirementTarget ?? "",
+        PrimaryStatRequirementDice: requirement.primaryStatRequirementDice ?? 1,
+        PrimaryStatRequirementMod: requirement.primaryStatRequirementMod ?? 0,
+        RequirementSkillRef: requirement.requirementSkillRef ?? [],
+        SkillMinLevel: requirement.skillMinLevel ?? 0
+    };
+    return mergeDefinedProps(props, requirement.props ?? requirement.system?.props);
+}
+
+async function buildRequirementsPack() {
+    const requirements = loadJson(path.join(TEMPLATES_DIR, "requirements.json"));
+    const template = loadJson(path.join(TEMPLATES_DIR, TEMPLATE_FILES.requirement));
+    const docs = requirements.map((src) =>
+        makeItemDoc(src, template, src.img ?? template.img ?? "icons/svg/lock.svg", buildRequirementProps, "Requirements")
+    );
+    await compilePackFromDocs("requirements", docs);
+}
+
 // --- Main ----------------------------------------------------------------
 
 async function main() {
@@ -480,6 +614,9 @@ async function main() {
     await buildArmorsPack();
     await buildAmmunitionPack();
     await buildWeaponModifiersPack();
+    await buildPactsPack();
+    await buildSupernaturalMarksPack();
+    await buildRequirementsPack();
     console.log("Done.");
 }
 
