@@ -64,6 +64,9 @@ if (typeof globalThis.foundry === "undefined") {
 if (typeof globalThis.Application === "undefined") {
     globalThis.Application = class { static get defaultOptions() { return {}; } };
 }
+if (typeof globalThis.Die === "undefined") {
+    globalThis.Die = class { constructor() {} };
+}
 
 const SERVICE_FILES = [
     "combat-events.js",
@@ -83,6 +86,22 @@ const SERVICE_FILES = [
     "skill-tree/node-logic.js",
     "skill-tree/node-editor.js",
     "skill-tree/skill-tree-service.js",
+];
+
+// Dice die-type classes — these are self-contained (no dice-so-nice import).
+// The main dice/dice1547.js is exercised only in Foundry runtime since it
+// imports from a sibling module (`dice-so-nice`) that does not exist in node.
+const DICE_FILES = [
+    "armor.js",
+    "balanced.js",
+    "control.js",
+    "evade.js",
+    "finesse.js",
+    "heavy.js",
+    "lethality.js",
+    "multiplier.js",
+    "penetration.js",
+    "risk.js",
 ];
 
 const COMBAT_FILES = [
@@ -125,6 +144,20 @@ for (const file of COMBAT_FILES) {
     assert.ok(mod);
     const exportCount = Object.keys(mod).length;
     console.log(`  ✓ combat/${file} (${exportCount} export${exportCount === 1 ? "" : "s"})`);
+}
+
+console.log("\nsmoke-load: dice/...");
+
+for (const file of DICE_FILES) {
+    let mod;
+    try {
+        mod = await import(`../dice/${file}`);
+    } catch (err) {
+        assert.fail(`dice/${file} failed to load: ${err.message}`);
+    }
+    assert.ok(mod);
+    const exportCount = Object.keys(mod).length;
+    console.log(`  ✓ dice/${file} (${exportCount} export${exportCount === 1 ? "" : "s"})`);
 }
 
 console.log("\nAll smoke-load checks passed.");

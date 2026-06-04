@@ -13,7 +13,7 @@ function buildDefenseRollFormula(armorSummary) {
 }
 
 function extractDice1547Totals(game, message) {
-    const result = game?.modules?.get?.("dice1547")?.api?.getRollResult?.(message?.id ?? message);
+    const result = game?.modules?.get?.("1547core")?.api?.getRollResult?.(message?.id ?? message);
     if (!result?.totals) return null;
     return {
         damage: Number(result.totals.damage ?? 0) || 0,

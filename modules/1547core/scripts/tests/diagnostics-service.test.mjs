@@ -24,7 +24,7 @@ function makeGame({ spellData = [], tables = [], summarizeActor, targets = [], s
         modules: {
             get: (id) => {
                 if (id === "1547core") return { version: "0.2.10", active: true, api: summarizeActor ? { summarizeActor } : {} };
-                if (id === "dice1547") return { active: true };
+                if (id === "dice-so-nice") return { active: true };
                 return undefined;
             },
         },
@@ -59,7 +59,7 @@ console.log("diagnostics-service report builder...");
 
     assert.strictEqual(report.errors.length, 0, "no section threw");
     assert.strictEqual(report.sections.environment.moduleVersion, "0.2.10");
-    assert.strictEqual(report.sections.environment.dice1547Active, true);
+    assert.strictEqual(report.sections.environment.diceSoNiceActive, true);
     assert.strictEqual(report.sections.seedData.counts.spellData, 2);
 
     const ritual = report.sections.tableResolution.ritualStepTables;

@@ -93,7 +93,7 @@ export function buildDiagnosticsReport({ game = globalThis.game, canvas = global
     section("environment", () => ({
         foundryVersion: game?.version ?? null,
         moduleVersion: game?.modules?.get?.(MODULE_ID)?.version ?? null,
-        dice1547Active: Boolean(game?.modules?.get?.("dice1547")?.active),
+        diceSoNiceActive: Boolean(game?.modules?.get?.("dice-so-nice")?.active),
         systemId: game?.system?.id ?? null,
         systemVersion: game?.system?.version ?? null,
     }));

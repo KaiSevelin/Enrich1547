@@ -116,6 +116,11 @@ Hooks.once("init", () => {
         () => import("./services/skill-tree/skill-tree-service.js"),
         (module) => module.registerSkillTreeService()
     );
+    void runImportedModuleStep(
+        "register1547Dice",
+        () => import("./dice/dice1547.js"),
+        (module) => module.register1547Dice()
+    );
 });
 
 Hooks.once("ready", () => {

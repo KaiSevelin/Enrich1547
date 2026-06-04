@@ -1308,3 +1308,7 @@ a.enricher-1547::before {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.dice-tooltip {
+  display: block !important;
+}
