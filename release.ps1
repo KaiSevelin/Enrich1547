@@ -87,6 +87,20 @@ $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
 Write-Output "Version: $oldVer -> $newVer"
 
+# --- Build compendium packs -------------------------------------------------
+# Regenerate modules/1547core/packs/*/ from foundry/Templates/*.json so the
+# release ships with up-to-date compendium content. Assumes `npm install` has
+# already been run inside the module directory.
+
+Push-Location $moduleDir
+try {
+    & npm run build-packs
+    if ($LASTEXITCODE -ne 0) { throw "npm run build-packs failed (exit $LASTEXITCODE)" }
+}
+finally {
+    Pop-Location
+}
+
 # --- Build the zip ----------------------------------------------------------
 
 if (Test-Path $zipPath) {
@@ -99,13 +113,32 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem | Out-Null
 $absModuleDir = (Resolve-Path $moduleDir).Path
 $absZipPath   = [System.IO.Path]::GetFullPath($zipPath)
 
-# 4th arg $true = include the base directory ("1547core/") inside the archive.
-[System.IO.Compression.ZipFile]::CreateFromDirectory(
-    $absModuleDir,
-    $absZipPath,
-    [System.IO.Compression.CompressionLevel]::Optimal,
-    $true
-)
+# Stage a copy of the module dir with build artifacts excluded — we don't want
+# node_modules/ (dev deps) or pack-source/ (intermediate JSON) in the release.
+$stagingRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("1547core-release-" + [guid]::NewGuid().ToString("N"))
+$stagingModuleDir = Join-Path $stagingRoot "1547core"
+New-Item -ItemType Directory -Path $stagingModuleDir -Force | Out-Null
+
+# robocopy is the most reliable way to do a recursive copy with directory
+# exclusions on Windows. /MIR mirrors, /XD excludes named directories.
+& robocopy $absModuleDir $stagingModuleDir /MIR /XD "node_modules" "pack-source" /NFL /NDL /NJH /NJS /NP /NS | Out-Null
+# robocopy returns 0-7 for success, 8+ for failure. Force the exit code
+# back to 0 so the bleed-through doesn't fail later checks or the script.
+if ($LASTEXITCODE -ge 8) { throw "robocopy failed (exit $LASTEXITCODE)" }
+& cmd /c exit 0
+
+try {
+    # 4th arg $true = include the base directory ("1547core/") inside the archive.
+    [System.IO.Compression.ZipFile]::CreateFromDirectory(
+        $stagingRoot,
+        $absZipPath,
+        [System.IO.Compression.CompressionLevel]::Optimal,
+        $false
+    )
+}
+finally {
+    Remove-Item $stagingRoot -Recurse -Force -ErrorAction SilentlyContinue
+}
 
 $sizeKb = [math]::Round((Get-Item $zipPath).Length / 1024, 1)
 Write-Output ("Wrote: {0} ({1} KB)" -f $zipPath, $sizeKb)
