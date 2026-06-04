@@ -41,7 +41,8 @@ const TEMPLATE_FILES = {
     supernaturalMark: "fvtt-Item-supernaturalmarktemplate-w9ky0ZTDvXDs5Ce7.json",
     requirement: "fvtt-Item-requirementtemplate-L4ujYgqhGBGcoo2P.json",
     changeSet: "fvtt-Item-changesettemplate-b7A1z6cSZO4dYTKT.json",
-    change: "fvtt-Item-changetemplate-WsrkfjBmudnIhvEK.json"
+    change: "fvtt-Item-changetemplate-WsrkfjBmudnIhvEK.json",
+    actor: "fvtt-Actor-1547-Tgs09eTiTp63Cp7u.json"
 };
 
 const ACTOR_TYPES = ["Player", "HiddenFolk", "TheUnseen", "Beast", "Undead", "Colossal", "Unnatural", "Construct", "Zone", "People"];
@@ -930,6 +931,57 @@ async function buildChangeSetsPack() {
     await compilePackFromDocs("changesets", [...changeSetDocs, ...changeDocs]);
 }
 
+// --- Monsters ------------------------------------------------------------
+
+function mergeDeep(target, source) {
+    const out = { ...(target ?? {}) };
+    for (const [key, value] of Object.entries(source ?? {})) {
+        if (value && typeof value === "object" && !Array.isArray(value)
+            && out[key] && typeof out[key] === "object" && !Array.isArray(out[key])) {
+            out[key] = mergeDeep(out[key], value);
+        } else {
+            out[key] = deepClone(value);
+        }
+    }
+    return out;
+}
+
+function makeActorDoc(source, actorTemplate) {
+    const mergedSystem = actorTemplate?.system
+        ? mergeDeep(deepClone(actorTemplate.system), source.system ?? {})
+        : deepClone(source.system ?? {});
+    const mergedPrototypeToken = actorTemplate?.prototypeToken
+        ? mergeDeep(deepClone(actorTemplate.prototypeToken ?? {}), source.prototypeToken ?? {})
+        : deepClone(source.prototypeToken ?? {});
+    return {
+        _id: source._id,
+        _key: `!actors!${source._id}`,
+        name: source.name,
+        type: source.type ?? "character",
+        img: source.img ?? "icons/svg/mystery-man.svg",
+        system: mergedSystem,
+        prototypeToken: mergedPrototypeToken,
+        effects: deepClone(source.effects ?? []),
+        folder: null,
+        flags: {
+            ...deepClone(source.flags ?? {}),
+            [SOURCE_FLAG_SCOPE]: {
+                folderHint: source.folder ?? "Monsters",
+                sourceData: source
+            }
+        },
+        items: deepClone(source.items ?? []),
+        ownership: deepClone(source.ownership ?? { default: 0 })
+    };
+}
+
+async function buildMonstersPack() {
+    const monsters = loadJson(path.join(TEMPLATES_DIR, "monsters.json"));
+    const actorTemplate = loadJson(path.join(TEMPLATES_DIR, TEMPLATE_FILES.actor));
+    const docs = monsters.map((src) => makeActorDoc(src, actorTemplate));
+    await compilePackFromDocs("monsters", docs);
+}
+
 async function buildRollTablesPack() {
     const boostTables = loadJson(path.join(TEMPLATES_DIR, "boost-roll-tables.json"));
     const ritualStepTables = loadJson(path.join(TEMPLATES_DIR, "ritual-step-roll-tables.json"));
@@ -963,6 +1015,7 @@ async function main() {
     await buildSupernaturalMarksPack();
     await buildRequirementsPack();
     await buildChangeSetsPack();
+    await buildMonstersPack();
     await buildRollTablesPack();
     console.log("Done.");
 }

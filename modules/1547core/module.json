@@ -2,7 +2,7 @@
     "id":  "1547core",
     "title":  "1547 Core",
     "description":  "Core rules and shared runtime for 1547",
-    "version":  "0.2.101",
+    "version":  "0.2.102",
     "compatibility":  {
                           "minimum":  "11",
                           "verified":  "13.350"
@@ -134,6 +134,17 @@
                       "label":  "1547 Change Sets",
                       "path":  "packs/changesets",
                       "type":  "Item",
+                      "system":  "custom-system-builder",
+                      "ownership":  {
+                                        "PLAYER":  "OBSERVER",
+                                        "ASSISTANT":  "OWNER"
+                                    }
+                  },
+                  {
+                      "name":  "monsters",
+                      "label":  "1547 Monsters",
+                      "path":  "packs/monsters",
+                      "type":  "Actor",
                       "system":  "custom-system-builder",
                       "ownership":  {
                                         "PLAYER":  "OBSERVER",
