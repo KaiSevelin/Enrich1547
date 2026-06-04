@@ -28,8 +28,9 @@ async function resolveBoostRollTable() {
             console.warn(`${MODULE_ID} | Failed to resolve configured boost Roll Table`, error);
         }
     }
-    // Fallback: find the Standard Boost table by name
-    const fallback = game.tables?.find((t) => t.name === STANDARD_BOOST_TABLE_NAME);
+    // Fallback: find the Standard Boost table by name in world OR compendium.
+    const { findTable } = await import("./content-registry.js");
+    const fallback = findTable((t) => t.name === STANDARD_BOOST_TABLE_NAME);
     if (fallback) return fallback;
     ui.notifications.error(`1547 Core: No boost Roll Table found. Run module setup or configure boostRollTableUuid.`);
     return null;

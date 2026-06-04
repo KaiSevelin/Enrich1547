@@ -1,4 +1,5 @@
 import { isManualSpellItem } from "./spell-manual-support.js";
+import { findTable, getTableById } from "./content-registry.js";
 
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
@@ -207,9 +208,9 @@ async function postCastingSummaryToChat(spell, sourceToken, evaluation, outcome,
 async function resolveFailureTable(tableRef) {
     const ref = String(tableRef ?? "").trim();
     if (!ref) return null;
-    return game.tables.get(ref)
-        ?? game.tables.find((table) => table.flags?.[SOURCE_FLAG_SCOPE]?.sourceKey === ref)
-        ?? game.tables.find((table) => table.name === ref)
+    return getTableById(ref)
+        ?? findTable((table) => table.flags?.[SOURCE_FLAG_SCOPE]?.sourceKey === ref)
+        ?? findTable((table) => table.name === ref)
         ?? await fromUuid(ref).catch(() => null);
 }
 
@@ -304,9 +305,9 @@ async function rollManualContest({
 async function resolveSupportTable(tableRef) {
     const ref = String(tableRef ?? "").trim();
     if (!ref) return null;
-    return game.tables.get(ref)
-        ?? game.tables.find((table) => table.flags?.[SOURCE_FLAG_SCOPE]?.sourceKey === ref)
-        ?? game.tables.find((table) => table.name === ref)
+    return getTableById(ref)
+        ?? findTable((table) => table.flags?.[SOURCE_FLAG_SCOPE]?.sourceKey === ref)
+        ?? findTable((table) => table.name === ref)
         ?? await fromUuid(ref).catch(() => null);
 }
 

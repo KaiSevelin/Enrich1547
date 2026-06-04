@@ -1,3 +1,5 @@
+import { getItemById } from "./content-registry.js";
+
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
 const MODIFIER_TEMPLATE_ID = "WmP9Ld3Qs7Nk2FvR";
@@ -321,9 +323,9 @@ export async function seedOnHitEffectItemsForModifier(modifierItem) {
     );
     if (alreadySeeded) return { created: 0 };
 
-    const templateDoc = game.items?.get?.(ON_HIT_EFFECT_TEMPLATE_ID);
+    const templateDoc = getItemById(ON_HIT_EFFECT_TEMPLATE_ID);
     if (!templateDoc?.system?.body) {
-        console.warn(`${MODULE_ID} | OnHitEffectTemplate not in world; cannot seed child effects for ${modifierItem.name}`);
+        console.warn(`${MODULE_ID} | OnHitEffectTemplate not loaded; cannot seed child effects for ${modifierItem.name}`);
         return { created: 0 };
     }
 

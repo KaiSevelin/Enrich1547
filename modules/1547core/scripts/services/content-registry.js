@@ -154,51 +154,80 @@ export function registerContentRegistry() {
     return state.readyPromise;
 }
 
+// Fallthroughs to world collections when registry hasn't been initialized
+// (smoke tests, edge cases where a helper is called before ready fires).
+function worldItems() {
+    if (typeof globalThis.game?.items?.values === "function") return [...globalThis.game.items.values()];
+    return [];
+}
+function worldActors() {
+    if (typeof globalThis.game?.actors?.values === "function") return [...globalThis.game.actors.values()];
+    return [];
+}
+function worldTables() {
+    if (typeof globalThis.game?.tables?.values === "function") return [...globalThis.game.tables.values()];
+    if (typeof globalThis.game?.tables?.find === "function") {
+        // Some test stubs only provide get/find without values(). Caller must
+        // tolerate this by using getTableById / find-style lookups.
+        return [];
+    }
+    return [];
+}
+
 export function getAllItems() {
-    return Array.from(state.items.values());
+    return state.items.size ? Array.from(state.items.values()) : worldItems();
 }
 
 export function getItemById(id) {
-    return state.items.get(id) ?? null;
+    return state.items.get(id) ?? globalThis.game?.items?.get?.(id) ?? null;
 }
 
 export function getAllActors() {
-    return Array.from(state.actors.values());
+    return state.actors.size ? Array.from(state.actors.values()) : worldActors();
 }
 
 export function getActorById(id) {
-    return state.actors.get(id) ?? null;
+    return state.actors.get(id) ?? globalThis.game?.actors?.get?.(id) ?? null;
 }
 
 export function getAllTables() {
-    return Array.from(state.tables.values());
+    return state.tables.size ? Array.from(state.tables.values()) : worldTables();
 }
 
 export function getTableById(id) {
-    return state.tables.get(id) ?? null;
+    return state.tables.get(id) ?? globalThis.game?.tables?.get?.(id) ?? null;
 }
 
 export function findItemsByTemplate(templateId) {
-    const out = [];
-    for (const doc of state.items.values()) {
-        if (doc?.system?.template === templateId) out.push(doc);
-    }
-    return out;
+    return getAllItems().filter((doc) => doc?.system?.template === templateId);
+}
+
+// Find-style helpers that work in either the registry OR a raw world
+// collection (some test stubs only provide `find` / `get`, not iterators).
+export function findItem(predicate) {
+    for (const doc of state.items.values()) if (predicate(doc)) return doc;
+    return globalThis.game?.items?.find?.(predicate) ?? null;
+}
+
+export function findActor(predicate) {
+    for (const doc of state.actors.values()) if (predicate(doc)) return doc;
+    return globalThis.game?.actors?.find?.(predicate) ?? null;
+}
+
+export function findTable(predicate) {
+    for (const doc of state.tables.values()) if (predicate(doc)) return doc;
+    return globalThis.game?.tables?.find?.(predicate) ?? null;
 }
 
 export function findChangeSetsByGroup(group, typeFilter = null) {
     const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
-    const out = [];
-    for (const doc of state.items.values()) {
-        if (doc?.system?.template !== CHANGESET_TEMPLATE_ID) continue;
+    return getAllItems().filter((doc) => {
+        if (doc?.system?.template !== CHANGESET_TEMPLATE_ID) return false;
         const props = doc.system?.props ?? {};
-        if (String(props.Group ?? "").trim() !== group) continue;
-        if (typeFilter) {
-            if (props.ForTypeAny !== true && props[`ForType_${typeFilter}`] !== true) continue;
-        }
-        out.push(doc);
-    }
-    return out;
+        if (String(props.Group ?? "").trim() !== group) return false;
+        if (typeFilter && props.ForTypeAny !== true && props[`ForType_${typeFilter}`] !== true) return false;
+        return true;
+    });
 }
 
 /**

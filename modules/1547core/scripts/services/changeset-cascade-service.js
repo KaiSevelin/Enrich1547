@@ -20,6 +20,8 @@
  * re-triggering the hook recursively.
  */
 
+import { getItemById } from "./content-registry.js";
+
 const MODULE_ID = "1547core";
 const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
 const CHANGE_TEMPLATE_ID = "WsrkfjBmudnIhvEK";
@@ -58,7 +60,7 @@ async function handleChangeSetCreate(item, options) {
     // Build the embed payloads from world-side source items.
     const docsToCreate = [];
     for (const sourceId of readLinkageIds(item, CHANGE_CONTAINER_KEY)) {
-        const source = game.items?.get?.(sourceId);
+        const source = getItemById(sourceId);
         if (!source) continue;
         const data = source.toObject();
         delete data._id;
@@ -68,7 +70,7 @@ async function handleChangeSetCreate(item, options) {
         docsToCreate.push({ data, role: "change" });
     }
     for (const sourceId of readLinkageIds(item, REQUIREMENT_CONTAINER_KEY)) {
-        const source = game.items?.get?.(sourceId);
+        const source = getItemById(sourceId);
         if (!source) continue;
         const data = source.toObject();
         delete data._id;

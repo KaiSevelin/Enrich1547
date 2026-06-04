@@ -1,5 +1,6 @@
 import { buildAdvanceStatUpdateFromProps } from "./primary-stats.js";
 import { isManualSpellItem } from "./spell-manual-support.js";
+import { getItemById } from "./content-registry.js";
 
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
@@ -620,7 +621,7 @@ async function applyGrantItemEffect(carrierItem, effect, targetDoc) {
     }
 
     const templateId = String(effect.GrantedItemTemplate ?? "").trim();
-    const templateItem = templateId ? (game.items?.get?.(templateId) ?? null) : (game.items?.get?.(UNEQUIPPABLE_TEMPLATE_ID) ?? null);
+    const templateItem = templateId ? getItemById(templateId) : getItemById(UNEQUIPPABLE_TEMPLATE_ID);
     const name = String(effect.GrantedItemName ?? effect.PayloadTraitName ?? effect.EffectSubtype ?? carrierItem.name).trim();
     if (!templateItem) {
         return { applied: false, note: "No item template was available for this granted item." };
