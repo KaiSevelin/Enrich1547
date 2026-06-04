@@ -64,6 +64,9 @@ if (typeof globalThis.foundry === "undefined") {
 if (typeof globalThis.Application === "undefined") {
     globalThis.Application = class { static get defaultOptions() { return {}; } };
 }
+if (typeof globalThis.FormApplication === "undefined") {
+    globalThis.FormApplication = class { static get defaultOptions() { return {}; } };
+}
 if (typeof globalThis.Die === "undefined") {
     globalThis.Die = class { constructor() {} };
 }
@@ -88,6 +91,16 @@ const SERVICE_FILES = [
     "skill-tree/node-logic.js",
     "skill-tree/node-editor.js",
     "skill-tree/skill-tree-service.js",
+];
+
+const CHARGEN_FILES = [
+    "chargen-service.js",
+    "settings.js",
+    "interface-registry.js",
+    "legacy-rolltable-map.js",
+    "drive-prompts.js"
+    // chargen.js, chargen-deferred.js, chargen-rewards.js, import-world-content.js
+    // pull in foundry runtime classes / large data trees — exercised at runtime, skipped here.
 ];
 
 // Dice die-type classes — these are self-contained (no dice-so-nice import).
@@ -146,6 +159,20 @@ for (const file of COMBAT_FILES) {
     assert.ok(mod);
     const exportCount = Object.keys(mod).length;
     console.log(`  ✓ combat/${file} (${exportCount} export${exportCount === 1 ? "" : "s"})`);
+}
+
+console.log("\nsmoke-load: chargen/...");
+
+for (const file of CHARGEN_FILES) {
+    let mod;
+    try {
+        mod = await import(`../chargen/${file}`);
+    } catch (err) {
+        assert.fail(`chargen/${file} failed to load: ${err.message}`);
+    }
+    assert.ok(mod);
+    const exportCount = Object.keys(mod).length;
+    console.log(`  ✓ chargen/${file} (${exportCount} export${exportCount === 1 ? "" : "s"})`);
 }
 
 console.log("\nsmoke-load: dice/...");

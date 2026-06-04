@@ -126,6 +126,11 @@ Hooks.once("init", () => {
         () => import("./dice/dice1547.js"),
         (module) => module.register1547Dice()
     );
+    void runImportedModuleStep(
+        "registerChargenService",
+        () => import("./chargen/chargen-service.js"),
+        (module) => module.registerChargenService()
+    );
 });
 
 Hooks.once("ready", () => {
@@ -183,5 +188,10 @@ Hooks.once("ready", () => {
         "refreshSkillTreeApi",
         () => import("./services/skill-tree/skill-tree-service.js"),
         (module) => module.refreshSkillTreeApi()
+    );
+    void runImportedModuleStep(
+        "refreshChargenApi",
+        () => import("./chargen/chargen-service.js"),
+        (module) => module.refreshChargenApi()
     );
 });

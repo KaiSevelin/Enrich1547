@@ -1,0 +1,36 @@
+{
+    "stageKey": "career-archer",
+    "packages": [
+        {
+            "label": "Soldier's body",
+            "gain": {
+                "type": "stat",
+                "characteristic": "Stamina",
+                "steps": 1
+            }
+        },
+        {
+            "label": "Bow from the armory",
+            "gain": {
+                "type": "item",
+                "itemUuid": "Item.5StlED1EUFQ4pdp3"
+            }
+        },
+        {
+            "label": "Bow training",
+            "gain": {
+                "type": "skill",
+                "targetKey": "Item.Y0SfW0f3l5E5JHd5",
+                "fallback": true
+            }
+        },
+        {
+            "label": "Veteran's eye",
+            "gain": {
+                "type": "skill",
+                "targetKey": "Item.Bta0YOZtc2Z7jjT3",
+                "fallback": true
+            }
+        }
+    ]
+}

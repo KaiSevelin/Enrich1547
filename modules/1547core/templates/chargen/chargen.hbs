@@ -1,0 +1,197 @@
+<form class="skilltree-chargen flexcol" autocomplete="off">
+
+    <header class="chargen-header flexrow">
+        <h2 class="chargen-title">
+            <i class="fas fa-scroll"></i>
+            The Life of {{actorName}}
+        </h2>
+
+        <div class="chargen-counters">
+            <span class="tag">
+                <i class="fas fa-hourglass-half"></i>
+                Global: {{state.remainingGlobal}}
+            </span>
+        </div>
+    </header>
+
+    {{#if nextPackage}}
+    <section class="chargen-next-package" aria-label="Career package gained on this roll">
+        <div class="chargen-next-package-eyebrow">From this roll you'll gain</div>
+        <div class="chargen-next-package-chip">
+            <span class="chargen-next-package-label">{{nextPackage.label}}</span>
+            {{#if nextPackage.summary}}
+            <span class="chargen-next-package-summary">{{nextPackage.summary}}</span>
+            {{/if}}
+            <span class="chargen-next-package-meta">Package {{nextPackage.indexHuman}} of {{nextPackage.total}}</span>
+        </div>
+    </section>
+    {{/if}}
+
+    <section class="chargen-main">
+        <div class="chargen-main-cards">
+            <section class="chargen-cards">
+                {{#each cards}}
+                <article class="chargen-card {{this.cardClass}} {{#if this.masked}}is-veiled{{/if}}"
+                         data-index="{{@index}}"
+                         title="{{this.tooltip}}"
+                         style='--cg-cover: url("{{this.img}}"); --cg-back: url("{{../backImg}}");'>
+                    <div class="card-cover" aria-label="{{this.title}}">
+                        <div class="card-flip">
+                            <div class="card-face card-front" role="img" aria-label="{{this.title}}"></div>
+                            <div class="card-face card-back" role="img" aria-label="Card back"></div>
+                        </div>
+                    </div>
+
+                    <header class="card-header">
+                        <h3 class="card-title">{{this.title}}</h3>
+                        {{#if this.badges.length}}
+                        <div class="card-badges" aria-label="Card hints">
+                            {{#each this.badges}}
+                            <span class="card-badge is-{{this.tone}}" title="{{this.detail}}">{{this.label}}</span>
+                            {{/each}}
+                        </div>
+                        {{/if}}
+                    </header>
+
+                    {{#if this.text}}
+                    <p class="card-text">{{this.text}}</p>
+                    {{/if}}
+                </article>
+                {{/each}}
+            </section>
+        </div>
+
+        <aside class="chargen-sidebar" aria-label="Biography so far">
+            {{#if currentTableDescription}}
+            <section class="chargen-sidebar-panel chargen-sidebar-panel--intro">
+                <header class="chargen-sidebar-panel__header">
+                    <i class="fas fa-star"></i>
+                    <span>{{currentTableName}}</span>
+                </header>
+                <div class="chargen-sidebar-panel__body">
+                    <div class="table-description">{{{currentTableDescription}}}</div>
+                </div>
+            </section>
+            {{/if}}
+
+            <section class="chargen-bio-panel">
+                <header class="chargen-bio-panel__header">
+                    <i class="fas fa-book-open"></i>
+                    <span>Biography so far</span>
+                </header>
+                <div class="chargen-bio-scroll" role="log" aria-live="polite">
+                    {{#if compiledBio.length}}
+                    <div class="chargen-bio-block">
+                        <div class="chargen-bio-block__title">Life Summary</div>
+                        {{#each compiledBio}}
+                        <p>{{this}}</p>
+                        {{/each}}
+                    </div>
+                    {{/if}}
+
+                    {{#if workHistory.length}}
+                    <div class="chargen-bio-block">
+                        <div class="chargen-bio-block__title">Work History</div>
+                        <ul class="chargen-bio-list">
+                            {{#each workHistory}}
+                            <li>{{this}}</li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                    {{/if}}
+
+                    {{#if bio.length}}
+                    <div class="chargen-bio-block">
+                        <div class="chargen-bio-block__title">Chronicle</div>
+                        <ul class="chargen-bio-list">
+                            {{#each bio}}
+                            <li>{{this}}</li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                    {{else}}
+                    <p class="chargen-bio-empty">This life has only just begun.</p>
+                    {{/if}}
+                </div>
+            </section>
+
+            <footer class="sheet-footer flexcol chargen-footer">
+                <button type="button" data-action="settings">
+                    <i class="fas fa-sliders"></i> Settings
+                </button>
+                <button type="button" data-action="finish" class="primary-action">
+                    <i class="fas fa-flag-checkered"></i> Finish
+                </button>
+            </footer>
+        </aside>
+    </section>
+
+    {{#if reveal.isTransitionInterstitial}}
+    <div class="transition-overlay" data-action="continue" role="button" tabindex="0" aria-label="Continue to the next chapter">
+        <div class="deferred-intertitle transition-intertitle">
+            <div class="deferred-intertitle__frame transition-intertitle__frame">
+                {{#if reveal.image}}
+                <div class="deferred-card-art transition-card-art">
+                    <img src="{{reveal.image}}" alt="{{reveal.title}}">
+                </div>
+                {{/if}}
+                {{#if reveal.transitionModeLabel}}
+                <p class="transition-kind">{{reveal.transitionModeLabel}}</p>
+                {{/if}}
+                <h3 class="reveal-title deferred-title transition-title">Your Life Turns</h3>
+                {{#if reveal.fromTableName}}
+                <p class="transition-path">{{reveal.fromTableName}} &rarr; {{reveal.nextName}}</p>
+                {{/if}}
+                {{#if reveal.title}}
+                <p class="deferred-origin transition-origin">After {{reveal.title}}</p>
+                {{/if}}
+                {{#if revealTransitionText}}
+                <p class="reveal-text deferred-text transition-text">{{revealTransitionText}}</p>
+                {{else}}
+                {{#if reveal.nextDetail}}
+                <p class="reveal-text deferred-text transition-text">{{reveal.nextDetail}}</p>
+                {{/if}}
+                {{/if}}
+                {{#if reveal.lines}}
+                <ul class="deferred-effects transition-effects">
+                    {{#each reveal.lines}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+                {{/if}}
+                <p class="deferred-dismiss">Click to continue</p>
+            </div>
+        </div>
+    </div>
+    {{/if}}
+
+    {{#if reveal.isDeferred}}
+    <div class="deferred-overlay" data-action="continue" role="button" tabindex="0" aria-label="Continue past deferred reveal">
+        <div class="deferred-intertitle">
+            <div class="deferred-intertitle__frame">
+                {{#if reveal.image}}
+                <div class="deferred-card-art">
+                    <img src="{{reveal.image}}" alt="{{reveal.title}}">
+                </div>
+                {{/if}}
+                <h3 class="reveal-title deferred-title">{{reveal.title}}</h3>
+                {{#if reveal.originLine}}
+                <p class="deferred-origin">{{reveal.originLine}}</p>
+                {{/if}}
+                {{#if reveal.text}}
+                <p class="reveal-text deferred-text">{{{revealDeferredHtml}}}</p>
+                {{/if}}
+                {{#if revealDeferredLines}}
+                <ul class="deferred-effects">
+                    {{#each revealDeferredLines}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+                {{/if}}
+                <p class="deferred-dismiss">Click to continue</p>
+            </div>
+        </div>
+    </div>
+    {{/if}}
+
+</form>
