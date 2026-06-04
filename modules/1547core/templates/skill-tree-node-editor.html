@@ -1,0 +1,79 @@
+<form class="skilltree-node-editor flexcol">
+    <p>
+        This is a world-level item dependency graph. Drop world/compendium items (or actor items with source links) into the graph to add nodes.
+        Click one node, then another, to create AND dependencies. Shift-click target for OR dependency. Click edge to edit minimum level. Right-click edge to remove.
+    </p>
+
+    <div class="form-group">
+        <p class="notes">Loaded nodes: <span data-role="graph-count">{{nodeCount}}</span> | Cycles: <span data-role="cycle-count">{{cycleCount}}</span></p>
+    </div>
+
+    <div class="form-group">
+        <nav class="flexrow" style="gap:0.5rem; margin-bottom:0.5rem;">
+            <button type="button" data-tab-target="graph" data-tab-button class="active">
+                <i class="fas fa-project-diagram"></i> Graph
+            </button>
+            <button type="button" data-tab-target="json" data-tab-button>
+                <i class="fas fa-code"></i> JSON
+            </button>
+        </nav>
+    </div>
+
+    <section data-tab="graph">
+        <div class="form-group">
+            <div class="flexrow" style="gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+                <label for="skilltree-layout-select" style="align-self:center; margin:0;">Layout</label>
+                <select id="skilltree-layout-select" data-role="layout-select" style="max-width: 14rem;">
+                    <option value="cose">COSE</option>
+                    <option value="fcose">fCoSE</option>
+                    <option value="dagre">Dagre</option>
+                    <option value="elk">ELK</option>
+                    <option value="breadthfirst">Breadthfirst</option>
+                    <option value="concentric">Concentric</option>
+                    <option value="grid">Grid</option>
+                </select>
+                <button type="button" data-action="arrange">
+                    <i class="fas fa-sitemap"></i> Auto Arrange
+                </button>
+                <button type="button" data-action="fit">
+                    <i class="fas fa-expand-arrows-alt"></i> Fit View
+                </button>
+            </div>
+            <label>Dependency Graph</label>
+            <div data-role="cy-canvas" style="width:100%; height:500px; border:1px solid #555; border-radius:6px; background:#1f2329;"></div>
+            <p class="notes" data-role="node-label">Hover or click a node to inspect its full name.</p>
+            <p class="notes">Drop item documents here to create graph nodes.</p>
+        </div>
+    </section>
+
+    <section data-tab="json" style="display:none;">
+        <div class="form-group">
+            <div class="flexrow" style="gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+                <button type="button" data-action="format">
+                    <i class="fas fa-indent"></i> Format JSON
+                </button>
+                <button type="button" data-action="restore-default">
+                    <i class="fas fa-rotate-left"></i> Restore Default
+                </button>
+                <button type="button" data-action="apply-json">
+                    <i class="fas fa-code"></i> Apply JSON To Graph
+                </button>
+                <button type="button" data-action="validate">
+                    <i class="fas fa-check"></i> Validate
+                </button>
+            </div>
+
+            <label>Graph JSON</label>
+            <textarea name="json" rows="14" style="font-family: monospace; width: 100%;">{{json}}</textarea>
+            <p class="notes">
+                Format: { "Item.UUID": { "name": "Node", "type": "itemType", "requirements": [{ "nodeId": "OtherItem.UUID", "minLevel": 2 }], "anyOf": [{ "options": [{ "nodeId": "SkillA", "minLevel": 1 }, { "nodeId": "SkillB", "minLevel": 1 }] }] } }
+            </p>
+        </div>
+    </section>
+
+    <footer class="sheet-footer flexrow">
+        <button type="submit">
+            <i class="fas fa-save"></i> Save
+        </button>
+    </footer>
+</form>

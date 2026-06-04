@@ -1,0 +1,2469 @@
+{
+  "Item.3ssOYdjj50y5HMlZ": {
+    "name": "Art Creative",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 1,
+    "requirements": [],
+    "anyOf": []
+  },
+  "Item.ZZ12L5yJNKZswgkF": {
+    "name": "Art Expertise Dance",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.3ssOYdjj50y5HMlZ",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.Ttqs89del0HbbZSR": {
+    "name": "Art Expertise Music",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.3ssOYdjj50y5HMlZ",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.gvI6WmGXC2iTYYQz": {
+    "name": "Art Expertise Painting",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.3ssOYdjj50y5HMlZ",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.lciQamwqcsqekGRF": {
+    "name": "Art Expertise Writing",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.3ssOYdjj50y5HMlZ",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.WVdJOfiwZCSPrOHE": {
+    "name": "Learning Scholar",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 1,
+    "requirements": [],
+    "anyOf": []
+  },
+  "Item.7VoeHrMi683vwBeS": {
+    "name": "Learning Expertise Religion",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.WVdJOfiwZCSPrOHE",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.WjngVZIgku8cBETw": {
+    "name": "Learning Expertise Occult",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.WVdJOfiwZCSPrOHE",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.yRsiAyzSCh6v6wMm": {
+    "name": "Learning Expertise Nobility",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.WVdJOfiwZCSPrOHE",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.rA14pwn4o08IusWY": {
+    "name": "Learning Expertise Medicine",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.WVdJOfiwZCSPrOHE",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.3rONx9nVxk10fyZ4": {
+    "name": "Learning Expertise Lore",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.WVdJOfiwZCSPrOHE",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.00wKdoVpnYkW0LUk": {
+    "name": "Learning Expertise Law",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.WVdJOfiwZCSPrOHE",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.DGOKXfiahX4RZhJL": {
+    "name": "Learning Expertise Astrology",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.WVdJOfiwZCSPrOHE",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.jFRLqzcUavG6hsUM": {
+    "name": "Learning Expertise Art",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.WVdJOfiwZCSPrOHE",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.I28pxbqeoKMdNgxr": {
+    "name": "Learning Expertise Apothecary",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.WVdJOfiwZCSPrOHE",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.pQ1qZGqEvNCun2pc": {
+    "name": "Learning Expertise Alchemy",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.WVdJOfiwZCSPrOHE",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.l3euj72k8YDI7WFv": {
+    "name": "Manufacturing Craft",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 1,
+    "requirements": [],
+    "anyOf": []
+  },
+  "Item.WfmlOA5KomA8Wfnw": {
+    "name": "Manufacturing Expertise Food",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.l3euj72k8YDI7WFv",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.1IK3By3aRaQTkvdU": {
+    "name": "Manufacturing Expertise Glass",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.l3euj72k8YDI7WFv",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.uvM0DC5zg0gEavyb": {
+    "name": "Manufacturing Expertise Jewelry",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.3ssOYdjj50y5HMlZ",
+        "minLevel": 1
+      },
+      {
+        "nodeId": "Item.l3euj72k8YDI7WFv",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.cR0l72jFwycnWamb": {
+    "name": "Manufacturing Expertise Mechanics",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.WVdJOfiwZCSPrOHE",
+        "minLevel": 1
+      },
+      {
+        "nodeId": "Item.l3euj72k8YDI7WFv",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.U8Re3snZayr53CyN": {
+    "name": "Manufacturing Expertise Metal",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.l3euj72k8YDI7WFv",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.BzXKFA8YPCex5Gsz": {
+    "name": "Manufacturing Expertise Paper",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.l3euj72k8YDI7WFv",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.cXG8MEvoZlFeiU3t": {
+    "name": "Manufacturing Expertise Soft",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.l3euj72k8YDI7WFv",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.ie2GIgz9WXiRPyFt": {
+    "name": "Manufacturing Expertise Stone",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.l3euj72k8YDI7WFv",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.AtpamHqzRTgSqaSR": {
+    "name": "Manufacturing Expertise Wood",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.l3euj72k8YDI7WFv",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.jSmkCryle69Qvw6j": {
+    "name": "Pagan Low Magic",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 1,
+    "requirements": [],
+    "anyOf": []
+  },
+  "Item.hQfvmQ10qHxVY3ni": {
+    "name": "Pagan Expertise Amulet",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.l3euj72k8YDI7WFv",
+        "minLevel": 1
+      },
+      {
+        "nodeId": "Item.jSmkCryle69Qvw6j",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.2vTglrIXgGVEisl6": {
+    "name": "Pagan Expertise Divination",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.jSmkCryle69Qvw6j",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.lPAQTWr30t44JFeJ": {
+    "name": "Pagan Expertise Herbalism",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.jSmkCryle69Qvw6j",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.QeV7gHxmUVJWyBlC": {
+    "name": "Pagan Expertise Knot",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.l3euj72k8YDI7WFv",
+        "minLevel": 1
+      },
+      {
+        "nodeId": "Item.jSmkCryle69Qvw6j",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.ivrUWUcZCZHVlGCe": {
+    "name": "Pagan Expertise Necromancy",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.jSmkCryle69Qvw6j",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.2QFZcbgsyvU6kYcO": {
+    "name": "Pagan Expertise Potion",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.lPAQTWr30t44JFeJ",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.YYw6eQCJIWhyroR9": {
+    "name": "Pagan Expertise Warding",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.l3euj72k8YDI7WFv",
+        "minLevel": 1
+      },
+      {
+        "nodeId": "Item.jSmkCryle69Qvw6j",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.UhhJ9dc4uPNpGp7r": {
+    "name": "Services Barber",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 1,
+    "requirements": [],
+    "anyOf": []
+  },
+  "Item.65Rf3FrHzu6XwOfd": {
+    "name": "Services Expertise Surgeon",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.UhhJ9dc4uPNpGp7r",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.PmNFvXH9Emt3hIMg": {
+    "name": "Subterfuge Criminal",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 0,
+    "maxLevel": 1,
+    "requirements": [],
+    "anyOf": []
+  },
+  "Item.RvWnsh13xndC3BDJ": {
+    "name": "Subterfuge Expertise Locks",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.PmNFvXH9Emt3hIMg",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.F0NfycHV3L1nXozL": {
+    "name": "Subterfuge Expertise Procuring",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.PmNFvXH9Emt3hIMg",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.38r2fiOwNtIlpoMe": {
+    "name": "Subterfuge Expertise Spying",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.PmNFvXH9Emt3hIMg",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.fmgOxAd61kbBC3oF": {
+    "name": "Subterfuge Expertise Stealth",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.PmNFvXH9Emt3hIMg",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.0k3dXTEU5oN3rHSs": {
+    "name": "Subterfuge Expertise Thieving",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 1,
+    "maxLevel": 3,
+    "requirements": [
+      {
+        "nodeId": "Item.PmNFvXH9Emt3hIMg",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.6W0w1AV1grz8V6Z7": {
+    "name": "Combat Melee",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 0,
+    "maxLevel": 3,
+    "requirements": [],
+    "anyOf": []
+  },
+  "Item.3rmcikTMMXLQyzfb": {
+    "name": "Combat Firearm",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 0,
+    "maxLevel": 3,
+    "requirements": [],
+    "anyOf": []
+  },
+  "Item.Y0SfW0f3l5E5JHd5": {
+    "name": "Combat Ranged",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 0,
+    "maxLevel": 3,
+    "requirements": [],
+    "anyOf": []
+  },
+  "Item.fLIefMop44DdTwzl": {
+    "name": "Combat Thrown",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 0,
+    "maxLevel": 3,
+    "requirements": [],
+    "anyOf": []
+  },
+  "Item.UU75zjUE8ySUKzoC": {
+    "name": "Combat Unarmed",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 0,
+    "maxLevel": 3,
+    "requirements": [],
+    "anyOf": []
+  },
+  "Item.1vsU4URL3rEUU62L": {
+    "name": "Feint",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.qoob23NivFhPxDz7": {
+    "name": "Quick Reload",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.3rmcikTMMXLQyzfb",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.Y0SfW0f3l5E5JHd5",
+            "minLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "Item.pYHk7x76PG4tPdc9": {
+    "name": "Point Blank",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.3rmcikTMMXLQyzfb",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.W88cuoIAA7yiKG9w": {
+    "name": "Counter Strike",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.QaEAgV8VpMOIBehT": {
+    "name": "Redouble",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.6W0w1AV1grz8V6Z7",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.Y0SfW0f3l5E5JHd5",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.UU75zjUE8ySUKzoC",
+            "minLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "Item.VdirxzHv2Gf0MKW2": {
+    "name": "Riposte",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.MHMCM3D4kHEUABWp": {
+    "name": "Throw",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.UU75zjUE8ySUKzoC",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.Nx7vHltQuktuUThp": {
+    "name": "Quick Brace",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.3rmcikTMMXLQyzfb",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.L8M2Lhol4GaAr2rW": {
+    "name": "Quick Aim",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.fLIefMop44DdTwzl",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.3rmcikTMMXLQyzfb",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.Y0SfW0f3l5E5JHd5",
+            "minLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "Item.H1aCK1J68Y0LAL9P": {
+    "name": "Suppressing Fire",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.Y0SfW0f3l5E5JHd5",
+            "minLevel": 3
+          },
+          {
+            "nodeId": "Item.3rmcikTMMXLQyzfb",
+            "minLevel": 3
+          }
+        ]
+      }
+    ]
+  },
+  "Item.sOJVkvmtsRuiBUc3": {
+    "name": "Parry",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.rHF8ziPwUd6MJ6Qz": {
+    "name": "Shield",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.Ki0terhQZNkLRN1L": {
+    "name": "Bind",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.lIIYhkGTa2e2xa7A": {
+    "name": "Lock and Strike",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.UU75zjUE8ySUKzoC",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.ezUfv7x5vmaVa04Q": {
+    "name": "Lock",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.UU75zjUE8ySUKzoC",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.l14YtB6GEUCpzfLC": {
+    "name": "Disarm",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.6W0w1AV1grz8V6Z7",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.UU75zjUE8ySUKzoC",
+            "minLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "Item.mlZAwyG0zBfXzydm": {
+    "name": "Receive charge",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.P5yT3V9dDraPZeW1": {
+    "name": "Hook",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.uA3IU5Dh7AfZShIc": {
+    "name": "Break Armor",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.nfzU9B8ALyhxczjL": {
+    "name": "Choke",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.UU75zjUE8ySUKzoC",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.HqrGELWDC8lWgIrz": {
+    "name": "Press",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.qKblR61N6NE1DHZf": {
+    "name": "All-In",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.vEgS0TqHWtnsKYpP": {
+    "name": "Charge",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
+      },
+      {
+        "nodeId": "Item.X7zC0glgUPw5qOiU",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.X7zC0glgUPw5qOiU": {
+    "name": "Outdoor Riding",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 0,
+    "maxLevel": 2,
+    "requirements": [],
+    "anyOf": []
+  },
+  "Item.4z4O6Kp9WLMU4w11": {
+    "name": "Bull Charge",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.UJBuJkDMX2UZ8fvL": {
+    "name": "Formation",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.wfETgvyluTlkDV3L": {
+    "name": "Shield Wall",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.p55MDtE7iZzgeOT0": {
+    "name": "Rally",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 1
+      },
+      {
+        "nodeId": "Item.yK8twhFqVhpXoqgU",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.yK8twhFqVhpXoqgU": {
+    "name": "Charisma Perform",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 0,
+    "maxLevel": 2,
+    "requirements": [],
+    "anyOf": []
+  },
+  "Item.ChkR8nWx1MtoYYRm": {
+    "name": "Sap",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.fmgOxAd61kbBC3oF",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.8G44hFsoSjZP1oxD": {
+    "name": "Assassinate",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.fmgOxAd61kbBC3oF",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.6Z8Bi2hel5HoNyos": {
+    "name": "Resist Hooking",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.zXuCnw9eUnBOb1Vp",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.zXuCnw9eUnBOb1Vp": {
+    "name": "Strength Athletics",
+    "type": "equippableItem",
+    "kind": "skill",
+    "minLevel": 0,
+    "maxLevel": 2,
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.I8sJmFC6OSOLZncM": {
+    "name": "Albedo",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.pQ1qZGqEvNCun2pc",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.OdZGFvcvJ9H6XVI3": {
+    "name": "Angelic Boon",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.68pK1JyVwdTniZhY": {
+    "name": "Astral Projection",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.2vTglrIXgGVEisl6",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.AhdYLp8Y9LghLGuK": {
+    "name": "Auspicious Prediction",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.2vTglrIXgGVEisl6",
+            "minLevel": 1
+          },
+          {
+            "nodeId": "Item.DGOKXfiahX4RZhJL",
+            "minLevel": 1
+          }
+        ]
+      }
+    ]
+  },
+  "Item.edpD7dIUE0fD4dL5": {
+    "name": "Auspicious timing",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.2vTglrIXgGVEisl6",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.DGOKXfiahX4RZhJL",
+            "minLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "Item.YNASYFtYSsAdfqpc": {
+    "name": "Banish",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.7VoeHrMi683vwBeS",
+            "minLevel": 3
+          },
+          {
+            "nodeId": "Item.WjngVZIgku8cBETw",
+            "minLevel": 3
+          }
+        ]
+      }
+    ]
+  },
+  "Item.e0VMN3PnDNGtopvO": {
+    "name": "Beam Sigil",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.YYw6eQCJIWhyroR9",
+            "minLevel": 1
+          },
+          {
+            "nodeId": "Item.7VoeHrMi683vwBeS",
+            "minLevel": 1
+          }
+        ]
+      }
+    ]
+  },
+  "Item.oqvofFOe52EKl62D": {
+    "name": "Bind",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.UUMQE5Oi4ETa8DdA": {
+    "name": "Black Sleep",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.o9yBk3mElCR8b9Xv": {
+    "name": "Bless Weapon",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.7VoeHrMi683vwBeS",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.WfRkfPMj4SuN6AWm": {
+    "name": "Blood Border",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 2
+      },
+      {
+        "nodeId": "Item.YYw6eQCJIWhyroR9",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.L5sE3eqImTUf1Saz": {
+    "name": "Borrowed Pallor",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.zhkDzFaH5ljtUCel": {
+    "name": "Borrowed Pulse",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.65C0dy4i4nVtqF5i": {
+    "name": "Break Binding",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.0tFgEp3HLo4HmAeg": {
+    "name": "Break Pact",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.0y6TpH7RA8esw9IM": {
+    "name": "Break Seal",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.OeC84PNmVQ7pNoRN": {
+    "name": "Calcination",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.pQ1qZGqEvNCun2pc",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.7Gp6n3DhV1j0OAL4": {
+    "name": "Chalk Border",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.YYw6eQCJIWhyroR9",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.WjngVZIgku8cBETw",
+            "minLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "Item.sRltIPXfjPZClsrt": {
+    "name": "Citrinitas",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.xKaiMjTaTuZ2Cf3K": {
+    "name": "Coagulation",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.pQ1qZGqEvNCun2pc",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.gJIa0gSgnbsmNQxG": {
+    "name": "Cold Knot",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.wyeMMQDHH1oG8cnK": {
+    "name": "Command",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.GMhN0wOMB0gl1hnd": {
+    "name": "Conjunction",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.QZhClf2YhAll0ri7": {
+    "name": "Consecrate Church",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.7VoeHrMi683vwBeS",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.TZKn4aPW6a07bW5P": {
+    "name": "Consumption Oath",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.9VM99osQtYijDc8j": {
+    "name": "Create Funeral Wax Candle",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.7VoeHrMi683vwBeS",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.ivrUWUcZCZHVlGCe",
+            "minLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "Item.3NPFvnsGfgC4DJYc": {
+    "name": "Create Spirit Vessel",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.U9GuFt7oNhXAefoT": {
+    "name": "Curse of Withering",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.N3kMLWwj3H4tHSfZ": {
+    "name": "Danger Sense",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.2vTglrIXgGVEisl6",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.cZbSHiqi54fu3Yb6": {
+    "name": "Death Knots",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.GDD3eifb8o7fSuzj": {
+    "name": "Delay",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.BZE6zjrHyBooA4ib": {
+    "name": "Disease Knot",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.OshEftZBRDCDr4lG": {
+    "name": "Dissolution",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.pQ1qZGqEvNCun2pc",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.M11iarZhaReFnEpx": {
+    "name": "Distillation",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.pQ1qZGqEvNCun2pc",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.feWeJLhel1NQNWXp": {
+    "name": "Divine Guidance",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.WjngVZIgku8cBETw",
+            "minLevel": 3
+          },
+          {
+            "nodeId": "Item.7VoeHrMi683vwBeS",
+            "minLevel": 3
+          }
+        ]
+      }
+    ]
+  },
+  "Item.ggZe2ATPq0ffJ5fP": {
+    "name": "Dread",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.l60Bhiy5CifQoYmV": {
+    "name": "Dream Interpretation",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.2vTglrIXgGVEisl6",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.q9mNclcOboigSXrt": {
+    "name": "Dream Warding",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.YYw6eQCJIWhyroR9",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.rfiiz90apyrUu99p": {
+    "name": "Empty Mirror",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.MCjNtJaB92TNy2h3": {
+    "name": "Enchant Object",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.o9AWxrkJchs2OwGU": {
+    "name": "Evil Eye",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.KRN3Ah27teJox0GY": {
+    "name": "Exorcism",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.WjngVZIgku8cBETw",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.7VoeHrMi683vwBeS",
+            "minLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "Item.1ddMv5NaVAhMb6vl": {
+    "name": "Faith Manipulation",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.2vTglrIXgGVEisl6",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.6bM33vPoiARwfxuG": {
+    "name": "Favor Knot",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.qPi2tTLyUp1nCIvZ": {
+    "name": "Fermentation",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.pQ1qZGqEvNCun2pc",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.AsN98bt372GMlHEL": {
+    "name": "Find the Culprit",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.2vTglrIXgGVEisl6",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.3AU72o82cWIciLa4": {
+    "name": "Find What Is Lost",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.2vTglrIXgGVEisl6",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.Su3XJJ1ue6CZ1y7g": {
+    "name": "Glamour",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.2vTglrIXgGVEisl6",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.Gu0Jq2R9NHmYDhWj": {
+    "name": "Golem",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.WjngVZIgku8cBETw",
+            "minLevel": 3
+          },
+          {
+            "nodeId": "Item.pQ1qZGqEvNCun2pc",
+            "minLevel": 3
+          }
+        ]
+      }
+    ]
+  },
+  "Item.eYVN1yeK9xLZ0WgO": {
+    "name": "Grave Dreaming",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.dL4rAhjXtZVbrJJT": {
+    "name": "Grave Soil & Salt Border",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.YYw6eQCJIWhyroR9",
+        "minLevel": 1
+      },
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.swz5QHIMjFXIfIrX": {
+    "name": "Heart Twine",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.ADKcSZyLXyXLNSdx": {
+    "name": "Homonculus",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.pQ1qZGqEvNCun2pc",
+        "minLevel": 3
+      },
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.ZgNjIhhmNSABmKKM": {
+    "name": "Humoral Rebalancing",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.pQ1qZGqEvNCun2pc",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.5rEHPrV1nwjKV7nj": {
+    "name": "Ill Luck Knot",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.Hwqnp4I1mu2CkNQc": {
+    "name": "Ill Turning Loop",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.GASRi4LKXzNkp6nk": {
+    "name": "Invoke Pact",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.MmxpEkPj75AH3ZWj": {
+    "name": "Iron Seal",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.YYw6eQCJIWhyroR9",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.GDGNGs3XgXp60WO9": {
+    "name": "Limb Snare",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.4ZmJmt22mQufaQza": {
+    "name": "Love Binding",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.Zrylz7D15dyAFA6i": {
+    "name": "Memory Tangle",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.kvPGyylOK6LmM4mo": {
+    "name": "Metallic Transposition",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.pQ1qZGqEvNCun2pc",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.pbkfLykBflIXX5B6": {
+    "name": "Name the Unnamed",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.BzGMt3dDlzAVBuuY": {
+    "name": "Night Riding",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.YIoVy8cEdVqh1sfF": {
+    "name": "Nigredo",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.pQ1qZGqEvNCun2pc",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.H0TkuEQeGv37GlbO": {
+    "name": "Oath Knot",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.gAH7IQoVbUBxuI9L": {
+    "name": "Oath of Three Witnesses",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.YYw6eQCJIWhyroR9",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.8zzcx6SKk4bOeMdP": {
+    "name": "Object Memory",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.2vTglrIXgGVEisl6",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.3X2hBK1QFBi70G6Z": {
+    "name": "Planetary Invocation",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 1
+      },
+      {
+        "nodeId": "Item.DGOKXfiahX4RZhJL",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.siubRfZFPmFZCenW": {
+    "name": "Possess",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.HaXNbO7usa7AVyP1": {
+    "name": "Prayer against Evil Eye",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.7VoeHrMi683vwBeS",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.v4QVOmblNFmocgVX": {
+    "name": "Prophecy",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.7VoeHrMi683vwBeS",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.DGOKXfiahX4RZhJL",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.2vTglrIXgGVEisl6",
+            "minLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "Item.sKpj8DQ714GedaBb": {
+    "name": "Prospect Reading",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.DGOKXfiahX4RZhJL",
+            "minLevel": 1
+          },
+          {
+            "nodeId": "Item.2vTglrIXgGVEisl6",
+            "minLevel": 1
+          }
+        ]
+      }
+    ]
+  },
+  "Item.4Xfjra3lhXPCet0y": {
+    "name": "Protection Rhyme",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.YYw6eQCJIWhyroR9",
+            "minLevel": 1
+          },
+          {
+            "nodeId": "Item.7VoeHrMi683vwBeS",
+            "minLevel": 1
+          }
+        ]
+      }
+    ]
+  },
+  "Item.wQBkp7POxtm5m7Q4": {
+    "name": "Protective Border",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.7VoeHrMi683vwBeS",
+            "minLevel": 1
+          },
+          {
+            "nodeId": "Item.YYw6eQCJIWhyroR9",
+            "minLevel": 1
+          }
+        ]
+      }
+    ]
+  },
+  "Item.8BCcXHisWiDoVPMO": {
+    "name": "Protective Circle",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.7VoeHrMi683vwBeS",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.YYw6eQCJIWhyroR9",
+            "minLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "Item.H5XZ3JVKhFZbYfgJ": {
+    "name": "Reading",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.DGOKXfiahX4RZhJL",
+            "minLevel": 1
+          },
+          {
+            "nodeId": "Item.2vTglrIXgGVEisl6",
+            "minLevel": 1
+          }
+        ]
+      }
+    ]
+  },
+  "Item.dJF8CaJBdIPSJTYb": {
+    "name": "Refusal Rite",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.7VoeHrMi683vwBeS",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.YYw6eQCJIWhyroR9",
+            "minLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "Item.QAZBYYNSFLuCVZNd": {
+    "name": "Rewrite the Past",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.BiwyPvd0xXvUGVc9": {
+    "name": "Rubedo",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.pQ1qZGqEvNCun2pc",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.iPJCeYpyo7eR6QPS": {
+    "name": "Sanctify",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.7VoeHrMi683vwBeS",
+        "minLevel": 2
+      },
+      {
+        "nodeId": "Item.YYw6eQCJIWhyroR9",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.N83UQYPv4ZZ5nTM4": {
+    "name": "Scrying",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.2vTglrIXgGVEisl6",
+            "minLevel": 3
+          },
+          {
+            "nodeId": "Item.WjngVZIgku8cBETw",
+            "minLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "Item.dUFPZKNlK3sNuDwx": {
+    "name": "Seal",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.7VoeHrMi683vwBeS",
+            "minLevel": 3
+          },
+          {
+            "nodeId": "Item.WjngVZIgku8cBETw",
+            "minLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "Item.1Wg6yp1KYOOMcnqJ": {
+    "name": "Separation",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.pQ1qZGqEvNCun2pc",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.gW6RGPynDa3R18lL": {
+    "name": "Shadow Attachment",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.eTskx4gU6mqClb1P": {
+    "name": "Shape Shifting",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.2vTglrIXgGVEisl6",
+            "minLevel": 3
+          },
+          {
+            "nodeId": "Item.WjngVZIgku8cBETw",
+            "minLevel": 3
+          }
+        ]
+      }
+    ]
+  },
+  "Item.z0whtZPLbaHj5AjH": {
+    "name": "Similacrum",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.v77rRDeXDd88ZAQW": {
+    "name": "Speak with the Dead",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.VLTm3fsxgbL3jDM0": {
+    "name": "Spirit Sight",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.7VoeHrMi683vwBeS",
+            "minLevel": 2
+          },
+          {
+            "nodeId": "Item.ivrUWUcZCZHVlGCe",
+            "minLevel": 1
+          }
+        ]
+      }
+    ]
+  },
+  "Item.pXYHis8GTAY6mp6O": {
+    "name": "Still Tongue",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.ivrUWUcZCZHVlGCe",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.UbPS5qBRoTdsxMCu": {
+    "name": "Summon Being",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.jqnOImydzoO6qj4k": {
+    "name": "Threshold Awareness",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.2vTglrIXgGVEisl6",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.6uzJDVv1QMJye8Ep": {
+    "name": "Tongue Tying Knot",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.nntoro1zpqDptMUE": {
+    "name": "Transform Self",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.pdy0mR1LkIXBFntj": {
+    "name": "Truth Pressure",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.2vTglrIXgGVEisl6",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.OwlW0ntkgzYib6HX": {
+    "name": "Uncertain Knot",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.KOqZvKiBnVMyMhfY": {
+    "name": "Wax Seal",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.YYw6eQCJIWhyroR9",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.JGCiuiIdASGgIdH7": {
+    "name": "Wind Knot",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.voD1EzY8zJHcQnCo": {
+    "name": "Witches' Ladder",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.TgjBtSEJxUfnxZTV": {
+    "name": "Withering Knot",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.QeV7gHxmUVJWyBlC",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.Ymko7qvWSyx2YWKQ": {
+    "name": "Zone Travel",
+    "type": "equippableItem",
+    "kind": "spell",
+    "requirements": [
+      {
+        "nodeId": "Item.WjngVZIgku8cBETw",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  }
+}

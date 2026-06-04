@@ -111,6 +111,11 @@ Hooks.once("init", () => {
         () => import("./services/diagnostics-service.js"),
         (module) => module.registerDiagnosticsService()
     );
+    void runImportedModuleStep(
+        "registerSkillTreeService",
+        () => import("./services/skill-tree/skill-tree-service.js"),
+        (module) => module.registerSkillTreeService()
+    );
 });
 
 Hooks.once("ready", () => {
@@ -158,5 +163,10 @@ Hooks.once("ready", () => {
         "register1547DialogHooks",
         () => import("./dialogs/roll-dialog.js"),
         (module) => module.register1547DialogHooks()
+    );
+    void runImportedModuleStep(
+        "refreshSkillTreeApi",
+        () => import("./services/skill-tree/skill-tree-service.js"),
+        (module) => module.refreshSkillTreeApi()
     );
 });

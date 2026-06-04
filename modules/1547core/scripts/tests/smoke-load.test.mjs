@@ -46,10 +46,18 @@ if (typeof globalThis.canvas === "undefined") {
     globalThis.canvas = { tokens: { controlled: [] } };
 }
 if (typeof globalThis.foundry === "undefined") {
+    class StubApplicationV2 {
+        static DEFAULT_OPTIONS = {};
+        static PARTS = {};
+    }
+    const HandlebarsApplicationMixin = (base) => class extends base {};
     globalThis.foundry = {
         utils: {
             deepClone: (v) => JSON.parse(JSON.stringify(v)),
             mergeObject: (a, b) => Object.assign({}, a, b),
+        },
+        applications: {
+            api: { ApplicationV2: StubApplicationV2, HandlebarsApplicationMixin },
         },
     };
 }
@@ -72,6 +80,9 @@ const SERVICE_FILES = [
     "csb-container-helpers.mjs",
     "composition-service.mjs",
     "monster-wizard-service.js",
+    "skill-tree/node-logic.js",
+    "skill-tree/node-editor.js",
+    "skill-tree/skill-tree-service.js",
 ];
 
 const COMBAT_FILES = [
