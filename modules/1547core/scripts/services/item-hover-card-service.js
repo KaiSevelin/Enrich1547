@@ -207,9 +207,16 @@ function findActor(app) {
 export function registerItemHoverCardService() {
     const handler = (app, html) => {
         try {
-            const root = normalizeRoot(html);
-            if (!root) return;
-            decorateRoot(root, findActor(app));
+            // v13 sometimes passes a chrome-only fragment as `html` before
+            // the inner content mounts. Fall through to app.element (the
+            // mounted DOM after _onRender) or document.body so we don't miss.
+            const candidates = [normalizeRoot(html), app?.element, document.body].filter(Boolean);
+            const actor = findActor(app);
+            for (const root of candidates) {
+                const decorated = decorateRoot(root, actor);
+                // Stop at the first non-empty scan — no point repeating work.
+                if (decorated > 0) break;
+            }
         } catch (err) {
             console.warn(`${MODULE_ID} | hover-card render-hook failed`, err);
         }
@@ -220,6 +227,15 @@ export function registerItemHoverCardService() {
     Hooks.on("renderApplicationV2", handler);
     Hooks.on("renderCompendium", handler);
     Hooks.on("renderItemDirectory", handler);
+    // CSB sheets in v13 may render with a delay after the hook fires. Run
+    // another sweep on a short timer to catch late-mounted content.
+    Hooks.on("renderApplicationV2", (app) => {
+        try {
+            setTimeout(() => {
+                if (app?.element) decorateRoot(app.element, findActor(app));
+            }, 50);
+        } catch { /* non-fatal */ }
+    });
 
     console.log(`${MODULE_ID} | item-hover-card service registered`);
 

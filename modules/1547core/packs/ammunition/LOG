@@ -1,5 +1,5 @@
-2026/06/05-13:27:20.905 cdbc Delete type=3 #1
-2026/06/05-13:27:20.907 13038 Level-0 table #5: started
-2026/06/05-13:27:20.908 13038 Level-0 table #5: 7150 bytes OK
-2026/06/05-13:27:20.909 13038 Delete type=0 #3
-2026/06/05-13:27:20.909 13038 Manual compaction at level-0 from '!items!3mK8vT1QpL6rXsD2' @ 72057594037927935 : 1 .. '!items!8tV6PqL2mR5xYcN1' @ 0 : 0; will stop at (end)
+2026/06/05-13:32:04.836 12f54 Delete type=3 #1
+2026/06/05-13:32:04.838 162e0 Level-0 table #5: started
+2026/06/05-13:32:04.839 162e0 Level-0 table #5: 7150 bytes OK
+2026/06/05-13:32:04.839 162e0 Delete type=0 #3
+2026/06/05-13:32:04.839 162e0 Manual compaction at level-0 from '!items!3mK8vT1QpL6rXsD2' @ 72057594037927935 : 1 .. '!items!8tV6PqL2mR5xYcN1' @ 0 : 0; will stop at (end)
