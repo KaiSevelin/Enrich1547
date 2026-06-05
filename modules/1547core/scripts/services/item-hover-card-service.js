@@ -161,8 +161,20 @@ let currentHoveredItem = null;
 
 function findHoverableAncestor(target, actor = null) {
     if (!target?.closest) return { el: null, item: null, unresolvedAncestor: null };
-    // data-uuid first — that's what CSB content-link cells use for items.
-    const selectors = ["[data-uuid]", "[data-item-id]", "[data-document-id]", "[data-entry-id]"];
+    const selectors = [
+        "[data-uuid]",
+        "[data-item-id]",
+        "[data-document-id]",
+        "[data-entry-id]",
+        "[data-hud-weapon-profile]",
+        "[data-hud-weapon-attack]",
+        "[data-hud-weapon-range]",
+        "[data-hud-weapon-reload]",
+        "[data-hud-weapon-ammo]",
+        "[data-hud-item-equip]",
+        "[data-hud-item-unequip]",
+        "[data-hud-open-item]"
+    ];
     let firstAncestor = null;
     for (const sel of selectors) {
         const el = target.closest(sel);
@@ -261,10 +273,16 @@ function findItemForElement(el, actor) {
             if (doc?.documentName === "Item") return doc;
         } catch { /* fall through */ }
     }
+    const d = el.dataset;
     // data-item-id: classic Foundry actor sheets / inventory grids
     // data-document-id: compendium browser, sidebar item directory
     // data-entry-id: CSB v13 grid renderer
-    const id = el.dataset?.itemId ?? el.dataset?.documentId ?? el.dataset?.entryId;
+    // data-hud-*: 1547core HUD rows (weapons / armor / inventory / marks)
+    const id = d?.itemId ?? d?.documentId ?? d?.entryId
+        ?? d?.hudWeaponProfile ?? d?.hudWeaponAttack ?? d?.hudWeaponRange
+        ?? d?.hudWeaponReload ?? d?.hudWeaponAmmo
+        ?? d?.hudItemEquip ?? d?.hudItemUnequip
+        ?? d?.hudOpenItem;
     if (!id) return null;
     if (!VALID_FOUNDRY_ID.test(id)) return null;
     if (actor?.items?.get) {
