@@ -150,41 +150,85 @@ function hidePanel() {
     if (sharedPanel) sharedPanel.style.display = "none";
 }
 
-function attachTooltipHandlers(el, item) {
-    if (!el || !item) return;
-    if (el.dataset.hoverCard1547Bound === "1") return;
-    el.dataset.hoverCard1547Bound = "1";
+// Per-element binding is fragile when CSB re-renders the actor sheet —
+// re-renders destroy our bound elements, leaving fresh items without
+// handlers. Instead we use a single document-level mousemove listener
+// (delegation) plus closest() ancestor lookup. Robust to re-renders.
 
-    let cachedHtml = null;
-    let inFlight = null;
+const HOVER_HTML_CACHE = new WeakMap();
+let currentHoveredEl = null;
+let currentHoveredItem = null;
 
-    el.addEventListener("pointerenter", async (event) => {
+function findHoverableAncestor(target, actor = null) {
+    if (!target?.closest) return { el: null, item: null };
+    // Check each candidate selector; first match with a resolvable item wins.
+    const selectors = ["[data-item-id]", "[data-document-id]", "[data-entry-id]"];
+    for (const sel of selectors) {
+        const el = target.closest(sel);
+        if (!el) continue;
+        const item = findItemForElement(el, actor);
+        if (item) return { el, item };
+    }
+    return { el: null, item: null };
+}
+
+function findActorForElement(el) {
+    // Look up the chain for a sheet-rendered window with a recognised actor.
+    // CSB sheets stamp the actor uuid as data-uuid on the window root.
+    const winRoot = el.closest("[data-uuid], .window-app");
+    if (!winRoot) return null;
+    const uuid = winRoot.dataset?.uuid;
+    if (uuid) {
         try {
-            if (globalThis.HoverCard1547_DEBUG) console.log(`${MODULE_ID} | hover enter:`, item?.name);
-            if (!cachedHtml) {
-                if (!inFlight) inFlight = buildHoverCardHtml(item);
-                cachedHtml = await inFlight;
-                if (globalThis.HoverCard1547_DEBUG) console.log(`${MODULE_ID} | hover html ready, length:`, cachedHtml?.length);
+            const doc = fromUuidSync?.(uuid);
+            if (doc?.documentName === "Actor") return doc;
+        } catch { /* non-fatal */ }
+    }
+    return null;
+}
+
+function installDelegatedHoverListener() {
+    if (globalThis._hoverCard1547DelegationInstalled) return;
+    globalThis._hoverCard1547DelegationInstalled = true;
+
+    document.body.addEventListener("pointermove", async (event) => {
+        try {
+            const actor = findActorForElement(event.target);
+            const { el, item } = findHoverableAncestor(event.target, actor);
+
+            if (el !== currentHoveredEl) {
+                // Hover target changed.
+                currentHoveredEl = el;
+                currentHoveredItem = item;
+                if (!el || !item) {
+                    hidePanel();
+                    return;
+                }
+                if (globalThis.HoverCard1547_DEBUG) console.log(`${MODULE_ID} | hover enter:`, item.name);
+                let html = HOVER_HTML_CACHE.get(item);
+                if (!html) {
+                    html = await buildHoverCardHtml(item);
+                    HOVER_HTML_CACHE.set(item, html);
+                    if (globalThis.HoverCard1547_DEBUG) console.log(`${MODULE_ID} | hover html ready, length:`, html?.length);
+                }
+                // User may have moved off during enrichment.
+                if (currentHoveredItem !== item) return;
+                showPanel(html || "<div>(empty)</div>", event.clientX, event.clientY);
+                if (globalThis.HoverCard1547_DEBUG) console.log(`${MODULE_ID} | panel shown`);
+            } else if (el && sharedPanel?.style.display === "block") {
+                // Same element, just track the cursor.
+                positionPanel(sharedPanel, event.clientX, event.clientY);
             }
-            // Note: previously gated on el.matches(":hover") to avoid popping
-            // after the mouse moved away during async enrich, but it also
-            // suppressed legitimate hovers and broke synthetic-event testing.
-            // pointerleave will hide it; that's enough.
-            showPanel(cachedHtml || "<div>(empty)</div>", event.clientX, event.clientY);
-            if (globalThis.HoverCard1547_DEBUG) console.log(`${MODULE_ID} | panel shown at`, event.clientX, event.clientY);
         } catch (err) {
-            console.warn(`${MODULE_ID} | hover-card enter failed`, err);
+            console.warn(`${MODULE_ID} | delegated hover handler failed`, err);
         }
     });
 
-    el.addEventListener("pointermove", (event) => {
-        if (sharedPanel?.style.display !== "block") return;
-        positionPanel(sharedPanel, event.clientX, event.clientY);
-    });
+    if (globalThis.HoverCard1547_DEBUG) console.log(`${MODULE_ID} | delegated hover listener installed`);
+}
 
-    el.addEventListener("pointerleave", () => {
-        hidePanel();
-    });
+function attachTooltipHandlers(_el, _item) {
+    // No-op: handled by document-level delegation in installDelegatedHoverListener.
 }
 
 const VALID_FOUNDRY_ID = /^[A-Za-z0-9]{16}$/;
@@ -263,20 +307,16 @@ export function registerItemHoverCardService() {
         }
     };
 
+    // Install the single document-level delegated listener. This replaces
+    // the per-element pointerenter binding and is robust to CSB re-renders.
+    installDelegatedHoverListener();
+
+    // Render-hook decoration kept only for the diagnostic count log.
     Hooks.on("renderActorSheet", handler);
     Hooks.on("renderApplication", handler);
     Hooks.on("renderApplicationV2", handler);
     Hooks.on("renderCompendium", handler);
     Hooks.on("renderItemDirectory", handler);
-    // CSB sheets in v13 may render with a delay after the hook fires. Run
-    // another sweep on a short timer to catch late-mounted content.
-    Hooks.on("renderApplicationV2", (app) => {
-        try {
-            setTimeout(() => {
-                if (app?.element) decorateRoot(app.element, findActor(app));
-            }, 50);
-        } catch { /* non-fatal */ }
-    });
 
     console.log(`${MODULE_ID} | item-hover-card service registered`);
 
