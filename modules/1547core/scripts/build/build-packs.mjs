@@ -847,6 +847,128 @@ function generateChangeSetCatalog() {
     };
 }
 
+function generateBoostRollTableChapter() {
+    const tables = loadJson(path.join(TEMPLATES_DIR, "boost-roll-tables.json"));
+    const standard = tables.find((t) => t.id === "BoostStandard" || t.name === "Standard Boost") ?? tables[0];
+    if (!standard) return null;
+    const entries = (Array.isArray(standard.entries) ? standard.entries : [])
+        .sort((a, b) => (a.roll ?? 0) - (b.roll ?? 0));
+    const rows = entries.map((e) => [String(e.roll ?? ""), e.label ?? ""]);
+    // The pack-compiled RollTable has an _id derived from the source `id` by the seeder.
+    // We link by name through the Compendium UUID so users can click to roll.
+    const linkAttempt = `@Compendium[1547core.roll-tables.${htmlEscape(standard.name)}]{Roll on the Standard Boost Table}`;
+    return {
+        title: "Boost Roll Table",
+        content: generatedIntro("boost-roll-tables.json")
+            + `<p>Roll formula: <strong>${htmlEscape(standard.drawFormula ?? "4d6")}</strong>. ${entries.length} outcome${entries.length === 1 ? "" : "s"}.</p>`
+            + `<p>${linkAttempt} (this link opens the actual rollable table in the Roll Tables compendium).</p>`
+            + tableBlock(["Roll", "Outcome"], rows),
+        generated: true
+    };
+}
+
+function generateSkillTreeChapter() {
+    const skills = loadJson(path.join(MODULE_ROOT, "data", "skill-graph-default.json"));
+    const idToName = new Map();
+    for (const [id, s] of Object.entries(skills)) idToName.set(id, s.name);
+
+    // Group by first word of skill name (Art, Combat, Crafts, Knowledge, Lore, etc.)
+    const groups = new Map();
+    for (const [id, s] of Object.entries(skills)) {
+        if (s.kind !== "skill") continue;
+        const cat = String(s.name).split(/\s+/)[0] || "Other";
+        if (!groups.has(cat)) groups.set(cat, []);
+        groups.get(cat).push({ id, ...s });
+    }
+    const sorted = [...groups.entries()].sort(([a], [b]) => a.localeCompare(b));
+    const sections = sorted.map(([cat, list]) => {
+        list.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        const rows = list.map((s) => {
+            const prereqs = (s.requirements ?? [])
+                .map((r) => `${idToName.get(r.nodeId) ?? r.nodeId} ${r.minLevel}+`)
+                .join(", ");
+            const anyOf = (s.anyOf ?? [])
+                .map((r) => `${idToName.get(r.nodeId) ?? r.nodeId} ${r.minLevel}+`)
+                .join(" OR ");
+            const reqs = [prereqs, anyOf].filter(Boolean).join("; ");
+            return [s.name, `${s.minLevel}–${s.maxLevel}`, reqs];
+        });
+        return `<h2>${htmlEscape(cat)}</h2>${tableBlock(["Skill", "Levels", "Prerequisites"], rows)}`;
+    }).join("\n");
+    return {
+        title: "Skill Tree",
+        content: generatedIntro("data/skill-graph-default.json")
+            + `<p>Skills are organised below by category (first word of the skill name). Each entry shows its level range and its prerequisites — what you must already have to take the first level. Use the SkillTree Graph Editor (Configure Module Settings → 1547 Core → SkillTree Graph Editor) for the interactive node graph.</p>`
+            + sections,
+        generated: true
+    };
+}
+
+// Hardcoded mappings — these mirror the per-die `getResultLabel` chat icons
+// in scripts/dice/*.js plus the `getFaceTotals` outcome logic in dice1547.js.
+const DICE_GLOSSARY = [
+    { key: "balanced",    term: "db", name: "Balanced",    faces: [["fumble", "Fumble"], ["blank", "—"], ["d1", "1 damage"], ["d1", "1 damage"], ["d2", "2 damage"], ["crit", "Crit"]] },
+    { key: "heavy",       term: "dh", name: "Heavy",       faces: [["fumble", "Fumble"], ["fumble", "Fumble"], ["d1", "1 damage"], ["d2", "2 damage"], ["d4", "4 damage"], ["crit", "Crit"]] },
+    { key: "lethal",      term: "dl", name: "Lethality",   faces: [["fumble", "Fumble"], ["fumble", "Fumble"], ["d2", "2 damage"], ["d3", "3 damage"], ["d5", "5 damage"], ["crit", "Crit"]] },
+    { key: "penetration", term: "dp", name: "Penetration", faces: [["fumble", "Fumble"], ["blank", "—"], ["d1", "1 damage"], ["d1", "1 damage"], ["d3", "3 damage"], ["crit", "Crit"]] },
+    { key: "control",     term: "dc", name: "Control",     faces: [["fumble", "Fumble"], ["blank", "—"], ["blank", "—"], ["d1", "1 damage"], ["crit", "Crit"], ["crit", "Crit"]] },
+    { key: "finesse",     term: "dg", name: "Grace",       faces: [["blank", "—"], ["blank", "—"], ["d1", "1 damage"], ["d1", "1 damage"], ["crit", "Crit"], ["crit", "Crit"]] },
+    { key: "armor",       term: "da", name: "Armor",       faces: [["fumble", "Fumble"], ["blank", "—"], ["p1", "1 protection"], ["p2", "2 protection"], ["p4", "4 protection"], ["crit", "Crit"]] },
+    { key: "evade",       term: "de", name: "Evade",       faces: [["fumble", "Fumble"], ["blank", "—"], ["p1", "1 protection"], ["p2", "2 protection"], ["crit", "Crit"], ["crit", "Crit"]] },
+    { key: "multiply",    term: "dx", name: "Multiplier",  faces: [["0x", "×0 (whiff)"], ["blank", "×1"], ["blank", "×1"], ["2x", "×2"], ["2x", "×2"], ["3x", "×3"]] },
+    { key: "risk",        term: "dr", name: "Risk",        faces: [["0x", "×0 mult"], ["fumble", "Fumble"], ["fumble", "Fumble"], ["blank", "—"], ["d2", "2 damage"], ["crit", "Crit"]] }
+];
+
+function generateDiceGlossaryChapter() {
+    const sections = DICE_GLOSSARY.map((die) => {
+        const faceCells = die.faces.map(([face, label], i) => {
+            const img = `modules/1547core/images/dice/${face}_${die.key}_bg.png`;
+            return `<td style="text-align:center;vertical-align:top;padding:0.3rem;">`
+                + `<img src="${img}" alt="${htmlEscape(label)}" style="width:42px;height:42px;display:block;margin:0 auto 0.25rem;" />`
+                + `<div style="font-size:0.78rem;"><strong>${i + 1}</strong> · ${htmlEscape(label)}</div>`
+                + `</td>`;
+        }).join("");
+        return [
+            `<h2>${htmlEscape(die.name)} <span style="font-weight:normal;color:#5e4f38;">(<code>${die.term}</code>)</span></h2>`,
+            `<table><tbody><tr>${faceCells}</tr></tbody></table>`
+        ].join("\n");
+    }).join("\n");
+    return {
+        title: "Dice Glossary",
+        content: generatedIntro("scripts/dice/ + scripts/dice/dice1547.js")
+            + `<p>1547 uses ten typed d6 in addition to the standard polyhedrals. Each die's six faces are shown below with the chat-icon used in rolls and what the face yields. Enricher syntax: <code>@1547[1db|2dh|1dx]{Bastard Sword}</code>.</p>`
+            + sections,
+        generated: true
+    };
+}
+
+function generateMonsterReferenceChapter() {
+    const monsters = loadJson(path.join(TEMPLATES_DIR, "monsters.json"));
+    const sorted = [...monsters].sort((a, b) => String(a.name).localeCompare(String(b.name)));
+    const body = sorted.map((m) => {
+        const p = m.system?.props ?? {};
+        const stats = [
+            ["Type", p.TypeDropdown],
+            ["HP", p.HP || p.HPMax],
+            ["Move", p.MoveGround ? `${p.MoveGround}` : ""],
+            ["Str", p.Stats_StrengthDice ? `${p.Stats_StrengthDice}d / ${p.Stats_StrengthMod ?? 0}+` : ""],
+            ["Dex", p.Stats_DexterityDice ? `${p.Stats_DexterityDice}d / ${p.Stats_DexterityMod ?? 0}+` : ""],
+            ["Sta", p.Stats_StaminaDice ? `${p.Stats_StaminaDice}d / ${p.Stats_StaminaMod ?? 0}+` : ""],
+            ["Pow", p.Stats_PowerDice ? `${p.Stats_PowerDice}d / ${p.Stats_PowerMod ?? 0}+` : ""],
+        ];
+        return [
+            `<h2>${htmlEscape(m.name)}</h2>`,
+            statLine(stats),
+            descBlock(p.Description || p.Notes || "")
+        ].filter(Boolean).join("\n");
+    }).join("\n");
+    return {
+        title: "Monster Reference",
+        content: generatedIntro("monsters.json") + body,
+        generated: true
+    };
+}
+
 function buildReferenceChapters() {
     return [
         generateSpellChapter(),
@@ -857,8 +979,12 @@ function buildReferenceChapters() {
         generateWeaponChapter(),
         generateArmorChapter(),
         generateEquipmentChapter(),
-        generateChangeSetCatalog()
-    ];
+        generateChangeSetCatalog(),
+        generateBoostRollTableChapter(),
+        generateSkillTreeChapter(),
+        generateDiceGlossaryChapter(),
+        generateMonsterReferenceChapter()
+    ].filter(Boolean);
 }
 
 // --- Equipment (generic items: amulets, clothing, containers, etc.) -----
