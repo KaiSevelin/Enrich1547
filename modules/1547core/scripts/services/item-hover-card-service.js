@@ -242,11 +242,21 @@ function findItemForElement(el, actor) {
     // CSB stamps `data-entry-id` on many non-item DOM nodes (props, panels);
     // only the ones whose value is a real Foundry ID resolve to an item.
     if (!VALID_FOUNDRY_ID.test(id)) return null;
+    // Priority: passed-in actor's items → world items → any actor's items.
+    // The any-actor fallback is what makes hover work for actors whose sheet
+    // markup doesn't expose the parent uuid via .window-app / [data-uuid].
     if (actor?.items?.get) {
         const fromActor = actor.items.get(id);
         if (fromActor) return fromActor;
     }
-    return globalThis.game?.items?.get?.(id) ?? null;
+    const worldItem = globalThis.game?.items?.get?.(id);
+    if (worldItem) return worldItem;
+    const actors = globalThis.game?.actors?.contents ?? [];
+    for (const a of actors) {
+        const found = a.items?.get?.(id);
+        if (found) return found;
+    }
+    return null;
 }
 
 function decorateRoot(root, actor) {
