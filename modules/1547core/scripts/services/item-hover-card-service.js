@@ -105,8 +105,49 @@ async function buildHoverCardHtml(item) {
     `.trim();
 }
 
-function getTooltipManager() {
-    return globalThis.game?.tooltip ?? null;
+// Single shared panel element — avoids version-dependent TooltipManager
+// behavior in v13 where `game.tooltip.activate()` silently no-ops. Nested
+// decorated elements all share this panel: hovering the inner element fires
+// pointerenter for it, panel content updates, single panel always visible.
+let sharedPanel = null;
+const PANEL_ID = "hover-card-1547core-panel";
+const PANEL_OFFSET = 14;
+
+function ensurePanel() {
+    if (sharedPanel && document.body.contains(sharedPanel)) return sharedPanel;
+    sharedPanel = document.createElement("div");
+    sharedPanel.id = PANEL_ID;
+    sharedPanel.classList.add(TOOLTIP_CLASS);
+    sharedPanel.style.cssText = "position:fixed;z-index:99999;pointer-events:none;display:none;max-width:340px;";
+    document.body.appendChild(sharedPanel);
+    return sharedPanel;
+}
+
+function positionPanel(panel, x, y) {
+    // Default: right of cursor. If it would overflow viewport, flip to left.
+    const rect = panel.getBoundingClientRect();
+    let posX = x + PANEL_OFFSET;
+    if (posX + rect.width > window.innerWidth - 8) posX = x - rect.width - PANEL_OFFSET;
+    if (posX < 8) posX = 8;
+    let posY = y;
+    if (posY + rect.height > window.innerHeight - 8) posY = window.innerHeight - rect.height - 8;
+    if (posY < 8) posY = 8;
+    panel.style.left = posX + "px";
+    panel.style.top = posY + "px";
+}
+
+function showPanel(html, x, y) {
+    const panel = ensurePanel();
+    panel.innerHTML = html;
+    panel.style.display = "block";
+    // Position twice: once to lay out so we know dimensions, then again
+    // with the now-known size for accurate flip / clamp.
+    positionPanel(panel, x, y);
+    requestAnimationFrame(() => positionPanel(panel, x, y));
+}
+
+function hidePanel() {
+    if (sharedPanel) sharedPanel.style.display = "none";
 }
 
 function attachTooltipHandlers(el, item) {
@@ -117,32 +158,26 @@ function attachTooltipHandlers(el, item) {
     let cachedHtml = null;
     let inFlight = null;
 
-    el.addEventListener("pointerenter", async () => {
+    el.addEventListener("pointerenter", async (event) => {
         try {
-            const tooltip = getTooltipManager();
-            if (!tooltip?.activate) return;
             if (!cachedHtml) {
                 if (!inFlight) inFlight = buildHoverCardHtml(item);
                 cachedHtml = await inFlight;
             }
             if (!el.matches?.(":hover")) return;
-            tooltip.activate(el, {
-                html: cachedHtml,
-                cssClass: TOOLTIP_CLASS,
-                direction: "RIGHT"
-            });
+            showPanel(cachedHtml, event.clientX, event.clientY);
         } catch (err) {
             console.warn(`${MODULE_ID} | hover-card enter failed`, err);
         }
     });
 
+    el.addEventListener("pointermove", (event) => {
+        if (sharedPanel?.style.display !== "block") return;
+        positionPanel(sharedPanel, event.clientX, event.clientY);
+    });
+
     el.addEventListener("pointerleave", () => {
-        try {
-            const tooltip = getTooltipManager();
-            if (!tooltip) return;
-            tooltip.deactivate?.();
-            tooltip.dismiss?.();
-        } catch { /* non-fatal */ }
+        hidePanel();
     });
 }
 

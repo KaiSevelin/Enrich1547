@@ -3016,7 +3016,7 @@ a.enricher-1547::before {
 /* Foundry's TooltipManager adds `data-tooltip-class` value as a class on
    #tooltip. Style our card via that class. Cream-on-warm-amber palette
    matches the monster wizard / chargen aesthetic. */
-#tooltip.hover-card-1547core {
+.hover-card-1547core {
   background: rgba(252, 245, 224, 0.97);
   color: #2a1d10;
   border: 1px solid #7a4d1c;
@@ -3030,12 +3030,12 @@ a.enricher-1547::before {
   text-align: left;
   white-space: normal;
 }
-#tooltip.hover-card-1547core .hc-head {
+.hover-card-1547core .hc-head {
   display: flex;
   align-items: center;
   gap: 0.55rem;
 }
-#tooltip.hover-card-1547core .hc-img {
+.hover-card-1547core .hc-img {
   flex: 0 0 56px;
   width: 56px;
   height: 56px;
@@ -3044,41 +3044,41 @@ a.enricher-1547::before {
   border-radius: 4px;
   background: rgba(255, 250, 235, 0.6);
 }
-#tooltip.hover-card-1547core .hc-meta {
+.hover-card-1547core .hc-meta {
   flex: 1 1 auto;
   min-width: 0;
 }
-#tooltip.hover-card-1547core .hc-name {
+.hover-card-1547core .hc-name {
   font-weight: 700;
   color: #2a1d10;
   font-size: 1.0rem;
   word-break: break-word;
 }
-#tooltip.hover-card-1547core .hc-category {
+.hover-card-1547core .hc-category {
   font-size: 0.78rem;
   color: #5e4f38;
   font-style: italic;
   margin-top: 0.1rem;
 }
-#tooltip.hover-card-1547core .hc-divider {
+.hover-card-1547core .hc-divider {
   height: 1px;
   background: rgba(80, 50, 25, 0.3);
   margin: 0.45rem 0;
 }
-#tooltip.hover-card-1547core .hc-desc {
+.hover-card-1547core .hc-desc {
   color: #2a1d10;
 }
-#tooltip.hover-card-1547core .hc-desc p {
+.hover-card-1547core .hc-desc p {
   margin: 0 0 0.35rem 0;
 }
-#tooltip.hover-card-1547core .hc-desc p:last-child {
+.hover-card-1547core .hc-desc p:last-child {
   margin-bottom: 0;
 }
-#tooltip.hover-card-1547core .hc-desc a {
+.hover-card-1547core .hc-desc a {
   color: #7a4d1c;
   text-decoration: underline;
 }
-#tooltip.hover-card-1547core .hc-stats {
+.hover-card-1547core .hc-stats {
   font-size: 0.82rem;
   color: #4a3a25;
   font-style: italic;
