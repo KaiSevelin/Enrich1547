@@ -160,16 +160,17 @@ let currentHoveredEl = null;
 let currentHoveredItem = null;
 
 function findHoverableAncestor(target, actor = null) {
-    if (!target?.closest) return { el: null, item: null };
-    // Check each candidate selector; first match with a resolvable item wins.
+    if (!target?.closest) return { el: null, item: null, unresolvedAncestor: null };
     const selectors = ["[data-item-id]", "[data-document-id]", "[data-entry-id]"];
+    let firstAncestor = null;
     for (const sel of selectors) {
         const el = target.closest(sel);
         if (!el) continue;
+        if (!firstAncestor) firstAncestor = el;
         const item = findItemForElement(el, actor);
-        if (item) return { el, item };
+        if (item) return { el, item, unresolvedAncestor: null };
     }
-    return { el: null, item: null };
+    return { el: null, item: null, unresolvedAncestor: firstAncestor };
 }
 
 function findActorForElement(el) {
@@ -191,21 +192,25 @@ function installDelegatedHoverListener() {
     if (globalThis._hoverCard1547DelegationInstalled) return;
     globalThis._hoverCard1547DelegationInstalled = true;
 
+    let lastLoggedUnresolved = null;
     document.body.addEventListener("pointermove", async (event) => {
         try {
             const actor = findActorForElement(event.target);
-            const { el, item } = findHoverableAncestor(event.target, actor);
+            const { el, item, unresolvedAncestor } = findHoverableAncestor(event.target, actor);
 
             if (el !== currentHoveredEl) {
                 // Hover target changed.
                 currentHoveredEl = el;
                 currentHoveredItem = item;
                 if (!el || !item) {
-                    if (globalThis.HoverCard1547_DEBUG && el && !item) {
-                        // Element matches selector but item lookup failed.
-                        // Logged once per element so we can see which IDs are unresolvable.
-                        const id = el.dataset?.itemId ?? el.dataset?.documentId ?? el.dataset?.entryId;
-                        console.log(`${MODULE_ID} | found ancestor but no item lookup match for id=${id}`);
+                    // Surface unresolved-ancestor info even when el is null,
+                    // so we can diagnose IDs that fail to resolve to items.
+                    if (globalThis.HoverCard1547_DEBUG && unresolvedAncestor && unresolvedAncestor !== lastLoggedUnresolved) {
+                        const id = unresolvedAncestor.dataset?.itemId
+                            ?? unresolvedAncestor.dataset?.documentId
+                            ?? unresolvedAncestor.dataset?.entryId;
+                        console.log(`${MODULE_ID} | matched ancestor ${unresolvedAncestor.tagName} id=${id} but no item resolves`);
+                        lastLoggedUnresolved = unresolvedAncestor;
                     }
                     hidePanel();
                     return;
