@@ -161,7 +161,8 @@ let currentHoveredItem = null;
 
 function findHoverableAncestor(target, actor = null) {
     if (!target?.closest) return { el: null, item: null, unresolvedAncestor: null };
-    const selectors = ["[data-item-id]", "[data-document-id]", "[data-entry-id]"];
+    // data-uuid first — that's what CSB content-link cells use for items.
+    const selectors = ["[data-uuid]", "[data-item-id]", "[data-document-id]", "[data-entry-id]"];
     let firstAncestor = null;
     for (const sel of selectors) {
         const el = target.closest(sel);
@@ -249,9 +250,20 @@ function attachTooltipHandlers(_el, _item) {
 const VALID_FOUNDRY_ID = /^[A-Za-z0-9]{16}$/;
 
 function findItemForElement(el, actor) {
+    // data-uuid: Foundry content-links + many CSB cells point to items
+    //            with a fully-qualified UUID like
+    //            "Scene.X.Token.Y.Actor.Z.Item.W". fromUuidSync handles
+    //            actor-embedded and token-actor items directly.
+    const uuid = el.dataset?.uuid;
+    if (uuid && typeof globalThis.fromUuidSync === "function") {
+        try {
+            const doc = globalThis.fromUuidSync(uuid);
+            if (doc?.documentName === "Item") return doc;
+        } catch { /* fall through */ }
+    }
     // data-item-id: classic Foundry actor sheets / inventory grids
     // data-document-id: compendium browser, sidebar item directory
-    // data-entry-id: CSB v13 grid renderer (this is the bulk on actor sheets)
+    // data-entry-id: CSB v13 grid renderer
     const id = el.dataset?.itemId ?? el.dataset?.documentId ?? el.dataset?.entryId;
     if (!id) return null;
     if (!VALID_FOUNDRY_ID.test(id)) return null;
@@ -261,13 +273,10 @@ function findItemForElement(el, actor) {
     }
     const worldItem = globalThis.game?.items?.get?.(id);
     if (worldItem) return worldItem;
-    // World actors (linked tokens / actor directory).
     for (const a of globalThis.game?.actors?.contents ?? []) {
         const x = a.items?.get?.(id);
         if (x) return x;
     }
-    // Canvas tokens — covers UNLINKED token actors that don't exist in
-    // game.actors. Only the active scene's tokens are checked (cheap).
     for (const token of globalThis.canvas?.tokens?.placeables ?? []) {
         const x = token.actor?.items?.get?.(id);
         if (x) return x;
