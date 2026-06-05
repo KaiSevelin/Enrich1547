@@ -190,10 +190,13 @@ function findActorForElement(el) {
 
 function installDelegatedHoverListener() {
     if (globalThis._hoverCard1547DelegationInstalled) return;
-    globalThis._hoverCard1547DelegationInstalled = true;
 
     let lastLoggedUnresolved = null;
-    document.body.addEventListener("pointermove", async (event) => {
+    // Attach at the CAPTURE phase on document. CSB v13 sheets call
+    // stopPropagation on pointer events in their bubble-phase handlers,
+    // preventing document.body from receiving them. Capture fires BEFORE
+    // any bubble handlers — we get the event regardless of who stops what.
+    document.addEventListener("pointermove", async (event) => {
         try {
             const actor = findActorForElement(event.target);
             const { el, item, unresolvedAncestor } = findHoverableAncestor(event.target, actor);
@@ -233,9 +236,10 @@ function installDelegatedHoverListener() {
         } catch (err) {
             console.warn(`${MODULE_ID} | delegated hover handler failed`, err);
         }
-    });
+    }, true); // capture phase
 
-    if (globalThis.HoverCard1547_DEBUG) console.log(`${MODULE_ID} | delegated hover listener installed`);
+    globalThis._hoverCard1547DelegationInstalled = true;
+    console.log(`${MODULE_ID} | delegated hover listener installed (capture phase on document)`);
 }
 
 function attachTooltipHandlers(_el, _item) {
