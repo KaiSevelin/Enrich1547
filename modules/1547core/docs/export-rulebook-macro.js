@@ -29,8 +29,13 @@ if (!entry) {
 }
 
 // Reduce a JournalEntry to the minimal shape buildRulebookPack expects:
-// { _id, name, pages: [{ title, content }] }.
-const sortedPages = [...entry.pages.contents].sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+// { _id, name, pages: [{ title, content }] }. Auto-generated reference
+// pages (flagged by the build script) are SKIPPED — they'd just be
+// regenerated on the next build, and including them in rulebook.json
+// would pin the generated HTML and silently drift from the real data.
+const sortedPages = [...entry.pages.contents]
+    .filter((p) => !p.getFlag?.("1547Core", "generated"))
+    .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
 const sourceDoc = {
     _id: entry.id,
     name: entry.name,

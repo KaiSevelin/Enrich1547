@@ -519,15 +519,24 @@ function buildWeaponModifierProps(modifier) {
 
 async function buildRulebookPack() {
     const entries = loadJson(path.join(TEMPLATES_DIR, "rulebook.json"));
-    const docs = (Array.isArray(entries) ? entries : []).map((entry) => {
+    const generatedPages = buildReferenceChapters();
+    const docs = (Array.isArray(entries) ? entries : []).map((entry, entryIndex) => {
         const entryId = isValidFoundryId(entry._id)
             ? entry._id
             : deriveFoundryIdFromText(`rulebook:${entry.name}`);
-        const pageSources = Array.isArray(entry.pages) ? entry.pages : [];
+        const narrativeSources = Array.isArray(entry.pages) ? entry.pages : [];
+        // Generated pages append after narrative ones, but only on the first
+        // JournalEntry (the canonical "1547 Rule Book").
+        const pageSources = entryIndex === 0
+            ? [...narrativeSources, ...generatedPages]
+            : narrativeSources;
         const pages = pageSources.map((page, index) => {
             const pageId = isValidFoundryId(page._id)
                 ? page._id
                 : deriveFoundryIdFromText(`rulebook:${entryId}:${page.title ?? index}`);
+            const flags = page.generated
+                ? { [SOURCE_FLAG_SCOPE]: { generated: true } }
+                : {};
             return {
                 _id: pageId,
                 _key: `!journal.pages!${entryId}.${pageId}`,
@@ -540,7 +549,7 @@ async function buildRulebookPack() {
                 system: {},
                 sort: (index + 1) * 100000,
                 ownership: { default: -1 },
-                flags: {}
+                flags
             };
         });
         return {
@@ -557,6 +566,299 @@ async function buildRulebookPack() {
         };
     });
     await compilePackFromDocs("rulebook", docs);
+}
+
+// --- Reference-chapter generators ----------------------------------------
+// Each returns { title, content, generated: true }. They read the same
+// source JSON used by the data packs, so reference chapters stay in lockstep
+// with the actual content with zero hand-editing.
+
+function htmlEscape(s) {
+    return String(s ?? "")
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+function descBlock(raw) {
+    const s = String(raw ?? "").trim();
+    if (!s) return "";
+    // Already-HTML descriptions pass through; plain text gets wrapped.
+    if (s.startsWith("<")) return s;
+    return `<p>${htmlEscape(s)}</p>`;
+}
+
+function statLine(parts) {
+    const items = parts.filter(([_, v]) => v !== undefined && v !== null && v !== "" && v !== 0);
+    if (!items.length) return "";
+    return `<p>${items.map(([k, v]) => `<strong>${htmlEscape(k)}:</strong> ${htmlEscape(v)}`).join(" &middot; ")}</p>`;
+}
+
+function tableBlock(headers, rows) {
+    if (!rows.length) return "";
+    const thead = `<thead><tr>${headers.map((h) => `<th>${htmlEscape(h)}</th>`).join("")}</tr></thead>`;
+    const tbody = `<tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${htmlEscape(c ?? "")}</td>`).join("")}</tr>`).join("")}</tbody>`;
+    return `<table>${thead}${tbody}</table>`;
+}
+
+function generatedIntro(label) {
+    return `<p><em>Auto-generated from ${label}. Edit the underlying source file and re-release to update — manual edits to this page are overwritten on rebuild.</em></p>`;
+}
+
+function generateSpellChapter() {
+    const spells = loadJson(path.join(TEMPLATES_DIR, "spells.json"));
+    const sorted = [...spells].sort((a, b) => String(a.name).localeCompare(String(b.name)));
+    const body = sorted.map((spell) => {
+        const schools = Array.isArray(spell.schools) ? spell.schools.join(", ") : "";
+        return [
+            `<h2>${htmlEscape(spell.name)}</h2>`,
+            statLine([
+                ["Kind", spell.spellKind],
+                ["Complexity", spell.complexity],
+                ["Schools", schools],
+                ["School mode", spell.schoolRequirementMode],
+                ["Failure", spell.failureProfile]
+            ]),
+            descBlock(spell.description)
+        ].filter(Boolean).join("\n");
+    }).join("\n");
+    return {
+        title: "Spell Reference",
+        content: generatedIntro("spells.json") + body,
+        generated: true
+    };
+}
+
+function generateManeuverChapter() {
+    const maneuvers = loadJson(path.join(TEMPLATES_DIR, "maneuvers.json"));
+    // Bucket by primary tag (offense / defense / control / movement / monster / other)
+    const buckets = { Offense: [], Defense: [], Control: [], Movement: [], Monster: [], Other: [] };
+    for (const m of maneuvers) {
+        const tags = new Set(m.tags ?? []);
+        let key = "Other";
+        if (tags.has("monster")) key = "Monster";
+        else if (tags.has("offense")) key = "Offense";
+        else if (tags.has("defense") || tags.has("counter")) key = "Defense";
+        else if (tags.has("control") || tags.has("grapple")) key = "Control";
+        else if (tags.has("movement")) key = "Movement";
+        buckets[key].push(m);
+    }
+    const sections = Object.entries(buckets).map(([group, items]) => {
+        if (!items.length) return "";
+        items.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        const list = items.map((m) => {
+            const cost = m.CostType && m.CostAmount
+                ? `${m.CostAmount} ${String(m.CostType).replace("Points", " pts")}`
+                : "Free";
+            return [
+                `<h3>${htmlEscape(m.name)}</h3>`,
+                statLine([
+                    ["Type", m.type],
+                    ["Trigger", m.triggerType],
+                    ["Cost", cost],
+                    ["Usage", m.usageLimit?.scope ? `${m.usageLimit?.maxUses ?? 1}× per ${m.usageLimit.scope}` : ""]
+                ]),
+                descBlock(m.requirements?.text)
+            ].filter(Boolean).join("\n");
+        }).join("\n");
+        return `<h2>${htmlEscape(group)}</h2>${list}`;
+    }).filter(Boolean).join("\n");
+    return {
+        title: "Maneuver Reference",
+        content: generatedIntro("maneuvers.json") + sections,
+        generated: true
+    };
+}
+
+function generateMonsterPowerChapter() {
+    const powers = loadJson(path.join(TEMPLATES_DIR, "monster-magic.json"));
+    const byKind = new Map();
+    for (const p of powers) {
+        const k = p.magicKind ?? "Other";
+        if (!byKind.has(k)) byKind.set(k, []);
+        byKind.get(k).push(p);
+    }
+    const sortedKinds = [...byKind.keys()].sort();
+    const sections = sortedKinds.map((kind) => {
+        const items = byKind.get(kind).sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        const list = items.map((p) => [
+            `<h3>${htmlEscape(p.name)}</h3>`,
+            statLine([
+                ["Use", p.useMode],
+                ["Trigger", p.triggerText],
+                ["Range", p.rangeText],
+                ["Cost", p.costText]
+            ]),
+            descBlock(p.description)
+        ].filter(Boolean).join("\n")).join("\n");
+        return `<h2>${htmlEscape(kind)}</h2>${list}`;
+    }).join("\n");
+    return {
+        title: "Monster Powers Reference",
+        content: generatedIntro("monster-magic.json") + sections,
+        generated: true
+    };
+}
+
+function generateWeaponChapter() {
+    const weapons = loadJson(path.join(TEMPLATES_DIR, "weapons.json"));
+    const sorted = [...weapons].sort((a, b) => String(a.name).localeCompare(String(b.name)));
+    const rows = sorted.map((w) => {
+        const a = w.attackProfiles?.[0];
+        const dice = Array.isArray(a?.dice) ? a.dice.join(", ") : "";
+        const range = w.maxRange ? `${w.shortRange ?? "-"}/${w.longRange ?? "-"}/${w.maxRange}` : "";
+        const traits = Array.isArray(w.traits) ? w.traits.join(", ") : "";
+        return [w.name, w.category ?? "", w.weight ?? "", w.value ?? "", dice, range, traits];
+    });
+    const table = tableBlock(
+        ["Name", "Type", "Weight", "Value", "Attack Dice", "Range (S/L/M)", "Traits"],
+        rows
+    );
+    return {
+        title: "Weapons Reference",
+        content: generatedIntro("weapons.json") + table,
+        generated: true
+    };
+}
+
+function generateArmorChapter() {
+    const armors = loadJson(path.join(TEMPLATES_DIR, "armors.json"));
+    const sorted = [...armors].sort((a, b) => String(a.name).localeCompare(String(b.name)));
+    const rows = sorted.map((a) => {
+        const defense = Array.isArray(a.defenseDice) ? a.defenseDice.join(", ") : "";
+        const traits = Array.isArray(a.traits) ? a.traits.join(", ") : "";
+        return [a.name, a.armorClass ?? "", a.weight ?? "", a.value ?? "", defense, traits];
+    });
+    return {
+        title: "Armor Reference",
+        content: generatedIntro("armors.json") + tableBlock(
+            ["Name", "Class", "Weight", "Value", "Defense Dice", "Traits"], rows
+        ),
+        generated: true
+    };
+}
+
+function generateEquipmentChapter() {
+    const items = loadJson(path.join(TEMPLATES_DIR, "equipment.json"));
+    const byCategory = new Map();
+    for (const it of items) {
+        const cat = it._exportFolderName ?? it.system?.props?.Category ?? "Equipment";
+        if (!byCategory.has(cat)) byCategory.set(cat, []);
+        byCategory.get(cat).push(it);
+    }
+    const sortedCats = [...byCategory.keys()].sort();
+    const sections = sortedCats.map((cat) => {
+        const list = byCategory.get(cat).sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        const rows = list.map((it) => {
+            const p = it.system?.props ?? {};
+            return [it.name, p.Weight ?? "", p.Value ?? "", String(p.Description ?? "").slice(0, 80)];
+        });
+        return `<h2>${htmlEscape(cat)}</h2>${tableBlock(["Name", "Weight", "Value", "Description"], rows)}`;
+    }).join("\n");
+    return {
+        title: "Equipment Reference",
+        content: generatedIntro("equipment.json") + sections,
+        generated: true
+    };
+}
+
+function generatePactChapter() {
+    const pacts = loadJson(path.join(TEMPLATES_DIR, "pacts.json"));
+    const sorted = [...pacts].sort((a, b) => String(a.name).localeCompare(String(b.name)));
+    const body = sorted.map((p) => [
+        `<h2>${htmlEscape(p.name)}</h2>`,
+        statLine([["Type", p.pactType], ["Patron", p.patron]]),
+        p.boonText ? `<h4>Boon</h4>${descBlock(p.boonText)}` : "",
+        p.priceText ? `<h4>Price</h4>${descBlock(p.priceText)}` : "",
+        p.obligationText ? `<h4>Obligation</h4>${descBlock(p.obligationText)}` : "",
+        p.tension ? `<p><em>${htmlEscape(p.tension)}</em></p>` : ""
+    ].filter(Boolean).join("\n")).join("\n");
+    return {
+        title: "Pact Reference",
+        content: generatedIntro("pacts.json") + body,
+        generated: true
+    };
+}
+
+function generateMarkChapter() {
+    const marks = loadJson(path.join(TEMPLATES_DIR, "supernatural-marks.json"));
+    const blessings = marks.filter((m) => m.markNature === "Blessing");
+    const curses = marks.filter((m) => m.markNature === "Curse");
+    const mixed = marks.filter((m) => m.markNature === "Mixed");
+    const renderGroup = (name, list) => {
+        if (!list.length) return "";
+        list.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        const body = list.map((m) => {
+            const sources = Array.isArray(m.markSource) ? m.markSource.join(", ") : (m.markSource ?? "");
+            return [
+                `<h3>${htmlEscape(m.name)}</h3>`,
+                statLine([["Scope", m.markScope], ["Sources", sources], ["Visibility", m.visibility]]),
+                descBlock(m.description)
+            ].filter(Boolean).join("\n");
+        }).join("\n");
+        return `<h2>${htmlEscape(name)}</h2>${body}`;
+    };
+    return {
+        title: "Supernatural Marks Reference",
+        content: generatedIntro("supernatural-marks.json")
+            + renderGroup("Blessings", blessings)
+            + renderGroup("Curses", curses)
+            + renderGroup("Mixed", mixed),
+        generated: true
+    };
+}
+
+function generateChangeSetCatalog() {
+    const sets = loadJson(path.join(TEMPLATES_DIR, "changesets.json"));
+    const changes = loadJson(path.join(TEMPLATES_DIR, "changes.json"));
+    const childrenByParent = new Map();
+    for (const c of changes) {
+        const k = c.parentChangeSetId;
+        if (!k) continue;
+        if (!childrenByParent.has(k)) childrenByParent.set(k, []);
+        childrenByParent.get(k).push(c);
+    }
+    const byGroup = new Map();
+    for (const s of sets) {
+        const g = s.group ?? "Other";
+        if (!byGroup.has(g)) byGroup.set(g, []);
+        byGroup.get(g).push(s);
+    }
+    const groupOrder = ["Base", "Role", "Domain", "Loadout", "Motivation", "Quirk", "Boost"];
+    const groups = [...new Set([...groupOrder, ...byGroup.keys()])].filter((g) => byGroup.has(g));
+    const sections = groups.map((g) => {
+        const list = byGroup.get(g).sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        const body = list.map((s) => {
+            const kids = childrenByParent.get(s._id) ?? [];
+            const kindCounts = {};
+            for (const k of kids) kindCounts[k.kind] = (kindCounts[k.kind] ?? 0) + 1;
+            const composition = Object.entries(kindCounts).map(([k, n]) => `${n}× ${k}`).join(", ");
+            return [
+                `<h3>${htmlEscape(s.name)}</h3>`,
+                composition ? `<p><em>Adds: ${htmlEscape(composition)}</em></p>` : "",
+                descBlock(s.description ?? s.notes)
+            ].filter(Boolean).join("\n");
+        }).join("\n");
+        return `<h2>${htmlEscape(g)}</h2>${body}`;
+    }).join("\n");
+    return {
+        title: "ChangeSet Catalog",
+        content: generatedIntro("changesets.json + changes.json") + sections,
+        generated: true
+    };
+}
+
+function buildReferenceChapters() {
+    return [
+        generateSpellChapter(),
+        generateManeuverChapter(),
+        generateMonsterPowerChapter(),
+        generatePactChapter(),
+        generateMarkChapter(),
+        generateWeaponChapter(),
+        generateArmorChapter(),
+        generateEquipmentChapter(),
+        generateChangeSetCatalog()
+    ];
 }
 
 // --- Equipment (generic items: amulets, clothing, containers, etc.) -----
