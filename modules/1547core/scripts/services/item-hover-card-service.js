@@ -201,6 +201,12 @@ function installDelegatedHoverListener() {
                 currentHoveredEl = el;
                 currentHoveredItem = item;
                 if (!el || !item) {
+                    if (globalThis.HoverCard1547_DEBUG && el && !item) {
+                        // Element matches selector but item lookup failed.
+                        // Logged once per element so we can see which IDs are unresolvable.
+                        const id = el.dataset?.itemId ?? el.dataset?.documentId ?? el.dataset?.entryId;
+                        console.log(`${MODULE_ID} | found ancestor but no item lookup match for id=${id}`);
+                    }
                     hidePanel();
                     return;
                 }
@@ -239,22 +245,23 @@ function findItemForElement(el, actor) {
     // data-entry-id: CSB v13 grid renderer (this is the bulk on actor sheets)
     const id = el.dataset?.itemId ?? el.dataset?.documentId ?? el.dataset?.entryId;
     if (!id) return null;
-    // CSB stamps `data-entry-id` on many non-item DOM nodes (props, panels);
-    // only the ones whose value is a real Foundry ID resolve to an item.
     if (!VALID_FOUNDRY_ID.test(id)) return null;
-    // Priority: passed-in actor's items → world items → any actor's items.
-    // The any-actor fallback is what makes hover work for actors whose sheet
-    // markup doesn't expose the parent uuid via .window-app / [data-uuid].
     if (actor?.items?.get) {
-        const fromActor = actor.items.get(id);
-        if (fromActor) return fromActor;
+        const x = actor.items.get(id);
+        if (x) return x;
     }
     const worldItem = globalThis.game?.items?.get?.(id);
     if (worldItem) return worldItem;
-    const actors = globalThis.game?.actors?.contents ?? [];
-    for (const a of actors) {
-        const found = a.items?.get?.(id);
-        if (found) return found;
+    // World actors (linked tokens / actor directory).
+    for (const a of globalThis.game?.actors?.contents ?? []) {
+        const x = a.items?.get?.(id);
+        if (x) return x;
+    }
+    // Canvas tokens — covers UNLINKED token actors that don't exist in
+    // game.actors. Only the active scene's tokens are checked (cheap).
+    for (const token of globalThis.canvas?.tokens?.placeables ?? []) {
+        const x = token.actor?.items?.get?.(id);
+        if (x) return x;
     }
     return null;
 }
