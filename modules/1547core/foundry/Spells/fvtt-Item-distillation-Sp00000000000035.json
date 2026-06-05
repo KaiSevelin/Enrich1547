@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Concentrates and makes a potion more powerful. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Refines a substance through repeated separation, carrying the subtle upward from the gross. It works through alchemical operations, using prepared matter and disciplined change rather than prayer or folk habit. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
             "SpellKind": "Alchemy",
             "Strength": 2,
             "Complexity": "Medium",
@@ -721,7 +721,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Makes a potion enhanced.",
-                "description": "Concentrates and makes a potion more powerful. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Refines a substance through repeated separation, carrying the subtle upward from the gross. It works through alchemical operations, using prepared matter and disciplined change rather than prayer or folk habit. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "schools": [
                     "Alchemy"
                 ],

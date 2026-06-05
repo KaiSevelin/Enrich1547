@@ -231,7 +231,7 @@ function buildManeuverProps(maneuver) {
         EffectData: JSON.stringify(maneuver.effectData ?? {}, null, 2),
         Automated: Boolean(maneuver.automated),
         HandlerId: maneuver.handlerId ?? "",
-        Description: "",
+        Description: maneuver.description ?? "",
         Usage: maneuver.type ?? "pre",
         Trigger: maneuver.triggerType ?? "attack-declared",
         CostType: maneuver.CostType ?? "null",
@@ -374,7 +374,7 @@ function buildWeaponProps(weapon) {
         : (availableProfiles[0] ?? "Attack");
 
     const props = {
-        Description: "",
+        Description: weapon.description ?? "",
         Weight: weapon.weight ?? 0,
         Value: weapon.value ?? 0,
         Equipped: Boolean(weapon.equipped),
@@ -424,7 +424,7 @@ function buildArmorProps(armor) {
     const traitKeys = ["Concealable", "Encumbering", "Flexible", "Noisy", "Soft", "Resistance", "VerySoft"];
     const normalizedTraits = new Set((armor.traits ?? []).map(normalizeTraitKey));
     const props = {
-        Description: "",
+        Description: armor.description ?? "",
         Weight: armor.weight ?? 0,
         Value: armor.value ?? 0,
         Equipped: Boolean(armor.equipped),

@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Find out if odds are with or against you. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Reads whether fortune favors or opposes the matter at hand. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
             "SpellKind": "Divination",
             "Strength": 1,
             "Complexity": "Easy",
@@ -740,7 +740,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Ask DM, get looks good or looks bad",
-                "description": "Find out if odds are with or against you. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Reads whether fortune favors or opposes the matter at hand. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "schools": [
                     "Astrology",
                     "Divination"

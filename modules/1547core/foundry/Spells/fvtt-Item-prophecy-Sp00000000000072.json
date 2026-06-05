@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Predicts the future. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Speak or receive a prophecy that reaches beyond ordinary knowing. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
             "SpellKind": "Divination",
             "Strength": 2,
             "Complexity": "Medium",
@@ -759,7 +759,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Predicts the future. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Speak or receive a prophecy that reaches beyond ordinary knowing. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "schools": [
                     "Astrology",
                     "Divination",

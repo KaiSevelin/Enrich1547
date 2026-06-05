@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Makes temporal changes permanent. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "Compels separated matter back into denser, fixed, or newly joined form. It is an alchemical working, concerned with refinement, corruption, union, or remaking through controlled process. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
             "SpellKind": "Alchemy",
             "Strength": 3,
             "Complexity": "Hard",
@@ -721,7 +721,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Any temporal effect on the target will be permanent.",
-                "description": "Makes temporal changes permanent. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "Compels separated matter back into denser, fixed, or newly joined form. It is an alchemical working, concerned with refinement, corruption, union, or remaking through controlled process. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "schools": [
                     "Alchemy"
                 ],

@@ -122,6 +122,11 @@ Hooks.once("init", () => {
         (module) => module.registerSkillTreeService()
     );
     void runImportedModuleStep(
+        "registerItemHoverCardService",
+        () => import("./services/item-hover-card-service.js"),
+        (module) => module.registerItemHoverCardService()
+    );
+    void runImportedModuleStep(
         "register1547Dice",
         () => import("./dice/dice1547.js"),
         (module) => module.register1547Dice()

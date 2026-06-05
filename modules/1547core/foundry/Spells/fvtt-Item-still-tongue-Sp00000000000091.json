@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Make sure that a corpse can not provide information to other magicians. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Still the tongue so the dead or living find speech difficult or impossible. It works at the edge of death, drawing on corpse, burial, remnant life, or the unsettled dead. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
             "SpellKind": "Necromancy",
             "Strength": 1,
             "Complexity": "Easy",
@@ -687,7 +687,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Make sure that a corpse can not provide information to other magicians. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Still the tongue so the dead or living find speech difficult or impossible. It works at the edge of death, drawing on corpse, burial, remnant life, or the unsettled dead. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "schools": [
                     "Necromancy"
                 ],

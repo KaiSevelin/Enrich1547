@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Binds the grave soil from a victim of consumption to bind an oath. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "Swear an oath whose breaking feeds ruin back into the oathbreaker. It deals with sworn bonds, compulsions, witnessed promises, and the supernatural force that clings to pledged words. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
             "SpellKind": "Oath",
             "Strength": 3,
             "Complexity": "Hard",
@@ -687,7 +687,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Creates a mutual **magical oath (**see pacts). Anyone who breaks it is affected by consumption.",
-                "description": "Binds the grave soil from a victim of consumption to bind an oath. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "Swear an oath whose breaking feeds ruin back into the oathbreaker. It deals with sworn bonds, compulsions, witnessed promises, and the supernatural force that clings to pledged words. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "schools": [
                     "Necromancy"
                 ],

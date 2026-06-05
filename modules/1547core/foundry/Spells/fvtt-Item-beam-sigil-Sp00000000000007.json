@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "A sign or prayer inscribed on a house beam to hinder supernatural beings from entering the house. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Inscribe a sign or prayer on a house beam to hinder supernatural beings from entering the house. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
             "SpellKind": "Protection",
             "Strength": 1,
             "Complexity": "Easy",
@@ -740,7 +740,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Monsters must roll a check vs 3d6 to pass.",
-                "description": "A sign or prayer inscribed on a house beam to hinder supernatural beings from entering the house. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Inscribe a sign or prayer on a house beam to hinder supernatural beings from entering the house. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "schools": [
                     "Wards",
                     "Religion"

@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Detect protective wards. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Sense protective wards, charged thresholds, and defended boundaries nearby. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
             "SpellKind": "Divination",
             "Strength": 1,
             "Complexity": "Easy",
@@ -721,7 +721,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Detect protective wards. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Sense protective wards, charged thresholds, and defended boundaries nearby. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                 "schools": [
                     "Divination"
                 ],

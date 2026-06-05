@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Makes a person impervious to evil eye for a time period. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Pray against the evil eye and lift or resist its wasting influence. It belongs to malignant workings meant to afflict, weaken, or trouble the victim rather than merely frighten them. Among ritual workings it is considered slight, though even slight magic can miscarry.",
             "SpellKind": "Curse",
             "Strength": 1,
             "Complexity": "Easy",
@@ -687,7 +687,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Makes a person impervious to evil eye for a time period. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Pray against the evil eye and lift or resist its wasting influence. It belongs to malignant workings meant to afflict, weaken, or trouble the victim rather than merely frighten them. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "schools": [
                     "Religion"
                 ],

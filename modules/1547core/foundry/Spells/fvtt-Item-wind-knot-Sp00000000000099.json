@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Increase the wind to give better sailing. It is worked through cords, bindings, and held tension, as is common in knot magic. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Tie the wind into knots so it may later be loosed for sailing or weather-work. It is a knot-working, carrying its force through tied form, repeated turns, and what is made to hold. Among ritual workings it is considered slight, though even slight magic can miscarry.",
             "SpellKind": "Knot",
             "Strength": 1,
             "Complexity": "Easy",
@@ -721,7 +721,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Increase the wind to give better sailing. It is worked through cords, bindings, and held tension, as is common in knot magic. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Tie the wind into knots so it may later be loosed for sailing or weather-work. It is a knot-working, carrying its force through tied form, repeated turns, and what is made to hold. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "schools": [
                     "Knot"
                 ],

@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Create a wax candle that goes out when a spirit is near. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Prepare a funerary candle meant to carry grave-linked force in later rites. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
             "SpellKind": "Necromancy",
             "Strength": 2,
             "Complexity": "Medium",
@@ -746,7 +746,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: creates a **spirit candle**.",
-                "description": "Create a wax candle that goes out when a spirit is near. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Prepare a funerary candle meant to carry grave-linked force in later rites. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "schools": [
                     "Necromancy",
                     "Religion"

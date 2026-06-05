@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Induce a target in a sleep difficult to tell from death. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Lays a target into a deathlike sleep that is hard to distinguish from true dying. It is worked to burden a victim with wasting, fear, misfortune, or other hostile pressure that lingers after the moment of casting. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
             "SpellKind": "Curse",
             "Strength": 2,
             "Complexity": "Medium",
@@ -652,7 +652,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: caster appears dead, 5d6 to believe he is alive.",
-                "description": "Induce a target in a sleep difficult to tell from death. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Lays a target into a deathlike sleep that is hard to distinguish from true dying. It is worked to burden a victim with wasting, fear, misfortune, or other hostile pressure that lingers after the moment of casting. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "schools": [
                     "Necromancy"
                 ],

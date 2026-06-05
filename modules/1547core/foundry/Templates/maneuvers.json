@@ -1,68 +1,2266 @@
 [
-{"_id":"9TDjGpjLsS2ZInCz","id":"9TDjGpjLsS2ZInCz","name":"Act Of Faith","uuid":"Item.9TDjGpjLsS2ZInCz","folder":"Maneuvers","type":"full-turn","triggerType":"full-turn-activation","CostType":"FaithPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"duration":"until-side-active-again","addMultiplierDice":1,"appliesTo":["attacks","defenses"]},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["ascetic","persistent"],"enabled":false,"requirements":{"skill":"Ascetic","text":"Valid drive against current opponent"}},
-{"_id":"PCMSwxICLz2Swnbg","id":"PCMSwxICLz2Swnbg","name":"Act Of Heroism","uuid":"Item.PCMSwxICLz2Swnbg","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"FaithPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addMultiplierDice":1,"addRiskDice":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["stat","attack-modifier"],"enabled":false,"requirements":{}},
-{"_id":"d2cbZAP5J9MvtFwk","id":"d2cbZAP5J9MvtFwk","name":"Act Of Inspiration","uuid":"Item.d2cbZAP5J9MvtFwk","folder":"Maneuvers","type":"full-turn","triggerType":"full-turn-activation","CostType":"CharismaPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"duration":"until-side-active-again","target":"visible-ally","grantAdvantage":["attack","defense"]},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["support","persistent"],"enabled":false,"requirements":{"text":"Choose one visible ally"}},
-{"_id":"C9AOwpsyX2fLn3St","id":"C9AOwpsyX2fLn3St","name":"Act Of Precision","uuid":"Item.C9AOwpsyX2fLn3St","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"IntelligencePoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addMainDice":1,"appliesTo":"ranged-attack"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["stat","attack-modifier"],"enabled":false,"requirements":{"text":"Ranged attack"}},
-{"_id":"fIF4KGkCpk6TqrB5","id":"fIF4KGkCpk6TqrB5","name":"Act Of Speed","uuid":"Item.fIF4KGkCpk6TqrB5","folder":"Maneuvers","type":"pre","triggerType":"move-declared","CostType":"DexterityPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addMoveSquares":2},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["stat","movement"],"enabled":false,"requirements":{}},
-{"_id":"Uvq41w9Ik1EKy7gM","id":"Uvq41w9Ik1EKy7gM","name":"Act Of Strength","uuid":"Item.Uvq41w9Ik1EKy7gM","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"StrengthPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addMainDice":1,"appliesTo":"melee-attack"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["stat","attack-modifier"],"enabled":false,"requirements":{"text":"Melee attack"}},
-{"_id":"vvUVUoFs3tzr8Xk7","id":"vvUVUoFs3tzr8Xk7","name":"Act Of Toughness","uuid":"Item.vvUVUoFs3tzr8Xk7","folder":"Maneuvers","type":"reaction","triggerType":"damage-taken","CostType":"StaminaPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"reduceDamageTaken":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["stat","defense"],"enabled":false,"requirements":{}},
-{"_id":"SBIsohvIxk1hMePv","id":"SBIsohvIxk1hMePv","name":"Aim","uuid":"Item.SBIsohvIxk1hMePv","folder":"Maneuvers","type":"full-turn","triggerType":"full-turn-activation","CostType":null,"CostAmount":0,"automated":false,"handlerId":null,"effectData":{"duration":"until-side-active-again-or-consumed","createsPersistentEffect":"aimed","grantAdvantageNextLegalAttack":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["prepared","persistent","aiming"],"enabled":false,"requirements":{}},
-{"_id":"qKblR61N6NE1DHZf","id":"qKblR61N6NE1DHZf","name":"All-in","uuid":"Item.qKblR61N6NE1DHZf","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"StrengthPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addMultiplierDice":1,"addRiskDice":2},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","heavy"],"enabled":false,"requirements":{"traits":["Heavy"],"requiredWeaponTraits":["Heavy"]}},
-{"_id":"8G44hFsoSjZP1oxD","id":"8G44hFsoSjZP1oxD","name":"Assassinate","uuid":"Item.8G44hFsoSjZP1oxD","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":null,"CostAmount":0,"automated":false,"handlerId":null,"effectData":{"addMultiplierDice":1,"attackMode":"lethal-hidden","removeDefenderReactions":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["stealth","attack"],"enabled":false,"requirements":{"skill":"Subterfuge Stealth 2","text":"Hidden"}},
-{"_id":"Ki0terhQZNkLRN1L","id":"Ki0terhQZNkLRN1L","name":"Bind","uuid":"Item.Ki0terhQZNkLRN1L","folder":"Maneuvers","type":"reaction","triggerType":"attack-declared","CostType":"StrengthPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"removeAllIncomingMultiplierDice":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["defense","parrying"],"enabled":false,"requirements":{"expertise":true,"traits":["Parrying"],"skill":"Combat Melee 1","requiredWeaponTraits":["Parrying"]}},
-{"_id":"Qtc3sNJL5kABXzDJ","id":"Qtc3sNJL5kABXzDJ","name":"Brace Firearm","uuid":"Item.Qtc3sNJL5kABXzDJ","folder":"Maneuvers","type":"full-turn","triggerType":"full-turn-activation","CostType":null,"CostAmount":0,"automated":false,"handlerId":null,"effectData":{"duration":"until-side-active-again","addMultiplierDice":1,"createsPersistentEffect":"braced"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["prepared","persistent","bracing"],"enabled":false,"requirements":{"traits":["Bracing"],"requiredWeaponTraits":["Bracing"]}},
-{"_id":"uA3IU5Dh7AfZShIc","id":"uA3IU5Dh7AfZShIc","name":"Break Armor","uuid":"Item.uA3IU5Dh7AfZShIc","folder":"Maneuvers","type":"post","triggerType":"post-attack","CostType":"CriticalPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addDamagePerDefenderResult":"Shield 1"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","armor-breaking"],"enabled":false,"requirements":{"skill":"Combat Melee 3","traits":["Armor Breaking"],"requiredWeaponTraits":["Armor Breaking"]}},
-{"_id":"4z4O6Kp9WLMU4w11","id":"4z4O6Kp9WLMU4w11","name":"Bull Charge","uuid":"Item.4z4O6Kp9WLMU4w11","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":null,"CostAmount":0,"automated":false,"handlerId":null,"effectData":{"addMultiplierDice":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","charge"],"enabled":false,"requirements":{"skill":"Combat Melee 3","text":"Unmounted, melee weapon, moved at least 3 squares before attack"}},
-{"_id":"EzBwgx66m1efLL1D","id":"EzBwgx66m1efLL1D","name":"Catch Breath","uuid":"Item.EzBwgx66m1efLL1D","folder":"Maneuvers","type":"full-turn","triggerType":"full-turn-activation","CostType":null,"CostAmount":0,"automated":false,"handlerId":null,"effectData":{"recoverSpentStatPoints":1,"clearAllRiskPoints":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["recovery"],"enabled":false,"requirements":{}},
-{"_id":"vEgS0TqHWtnsKYpP","id":"vEgS0TqHWtnsKYpP","name":"Charge","uuid":"Item.vEgS0TqHWtnsKYpP","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":null,"CostAmount":0,"automated":false,"handlerId":null,"effectData":{"addMainDice":1,"addMultiplierDice":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","charge"],"enabled":false,"requirements":{"skill":"Combat Melee 2, Outdoor Riding 2","text":"Mounted and moved at least 3 squares before attack"}},
-{"_id":"nfzU9B8ALyhxczjL","id":"nfzU9B8ALyhxczjL","name":"Choke","uuid":"Item.nfzU9B8ALyhxczjL","folder":"Maneuvers","type":"post","triggerType":"post-attack","CostType":"CriticalPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"upgradeCondition":"choking-hold","maintainsFreeSafeAttackEachSide":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["control","condition"],"enabled":false,"requirements":{"skill":"Combat Unarmed 2","text":"Target already locked"}},
-{"_id":"W88cuoIAA7yiKG9w","id":"W88cuoIAA7yiKG9w","name":"Counter Attack","uuid":"Item.W88cuoIAA7yiKG9w","folder":"Maneuvers","type":"reaction","triggerType":"attack-declared","CostType":"DexterityPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"createFreeSafeAttack":"after-triggering-attack-resolves"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["counter","safe-attack"],"enabled":false,"requirements":{"skill":"Combat Melee 2","traits":["Fast"],"requiredWeaponTraits":["Fast"]}},
-{"_id":"AYxAdcJLNiqt3Kz0","id":"AYxAdcJLNiqt3Kz0","name":"Desperate Defense","uuid":"Item.AYxAdcJLNiqt3Kz0","folder":"Maneuvers","type":"reaction","triggerType":"attack-declared","CostType":null,"CostAmount":0,"automated":false,"handlerId":null,"effectData":{"cancelIncomingMultiplierDice":1,"addRiskPoints":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["defense","risk"],"enabled":false,"requirements":{}},
-{"_id":"l14YtB6GEUCpzfLC","id":"l14YtB6GEUCpzfLC","name":"Disarm","uuid":"Item.l14YtB6GEUCpzfLC","folder":"Maneuvers","type":"post","triggerType":"post-attack","CostType":"CriticalPoints","CostAmount":2,"automated":false,"handlerId":null,"effectData":{"placeDroppedWeaponSquares":2,"disarmWeapon":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["stunt","control"],"enabled":false,"requirements":{"expertise":true,"traits":["Disarming"],"skill":"Combat Melee 2 or Combat Unarmed 2","requiredWeaponTraits":["Disarming"]}},
-{"_id":"UkOecPq8lfF2jnWG","id":"UkOecPq8lfF2jnWG","name":"Disengage","uuid":"Item.UkOecPq8lfF2jnWG","folder":"Maneuvers","type":"pre","triggerType":"move-declared","CostType":"DexterityPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"ignoreMovementTriggeredReactions":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["movement","reaction-suppression"],"enabled":false,"requirements":{}},
-{"_id":"lURv2PmrFg0xnqbr","id":"lURv2PmrFg0xnqbr","name":"Evade","uuid":"Item.lURv2PmrFg0xnqbr","folder":"Maneuvers","type":"reaction","triggerType":"attack-declared","CostType":"DexterityPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"removeIncomingMultiplierDice":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["defense"],"enabled":false,"requirements":{"text":"Cannot be used in medium or heavy armor, while locked, or while prone"}},
-{"_id":"1vsU4URL3rEUU62L","id":"1vsU4URL3rEUU62L","name":"Feint","uuid":"Item.1vsU4URL3rEUU62L","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"DexterityPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addMainDice":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["attack-modifier","fast"],"enabled":false,"requirements":{"skill":"Combat Melee 1","traits":["Fast"],"requiredWeaponTraits":["Fast"]}},
-{"_id":"UJBuJkDMX2UZ8fvL","id":"UJBuJkDMX2UZ8fvL","name":"Formation","uuid":"Item.UJBuJkDMX2UZ8fvL","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":null,"CostAmount":0,"automated":false,"handlerId":null,"effectData":{"formationAdvantagePerParticipant":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["tactical","support"],"enabled":false,"requirements":{"traits":["Tactical"],"skill":"Combat Melee 2","text":"Adjacent ally also has access to Formation","requiredWeaponTraits":["Tactical"]}},
-{"_id":"P5yT3V9dDraPZeW1","id":"P5yT3V9dDraPZeW1","name":"Hook","uuid":"Item.P5yT3V9dDraPZeW1","folder":"Maneuvers","type":"post","triggerType":"post-attack","CostType":"CriticalPoints","CostAmount":2,"automated":false,"handlerId":null,"effectData":{"chooseOne":["trip-prone","dismount-prone","pull-1-square"]},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["control","hooked"],"enabled":false,"requirements":{"skill":"Combat Melee 2","traits":["Hooking"],"requiredWeaponTraits":["Hooking"]}},
-{"_id":"ezUfv7x5vmaVa04Q","id":"ezUfv7x5vmaVa04Q","name":"Lock","uuid":"Item.ezUfv7x5vmaVa04Q","folder":"Maneuvers","type":"post","triggerType":"post-attack","CostType":"CriticalPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addDisadvantageToTargetAttack":1,"applyCondition":"locked","escapeStatChoices":["Strength","Dexterity"],"addDisadvantageToTargetDefense":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["control","condition"],"enabled":false,"requirements":{"skill":"Combat Unarmed 1","traits":["Control"],"requiredWeaponTraits":["Control"]}},
-{"_id":"lIIYhkGTa2e2xa7A","id":"lIIYhkGTa2e2xa7A","name":"Lock And Strike","uuid":"Item.lIIYhkGTa2e2xa7A","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"StrengthPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addMainDice":2,"createFreeSafeAttack":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["control","safe-attack"],"enabled":false,"requirements":{"expertise":true,"traits":["Control"],"skill":"Combat Unarmed 2","text":"Target already locked","requiredWeaponTraits":["Control"]}},
-{"_id":"RAwHPMwVPZ8vbhfw","id":"RAwHPMwVPZ8vbhfw","name":"Opportunity Strike","uuid":"Item.RAwHPMwVPZ8vbhfw","folder":"Maneuvers","type":"reaction","triggerType":"threat-zone-entered","CostType":"DexterityPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"createFreeSafeAttack":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["movement-reaction","safe-attack"],"enabled":false,"requirements":{"text":"Any equipped weapon","alternateTriggers":["threat-zone-left"]}},
-{"_id":"sOJVkvmtsRuiBUc3","id":"sOJVkvmtsRuiBUc3","name":"Parry","uuid":"Item.sOJVkvmtsRuiBUc3","folder":"Maneuvers","type":"reaction","triggerType":"attack-declared","CostType":null,"CostAmount":0,"automated":false,"handlerId":null,"effectData":{"addArmorDice":1,"lockParryingWeaponUntil":"current-side-activation-end"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["defense","parrying"],"enabled":false,"requirements":{"skill":"Combat Melee 2","traits":["Parrying"],"requiredWeaponTraits":["Parrying"]}},
-{"_id":"pYHk7x76PG4tPdc9","id":"pYHk7x76PG4tPdc9","name":"Point Blank","uuid":"Item.pYHk7x76PG4tPdc9","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":null,"CostAmount":0,"automated":false,"handlerId":null,"effectData":{"allowFirearmAtMelee":true,"addMultiplierDice":1,"addRiskDice":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["ranged","risk"],"enabled":false,"requirements":{"skill":"Combat Firearms 1","traits":["Point Blank"],"requiredWeaponTraits":["Point Blank"]}},
-{"_id":"HqrGELWDC8lWgIrz","id":"HqrGELWDC8lWgIrz","name":"Press","uuid":"Item.HqrGELWDC8lWgIrz","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"StaminaPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"ignoreReactionsFromTargetOnFollowUpMove":true,"ifDealsDamageMoveTowardTarget":1,"targetCannotUse":"Disengage"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","control"],"enabled":false,"requirements":{"skill":"Combat Melee 2"}},
-{"_id":"L8M2Lhol4GaAr2rW","id":"L8M2Lhol4GaAr2rW","name":"Quick Aim","uuid":"Item.L8M2Lhol4GaAr2rW","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"IntelligencePoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addMainDice":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["prepared","aiming"],"enabled":false,"requirements":{"skill":"Combat Ranged 2 or Combat Thrown 2 or Combat Firearms 2","traits":["Aiming"],"requiredWeaponTraits":["Aiming"]}},
-{"_id":"Nx7vHltQuktuUThp","id":"Nx7vHltQuktuUThp","name":"Quick Brace Firearm","uuid":"Item.Nx7vHltQuktuUThp","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"StrengthPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"createPersistentEffect":"braced","addMultiplierDice":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["prepared","bracing"],"enabled":false,"requirements":{"skill":"Combat Firearms 2","traits":["Bracing"],"requiredWeaponTraits":["Bracing"]}},
-{"_id":"qoob23NivFhPxDz7","id":"qoob23NivFhPxDz7","name":"Quick Reload","uuid":"Item.qoob23NivFhPxDz7","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"DexterityPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"reduceReloadTime":1,"maxApplicationsPerAction":2},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["reload"],"enabled":false,"requirements":{"skill":"Combat Firearms 2 or Combat Ranged 2","traits":["Reloading"],"requiredWeaponTraits":["Reloading"]}},
-{"_id":"p55MDtE7iZzgeOT0","id":"p55MDtE7iZzgeOT0","name":"Rally","uuid":"Item.p55MDtE7iZzgeOT0","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"CharismaPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"grantAdvantageWithinSquares":2,"appliesTo":["attack","defense"],"targets":"allies"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["support","command"],"enabled":false,"requirements":{"skill":"Combat Melee 1, Charisma Perform 1","text":"User can communicate with nearby allies"}},
-{"_id":"mlZAwyG0zBfXzydm","id":"mlZAwyG0zBfXzydm","name":"Receive Charge","uuid":"Item.mlZAwyG0zBfXzydm","folder":"Maneuvers","type":"reaction","triggerType":"charge-declared","CostType":"StaminaPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addMultiplierDice":1,"createFreeSafeCounterattack":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["counter","safe-attack"],"enabled":false,"requirements":{"expertise":true,"traits":["Receiving"],"skill":"Combat Melee 2","requiredWeaponTraits":["Receiving"]}},
-{"_id":"QaEAgV8VpMOIBehT","id":"QaEAgV8VpMOIBehT","name":"Redouble","uuid":"Item.QaEAgV8VpMOIBehT","folder":"Maneuvers","type":"post","triggerType":"post-attack","CostType":"CriticalPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addDisadvantage":1,"createSecondSafeAttack":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["safe-attack","follow-up"],"enabled":false,"requirements":{"expertise":true,"traits":["Fast"],"skill":"Combat Melee 2 or Combat Ranged 2 or Combat Unarmed 2","requiredWeaponTraits":["Fast"]}},
-{"_id":"4DkWGQOP1z9hLWHb","id":"4DkWGQOP1z9hLWHb","name":"Reload","uuid":"Item.4DkWGQOP1z9hLWHb","folder":"Maneuvers","type":"full-turn","triggerType":"full-turn-activation","CostType":null,"CostAmount":0,"automated":false,"handlerId":null,"effectData":{"reduceReloadTime":1,"consumesNormalMoveAndAttack":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["reload"],"enabled":false,"requirements":{"traits":["Reloading"],"requiredWeaponTraits":["Reloading"]}},
-{"_id":"6Z8Bi2hel5HoNyos","id":"6Z8Bi2hel5HoNyos","name":"Resist Hooking","uuid":"Item.6Z8Bi2hel5HoNyos","folder":"Maneuvers","type":"reaction","triggerType":"hook-applied","CostType":"StrengthPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"cancelHookTripOrDismount":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["defense","athletic"],"enabled":false,"requirements":{"skill":"Strength Athletics 1"}},
-{"_id":"VdirxzHv2Gf0MKW2","id":"VdirxzHv2Gf0MKW2","name":"Riposte","uuid":"Item.VdirxzHv2Gf0MKW2","folder":"Maneuvers","type":"reaction","triggerType":"attack-dealt-0-damage","CostType":"DexterityPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"createFreeSafeAttack":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["counter","safe-attack"],"enabled":false,"requirements":{"expertise":true,"traits":["Fast"],"skill":"Combat Melee 3","requiredWeaponTraits":["Fast"]}},
-{"_id":"ChkR8nWx1MtoYYRm","id":"ChkR8nWx1MtoYYRm","name":"Sap","uuid":"Item.ChkR8nWx1MtoYYRm","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":null,"CostAmount":0,"automated":false,"handlerId":null,"effectData":{"successEffect":"unconscious","attackMode":"nonlethal-hidden","suppressTargetReactions":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["stealth","attack"],"enabled":false,"requirements":{"skill":"Subterfuge Stealth 1","text":"Hidden"}},
-{"_id":"rHF8ziPwUd6MJ6Qz","id":"rHF8ziPwUd6MJ6Qz","name":"Shield","uuid":"Item.rHF8ziPwUd6MJ6Qz","folder":"Maneuvers","type":"reaction","triggerType":"attack-declared","CostType":null,"CostAmount":0,"automated":false,"handlerId":null,"effectData":{"addArmorDice":2},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["defense","shield"],"enabled":false,"requirements":{"skill":"Combat Melee 1","traits":["Shield"],"requiredWeaponTraits":["Shield"]}},
-{"_id":"wfETgvyluTlkDV3L","id":"wfETgvyluTlkDV3L","name":"Shield Wall","uuid":"Item.wfETgvyluTlkDV3L","folder":"Maneuvers","type":"reaction","triggerType":"attack-declared","CostType":null,"CostAmount":0,"automated":false,"handlerId":null,"effectData":{"grantDefenseAdvantage":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["defense","tactical"],"enabled":false,"requirements":{"traits":["Shield"],"skill":"Tactics","text":"Adjacent ally also has access to Shield Wall","requiredWeaponTraits":["Shield"]}},
-{"_id":"H1aCK1J68Y0LAL9P","id":"H1aCK1J68Y0LAL9P","name":"Suppressing Fire","uuid":"Item.H1aCK1J68Y0LAL9P","folder":"Maneuvers","type":"full-turn","triggerType":"full-turn-activation","CostType":"StaminaPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"enemyMoveLimit":1,"duration":"current-round","createsBattlefieldEffect":"suppressing-fire","area":"5x5","useMaxRange":true,"allowBeyondLongRange":true,"doesNotPermitDirectAttackBeyondLongRange":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["battlefield-effect","ranged"],"enabled":false,"requirements":{"skill":"Combat Ranged 3 or Combat Firearms 3","traits":["RangedWeapon","Firearm"],"requiredWeaponGroups":["Firearm","RangedWeapon"]}},
-{"_id":"V0ll3yF1r3GrpA1","id":"V0ll3yF1r3GrpA1","name":"Volley Fire","uuid":"Item.V0ll3yF1r3GrpA1","folder":"Maneuvers","type":"full-turn","triggerType":"full-turn-activation","CostType":"StaminaPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"useMaxRange":true,"requiresGroupAttack":true,"minParticipants":2,"area":"3x3","sharedAttackerRoll":true,"addMainDicePerParticipant":1,"addDisadvantage":1,"eachTargetDefendsSeparately":true,"requiresLoadedAndReadyWeapons":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["battlefield-effect","ranged","group-attack"],"enabled":false,"requirements":{"skill":"Combat Ranged 3 or Combat Firearms 3","text":"At least 2 ready allies on the active side commit to the same volley","traits":["RangedWeapon","Firearm"],"requiredWeaponGroups":["Firearm","RangedWeapon"]}},
-{"_id":"MHMCM3D4kHEUABWp","id":"MHMCM3D4kHEUABWp","name":"Throw","uuid":"Item.MHMCM3D4kHEUABWp","folder":"Maneuvers","type":"post","triggerType":"post-attack","CostType":"CriticalPoints","CostAmount":2,"automated":false,"handlerId":null,"effectData":{"applyCondition":"prone","placeTargetAdjacent":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["control","condition"],"enabled":false,"requirements":{"expertise":true,"traits":["Control"],"skill":"Combat Unarmed 3","requiredWeaponTraits":["Control"]}},
-{"_id":"a7PvK3Lm9Qx2Nf1R","id":"a7PvK3Lm9Qx2Nf1R","name":"Provoke","uuid":"Item.a7PvK3Lm9Qx2Nf1R","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"CharismaPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addRiskDiceToTargetNextAttack":1,"duration":"until-side-active-again"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["command","risk"],"enabled":false,"requirements":{"skill":"Combat Melee 1 or Charisma Perform 1"}},
-{"_id":"b4TuRn8Kd2Lp6Xs1","id":"b4TuRn8Kd2Lp6Xs1","name":"Turn","uuid":"Item.b4TuRn8Kd2Lp6Xs1","folder":"Maneuvers","type":"post","triggerType":"post-attack","CostType":"CriticalPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"rotateTargetFacingSteps":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["control","facing"],"enabled":false,"requirements":{"skill":"Combat Melee 2"}},
-{"_id":"c9QdRw3Mn7Ts2Vk4","id":"c9QdRw3Mn7Ts2Vk4","name":"Quick Draw","uuid":"Item.c9QdRw3Mn7Ts2Vk4","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"DexterityPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"readyEquippedSidearm":true,"usableInCurrentAction":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["sidearm","utility"],"enabled":false,"requirements":{"skill":"Combat Melee 1 or Combat Firearms 1","traits":["Sidearm"],"requiredWeaponGroups":["Sidearm"]}},
-{"_id":"e2OvRw7Jk4Nz9Lp3","id":"e2OvRw7Jk4Nz9Lp3","name":"Overwatch","uuid":"Item.e2OvRw7Jk4Nz9Lp3","folder":"Maneuvers","type":"full-turn","triggerType":"full-turn-activation","CostType":"DexterityPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"createsPersistentEffect":"overwatch","area":"5x5","maxTargetsPerRangedWeapon":2,"loadingWeaponMaxTargets":1,"addMainDice":1,"duration":"until-side-active-again"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["prepared","persistent","ranged"],"enabled":false,"requirements":{"skill":"Combat Ranged 3 or Combat Firearms 3","traits":["RangedWeapon","Firearm"],"requiredWeaponGroups":["Firearm","RangedWeapon"]}},
-{"_id":"f5CvRt2Mx8Qa1Hd6","id":"f5CvRt2Mx8Qa1Hd6","name":"Convert","uuid":"Item.f5CvRt2Mx8Qa1Hd6","folder":"Maneuvers","type":"post","triggerType":"post-attack","CostType":"CriticalPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"convertCriticalPointsToDamage":1,"addDamage":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","crit-spend"],"enabled":false,"requirements":{"skill":"Combat Melee 1"}},
-{"_id":"g8HsWd4Lp1Tr7Qn2","id":"g8HsWd4Lp1Tr7Qn2","name":"Half-Sword","uuid":"Item.g8HsWd4Lp1Tr7Qn2","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"StrengthPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addDisadvantage":1,"ignoreHighestArmorDie":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","sword","armor"],"enabled":false,"requirements":{"skill":"Combat Melee 3","traits":["Rigid Blade"],"requiredWeaponTraits":["Rigid Blade"]}},
-{"_id":"h3PoPk9Vs2Lm6Xc1","id":"h3PoPk9Vs2Lm6Xc1","name":"Push Of Pike","uuid":"Item.h3PoPk9Vs2Lm6Xc1","folder":"Maneuvers","type":"post","triggerType":"post-attack","CostType":"CriticalPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"pushTargetSquares":1,"direction":"directly-away","addRiskPointsToTarget":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","polearm"],"enabled":false,"requirements":{"skill":"Combat Melee 2","traits":["Polearm"],"text":"Adjacent ally also wields a polearm or spear","requiredWeaponGroups":["Polearm"]}},
-{"_id":"j7FlNk5Qr1Tb8Mz2","id":"j7FlNk5Qr1Tb8Mz2","name":"Flank","uuid":"Item.j7FlNk5Qr1Tb8Mz2","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"DexterityPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addMultiplierDice":1,"appliesTo":"melee-attack"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","position"],"enabled":false,"requirements":{"skill":"Combat Melee 2","text":"One ally also threatens the target from another side"}},
-{"_id":"k4HaBy2Ln9Qp7Xs3","id":"k4HaBy2Ln9Qp7Xs3","name":"Hold At Bay","uuid":"Item.k4HaBy2Ln9Qp7Xs3","folder":"Maneuvers","type":"reaction","triggerType":"threat-zone-entered","CostType":"StrengthPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"stopEnteringActorInEnteredSquare":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["movement-reaction","control"],"enabled":false,"requirements":{"skill":"Combat Melee 2","traits":["Polearm","Spear"],"requiredWeaponGroups":["Polearm","Spear"]}},
-{"_id":"m1GuAl8Rp3Vx6Tk4","id":"m1GuAl8Rp3Vx6Tk4","name":"Guard Ally","uuid":"Item.m1GuAl8Rp3Vx6Tk4","folder":"Maneuvers","type":"reaction","triggerType":"attack-declared","CostType":"StaminaPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addArmorDiceToAllyDefense":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["defense","support"],"enabled":false,"requirements":{"skill":"Combat Melee 1 or Tactics","traits":["Shield"],"text":"Adjacent ally is the target of the attack","requiredWeaponTraits":["Shield"]}},
-{"_id":"n6AuGd4Qm2Ls9Hp1","id":"n6AuGd4Qm2Ls9Hp1","name":"Advance Under Guard","uuid":"Item.n6AuGd4Qm2Ls9Hp1","folder":"Maneuvers","type":"pre","triggerType":"move-declared","CostType":"StaminaPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addMoveSquares":2,"ignoreOpportunityStrike":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["movement","tactical"],"enabled":false,"requirements":{"skill":"Combat Melee 2 or Tactics","traits":["Shield"],"requiredWeaponTraits":["Shield"]}},
-{"_id":"p2GrBr7Nx5Lt1Qv8","id":"p2GrBr7Nx5Lt1Qv8","name":"Grapple Break","uuid":"Item.p2GrBr7Nx5Lt1Qv8","folder":"Maneuvers","type":"reaction","triggerType":"locked","CostType":"StrengthPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"addAdvantageNextEscapeRoll":1,"ifEscapeSucceedsCreateFreeSafeAttack":true,"alternateTriggers":["choking-hold"]},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["defense","athletic"],"enabled":false,"requirements":{"skill":"Combat Unarmed 1 or Strength Athletics 2"}},
-{"_id":"WkSp0tR1g1dBldX","id":"WkSp0tR1g1dBldX","name":"Weak Spot","uuid":"Item.WkSp0tR1g1dBldX","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"DexterityPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"ignoreHighestArmorDie":true},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","precision","armor"],"enabled":false,"requirements":{"skill":"Combat Melee 2","traits":["Rigid Blade"],"requiredWeaponTraits":["Rigid Blade"]}},
-{"_id":"r9ShBa3Kp6Mx2Tw1","id":"r9ShBa3Kp6Mx2Tw1","name":"Shield Bash","uuid":"Item.r9ShBa3Kp6Mx2Tw1","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"StrengthPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"ifAttackDealsDamagePushTargetSquares":1},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["control","shield"],"enabled":false,"requirements":{"skill":"Combat Melee 2","traits":["Shield"],"requiredWeaponTraits":["Shield"]}},
-{"_id":"MnPounceA0000001","id":"MnPounceA0000001","name":"Pounce","uuid":"Item.MnPounceA0000001","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"DexterityPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"ifMovedAtLeastSquaresBeforeAttack":2,"addMultiplierDice":1,"applyCondition":"prone"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","natural-weapon","monster"],"enabled":false,"requirements":{"traits":["Pouncer"],"requiredWeaponTraits":["Natural"],"text":"Quadruped body; moved at least 2 squares before the attack."}},
-{"_id":"MnTrampleA000001","id":"MnTrampleA000001","name":"Trample","uuid":"Item.MnTrampleA000001","folder":"Maneuvers","type":"pre","triggerType":"movement-declared","CostType":"StrengthPoints","CostAmount":2,"automated":false,"handlerId":null,"effectData":{"passThroughSmallerCreatures":true,"applyNaturalWeaponDamageToEach":true,"applyCondition":"prone"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","movement","monster"],"enabled":false,"requirements":{"traits":["Apex Predator","Massive"],"text":"Massive size; moves through creatures at least one size smaller."}},
-{"_id":"MnTailSweep00001","id":"MnTailSweep00001","name":"Tail Sweep","uuid":"Item.MnTailSweep00001","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"StrengthPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"areaAttack":"rear-arc-adjacent","ifAttackDealsDamageApplyCondition":"prone"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","control","monster","area"],"enabled":false,"requirements":{"traits":["Tailed"],"text":"Heavy or long tail; affects creatures behind the actor."}},
-{"_id":"MnConstrictA0001","id":"MnConstrictA0001","name":"Constrict","uuid":"Item.MnConstrictA0001","folder":"Maneuvers","type":"post","triggerType":"post-attack","CostType":"CriticalPoints","CostAmount":2,"automated":false,"handlerId":null,"effectData":{"applyCondition":"grappled","ongoingDamagePerTurn":"1d3"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["control","grapple","monster"],"enabled":false,"requirements":{"traits":["Constricting"],"requiredWeaponTraits":["Natural"],"text":"Coiling body part — tentacles, serpentine torso."}},
-{"_id":"MnSwallowWhole01","id":"MnSwallowWhole01","name":"Swallow Whole","uuid":"Item.MnSwallowWhole01","folder":"Maneuvers","type":"post","triggerType":"post-attack","CostType":"CriticalPoints","CostAmount":3,"automated":false,"handlerId":null,"effectData":{"ifTargetTwoSizesSmallerOrGrappled":true,"swallowTarget":true,"ongoingDamagePerTurn":"1d6"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","finisher","monster"],"enabled":false,"requirements":{"traits":["Apex Predator"],"requiredWeaponTraits":["Bite"],"text":"Apex predator with a maw — target must be much smaller or already grappled."}},
-{"_id":"MnWingBuffet0001","id":"MnWingBuffet0001","name":"Wing Buffet","uuid":"Item.MnWingBuffet0001","folder":"Maneuvers","type":"pre","triggerType":"attack-declared","CostType":"DexterityPoints","CostAmount":1,"automated":false,"handlerId":null,"effectData":{"ifAttackDealsDamagePushTargetSquares":2,"ifAttackDealsDamageApplyCondition":"prone"},"usageLimit":{"scope":"side-based-turn","maxUses":1},"tags":["offense","control","monster"],"enabled":false,"requirements":{"traits":["Winged"],"text":"Wings broad enough to drive air with force."}}
+  {
+    "_id": "9TDjGpjLsS2ZInCz",
+    "id": "9TDjGpjLsS2ZInCz",
+    "name": "Act Of Faith",
+    "uuid": "Item.9TDjGpjLsS2ZInCz",
+    "folder": "Maneuvers",
+    "type": "full-turn",
+    "triggerType": "full-turn-activation",
+    "CostType": "FaithPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "duration": "until-side-active-again",
+      "addMultiplierDice": 1,
+      "appliesTo": [
+        "attacks",
+        "defenses"
+      ]
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "ascetic",
+      "persistent"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Ascetic",
+      "text": "Valid drive against current opponent"
+    },
+    "description": "A devotional exertion that turns conviction into temporary martial certainty. It is activated as a full-turn maneuver instead of making a normal attack. In play, it adds 1 multiplier die. It requires Ascetic; Valid drive against current opponent. At the cost of one Faith point."
+  },
+  {
+    "_id": "PCMSwxICLz2Swnbg",
+    "id": "PCMSwxICLz2Swnbg",
+    "name": "Act Of Heroism",
+    "uuid": "Item.PCMSwxICLz2Swnbg",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "FaithPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addMultiplierDice": 1,
+      "addRiskDice": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "stat",
+      "attack-modifier"
+    ],
+    "enabled": false,
+    "requirements": {},
+    "description": "A self-committing surge of courage that drives an attack harder at the cost of safety. It is declared before an attack is resolved. In play, it adds 1 multiplier die, and adds 1 risk die. At the cost of one Faith point."
+  },
+  {
+    "_id": "d2cbZAP5J9MvtFwk",
+    "id": "d2cbZAP5J9MvtFwk",
+    "name": "Act Of Inspiration",
+    "uuid": "Item.d2cbZAP5J9MvtFwk",
+    "folder": "Maneuvers",
+    "type": "full-turn",
+    "triggerType": "full-turn-activation",
+    "CostType": "CharismaPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "duration": "until-side-active-again",
+      "target": "visible-ally",
+      "grantAdvantage": [
+        "attack",
+        "defense"
+      ]
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "support",
+      "persistent"
+    ],
+    "enabled": false,
+    "requirements": {
+      "text": "Choose one visible ally"
+    },
+    "description": "A spoken or visible rallying effort that steadies an ally and sharpens their performance. It is activated as a full-turn maneuver instead of making a normal attack. In play, it creates a tactical advantage or restriction that should be resolved according to its timing, tags, and listed requirements. It requires Choose one visible ally. At the cost of one Charisma point."
+  },
+  {
+    "_id": "C9AOwpsyX2fLn3St",
+    "id": "C9AOwpsyX2fLn3St",
+    "name": "Act Of Precision",
+    "uuid": "Item.C9AOwpsyX2fLn3St",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "IntelligencePoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addMainDice": 1,
+      "appliesTo": "ranged-attack"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "stat",
+      "attack-modifier"
+    ],
+    "enabled": false,
+    "requirements": {
+      "text": "Ranged attack"
+    },
+    "description": "A careful expenditure of focus that turns a ranged strike toward exact placement. It is declared before an attack is resolved. In play, it adds 1 main die. It requires Ranged attack. At the cost of one Intelligence point."
+  },
+  {
+    "_id": "fIF4KGkCpk6TqrB5",
+    "id": "fIF4KGkCpk6TqrB5",
+    "name": "Act Of Speed",
+    "uuid": "Item.fIF4KGkCpk6TqrB5",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "move-declared",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addMoveSquares": 2
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "stat",
+      "movement"
+    ],
+    "enabled": false,
+    "requirements": {},
+    "description": "A burst of quickness used to cover more ground before the enemy can answer. It is declared before movement is resolved. In play, it adds 2 squares of movement. At the cost of one Dexterity point."
+  },
+  {
+    "_id": "Uvq41w9Ik1EKy7gM",
+    "id": "Uvq41w9Ik1EKy7gM",
+    "name": "Act Of Strength",
+    "uuid": "Item.Uvq41w9Ik1EKy7gM",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "StrengthPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addMainDice": 1,
+      "appliesTo": "melee-attack"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "stat",
+      "attack-modifier"
+    ],
+    "enabled": false,
+    "requirements": {
+      "text": "Melee attack"
+    },
+    "description": "A forceful commitment that turns bodily power directly into a heavier melee attack. It is declared before an attack is resolved. In play, it adds 1 main die. It requires Melee attack. At the cost of one Strength point."
+  },
+  {
+    "_id": "vvUVUoFs3tzr8Xk7",
+    "id": "vvUVUoFs3tzr8Xk7",
+    "name": "Act Of Toughness",
+    "uuid": "Item.vvUVUoFs3tzr8Xk7",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "damage-taken",
+    "CostType": "StaminaPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "reduceDamageTaken": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "stat",
+      "defense"
+    ],
+    "enabled": false,
+    "requirements": {},
+    "description": "A bodily hardening response that lets you endure a blow that would otherwise bite deeper. It is used as a reaction after taking damage. In play, it reduces damage taken by 1. At the cost of one Stamina point."
+  },
+  {
+    "_id": "SBIsohvIxk1hMePv",
+    "id": "SBIsohvIxk1hMePv",
+    "name": "Aim",
+    "uuid": "Item.SBIsohvIxk1hMePv",
+    "folder": "Maneuvers",
+    "type": "full-turn",
+    "triggerType": "full-turn-activation",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "duration": "until-side-active-again-or-consumed",
+      "createsPersistentEffect": "aimed",
+      "grantAdvantageNextLegalAttack": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "prepared",
+      "persistent",
+      "aiming"
+    ],
+    "enabled": false,
+    "requirements": {},
+    "description": "A full-turn setup spent steadying the shot instead of firing at once. It is activated as a full-turn maneuver instead of making a normal attack. In play, it grants advantage on the next legal attack, and creates the aimed effect."
+  },
+  {
+    "_id": "qKblR61N6NE1DHZf",
+    "id": "qKblR61N6NE1DHZf",
+    "name": "All-in",
+    "uuid": "Item.qKblR61N6NE1DHZf",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "StrengthPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addMultiplierDice": 1,
+      "addRiskDice": 2
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "heavy"
+    ],
+    "enabled": false,
+    "requirements": {
+      "traits": [
+        "Heavy"
+      ],
+      "requiredWeaponTraits": [
+        "Heavy"
+      ]
+    },
+    "description": "A reckless commitment that drives a heavy attack harder by accepting greater danger in return. It is declared before an attack is resolved. In play, it adds 1 multiplier die, and adds 2 risk dies. It requires a weapon with heavy. At the cost of one Strength point."
+  },
+  {
+    "_id": "8G44hFsoSjZP1oxD",
+    "id": "8G44hFsoSjZP1oxD",
+    "name": "Assassinate",
+    "uuid": "Item.8G44hFsoSjZP1oxD",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addMultiplierDice": 1,
+      "attackMode": "lethal-hidden",
+      "removeDefenderReactions": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "stealth",
+      "attack"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Subterfuge Stealth 2",
+      "text": "Hidden"
+    },
+    "description": "A hidden killing stroke meant to end the fight before the target can properly react. It is declared before an attack is resolved. In play, it adds 1 multiplier die. It requires Subterfuge Stealth 2; Hidden."
+  },
+  {
+    "_id": "Ki0terhQZNkLRN1L",
+    "id": "Ki0terhQZNkLRN1L",
+    "name": "Bind",
+    "uuid": "Item.Ki0terhQZNkLRN1L",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "attack-declared",
+    "CostType": "StrengthPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "removeAllIncomingMultiplierDice": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "defense",
+      "parrying"
+    ],
+    "enabled": false,
+    "requirements": {
+      "expertise": true,
+      "traits": [
+        "Parrying"
+      ],
+      "skill": "Combat Melee 1",
+      "requiredWeaponTraits": [
+        "Parrying"
+      ]
+    },
+    "description": "A strong parrying catch that ties up the enemy's attack and strips its extra force away. It is used as a reaction when attacked. In play, it removes all incoming multiplier dice. It requires Combat Melee 1; a weapon with parrying. At the cost of one Strength point."
+  },
+  {
+    "_id": "Qtc3sNJL5kABXzDJ",
+    "id": "Qtc3sNJL5kABXzDJ",
+    "name": "Brace Firearm",
+    "uuid": "Item.Qtc3sNJL5kABXzDJ",
+    "folder": "Maneuvers",
+    "type": "full-turn",
+    "triggerType": "full-turn-activation",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "duration": "until-side-active-again",
+      "addMultiplierDice": 1,
+      "createsPersistentEffect": "braced"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "prepared",
+      "persistent",
+      "bracing"
+    ],
+    "enabled": false,
+    "requirements": {
+      "traits": [
+        "Bracing"
+      ],
+      "requiredWeaponTraits": [
+        "Bracing"
+      ]
+    },
+    "description": "A prepared firing stance that settles a braced firearm for a steadier and more punishing shot. It is activated as a full-turn maneuver instead of making a normal attack. In play, it adds 1 multiplier die, and creates the braced effect. It requires a weapon with bracing."
+  },
+  {
+    "_id": "uA3IU5Dh7AfZShIc",
+    "id": "uA3IU5Dh7AfZShIc",
+    "name": "Break Armor",
+    "uuid": "Item.uA3IU5Dh7AfZShIc",
+    "folder": "Maneuvers",
+    "type": "post",
+    "triggerType": "post-attack",
+    "CostType": "CriticalPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addDamagePerDefenderResult": "Shield 1"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "armor-breaking"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 3",
+      "traits": [
+        "Armor Breaking"
+      ],
+      "requiredWeaponTraits": [
+        "Armor Breaking"
+      ]
+    },
+    "description": "A punishing follow-through aimed at exploiting armor strain after a solid hit. It is spent after a successful attack in the post-maneuver window. In play, it adds damage based on the defender's Shield 1 result. It requires Combat Melee 3; a weapon with armor breaking. At the cost of one Critical point."
+  },
+  {
+    "_id": "4z4O6Kp9WLMU4w11",
+    "id": "4z4O6Kp9WLMU4w11",
+    "name": "Bull Charge",
+    "uuid": "Item.4z4O6Kp9WLMU4w11",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addMultiplierDice": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "charge"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 3",
+      "text": "Unmounted, melee weapon, moved at least 3 squares before attack"
+    },
+    "description": "A rushing impact that turns momentum into a heavier unmounted melee attack. It is declared before an attack is resolved. In play, it adds 1 multiplier die. It requires Combat Melee 3; Unmounted, melee weapon, moved at least 3 squares before attack."
+  },
+  {
+    "_id": "EzBwgx66m1efLL1D",
+    "id": "EzBwgx66m1efLL1D",
+    "name": "Catch Breath",
+    "uuid": "Item.EzBwgx66m1efLL1D",
+    "folder": "Maneuvers",
+    "type": "full-turn",
+    "triggerType": "full-turn-activation",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "recoverSpentStatPoints": 1,
+      "clearAllRiskPoints": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "recovery"
+    ],
+    "enabled": false,
+    "requirements": {},
+    "description": "A moment of recovery spent regaining composure instead of pressing the fight. It is activated as a full-turn maneuver instead of making a normal attack. In play, it recovers 1 spent stat point, and clears all risk points."
+  },
+  {
+    "_id": "vEgS0TqHWtnsKYpP",
+    "id": "vEgS0TqHWtnsKYpP",
+    "name": "Charge",
+    "uuid": "Item.vEgS0TqHWtnsKYpP",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addMainDice": 1,
+      "addMultiplierDice": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "charge"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 2, Outdoor Riding 2",
+      "text": "Mounted and moved at least 3 squares before attack"
+    },
+    "description": "A mounted driving attack that turns speed and weight into immediate offensive force. It is declared before an attack is resolved. In play, it adds 1 main die, and adds 1 multiplier die. It requires Combat Melee 2, Outdoor Riding 2; Mounted and moved at least 3 squares before attack."
+  },
+  {
+    "_id": "nfzU9B8ALyhxczjL",
+    "id": "nfzU9B8ALyhxczjL",
+    "name": "Choke",
+    "uuid": "Item.nfzU9B8ALyhxczjL",
+    "folder": "Maneuvers",
+    "type": "post",
+    "triggerType": "post-attack",
+    "CostType": "CriticalPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "upgradeCondition": "choking-hold",
+      "maintainsFreeSafeAttackEachSide": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "control",
+      "condition"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Unarmed 2",
+      "text": "Target already locked"
+    },
+    "description": "A tightening control hold that shifts a lock into a suffocating restraint. It is spent after a successful attack in the post-maneuver window. In play, it upgrades the target's condition to choking hold. It requires Combat Unarmed 2; Target already locked. At the cost of one Critical point."
+  },
+  {
+    "_id": "W88cuoIAA7yiKG9w",
+    "id": "W88cuoIAA7yiKG9w",
+    "name": "Counter Attack",
+    "uuid": "Item.W88cuoIAA7yiKG9w",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "attack-declared",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "createFreeSafeAttack": "after-triggering-attack-resolves"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "counter",
+      "safe-attack"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 2",
+      "traits": [
+        "Fast"
+      ],
+      "requiredWeaponTraits": [
+        "Fast"
+      ]
+    },
+    "description": "A sharp defensive answer that prepares an immediate safe return strike after the threat resolves. It is used as a reaction when attacked. In play, it creates a follow-up safe attack. It requires Combat Melee 2; a weapon with fast. At the cost of one Dexterity point."
+  },
+  {
+    "_id": "AYxAdcJLNiqt3Kz0",
+    "id": "AYxAdcJLNiqt3Kz0",
+    "name": "Desperate Defense",
+    "uuid": "Item.AYxAdcJLNiqt3Kz0",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "attack-declared",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "cancelIncomingMultiplierDice": 1,
+      "addRiskPoints": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "defense",
+      "risk"
+    ],
+    "enabled": false,
+    "requirements": {},
+    "description": "A last-ditch defense that throws caution aside just to spoil the worst of an incoming blow. It is used as a reaction when attacked. In play, it cancels 1 incoming multiplier die."
+  },
+  {
+    "_id": "l14YtB6GEUCpzfLC",
+    "id": "l14YtB6GEUCpzfLC",
+    "name": "Disarm",
+    "uuid": "Item.l14YtB6GEUCpzfLC",
+    "folder": "Maneuvers",
+    "type": "post",
+    "triggerType": "post-attack",
+    "CostType": "CriticalPoints",
+    "CostAmount": 2,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "placeDroppedWeaponSquares": 2,
+      "disarmWeapon": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "stunt",
+      "control"
+    ],
+    "enabled": false,
+    "requirements": {
+      "expertise": true,
+      "traits": [
+        "Disarming"
+      ],
+      "skill": "Combat Melee 2 or Combat Unarmed 2",
+      "requiredWeaponTraits": [
+        "Disarming"
+      ]
+    },
+    "description": "A practiced weapon-stripping stunt that sends the enemy's armament flying free. It is spent after a successful attack in the post-maneuver window. In play, it can disarm the target's weapon, and throws a dropped weapon up to 2 squares away. It requires Combat Melee 2 or Combat Unarmed 2; a weapon with disarming. At the cost of 2 critical points."
+  },
+  {
+    "_id": "UkOecPq8lfF2jnWG",
+    "id": "UkOecPq8lfF2jnWG",
+    "name": "Disengage",
+    "uuid": "Item.UkOecPq8lfF2jnWG",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "move-declared",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "ignoreMovementTriggeredReactions": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "movement",
+      "reaction-suppression"
+    ],
+    "enabled": false,
+    "requirements": {},
+    "description": "A careful withdrawal that breaks contact without inviting the usual reaction strike. It is declared before movement is resolved. In play, it ignores movement-triggered reactions. At the cost of one Dexterity point."
+  },
+  {
+    "_id": "lURv2PmrFg0xnqbr",
+    "id": "lURv2PmrFg0xnqbr",
+    "name": "Evade",
+    "uuid": "Item.lURv2PmrFg0xnqbr",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "attack-declared",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "removeIncomingMultiplierDice": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "defense"
+    ],
+    "enabled": false,
+    "requirements": {
+      "text": "Cannot be used in medium or heavy armor, while locked, or while prone"
+    },
+    "description": "A sudden bodily avoidance that tries to slip the attack rather than meet it with steel or shield. It is used as a reaction when attacked. In play, it removes 1 incoming multiplier die. It requires Cannot be used in medium or heavy armor, while locked, or while prone. At the cost of one Dexterity point."
+  },
+  {
+    "_id": "1vsU4URL3rEUU62L",
+    "id": "1vsU4URL3rEUU62L",
+    "name": "Feint",
+    "uuid": "Item.1vsU4URL3rEUU62L",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addMainDice": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "attack-modifier",
+      "fast"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 1",
+      "traits": [
+        "Fast"
+      ],
+      "requiredWeaponTraits": [
+        "Fast"
+      ]
+    },
+    "description": "A quick false opening used to draw a bad response and create a better line for the true attack. It is declared before an attack is resolved. In play, it adds 1 main die. It requires Combat Melee 1; a weapon with fast. At the cost of one Dexterity point."
+  },
+  {
+    "_id": "UJBuJkDMX2UZ8fvL",
+    "id": "UJBuJkDMX2UZ8fvL",
+    "name": "Formation",
+    "uuid": "Item.UJBuJkDMX2UZ8fvL",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "formationAdvantagePerParticipant": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "tactical",
+      "support"
+    ],
+    "enabled": false,
+    "requirements": {
+      "traits": [
+        "Tactical"
+      ],
+      "skill": "Combat Melee 2",
+      "text": "Adjacent ally also has access to Formation",
+      "requiredWeaponTraits": [
+        "Tactical"
+      ]
+    },
+    "description": "A disciplined group attack in which nearby fighters support one another's line and pressure. It is declared before an attack is resolved. In play, it builds advantage from each participating ally in formation. It requires Combat Melee 2; a weapon with tactical; Adjacent ally also has access to Formation."
+  },
+  {
+    "_id": "P5yT3V9dDraPZeW1",
+    "id": "P5yT3V9dDraPZeW1",
+    "name": "Hook",
+    "uuid": "Item.P5yT3V9dDraPZeW1",
+    "folder": "Maneuvers",
+    "type": "post",
+    "triggerType": "post-attack",
+    "CostType": "CriticalPoints",
+    "CostAmount": 2,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "chooseOne": [
+        "trip-prone",
+        "dismount-prone",
+        "pull-1-square"
+      ]
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "control",
+      "hooked"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 2",
+      "traits": [
+        "Hooking"
+      ],
+      "requiredWeaponTraits": [
+        "Hooking"
+      ]
+    },
+    "description": "A controlling hooked follow-up meant to drag, trip, pull, or unseat the target after a telling hit. It is spent after a successful attack in the post-maneuver window. In play, it creates a tactical advantage or restriction that should be resolved according to its timing, tags, and listed requirements. It requires Combat Melee 2; a weapon with hooking. At the cost of 2 critical points."
+  },
+  {
+    "_id": "ezUfv7x5vmaVa04Q",
+    "id": "ezUfv7x5vmaVa04Q",
+    "name": "Lock",
+    "uuid": "Item.ezUfv7x5vmaVa04Q",
+    "folder": "Maneuvers",
+    "type": "post",
+    "triggerType": "post-attack",
+    "CostType": "CriticalPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addDisadvantageToTargetAttack": 1,
+      "applyCondition": "locked",
+      "escapeStatChoices": [
+        "Strength",
+        "Dexterity"
+      ],
+      "addDisadvantageToTargetDefense": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "control",
+      "condition"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Unarmed 1",
+      "traits": [
+        "Control"
+      ],
+      "requiredWeaponTraits": [
+        "Control"
+      ]
+    },
+    "description": "A controlling hold that ties up the target's body and leaves them easier to dominate. It is spent after a successful attack in the post-maneuver window. In play, it applies the locked condition. It requires Combat Unarmed 1; a weapon with control. At the cost of one Critical point."
+  },
+  {
+    "_id": "lIIYhkGTa2e2xa7A",
+    "id": "lIIYhkGTa2e2xa7A",
+    "name": "Lock And Strike",
+    "uuid": "Item.lIIYhkGTa2e2xa7A",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "StrengthPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addMainDice": 2,
+      "createFreeSafeAttack": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "control",
+      "safe-attack"
+    ],
+    "enabled": false,
+    "requirements": {
+      "expertise": true,
+      "traits": [
+        "Control"
+      ],
+      "skill": "Combat Unarmed 2",
+      "text": "Target already locked",
+      "requiredWeaponTraits": [
+        "Control"
+      ]
+    },
+    "description": "A brutal close-control sequence that turns an existing lock into a heavier strike and follow-up. It is declared before an attack is resolved. In play, it adds 2 main dies, and creates a follow-up safe attack. It requires Combat Unarmed 2; a weapon with control; Target already locked. At the cost of one Strength point."
+  },
+  {
+    "_id": "RAwHPMwVPZ8vbhfw",
+    "id": "RAwHPMwVPZ8vbhfw",
+    "name": "Opportunity Strike",
+    "uuid": "Item.RAwHPMwVPZ8vbhfw",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "threat-zone-entered",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "createFreeSafeAttack": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "movement-reaction",
+      "safe-attack"
+    ],
+    "enabled": false,
+    "requirements": {
+      "text": "Any equipped weapon",
+      "alternateTriggers": [
+        "threat-zone-left"
+      ]
+    },
+    "description": "A fast answer against movement through your reach, meant to punish careless steps. It is used as a reaction when a target crosses your threat zone. In play, it creates a follow-up safe attack. It requires Any equipped weapon. At the cost of one Dexterity point."
+  },
+  {
+    "_id": "sOJVkvmtsRuiBUc3",
+    "id": "sOJVkvmtsRuiBUc3",
+    "name": "Parry",
+    "uuid": "Item.sOJVkvmtsRuiBUc3",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "attack-declared",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addArmorDice": 1,
+      "lockParryingWeaponUntil": "current-side-activation-end"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "defense",
+      "parrying"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 2",
+      "traits": [
+        "Parrying"
+      ],
+      "requiredWeaponTraits": [
+        "Parrying"
+      ]
+    },
+    "description": "A committed weapon defense that turns an incoming blow aside rather than simply enduring it. It is used as a reaction when attacked. In play, it adds 1 armor die to the defense. It requires Combat Melee 2; a weapon with parrying."
+  },
+  {
+    "_id": "pYHk7x76PG4tPdc9",
+    "id": "pYHk7x76PG4tPdc9",
+    "name": "Point Blank",
+    "uuid": "Item.pYHk7x76PG4tPdc9",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "allowFirearmAtMelee": true,
+      "addMultiplierDice": 1,
+      "addRiskDice": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "ranged",
+      "risk"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Firearms 1",
+      "traits": [
+        "Point Blank"
+      ],
+      "requiredWeaponTraits": [
+        "Point Blank"
+      ]
+    },
+    "description": "A dangerous close-range firearm technique used when there is no time to yield space first. It is declared before an attack is resolved. In play, it adds 1 multiplier die, adds 1 risk die, and allows a firearm attack at melee range. It requires Combat Firearms 1; a weapon with point blank."
+  },
+  {
+    "_id": "HqrGELWDC8lWgIrz",
+    "id": "HqrGELWDC8lWgIrz",
+    "name": "Press",
+    "uuid": "Item.HqrGELWDC8lWgIrz",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "StaminaPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "ignoreReactionsFromTargetOnFollowUpMove": true,
+      "ifDealsDamageMoveTowardTarget": 1,
+      "targetCannotUse": "Disengage"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "control"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 2"
+    },
+    "description": "A forward-driving attack that keeps pressure on a hurt or shaken target and crowds out their escape. It is declared before an attack is resolved. In play, it moves you 1 square toward the target if damage is dealt, and prevents the target from using Disengage. It requires Combat Melee 2. At the cost of one Stamina point."
+  },
+  {
+    "_id": "L8M2Lhol4GaAr2rW",
+    "id": "L8M2Lhol4GaAr2rW",
+    "name": "Quick Aim",
+    "uuid": "Item.L8M2Lhol4GaAr2rW",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "IntelligencePoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addMainDice": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "prepared",
+      "aiming"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Ranged 2 or Combat Thrown 2 or Combat Firearms 2",
+      "traits": [
+        "Aiming"
+      ],
+      "requiredWeaponTraits": [
+        "Aiming"
+      ]
+    },
+    "description": "A shortened aiming action that steals a little precision without surrendering the whole attack. It is declared before an attack is resolved. In play, it adds 1 main die. It requires Combat Ranged 2 or Combat Thrown 2 or Combat Firearms 2; a weapon with aiming. At the cost of one Intelligence point."
+  },
+  {
+    "_id": "Nx7vHltQuktuUThp",
+    "id": "Nx7vHltQuktuUThp",
+    "name": "Quick Brace Firearm",
+    "uuid": "Item.Nx7vHltQuktuUThp",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "StrengthPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "createPersistentEffect": "braced",
+      "addMultiplierDice": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "prepared",
+      "bracing"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Firearms 2",
+      "traits": [
+        "Bracing"
+      ],
+      "requiredWeaponTraits": [
+        "Bracing"
+      ]
+    },
+    "description": "A hurried bracing action that settles a firearm enough to gain some of the benefit of full preparation. It is declared before an attack is resolved. In play, it adds 1 multiplier die. It requires Combat Firearms 2; a weapon with bracing. At the cost of one Strength point."
+  },
+  {
+    "_id": "qoob23NivFhPxDz7",
+    "id": "qoob23NivFhPxDz7",
+    "name": "Quick Reload",
+    "uuid": "Item.qoob23NivFhPxDz7",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "reduceReloadTime": 1,
+      "maxApplicationsPerAction": 2
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "reload"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Firearms 2 or Combat Ranged 2",
+      "traits": [
+        "Reloading"
+      ],
+      "requiredWeaponTraits": [
+        "Reloading"
+      ]
+    },
+    "description": "A hurried reload performed under pressure to keep a missile weapon in the fight. It is declared before an attack is resolved. In play, it reduces reload time by 1. It requires Combat Firearms 2 or Combat Ranged 2; a weapon with reloading. At the cost of one Dexterity point."
+  },
+  {
+    "_id": "p55MDtE7iZzgeOT0",
+    "id": "p55MDtE7iZzgeOT0",
+    "name": "Rally",
+    "uuid": "Item.p55MDtE7iZzgeOT0",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "CharismaPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "grantAdvantageWithinSquares": 2,
+      "appliesTo": [
+        "attack",
+        "defense"
+      ],
+      "targets": "allies"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "support",
+      "command"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 1, Charisma Perform 1",
+      "text": "User can communicate with nearby allies"
+    },
+    "description": "A battlefield call that steadies nearby allies and sharpens their readiness for the exchange. It is declared before an attack is resolved. In play, it grants nearby allies advantage within 2 squares. It requires Combat Melee 1, Charisma Perform 1; User can communicate with nearby allies. At the cost of one Charisma point."
+  },
+  {
+    "_id": "mlZAwyG0zBfXzydm",
+    "id": "mlZAwyG0zBfXzydm",
+    "name": "Receive Charge",
+    "uuid": "Item.mlZAwyG0zBfXzydm",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "charge-declared",
+    "CostType": "StaminaPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addMultiplierDice": 1,
+      "createFreeSafeCounterattack": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "counter",
+      "safe-attack"
+    ],
+    "enabled": false,
+    "requirements": {
+      "expertise": true,
+      "traits": [
+        "Receiving"
+      ],
+      "skill": "Combat Melee 2",
+      "requiredWeaponTraits": [
+        "Receiving"
+      ]
+    },
+    "description": "A disciplined answer to an incoming charge, turning the enemy's rush into your own prepared opening. It is used as a reaction when a charge is declared. In play, it adds 1 multiplier die, and creates a follow-up safe attack. It requires Combat Melee 2; a weapon with receiving. At the cost of one Stamina point."
+  },
+  {
+    "_id": "QaEAgV8VpMOIBehT",
+    "id": "QaEAgV8VpMOIBehT",
+    "name": "Redouble",
+    "uuid": "Item.QaEAgV8VpMOIBehT",
+    "folder": "Maneuvers",
+    "type": "post",
+    "triggerType": "post-attack",
+    "CostType": "CriticalPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addDisadvantage": 1,
+      "createSecondSafeAttack": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "safe-attack",
+      "follow-up"
+    ],
+    "enabled": false,
+    "requirements": {
+      "expertise": true,
+      "traits": [
+        "Fast"
+      ],
+      "skill": "Combat Melee 2 or Combat Ranged 2 or Combat Unarmed 2",
+      "requiredWeaponTraits": [
+        "Fast"
+      ]
+    },
+    "description": "A fast follow-through that converts momentum or opening into another safe attack. It is spent after a successful attack in the post-maneuver window. In play, it adds 1 disadvantage, and creates a follow-up safe attack. It requires Combat Melee 2 or Combat Ranged 2 or Combat Unarmed 2; a weapon with fast. At the cost of one Critical point."
+  },
+  {
+    "_id": "4DkWGQOP1z9hLWHb",
+    "id": "4DkWGQOP1z9hLWHb",
+    "name": "Reload",
+    "uuid": "Item.4DkWGQOP1z9hLWHb",
+    "folder": "Maneuvers",
+    "type": "full-turn",
+    "triggerType": "full-turn-activation",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "reduceReloadTime": 1,
+      "consumesNormalMoveAndAttack": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "reload"
+    ],
+    "enabled": false,
+    "requirements": {
+      "traits": [
+        "Reloading"
+      ],
+      "requiredWeaponTraits": [
+        "Reloading"
+      ]
+    },
+    "description": "A full-turn action spent bringing a reloading weapon back into fighting condition. It is activated as a full-turn maneuver instead of making a normal attack. In play, it reduces reload time by 1. It requires a weapon with reloading."
+  },
+  {
+    "_id": "6Z8Bi2hel5HoNyos",
+    "id": "6Z8Bi2hel5HoNyos",
+    "name": "Resist Hooking",
+    "uuid": "Item.6Z8Bi2hel5HoNyos",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "hook-applied",
+    "CostType": "StrengthPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "cancelHookTripOrDismount": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "defense",
+      "athletic"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Strength Athletics 1"
+    },
+    "description": "A forceful reaction that resists being tripped, pulled, or unhorsed by a hooking attack. It is used as a reaction when a hooking effect is applied. In play, it creates a tactical advantage or restriction that should be resolved according to its timing, tags, and listed requirements. It requires Strength Athletics 1. At the cost of one Strength point."
+  },
+  {
+    "_id": "VdirxzHv2Gf0MKW2",
+    "id": "VdirxzHv2Gf0MKW2",
+    "name": "Riposte",
+    "uuid": "Item.VdirxzHv2Gf0MKW2",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "attack-dealt-0-damage",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "createFreeSafeAttack": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "counter",
+      "safe-attack"
+    ],
+    "enabled": false,
+    "requirements": {
+      "expertise": true,
+      "traits": [
+        "Fast"
+      ],
+      "skill": "Combat Melee 3",
+      "requiredWeaponTraits": [
+        "Fast"
+      ]
+    },
+    "description": "A trained return strike launched the moment an enemy's failed attack leaves them exposed. It is used as a reaction after an attack fails to deal damage. In play, it creates a follow-up safe attack. It requires Combat Melee 3; a weapon with fast. At the cost of one Dexterity point."
+  },
+  {
+    "_id": "ChkR8nWx1MtoYYRm",
+    "id": "ChkR8nWx1MtoYYRm",
+    "name": "Sap",
+    "uuid": "Item.ChkR8nWx1MtoYYRm",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "successEffect": "unconscious",
+      "attackMode": "nonlethal-hidden",
+      "suppressTargetReactions": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "stealth",
+      "attack"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Subterfuge Stealth 1",
+      "text": "Hidden"
+    },
+    "description": "A hidden nonlethal strike aimed at dropping a target before they can properly answer. It is declared before an attack is resolved. In play, it creates a tactical advantage or restriction that should be resolved according to its timing, tags, and listed requirements. It requires Subterfuge Stealth 1; Hidden."
+  },
+  {
+    "_id": "rHF8ziPwUd6MJ6Qz",
+    "id": "rHF8ziPwUd6MJ6Qz",
+    "name": "Shield",
+    "uuid": "Item.rHF8ziPwUd6MJ6Qz",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "attack-declared",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addArmorDice": 2
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "defense",
+      "shield"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 1",
+      "traits": [
+        "Shield"
+      ],
+      "requiredWeaponTraits": [
+        "Shield"
+      ]
+    },
+    "description": "A shield-led defense that absorbs the force of an incoming attack behind solid coverage. It is used as a reaction when attacked. In play, it adds 2 armor dies to the defense. It requires Combat Melee 1; a weapon with shield."
+  },
+  {
+    "_id": "wfETgvyluTlkDV3L",
+    "id": "wfETgvyluTlkDV3L",
+    "name": "Shield Wall",
+    "uuid": "Item.wfETgvyluTlkDV3L",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "attack-declared",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "grantDefenseAdvantage": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "defense",
+      "tactical"
+    ],
+    "enabled": false,
+    "requirements": {
+      "traits": [
+        "Shield"
+      ],
+      "skill": "Tactics",
+      "text": "Adjacent ally also has access to Shield Wall",
+      "requiredWeaponTraits": [
+        "Shield"
+      ]
+    },
+    "description": "A shield-based group defense that strengthens the line when fighters hold together. It is used as a reaction when attacked. In play, it grants 1 defense advantage. It requires Tactics; a weapon with shield; Adjacent ally also has access to Shield Wall."
+  },
+  {
+    "_id": "H1aCK1J68Y0LAL9P",
+    "id": "H1aCK1J68Y0LAL9P",
+    "name": "Suppressing Fire",
+    "uuid": "Item.H1aCK1J68Y0LAL9P",
+    "folder": "Maneuvers",
+    "type": "full-turn",
+    "triggerType": "full-turn-activation",
+    "CostType": "StaminaPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "enemyMoveLimit": 1,
+      "duration": "current-round",
+      "createsBattlefieldEffect": "suppressing-fire",
+      "area": "5x5",
+      "useMaxRange": true,
+      "allowBeyondLongRange": true,
+      "doesNotPermitDirectAttackBeyondLongRange": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "battlefield-effect",
+      "ranged"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Ranged 3 or Combat Firearms 3",
+      "traits": [
+        "RangedWeapon",
+        "Firearm"
+      ],
+      "requiredWeaponGroups": [
+        "Firearm",
+        "RangedWeapon"
+      ]
+    },
+    "description": "A full-turn hail of shots used to pin enemies down and restrict their movement through a threatened space. It is activated as a full-turn maneuver instead of making a normal attack. In play, it uses the weapon's maximum range, and creates the suppressing fire battlefield effect. It requires Combat Ranged 3 or Combat Firearms 3; the firearm and ranged weapon groups. At the cost of one Stamina point."
+  },
+  {
+    "_id": "V0ll3yF1r3GrpA1",
+    "id": "V0ll3yF1r3GrpA1",
+    "name": "Volley Fire",
+    "uuid": "Item.V0ll3yF1r3GrpA1",
+    "folder": "Maneuvers",
+    "type": "full-turn",
+    "triggerType": "full-turn-activation",
+    "CostType": "StaminaPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "useMaxRange": true,
+      "requiresGroupAttack": true,
+      "minParticipants": 2,
+      "area": "3x3",
+      "sharedAttackerRoll": true,
+      "addMainDicePerParticipant": 1,
+      "addDisadvantage": 1,
+      "eachTargetDefendsSeparately": true,
+      "requiresLoadedAndReadyWeapons": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "battlefield-effect",
+      "ranged",
+      "group-attack"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Ranged 3 or Combat Firearms 3",
+      "text": "At least 2 ready allies on the active side commit to the same volley",
+      "traits": [
+        "RangedWeapon",
+        "Firearm"
+      ],
+      "requiredWeaponGroups": [
+        "Firearm",
+        "RangedWeapon"
+      ]
+    },
+    "description": "A coordinated group salvo that trades individual freedom for heavier disciplined ranged pressure. It is activated as a full-turn maneuver instead of making a normal attack. In play, it adds 1 disadvantage, uses the weapon's maximum range, requires a coordinated group attack, uses a shared attacker roll, and still makes each target defend separately. It requires Combat Ranged 3 or Combat Firearms 3; the firearm and ranged weapon groups; At least 2 ready allies on the active side commit to the same volley. At the cost of one Stamina point."
+  },
+  {
+    "_id": "MHMCM3D4kHEUABWp",
+    "id": "MHMCM3D4kHEUABWp",
+    "name": "Throw",
+    "uuid": "Item.MHMCM3D4kHEUABWp",
+    "folder": "Maneuvers",
+    "type": "post",
+    "triggerType": "post-attack",
+    "CostType": "CriticalPoints",
+    "CostAmount": 2,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "applyCondition": "prone",
+      "placeTargetAdjacent": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "control",
+      "condition"
+    ],
+    "enabled": false,
+    "requirements": {
+      "expertise": true,
+      "traits": [
+        "Control"
+      ],
+      "skill": "Combat Unarmed 3",
+      "requiredWeaponTraits": [
+        "Control"
+      ]
+    },
+    "description": "A grappling finish that hurls the target down and leaves them prone at your feet. It is spent after a successful attack in the post-maneuver window. In play, it places the target adjacent to you, and applies the prone condition. It requires Combat Unarmed 3; a weapon with control. At the cost of 2 critical points."
+  },
+  {
+    "_id": "a7PvK3Lm9Qx2Nf1R",
+    "id": "a7PvK3Lm9Qx2Nf1R",
+    "name": "Provoke",
+    "uuid": "Item.a7PvK3Lm9Qx2Nf1R",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "CharismaPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addRiskDiceToTargetNextAttack": 1,
+      "duration": "until-side-active-again"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "command",
+      "risk"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 1 or Charisma Perform 1"
+    },
+    "description": "A taunting or commanding gesture meant to lure the enemy into a riskier next attack. It is declared before an attack is resolved. In play, it creates a tactical advantage or restriction that should be resolved according to its timing, tags, and listed requirements. It requires Combat Melee 1 or Charisma Perform 1. At the cost of one Charisma point."
+  },
+  {
+    "_id": "b4TuRn8Kd2Lp6Xs1",
+    "id": "b4TuRn8Kd2Lp6Xs1",
+    "name": "Turn",
+    "uuid": "Item.b4TuRn8Kd2Lp6Xs1",
+    "folder": "Maneuvers",
+    "type": "post",
+    "triggerType": "post-attack",
+    "CostType": "CriticalPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "rotateTargetFacingSteps": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "control",
+      "facing"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 2"
+    },
+    "description": "A positional follow-up that twists the target and spoils their facing after contact. It is spent after a successful attack in the post-maneuver window. In play, it rotates the target 1 facing step. It requires Combat Melee 2. At the cost of one Critical point."
+  },
+  {
+    "_id": "c9QdRw3Mn7Ts2Vk4",
+    "id": "c9QdRw3Mn7Ts2Vk4",
+    "name": "Quick Draw",
+    "uuid": "Item.c9QdRw3Mn7Ts2Vk4",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "readyEquippedSidearm": true,
+      "usableInCurrentAction": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "sidearm",
+      "utility"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 1 or Combat Firearms 1",
+      "traits": [
+        "Sidearm"
+      ],
+      "requiredWeaponGroups": [
+        "Sidearm"
+      ]
+    },
+    "description": "A tactical maneuver called Quick Draw that shifts the immediate terms of the fight. It is declared before an attack is resolved. In play, it readies an equipped sidearm for immediate use, and lets that sidearm be used in the current action. It requires Combat Melee 1 or Combat Firearms 1; the sidearm groups. At the cost of one Dexterity point."
+  },
+  {
+    "_id": "e2OvRw7Jk4Nz9Lp3",
+    "id": "e2OvRw7Jk4Nz9Lp3",
+    "name": "Overwatch",
+    "uuid": "Item.e2OvRw7Jk4Nz9Lp3",
+    "folder": "Maneuvers",
+    "type": "full-turn",
+    "triggerType": "full-turn-activation",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "createsPersistentEffect": "overwatch",
+      "area": "5x5",
+      "maxTargetsPerRangedWeapon": 2,
+      "loadingWeaponMaxTargets": 1,
+      "addMainDice": 1,
+      "duration": "until-side-active-again"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "prepared",
+      "persistent",
+      "ranged"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Ranged 3 or Combat Firearms 3",
+      "traits": [
+        "RangedWeapon",
+        "Firearm"
+      ],
+      "requiredWeaponGroups": [
+        "Firearm",
+        "RangedWeapon"
+      ]
+    },
+    "description": "A tactical maneuver called Overwatch that shifts the immediate terms of the fight. It is activated as a full-turn maneuver instead of making a normal attack. In play, it adds 1 main die, and creates the overwatch effect. It requires Combat Ranged 3 or Combat Firearms 3; the firearm and ranged weapon groups. At the cost of one Dexterity point."
+  },
+  {
+    "_id": "f5CvRt2Mx8Qa1Hd6",
+    "id": "f5CvRt2Mx8Qa1Hd6",
+    "name": "Convert",
+    "uuid": "Item.f5CvRt2Mx8Qa1Hd6",
+    "folder": "Maneuvers",
+    "type": "post",
+    "triggerType": "post-attack",
+    "CostType": "CriticalPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "convertCriticalPointsToDamage": 1,
+      "addDamage": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "crit-spend"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 1"
+    },
+    "description": "A direct conversion of critical advantage into immediate extra harm. It is spent after a successful attack in the post-maneuver window. In play, it converts 1 critical point into damage, and adds 1 extra damage. It requires Combat Melee 1. At the cost of one Critical point."
+  },
+  {
+    "_id": "g8HsWd4Lp1Tr7Qn2",
+    "id": "g8HsWd4Lp1Tr7Qn2",
+    "name": "Half-Sword",
+    "uuid": "Item.g8HsWd4Lp1Tr7Qn2",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "StrengthPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addDisadvantage": 1,
+      "ignoreHighestArmorDie": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "sword",
+      "armor"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 3",
+      "traits": [
+        "Rigid Blade"
+      ],
+      "requiredWeaponTraits": [
+        "Rigid Blade"
+      ]
+    },
+    "description": "A close-in rigid-blade technique that sacrifices ease to exploit gaps in armor. It is declared before an attack is resolved. In play, it adds 1 disadvantage, and ignores the target's highest armor die. It requires Combat Melee 3; a weapon with rigid blade. At the cost of one Strength point."
+  },
+  {
+    "_id": "h3PoPk9Vs2Lm6Xc1",
+    "id": "h3PoPk9Vs2Lm6Xc1",
+    "name": "Push Of Pike",
+    "uuid": "Item.h3PoPk9Vs2Lm6Xc1",
+    "folder": "Maneuvers",
+    "type": "post",
+    "triggerType": "post-attack",
+    "CostType": "CriticalPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "pushTargetSquares": 1,
+      "direction": "directly-away",
+      "addRiskPointsToTarget": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "polearm"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 2",
+      "traits": [
+        "Polearm"
+      ],
+      "text": "Adjacent ally also wields a polearm or spear",
+      "requiredWeaponGroups": [
+        "Polearm"
+      ]
+    },
+    "description": "A polearm follow-up that shoves the target backward under united reach and pressure. It is spent after a successful attack in the post-maneuver window. In play, it pushes the target 1 square. It requires Combat Melee 2; the polearm groups; Adjacent ally also wields a polearm or spear. At the cost of one Critical point."
+  },
+  {
+    "_id": "j7FlNk5Qr1Tb8Mz2",
+    "id": "j7FlNk5Qr1Tb8Mz2",
+    "name": "Flank",
+    "uuid": "Item.j7FlNk5Qr1Tb8Mz2",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addMultiplierDice": 1,
+      "appliesTo": "melee-attack"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "position"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 2",
+      "text": "One ally also threatens the target from another side"
+    },
+    "description": "A positional attack that turns divided pressure on the target into a sharper melee opening. It is declared before an attack is resolved. In play, it adds 1 multiplier die. It requires Combat Melee 2; One ally also threatens the target from another side. At the cost of one Dexterity point."
+  },
+  {
+    "_id": "k4HaBy2Ln9Qp7Xs3",
+    "id": "k4HaBy2Ln9Qp7Xs3",
+    "name": "Hold At Bay",
+    "uuid": "Item.k4HaBy2Ln9Qp7Xs3",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "threat-zone-entered",
+    "CostType": "StrengthPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "stopEnteringActorInEnteredSquare": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "movement-reaction",
+      "control"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 2",
+      "traits": [
+        "Polearm",
+        "Spear"
+      ],
+      "requiredWeaponGroups": [
+        "Polearm",
+        "Spear"
+      ]
+    },
+    "description": "A long-weapon stop that arrests an enemy the moment they push into your reach. It is used as a reaction when a target crosses your threat zone. In play, it stops an entering target in the entered square. It requires Combat Melee 2; the polearm and spear groups. At the cost of one Strength point."
+  },
+  {
+    "_id": "m1GuAl8Rp3Vx6Tk4",
+    "id": "m1GuAl8Rp3Vx6Tk4",
+    "name": "Guard Ally",
+    "uuid": "Item.m1GuAl8Rp3Vx6Tk4",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "attack-declared",
+    "CostType": "StaminaPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addArmorDiceToAllyDefense": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "defense",
+      "support"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 1 or Tactics",
+      "traits": [
+        "Shield"
+      ],
+      "text": "Adjacent ally is the target of the attack",
+      "requiredWeaponTraits": [
+        "Shield"
+      ]
+    },
+    "description": "A protective intervention that lets you cover an adjacent ally with your own shield and presence. It is used as a reaction when attacked. In play, it creates a tactical advantage or restriction that should be resolved according to its timing, tags, and listed requirements. It requires Combat Melee 1 or Tactics; a weapon with shield; Adjacent ally is the target of the attack. At the cost of one Stamina point."
+  },
+  {
+    "_id": "n6AuGd4Qm2Ls9Hp1",
+    "id": "n6AuGd4Qm2Ls9Hp1",
+    "name": "Advance Under Guard",
+    "uuid": "Item.n6AuGd4Qm2Ls9Hp1",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "move-declared",
+    "CostType": "StaminaPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addMoveSquares": 2,
+      "ignoreOpportunityStrike": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "movement",
+      "tactical"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 2 or Tactics",
+      "traits": [
+        "Shield"
+      ],
+      "requiredWeaponTraits": [
+        "Shield"
+      ]
+    },
+    "description": "A guarded advance that trades stamina for safer forward movement behind shield work. It is declared before movement is resolved. In play, it adds 2 squares of movement, and ignores opportunity strikes during the move. It requires Combat Melee 2 or Tactics; a weapon with shield. At the cost of one Stamina point."
+  },
+  {
+    "_id": "p2GrBr7Nx5Lt1Qv8",
+    "id": "p2GrBr7Nx5Lt1Qv8",
+    "name": "Grapple Break",
+    "uuid": "Item.p2GrBr7Nx5Lt1Qv8",
+    "folder": "Maneuvers",
+    "type": "reaction",
+    "triggerType": "locked",
+    "CostType": "StrengthPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addAdvantageNextEscapeRoll": 1,
+      "ifEscapeSucceedsCreateFreeSafeAttack": true,
+      "alternateTriggers": [
+        "choking-hold"
+      ]
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "defense",
+      "athletic"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Unarmed 1 or Strength Athletics 2"
+    },
+    "description": "A violent effort to wrench free from a lock or choking hold and possibly answer in the same beat. It is used as a reaction while you are locked. In play, it adds 1 advantage to the next escape roll. It requires Combat Unarmed 1 or Strength Athletics 2. At the cost of one Strength point."
+  },
+  {
+    "_id": "WkSp0tR1g1dBldX",
+    "id": "WkSp0tR1g1dBldX",
+    "name": "Weak Spot",
+    "uuid": "Item.WkSp0tR1g1dBldX",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "ignoreHighestArmorDie": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "precision",
+      "armor"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 2",
+      "traits": [
+        "Rigid Blade"
+      ],
+      "requiredWeaponTraits": [
+        "Rigid Blade"
+      ]
+    },
+    "description": "A precise attack that seeks a gap, seam, or exposed place in otherwise reliable armor. It is declared before an attack is resolved. In play, it ignores the target's highest armor die. It requires Combat Melee 2; a weapon with rigid blade. At the cost of one Dexterity point."
+  },
+  {
+    "_id": "r9ShBa3Kp6Mx2Tw1",
+    "id": "r9ShBa3Kp6Mx2Tw1",
+    "name": "Shield Bash",
+    "uuid": "Item.r9ShBa3Kp6Mx2Tw1",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "StrengthPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "ifAttackDealsDamagePushTargetSquares": 1
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "control",
+      "shield"
+    ],
+    "enabled": false,
+    "requirements": {
+      "skill": "Combat Melee 2",
+      "traits": [
+        "Shield"
+      ],
+      "requiredWeaponTraits": [
+        "Shield"
+      ]
+    },
+    "description": "A shield-led strike meant to stagger and drive the target backward if it lands cleanly. It is declared before an attack is resolved. In play, it pushes the target 1 square if the attack deals damage. It requires Combat Melee 2; a weapon with shield. At the cost of one Strength point."
+  },
+  {
+    "_id": "MnPounceA0000001",
+    "id": "MnPounceA0000001",
+    "name": "Pounce",
+    "uuid": "Item.MnPounceA0000001",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "ifMovedAtLeastSquaresBeforeAttack": 2,
+      "addMultiplierDice": 1,
+      "applyCondition": "prone"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "natural-weapon",
+      "monster"
+    ],
+    "enabled": false,
+    "requirements": {
+      "traits": [
+        "Pouncer"
+      ],
+      "requiredWeaponTraits": [
+        "Natural"
+      ],
+      "text": "Quadruped body; moved at least 2 squares before the attack."
+    },
+    "description": "A leaping natural-weapon attack that uses movement to bowl the prey down under sudden force. It is declared before an attack is resolved. In play, it adds 1 multiplier die, and applies the prone condition. It requires a weapon with natural; Quadruped body; moved at least 2 squares before the attack. At the cost of one Dexterity point."
+  },
+  {
+    "_id": "MnTrampleA000001",
+    "id": "MnTrampleA000001",
+    "name": "Trample",
+    "uuid": "Item.MnTrampleA000001",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "movement-declared",
+    "CostType": "StrengthPoints",
+    "CostAmount": 2,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "passThroughSmallerCreatures": true,
+      "applyNaturalWeaponDamageToEach": true,
+      "applyCondition": "prone"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "movement",
+      "monster"
+    ],
+    "enabled": false,
+    "requirements": {
+      "traits": [
+        "Apex Predator",
+        "Massive"
+      ],
+      "text": "Massive size; moves through creatures at least one size smaller."
+    },
+    "description": "A massive rushing movement that batters through smaller creatures and throws them down. It is declared before movement is resolved. In play, it applies the prone condition, lets the attacker pass through smaller creatures, and applies natural-weapon damage to each affected creature. It requires Massive size; moves through creatures at least one size smaller. At the cost of 2 strength points."
+  },
+  {
+    "_id": "MnTailSweep00001",
+    "id": "MnTailSweep00001",
+    "name": "Tail Sweep",
+    "uuid": "Item.MnTailSweep00001",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "StrengthPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "areaAttack": "rear-arc-adjacent",
+      "ifAttackDealsDamageApplyCondition": "prone"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "control",
+      "monster",
+      "area"
+    ],
+    "enabled": false,
+    "requirements": {
+      "traits": [
+        "Tailed"
+      ],
+      "text": "Heavy or long tail; affects creatures behind the actor."
+    },
+    "description": "A broad tail-driven attack that clears space behind the creature with brute control. It is declared before an attack is resolved. In play, it applies prone if the attack deals damage, and strikes across the rear arc adjacent. It requires Heavy or long tail; affects creatures behind the actor. At the cost of one Strength point."
+  },
+  {
+    "_id": "MnConstrictA0001",
+    "id": "MnConstrictA0001",
+    "name": "Constrict",
+    "uuid": "Item.MnConstrictA0001",
+    "folder": "Maneuvers",
+    "type": "post",
+    "triggerType": "post-attack",
+    "CostType": "CriticalPoints",
+    "CostAmount": 2,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "applyCondition": "grappled",
+      "ongoingDamagePerTurn": "1d3"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "control",
+      "grapple",
+      "monster"
+    ],
+    "enabled": false,
+    "requirements": {
+      "traits": [
+        "Constricting"
+      ],
+      "requiredWeaponTraits": [
+        "Natural"
+      ],
+      "text": "Coiling body part — tentacles, serpentine torso."
+    },
+    "description": "A crushing coil or binding grip that turns a hit into an ongoing grapple and squeeze. It is spent after a successful attack in the post-maneuver window. In play, it applies the grappled condition, and starts ongoing damage of 1d3 per turn. It requires a weapon with natural; Coiling body part — tentacles, serpentine torso. At the cost of 2 critical points."
+  },
+  {
+    "_id": "MnSwallowWhole01",
+    "id": "MnSwallowWhole01",
+    "name": "Swallow Whole",
+    "uuid": "Item.MnSwallowWhole01",
+    "folder": "Maneuvers",
+    "type": "post",
+    "triggerType": "post-attack",
+    "CostType": "CriticalPoints",
+    "CostAmount": 3,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "ifTargetTwoSizesSmallerOrGrappled": true,
+      "swallowTarget": true,
+      "ongoingDamagePerTurn": "1d6"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "finisher",
+      "monster"
+    ],
+    "enabled": false,
+    "requirements": {
+      "traits": [
+        "Apex Predator"
+      ],
+      "requiredWeaponTraits": [
+        "Bite"
+      ],
+      "text": "Apex predator with a maw — target must be much smaller or already grappled."
+    },
+    "description": "A monstrous finishing attack that devours a much smaller or already controlled target. It is spent after a successful attack in the post-maneuver window. In play, it can swallow the target whole, and starts ongoing damage of 1d6 per turn. It requires a weapon with bite; Apex predator with a maw — target must be much smaller or already grappled. At the cost of 3 critical points."
+  },
+  {
+    "_id": "MnWingBuffet0001",
+    "id": "MnWingBuffet0001",
+    "name": "Wing Buffet",
+    "uuid": "Item.MnWingBuffet0001",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "ifAttackDealsDamagePushTargetSquares": 2,
+      "ifAttackDealsDamageApplyCondition": "prone"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "offense",
+      "control",
+      "monster"
+    ],
+    "enabled": false,
+    "requirements": {
+      "traits": [
+        "Winged"
+      ],
+      "text": "Wings broad enough to drive air with force."
+    },
+    "description": "A heavy wing-driven strike that knocks a target back or down under forceful air and impact. It is declared before an attack is resolved. In play, it pushes the target 2 squares if the attack deals damage, and applies prone if the attack deals damage. It requires Wings broad enough to drive air with force. At the cost of one Dexterity point."
+  }
 ]

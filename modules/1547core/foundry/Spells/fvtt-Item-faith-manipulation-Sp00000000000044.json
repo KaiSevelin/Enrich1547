@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Uses divination to trick a victim to disbelief. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Twist, burden, or redirect the target's faith through supernatural pressure. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
             "SpellKind": "Divination",
             "Strength": 2,
             "Complexity": "Medium",
@@ -652,7 +652,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: If the caster overcomes the target's faith, the target gains the **lost faith** active effect.",
-                "description": "Uses divination to trick a victim to disbelief. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Twist, burden, or redirect the target's faith through supernatural pressure. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "schools": [
                     "Divination"
                 ],

@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Breaks a magic seal. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Breaks a magical seal and opens what it was made to hold shut. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
             "SpellKind": "Protection",
             "Strength": 2,
             "Complexity": "Medium",
@@ -727,7 +727,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Breaks a seal.",
-                "description": "Breaks a magic seal. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Breaks a magical seal and opens what it was made to hold shut. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "schools": [
                     "Grimoire"
                 ],

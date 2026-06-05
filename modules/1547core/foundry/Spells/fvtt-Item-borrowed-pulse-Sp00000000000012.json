@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Steal stamina from a newly deceased corpse. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Steal a remnant of vigor from a newly dead corpse and carry it in your own body. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
             "SpellKind": "Necromancy",
             "Strength": 1,
             "Complexity": "Easy",
@@ -755,7 +755,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Gain 1d6-2 stamina points for a day.",
-                "description": "Steal stamina from a newly deceased corpse. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Steal a remnant of vigor from a newly dead corpse and carry it in your own body. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                 "schools": [
                     "Necromancy"
                 ],

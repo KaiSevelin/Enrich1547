@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Changes the knowledge about an event or person. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Alter how the past is remembered, read, or made to stand in the present. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
             "SpellKind": "Grimoire",
             "Strength": 2,
             "Complexity": "Medium",
@@ -721,7 +721,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Changes the knowledge about an event or person. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Alter how the past is remembered, read, or made to stand in the present. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "schools": [
                     "Grimoire"
                 ],

@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Creates a seal to keep a being from escaping. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "Set a seal that closes, forbids, preserves, or holds something under rule. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
             "SpellKind": "Protection",
             "Strength": 3,
             "Complexity": "Hard",
@@ -746,7 +746,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Creates a seal to keep a being from escaping. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "Set a seal that closes, forbids, preserves, or holds something under rule. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "schools": [
                     "Grimoire",
                     "Religion"

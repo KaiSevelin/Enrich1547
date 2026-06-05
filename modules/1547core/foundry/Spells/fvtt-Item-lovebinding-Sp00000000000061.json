@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Moves a **bound** spirit to a person in order to control its feelings. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Bind another person in love, fixation, or compelled attachment. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
             "SpellKind": "Grimoire",
             "Strength": 1,
             "Complexity": "Easy",
@@ -687,7 +687,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Moves a **bound** spirit to a person in order to control its feelings. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Bind another person in love, fixation, or compelled attachment. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                 "schools": [
                     "Grimoire"
                 ],

@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "A spell to reveal forgotten memories. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Snarl memory so recollection becomes confused, delayed, or unreliable. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
             "SpellKind": "Divination",
             "Strength": 1,
             "Complexity": "Easy",
@@ -721,7 +721,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "A spell to reveal forgotten memories. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Snarl memory so recollection becomes confused, delayed, or unreliable. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "schools": [
                     "Knot"
                 ],

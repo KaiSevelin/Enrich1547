@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "The whitening, the second part of alchemistic transformation of a person. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "The whitening, the second alchemical transformation of a person, refining body and essence toward altered power. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
             "SpellKind": "Alchemy",
             "Strength": 3,
             "Complexity": "Hard",
@@ -687,7 +687,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: permanently change values. Give power.",
-                "description": "The whitening, the second part of alchemistic transformation of a person. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "The whitening, the second alchemical transformation of a person, refining body and essence toward altered power. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                 "schools": [
                     "Alchemy"
                 ],

@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Creates a pact. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Call on the living force of an existing pact so its promise answers now. It is an oath-bound working, concerned with promise, witness, obligation, and the cost of breaking what has been sworn. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
             "SpellKind": "Oath",
             "Strength": 2,
             "Complexity": "Medium",
@@ -721,7 +721,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Creates a pact. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Call on the living force of an existing pact so its promise answers now. It is an oath-bound working, concerned with promise, witness, obligation, and the cost of breaking what has been sworn. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "schools": [
                     "Grimoire"
                 ],

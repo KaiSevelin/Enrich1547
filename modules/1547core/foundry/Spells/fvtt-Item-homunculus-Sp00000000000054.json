@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Creates a Homonculus. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "Prepare and bring forth an artificial lesser being through alchemical and occult craft. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
             "SpellKind": "Alchemy",
             "Strength": 3,
             "Complexity": "Hard",
@@ -740,7 +740,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Creates a Homonculus. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "Prepare and bring forth an artificial lesser being through alchemical and occult craft. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "schools": [
                     "Alchemy",
                     "Grimoire"

@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Protects a target from possession. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Use a prepared mirror to catch, redirect, or hollow out what should have been reflected. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
             "SpellKind": "Protection",
             "Strength": 2,
             "Complexity": "Medium",
@@ -727,7 +727,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Any attempt to possess the target must overcome 4d6.",
-                "description": "Protects a target from possession. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Use a prepared mirror to catch, redirect, or hollow out what should have been reflected. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "schools": [
                     "Necromancy"
                 ],

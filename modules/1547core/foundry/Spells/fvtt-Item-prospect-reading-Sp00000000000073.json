@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Gives a positive or negative answer of what will be the effect of an action. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Read a prospect for what it is likely to yield, conceal, or become. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. Among ritual workings it is considered slight, though even slight magic can miscarry.",
             "SpellKind": "Divination",
             "Strength": 1,
             "Complexity": "Easy",
@@ -740,7 +740,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Gives a positive or negative answer of what will be the effect of an action. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Read a prospect for what it is likely to yield, conceal, or become. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "schools": [
                     "Astrology",
                     "Divination"

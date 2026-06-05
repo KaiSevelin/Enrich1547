@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Let the caster traverse the zone. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Pass through the zone by occult transit rather than ordinary movement. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
             "SpellKind": "Grimoire",
             "Strength": 1,
             "Complexity": "Easy",
@@ -721,7 +721,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Let the caster traverse the zone. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Pass through the zone by occult transit rather than ordinary movement. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "schools": [
                     "Grimoire"
                 ],

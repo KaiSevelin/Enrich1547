@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Gives warning for dangers. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Draws a warning before immediate danger properly shows its face. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It is a serious working that usually demands care, preparation, and a practiced hand.",
             "SpellKind": "Divination",
             "Strength": 2,
             "Complexity": "Medium",
@@ -721,7 +721,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Gets to roll an investigation check passively for a period of time.",
-                "description": "Gives warning for dangers. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Draws a warning before immediate danger properly shows its face. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "schools": [
                     "Divination"
                 ],

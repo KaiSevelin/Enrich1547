@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Binds a supernatural being to a vessel. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "Binds a supernatural being into a vessel, place, or prepared confinement. It belongs to grimoire practice, relying on formal instruction, written formulae, and dangerous exactness. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
             "SpellKind": "Grimoire",
             "Strength": 3,
             "Complexity": "Hard",
@@ -652,7 +652,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Roll a check vs monster power dice to bind.",
-                "description": "Binds a supernatural being to a vessel. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "Binds a supernatural being into a vessel, place, or prepared confinement. It belongs to grimoire practice, relying on formal instruction, written formulae, and dangerous exactness. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                 "schools": [
                     "Grimoire"
                 ],

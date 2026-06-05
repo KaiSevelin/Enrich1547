@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Let the diviner's soul leave the body and travel unseen. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "Lets the diviner's soul slip free of the body and travel unseen. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
             "SpellKind": "Divination",
             "Strength": 3,
             "Complexity": "Hard",
@@ -727,7 +727,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Creates a spirit token that can be moved",
-                "description": "Let the diviner's soul leave the body and travel unseen. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "Lets the diviner's soul slip free of the body and travel unseen. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "schools": [
                     "Divination"
                 ],

@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "The fourth stage in an alchemic transformation. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "The reddening, the culminating alchemical transformation of completion, force, and perfected change. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
             "SpellKind": "Alchemy",
             "Strength": 3,
             "Complexity": "Hard",
@@ -823,7 +823,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "The fourth stage in an alchemic transformation. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "The reddening, the culminating alchemical transformation of completion, force, and perfected change. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "schools": [
                     "Alchemy"
                 ],

@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Creates a protective circle or line from chalk. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Marks a temporary protective line in chalk to define a safer threshold. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
             "SpellKind": "Protection",
             "Strength": 2,
             "Complexity": "Medium",
@@ -746,7 +746,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Subspell used in complex rituals. Modifies the defence check by **chalk**.",
-                "description": "Creates a protective circle or line from chalk. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Marks a temporary protective line in chalk to define a safer threshold. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "schools": [
                     "Wards",
                     "Grimoire"

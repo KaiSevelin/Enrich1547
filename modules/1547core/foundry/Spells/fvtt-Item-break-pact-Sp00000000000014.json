@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Break a pact. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "Severs a pact and tears loose the bond that once held it in force. It deals with sworn bonds, compulsions, witnessed promises, and the supernatural force that clings to pledged words. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
             "SpellKind": "Oath",
             "Strength": 3,
             "Complexity": "Hard",
@@ -721,7 +721,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: If the spell succeeds the pact is broken.",
-                "description": "Break a pact. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "Severs a pact and tears loose the bond that once held it in force. It deals with sworn bonds, compulsions, witnessed promises, and the supernatural force that clings to pledged words. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "schools": [
                     "Grimoire"
                 ],

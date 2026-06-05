@@ -23,6 +23,7 @@ Current documents:
 - `handler-registration-spec-v1.md`
 - `hidden-folk-base-starter-spec-v1.md`
 - `hud-spec-v1.md`
+- `item-description-authoring-guide.md`
 - `equipment-and-dice-schema-spec-v1.md`
 - `maneuver-legality-and-filtering-spec-v1.md`
 - `maneuver-rules-guide.md`

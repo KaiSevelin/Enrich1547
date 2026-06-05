@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Sleep next to a corpse to gain invisibility to spirits until the next dawn. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Sleep beside a corpse and borrow its stillness to pass unseen by spirits until dawn. It works at the edge of death, drawing on corpse, burial, remnant life, or the unsettled dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
             "SpellKind": "Necromancy",
             "Strength": 2,
             "Complexity": "Medium",
@@ -721,7 +721,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Invisible to spirits.",
-                "description": "Sleep next to a corpse to gain invisibility to spirits until the next dawn. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Sleep beside a corpse and borrow its stillness to pass unseen by spirits until dawn. It works at the edge of death, drawing on corpse, burial, remnant life, or the unsettled dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "schools": [
                     "Necromancy"
                 ],

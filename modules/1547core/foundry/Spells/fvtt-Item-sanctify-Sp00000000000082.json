@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Removes curses on a person. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Sanctify a person, object, or place so it stands under holy claim. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is a serious working that usually demands care, preparation, and a practiced hand.",
             "SpellKind": "Protection",
             "Strength": 2,
             "Complexity": "Medium",
@@ -706,7 +706,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Removes curses on a person. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Sanctify a person, object, or place so it stands under holy claim. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "schools": [
                     "Religion",
                     "Wards"

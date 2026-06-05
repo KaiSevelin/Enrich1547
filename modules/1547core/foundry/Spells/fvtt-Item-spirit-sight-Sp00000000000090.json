@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Detects the presence of spirits. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Open the senses to spirits, traces, and presences not plainly visible. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is a serious working that usually demands care, preparation, and a practiced hand.",
             "SpellKind": "Divination",
             "Strength": 2,
             "Complexity": "Medium",
@@ -706,7 +706,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Detects the presence of spirits. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Open the senses to spirits, traces, and presences not plainly visible. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "schools": [
                     "Necromancy",
                     "Religion"

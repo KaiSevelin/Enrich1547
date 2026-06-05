@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Calm storms. It is worked through cords, bindings, and held tension, as is common in knot magic. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Tie down agitation and still the heart through a tempering knot-work. It is worked through cords, bindings, and held tension, as is common in knot magic. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
             "SpellKind": "Knot",
             "Strength": 1,
             "Complexity": "Easy",
@@ -721,7 +721,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: If the spell succeeds, the wind calms one step down.",
-                "description": "Calm storms. It is worked through cords, bindings, and held tension, as is common in knot magic. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Tie down agitation and still the heart through a tempering knot-work. It is worked through cords, bindings, and held tension, as is common in knot magic. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "schools": [
                     "Knot"
                 ],

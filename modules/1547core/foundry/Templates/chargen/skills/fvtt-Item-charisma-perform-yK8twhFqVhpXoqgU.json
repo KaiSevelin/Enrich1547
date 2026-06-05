@@ -430,7 +430,7 @@
     ],
     "modifiers": [],
     "props": {
-      "Description": "",
+      "Description": "This skill covers deliberate performance before others, whether through speech, music, posture, dance, or display. It governs entertaining, holding attention, shaping mood, and carrying presence in public. In play, it is used when success depends on winning or directing an audience rather than merely speaking to them. Base stat: Charisma. Levels: 0-2.",
       "Group": "Charisma",
       "Stat": "Charisma",
       "CanRoll": true,

@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Reveals the caster of a curse. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Use divinatory means to identify the guilty party behind a hidden wrong. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
             "SpellKind": "Divination",
             "Strength": 2,
             "Complexity": "Medium",
@@ -721,7 +721,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: If the caster overcomes the casterÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢s power he will know itÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢s name.",
-                "description": "Reveals the caster of a curse. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Use divinatory means to identify the guilty party behind a hidden wrong. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "schools": [
                     "Divination"
                 ],

@@ -13,7 +13,7 @@
       "template": "WmP9Ld3Qs7Nk2FvR",
       "templateSystemUniqueVersion": 1775480001,
       "props": {
-        "Description": "Counts as silver against beings vulnerable to silver.",
+      "Description": "A silver treatment worked onto the striking edge, point, or head of the weapon. In play, it adds the Silver qualifier to attacks made with the modified weapon or ammunition, making it effective against beings that recoil from silver.",
         "Weight": 0,
         "Value": 0,
         "ModifierType": "Material",
@@ -63,7 +63,7 @@
           "stackKey": "material",
           "stackMode": "replace",
           "requirements": {},
-          "description": "Counts as silver against beings vulnerable to silver.",
+          "description": "A silver treatment worked onto the striking edge, point, or head of the weapon. In play, it adds the Silver qualifier to attacks made with the modified weapon or ammunition, making it effective against beings that recoil from silver.",
           "img": "icons/svg/item-bag.svg"
         }
       }
@@ -85,7 +85,7 @@
       "template": "WmP9Ld3Qs7Nk2FvR",
       "templateSystemUniqueVersion": 1775480001,
       "props": {
-        "Description": "Consecrated for creatures harmed by blessing.",
+      "Description": "A weapon or missile prepared through formal blessing, prayer, or consecration. In play, it adds the Blessed qualifier to attacks made with the modified item, making it more effective against unclean, accursed, or spiritually vulnerable beings.",
         "Weight": 0,
         "Value": 0,
         "ModifierType": "Blessing",
@@ -135,7 +135,7 @@
           "stackKey": "blessing",
           "stackMode": "replace",
           "requirements": {},
-          "description": "Consecrated for creatures harmed by blessing.",
+          "description": "A weapon or missile prepared through formal blessing, prayer, or consecration. In play, it adds the Blessed qualifier to attacks made with the modified item, making it more effective against unclean, accursed, or spiritually vulnerable beings.",
           "img": "icons/svg/item-bag.svg"
         }
       }
@@ -157,7 +157,7 @@
       "template": "WmP9Ld3Qs7Nk2FvR",
       "templateSystemUniqueVersion": 1775480001,
       "props": {
-        "Description": "Counts as cold iron against beings vulnerable to it.",
+      "Description": "The striking surface is worked in cold iron, or fitted with a cold-iron head. In play, it adds the Cold Iron qualifier to attacks made with the modified weapon or ammunition, making it effective against beings that cannot abide iron.",
         "Weight": 0,
         "Value": 0,
         "ModifierType": "Material",
@@ -207,7 +207,7 @@
           "stackKey": "material",
           "stackMode": "replace",
           "requirements": {},
-          "description": "Counts as cold iron against beings vulnerable to it.",
+          "description": "The striking surface is worked in cold iron, or fitted with a cold-iron head. In play, it adds the Cold Iron qualifier to attacks made with the modified weapon or ammunition, making it effective against beings that cannot abide iron.",
           "img": "icons/svg/item-bag.svg"
         }
       }
@@ -229,7 +229,7 @@
       "template": "WmP9Ld3Qs7Nk2FvR",
       "templateSystemUniqueVersion": 1775480001,
       "props": {
-        "Description": "Carries poison for the next legal strike or shot.",
+      "Description": "The blade, point, or head is coated with a prepared venom or toxin. In play, it threatens a secondary poison effect on the next legal strike or shot that gets into the body, weakening the target beyond the initial wound.",
         "Weight": 0,
         "Value": 0,
         "ModifierType": "Poison",
@@ -293,7 +293,7 @@
           "stackKey": "poison",
           "stackMode": "replace",
           "requirements": {},
-          "description": "Carries poison for the next legal strike or shot.",
+          "description": "The blade, point, or head is coated with a prepared venom or toxin. In play, it threatens a secondary poison effect on the next legal strike or shot that gets into the body, weakening the target beyond the initial wound.",
           "img": "icons/svg/item-bag.svg"
         }
       }
@@ -315,7 +315,7 @@
       "template": "WmP9Ld3Qs7Nk2FvR",
       "templateSystemUniqueVersion": 1775480001,
       "props": {
-        "Description": "An armor-piercing head shape.",
+      "Description": "A narrow, hardened arrowhead built to press through mail, gaps, and layered protection. In play, it adds @1547[1dp]{Penetration} to the modified shot, favoring armor-breaking force over broad cutting injury.",
         "Weight": 0,
         "Value": 0,
         "ModifierType": "Craft",
@@ -365,7 +365,7 @@
           "stackKey": "arrowhead",
           "stackMode": "replace",
           "requirements": { "ammoTypes": ["Arrow", "Bolt"] },
-          "description": "An armor-piercing head shape.",
+          "description": "A narrow, hardened arrowhead built to press through mail, gaps, and layered protection. In play, it adds @1547[1dp]{Penetration} to the modified shot, favoring armor-breaking force over broad cutting injury.",
           "img": "icons/svg/item-bag.svg"
         }
       }
@@ -387,7 +387,7 @@
       "template": "WmP9Ld3Qs7Nk2FvR",
       "templateSystemUniqueVersion": 1775480001,
       "props": {
-        "Description": "A broad cutting head that favors raw injury.",
+      "Description": "A broad cutting head built to open flesh and worsen the wound. In play, it adds @1547[1dl]{Lethality} to the modified shot, favoring raw injury over narrow armor-piercing force.",
         "Weight": 0,
         "Value": 0,
         "ModifierType": "Craft",
@@ -437,7 +437,7 @@
           "stackKey": "arrowhead",
           "stackMode": "replace",
           "requirements": { "ammoTypes": ["Arrow", "Bolt"] },
-          "description": "A broad cutting head that favors raw injury.",
+          "description": "A broad cutting head built to open flesh and worsen the wound. In play, it adds @1547[1dl]{Lethality} to the modified shot, favoring raw injury over narrow armor-piercing force.",
           "img": "icons/svg/item-bag.svg"
         }
       }

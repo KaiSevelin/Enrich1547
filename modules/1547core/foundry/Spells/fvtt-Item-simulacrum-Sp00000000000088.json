@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Let the caster change his appearance to a copy of someone else. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "Make a crafted likeness that imitates a living form or person. It belongs to grimoire practice, relying on formal instruction, written formulae, and dangerous exactness. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
             "SpellKind": "Grimoire",
             "Strength": 3,
             "Complexity": "Hard",
@@ -721,7 +721,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Let the caster change his appearance to a copy of someone else. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "Make a crafted likeness that imitates a living form or person. It belongs to grimoire practice, relying on formal instruction, written formulae, and dangerous exactness. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                 "schools": [
                     "Grimoire"
                 ],

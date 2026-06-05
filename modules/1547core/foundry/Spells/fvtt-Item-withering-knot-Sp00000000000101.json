@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "A knot that when in a subject's possession slowly makes his health degrade. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "Tie a wasting force into the victim so health declines by slow degrees. It is worked to burden a victim with wasting, fear, misfortune, or other hostile pressure that lingers after the moment of casting. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
             "SpellKind": "Curse",
             "Strength": 3,
             "Complexity": "Hard",
@@ -687,7 +687,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "A knot that when in a subject's possession slowly makes his health degrade. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "Tie a wasting force into the victim so health declines by slow degrees. It is worked to burden a victim with wasting, fear, misfortune, or other hostile pressure that lingers after the moment of casting. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "schools": [
                     "Knot"
                 ],

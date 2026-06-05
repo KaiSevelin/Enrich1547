@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Can extract information from a dream. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Draw meaning out of a dream and judge what sign or truth it carried. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. Among ritual workings it is considered slight, though even slight magic can miscarry.",
             "SpellKind": "Divination",
             "Strength": 1,
             "Complexity": "Easy",
@@ -727,7 +727,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: When the player gets a cryptical dream, this spell can spell the message out in clear text.",
-                "description": "Can extract information from a dream. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Draw meaning out of a dream and judge what sign or truth it carried. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "schools": [
                     "Divination"
                 ],

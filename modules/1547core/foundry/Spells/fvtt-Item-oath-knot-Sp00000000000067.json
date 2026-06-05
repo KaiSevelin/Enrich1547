@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Binds subjects to an oath. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Tie an oath into a knot so promise and consequence stay fast together. It belongs to oath-work, where spoken vows are fixed hard enough to reward, punish, or bind. It is a serious working that usually demands care, preparation, and a practiced hand.",
             "SpellKind": "Oath",
             "Strength": 2,
             "Complexity": "Medium",
@@ -687,7 +687,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Binds subjects to an oath. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Tie an oath into a knot so promise and consequence stay fast together. It belongs to oath-work, where spoken vows are fixed hard enough to reward, punish, or bind. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "schools": [
                     "Knot"
                 ],

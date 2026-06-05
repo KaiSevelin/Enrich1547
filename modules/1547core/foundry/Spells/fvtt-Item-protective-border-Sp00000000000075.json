@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Draws a protective salt line that stops magic. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Lay a protective border that marks where hostile force should not pass freely. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
             "SpellKind": "Protection",
             "Strength": 1,
             "Complexity": "Easy",
@@ -712,7 +712,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Draws a protective salt line that stops magic. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Lay a protective border that marks where hostile force should not pass freely. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "schools": [
                     "Wards",
                     "Religion"

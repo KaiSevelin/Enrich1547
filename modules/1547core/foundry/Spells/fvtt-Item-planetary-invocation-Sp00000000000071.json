@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Uses one of the planets to influence love, war, health, authority or wealth. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "Invoke a planet's influence and draw its force into the working. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
             "SpellKind": "Divination",
             "Strength": 3,
             "Complexity": "Hard",
@@ -740,7 +740,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Uses one of the planets to influence love, war, health, authority or wealth. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "Invoke a planet's influence and draw its force into the working. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "schools": [
                     "Astrology",
                     "Grimoire"

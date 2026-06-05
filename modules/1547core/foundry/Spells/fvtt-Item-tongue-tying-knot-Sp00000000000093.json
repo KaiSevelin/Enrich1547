@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Makes it difficult for the victim to talk about a subject. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Tie the tongue against confession, accusation, or dangerous speech. It is worked through cords, bindings, and held tension, as is common in knot magic. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
             "SpellKind": "Knot",
             "Strength": 2,
             "Complexity": "Medium",
@@ -721,7 +721,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Makes it difficult for the victim to talk about a subject. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Tie the tongue against confession, accusation, or dangerous speech. It is worked through cords, bindings, and held tension, as is common in knot magic. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "schools": [
                     "Knot"
                 ],

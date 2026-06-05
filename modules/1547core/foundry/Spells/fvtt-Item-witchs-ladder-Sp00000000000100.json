@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Combines multiple spells in one knot. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Braid a witch's ladder to carry bound intention through knots, feathers, and fixed sequence. It belongs to knot-work, where intent is fastened into loops, crossings, and things bound tight by hand. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
             "SpellKind": "Knot",
             "Strength": 2,
             "Complexity": "Medium",
@@ -652,7 +652,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Combines multiple spells in one knot. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Braid a witch's ladder to carry bound intention through knots, feathers, and fixed sequence. It belongs to knot-work, where intent is fastened into loops, crossings, and things bound tight by hand. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "schools": [
                     "Knot"
                 ],

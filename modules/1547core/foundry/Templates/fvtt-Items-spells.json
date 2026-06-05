@@ -577,7 +577,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "The whitening, the second part of alchemistic transformation of a person. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "The whitening, the second alchemical transformation of a person, refining body and essence toward altered power. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                 "SpellKind": "Alchemy",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -688,7 +688,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: permanently change values. Give power.",
-                    "description": "The whitening, the second part of alchemistic transformation of a person. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "The whitening, the second alchemical transformation of a person, refining body and essence toward altered power. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                     "schools": [
                         "Alchemy"
                     ],
@@ -1350,7 +1350,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "A spell to gain a boon from an angel. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Calls down a boon from an angel or an answering heavenly force. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Grimoire",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -1426,7 +1426,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": true,
                     "spellNotes": "Canonical effect: Gets a random temporal active effect or the boon(s) specified on a **recipe**.",
-                    "description": "A spell to gain a boon from an angel. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Calls down a boon from an angel or an answering heavenly force. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -2053,7 +2053,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Let the diviner's soul leave the body and travel unseen. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Lets the diviner's soul slip free of the body and travel unseen. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "SpellKind": "Divination",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -2204,7 +2204,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Creates a spirit token that can be moved",
-                    "description": "Let the diviner's soul leave the body and travel unseen. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Lets the diviner's soul slip free of the body and travel unseen. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                     "schools": [
                         "Divination"
                     ],
@@ -2906,7 +2906,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Find out if odds are with or against you. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Reads whether fortune favors or opposes the matter at hand. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "SpellKind": "Divination",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -3070,7 +3070,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Ask DM, get looks good or looks bad",
-                    "description": "Find out if odds are with or against you. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Reads whether fortune favors or opposes the matter at hand. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                     "schools": [
                         "Astrology",
                         "Divination"
@@ -3786,7 +3786,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Find a good moment in time for an action to give advantages. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Seeks the right moment for an action so that the heavens lean in its favor. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Divination",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -3881,7 +3881,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": true,
                     "spellNotes": "Canonical effect: State a place, action (talk, fight, skill) and a week, get one hour where all allies get a random amount of advantage on the type of action.",
-                    "description": "Find a good moment in time for an action to give advantages. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Seeks the right moment for an action so that the heavens lean in its favor. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Astrology",
                         "Divination"
@@ -4528,7 +4528,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Expel a supernatural being. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Drives a supernatural being away and breaks its immediate hold on the place or victim. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "SpellKind": "Protection",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -4623,7 +4623,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Roll a banish check vs monster power dice with advantage vs monster.",
-                    "description": "Expel a supernatural being. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Drives a supernatural being away and breaks its immediate hold on the place or victim. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                     "schools": [
                         "Grimoire",
                         "Religion"
@@ -5270,7 +5270,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "A sign or prayer inscribed on a house beam to hinder supernatural beings from entering the house. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Inscribe a sign or prayer on a house beam to hinder supernatural beings from entering the house. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "SpellKind": "Protection",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -5434,7 +5434,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Monsters must roll a check vs 3d6 to pass.",
-                    "description": "A sign or prayer inscribed on a house beam to hinder supernatural beings from entering the house. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Inscribe a sign or prayer on a house beam to hinder supernatural beings from entering the house. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                     "schools": [
                         "Wards",
                         "Religion"
@@ -6150,7 +6150,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Binds a supernatural being to a vessel. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Binds a supernatural being into a vessel, place, or prepared confinement. It belongs to grimoire practice, relying on formal instruction, written formulae, and dangerous exactness. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                 "SpellKind": "Grimoire",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -6226,7 +6226,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Roll a check vs monster power dice to bind.",
-                    "description": "Binds a supernatural being to a vessel. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Binds a supernatural being into a vessel, place, or prepared confinement. It belongs to grimoire practice, relying on formal instruction, written formulae, and dangerous exactness. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -6853,7 +6853,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Induce a target in a sleep difficult to tell from death. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Lays a target into a deathlike sleep that is hard to distinguish from true dying. It is worked to burden a victim with wasting, fear, misfortune, or other hostile pressure that lingers after the moment of casting. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Curse",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -6929,7 +6929,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: caster appears dead, 5d6 to believe he is alive.",
-                    "description": "Induce a target in a sleep difficult to tell from death. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Lays a target into a deathlike sleep that is hard to distinguish from true dying. It is worked to burden a victim with wasting, fear, misfortune, or other hostile pressure that lingers after the moment of casting. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Necromancy"
                     ],
@@ -7556,7 +7556,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Creates a protective circle or line from blood. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Draws a protective boundary in blood to hold danger at bay. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Protection",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -7726,7 +7726,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Modifies the defence check by **blood**.",
-                    "description": "Creates a protective circle or line from blood. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Draws a protective boundary in blood to hold danger at bay. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Necromancy",
                         "Wards"
@@ -8448,7 +8448,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Sleep next to a corpse to gain invisibility to spirits until the next dawn. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Sleep beside a corpse and borrow its stillness to pass unseen by spirits until dawn. It works at the edge of death, drawing on corpse, burial, remnant life, or the unsettled dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Necromancy",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -8593,7 +8593,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Invisible to spirits.",
-                    "description": "Sleep next to a corpse to gain invisibility to spirits until the next dawn. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Sleep beside a corpse and borrow its stillness to pass unseen by spirits until dawn. It works at the edge of death, drawing on corpse, burial, remnant life, or the unsettled dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Necromancy"
                     ],
@@ -9289,7 +9289,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Steal stamina from a newly deceased corpse. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Steal a remnant of vigor from a newly dead corpse and carry it in your own body. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                 "SpellKind": "Necromancy",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -9468,7 +9468,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Gain 1d6-2 stamina points for a day.",
-                    "description": "Steal stamina from a newly deceased corpse. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Steal a remnant of vigor from a newly dead corpse and carry it in your own body. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                     "schools": [
                         "Necromancy"
                     ],
@@ -10198,7 +10198,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Releases a bound being. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Releases a being from an imposed binding, fastening, or occult confinement. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "SpellKind": "Grimoire",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -10343,7 +10343,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: The being gets out.",
-                    "description": "Releases a bound being. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Releases a being from an imposed binding, fastening, or occult confinement. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -11039,7 +11039,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Break a pact. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Severs a pact and tears loose the bond that once held it in force. It deals with sworn bonds, compulsions, witnessed promises, and the supernatural force that clings to pledged words. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "SpellKind": "Oath",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -11184,7 +11184,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: If the spell succeeds the pact is broken.",
-                    "description": "Break a pact. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Severs a pact and tears loose the bond that once held it in force. It deals with sworn bonds, compulsions, witnessed promises, and the supernatural force that clings to pledged words. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -11880,7 +11880,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Breaks a magic seal. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Breaks a magical seal and opens what it was made to hold shut. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Protection",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -12031,7 +12031,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Breaks a seal.",
-                    "description": "Breaks a magic seal. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Breaks a magical seal and opens what it was made to hold shut. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -12733,7 +12733,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Removes poison, diseases and curses. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Burns matter down toward its harsher truth through the first destructive labor of alchemy. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Alchemy",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -12878,7 +12878,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Removes all active effects of type poison, disease and cure.",
-                    "description": "Removes poison, diseases and curses. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Burns matter down toward its harsher truth through the first destructive labor of alchemy. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Alchemy"
                     ],
@@ -13574,7 +13574,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Calm storms. It is worked through cords, bindings, and held tension, as is common in knot magic. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Tie down agitation and still the heart through a tempering knot-work. It is worked through cords, bindings, and held tension, as is common in knot magic. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "SpellKind": "Knot",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -13719,7 +13719,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: If the spell succeeds, the wind calms one step down.",
-                    "description": "Calm storms. It is worked through cords, bindings, and held tension, as is common in knot magic. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Tie down agitation and still the heart through a tempering knot-work. It is worked through cords, bindings, and held tension, as is common in knot magic. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                     "schools": [
                         "Knot"
                     ],
@@ -14415,7 +14415,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Creates a protective circle or line from chalk. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Marks a temporary protective line in chalk to define a safer threshold. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Protection",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -14585,7 +14585,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Subspell used in complex rituals. Modifies the defence check by **chalk**.",
-                    "description": "Creates a protective circle or line from chalk. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Marks a temporary protective line in chalk to define a safer threshold. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Wards",
                         "Grimoire"
@@ -15307,7 +15307,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "The third stage in an alchemic transformation. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "The yellowing, the alchemical stage of dawning illumination and spiritual ripening. It works through alchemical operations, using prepared matter and disciplined change rather than prayer or folk habit. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "SpellKind": "Alchemy",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -15486,7 +15486,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: permanently change values. Give power.",
-                    "description": "The third stage in an alchemic transformation. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "The yellowing, the alchemical stage of dawning illumination and spiritual ripening. It works through alchemical operations, using prepared matter and disciplined change rather than prayer or folk habit. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                     "schools": [
                         "Alchemy"
                     ],
@@ -16216,7 +16216,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Makes temporal changes permanent. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Compels separated matter back into denser, fixed, or newly joined form. It is an alchemical working, concerned with refinement, corruption, union, or remaking through controlled process. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "SpellKind": "Alchemy",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -16361,7 +16361,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Any temporal effect on the target will be permanent.",
-                    "description": "Makes temporal changes permanent. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Compels separated matter back into denser, fixed, or newly joined form. It is an alchemical working, concerned with refinement, corruption, union, or remaking through controlled process. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                     "schools": [
                         "Alchemy"
                     ],
@@ -17057,7 +17057,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "A spell that makes a victim's feelings for someone wear off. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Ties chill, weakness, and draining cold into the victim through a hostile knot. It belongs to malignant workings meant to afflict, weaken, or trouble the victim rather than merely frighten them. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Curse",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -17236,7 +17236,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: The target loses interest in any love he/she might have.",
-                    "description": "A spell that makes a victim's feelings for someone wear off. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Ties chill, weakness, and draining cold into the victim through a hostile knot. It belongs to malignant workings meant to afflict, weaken, or trouble the victim rather than merely frighten them. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Knot"
                     ],
@@ -17966,7 +17966,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Commands a **bound** being. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Utters a binding order meant to override hesitation and compel obedience. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Grimoire",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -18042,7 +18042,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Force a being who is bound in a spirit vessel to do your bidding if his power is trumped.",
-                    "description": "Commands a **bound** being. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Utters a binding order meant to override hesitation and compel obedience. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -18669,7 +18669,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Create a new potion by combining potions. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Joins separated principles into a single working union through alchemical marriage. It is an alchemical working, concerned with refinement, corruption, union, or remaking through controlled process. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                 "SpellKind": "Alchemy",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -18814,7 +18814,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": true,
                     "spellNotes": "Canonical effect: Can mix two or more potions. Random effect unless following a **recipe**.",
-                    "description": "Create a new potion by combining potions. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Joins separated principles into a single working union through alchemical marriage. It is an alchemical working, concerned with refinement, corruption, union, or remaking through controlled process. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                     "schools": [
                         "Alchemy"
                     ],
@@ -19510,7 +19510,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Gives the church bell or other temple symbol a yearly warding function to protect from spirits and supernatural. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Consecrates a church or holy space so it stands properly under sacred protection. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Protection",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -19655,7 +19655,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Gives the church bell or other temple symbol a yearly warding function to protect from spirits and supernatural. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Consecrates a church or holy space so it stands properly under sacred protection. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Religion"
                     ],
@@ -20351,7 +20351,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Binds the grave soil from a victim of consumption to bind an oath. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Swear an oath whose breaking feeds ruin back into the oathbreaker. It deals with sworn bonds, compulsions, witnessed promises, and the supernatural force that clings to pledged words. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "SpellKind": "Oath",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -20462,7 +20462,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Creates a mutual **magical oath (**see pacts). Anyone who breaks it is affected by consumption.",
-                    "description": "Binds the grave soil from a victim of consumption to bind an oath. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Swear an oath whose breaking feeds ruin back into the oathbreaker. It deals with sworn bonds, compulsions, witnessed promises, and the supernatural force that clings to pledged words. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                     "schools": [
                         "Necromancy"
                     ],
@@ -21124,7 +21124,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Create a wax candle that goes out when a spirit is near. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Prepare a funerary candle meant to carry grave-linked force in later rites. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Necromancy",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -21294,7 +21294,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: creates a **spirit candle**.",
-                    "description": "Create a wax candle that goes out when a spirit is near. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Prepare a funerary candle meant to carry grave-linked force in later rites. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Necromancy",
                         "Religion"
@@ -22016,7 +22016,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Creates a vessel for **bound**. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Prepare a vessel fit to receive, confine, or host a spirit under rule. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Grimoire",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -22167,7 +22167,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: creates a **spirit vessel**.",
-                    "description": "Creates a vessel for **bound**. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Prepare a vessel fit to receive, confine, or host a spirit under rule. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -22869,7 +22869,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Mix grave soil into bread or drink. If the target consumes it he is subjected to a withering curse. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Lays a wasting curse that steadily diminishes health, force, and bodily soundness. It belongs to malignant workings meant to afflict, weaken, or trouble the victim rather than merely frighten them. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Curse",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -22945,7 +22945,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: the target receives a **Withering** curse.",
-                    "description": "Mix grave soil into bread or drink. If the target consumes it he is subjected to a withering curse. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Lays a wasting curse that steadily diminishes health, force, and bodily soundness. It belongs to malignant workings meant to afflict, weaken, or trouble the victim rather than merely frighten them. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Necromancy"
                     ],
@@ -23572,7 +23572,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Gives a weapon advantage for one strike. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Bless a weapon so it strikes under holy favor rather than mere steel alone. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Protection",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -23689,7 +23689,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Gives a weapon advantage for one strike. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Bless a weapon so it strikes under holy favor rather than mere steel alone. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Religion"
                     ],
@@ -24357,7 +24357,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Gives warning for dangers. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Draws a warning before immediate danger properly shows its face. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Divination",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -24502,7 +24502,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Gets to roll an investigation check passively for a period of time.",
-                    "description": "Gives warning for dangers. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Draws a warning before immediate danger properly shows its face. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Divination"
                     ],
@@ -25198,7 +25198,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "A thread with many knots that one by one unties, when the final one is untied, the subject dies. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Tie a killing or wasting intention into a series of malignant knots. It is a harmful working, laying decline, disturbance, or coercive spiritual force upon the target. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "SpellKind": "Curse",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -25274,7 +25274,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Multiple active effects with different onset times.",
-                    "description": "A thread with many knots that one by one unties, when the final one is untied, the subject dies. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Tie a killing or wasting intention into a series of malignant knots. It is a harmful working, laying decline, disturbance, or coercive spiritual force upon the target. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                     "schools": [
                         "Knot"
                     ],
@@ -25901,7 +25901,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Halts magic, curse or a pact to give a respite. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Push a working, force, or consequence a little farther down the line of time. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                 "SpellKind": "Grimoire",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -26046,7 +26046,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Pauses active effects of type curse, magic and pact.",
-                    "description": "Halts magic, curse or a pact to give a respite. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Push a working, force, or consequence a little farther down the line of time. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -26742,7 +26742,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Binds a disease into a knot that can be placed on another. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Tie sickness into the victim so the body begins to fail from within. It is worked to burden a victim with wasting, fear, misfortune, or other hostile pressure that lingers after the moment of casting. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Curse",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -26853,7 +26853,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Removes a disease from an actor and creates a **disease knot**.",
-                    "description": "Binds a disease into a knot that can be placed on another. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Tie sickness into the victim so the body begins to fail from within. It is worked to burden a victim with wasting, fear, misfortune, or other hostile pressure that lingers after the moment of casting. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Knot"
                     ],
@@ -27515,7 +27515,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Break matter into its components. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Loosens fixed form and breaks a thing down toward separation or loss of coherence. It works through alchemical operations, using prepared matter and disciplined change rather than prayer or folk habit. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "SpellKind": "Alchemy",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -27660,7 +27660,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Can destroy non living matter after a time period.",
-                    "description": "Break matter into its components. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Loosens fixed form and breaks a thing down toward separation or loss of coherence. It works through alchemical operations, using prepared matter and disciplined change rather than prayer or folk habit. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                     "schools": [
                         "Alchemy"
                     ],
@@ -28356,7 +28356,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Concentrates and makes a potion more powerful. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Refines a substance through repeated separation, carrying the subtle upward from the gross. It works through alchemical operations, using prepared matter and disciplined change rather than prayer or folk habit. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Alchemy",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -28501,7 +28501,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Makes a potion enhanced.",
-                    "description": "Concentrates and makes a potion more powerful. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Refines a substance through repeated separation, carrying the subtle upward from the gross. It works through alchemical operations, using prepared matter and disciplined change rather than prayer or folk habit. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Alchemy"
                     ],
@@ -29197,7 +29197,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Gives answers from a supernatural being. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Seek a moment of guiding grace from a higher holy source. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                 "SpellKind": "Divination",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -29361,7 +29361,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: The caster may ask a supernatural being a question and get an answer if reasonable.",
-                    "description": "Gives answers from a supernatural being. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Seek a moment of guiding grace from a higher holy source. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                     "schools": [
                         "Grimoire",
                         "Religion"
@@ -30077,7 +30077,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Inflicts a target with a dread curse. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Lay spiritual fear on the target until courage buckles into dread. It is a harmful working, laying decline, disturbance, or coercive spiritual force upon the target. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Curse",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -30188,7 +30188,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Target gains **dread** curse.",
-                    "description": "Inflicts a target with a dread curse. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Lay spiritual fear on the target until courage buckles into dread. It is a harmful working, laying decline, disturbance, or coercive spiritual force upon the target. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Necromancy"
                     ],
@@ -30850,7 +30850,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Can extract information from a dream. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Draw meaning out of a dream and judge what sign or truth it carried. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "SpellKind": "Divination",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -31001,7 +31001,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: When the player gets a cryptical dream, this spell can spell the message out in clear text.",
-                    "description": "Can extract information from a dream. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Draw meaning out of a dream and judge what sign or truth it carried. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                     "schools": [
                         "Divination"
                     ],
@@ -31703,7 +31703,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Protects a sleeping person from intrusion. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Set a protection over sleep so hostile dreams or night visitations find poorer footing. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Protection",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -31820,7 +31820,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Any attempt to intrude into the targetÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢s dream from night riding or a supernatural/spirit must overcome 4d6.",
-                    "description": "Protects a sleeping person from intrusion. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Set a protection over sleep so hostile dreams or night visitations find poorer footing. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Wards"
                     ],
@@ -32488,7 +32488,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Protects a target from possession. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Use a prepared mirror to catch, redirect, or hollow out what should have been reflected. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Protection",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -32639,7 +32639,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Any attempt to possess the target must overcome 4d6.",
-                    "description": "Protects a target from possession. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Use a prepared mirror to catch, redirect, or hollow out what should have been reflected. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Necromancy"
                     ],
@@ -33341,7 +33341,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Infuses an object with a **bound** being. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Imbue an object with prepared magical force so it carries more than its common use. It belongs to grimoire practice, relying on formal instruction, written formulae, and dangerous exactness. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "SpellKind": "Grimoire",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -33492,7 +33492,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Transfer a being into an object, use the enchantment stat on the object if the type of object is allowed, otherwise the being is just bound to the object.",
-                    "description": "Infuses an object with a **bound** being. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Imbue an object with prepared magical force so it carries more than its common use. It belongs to grimoire practice, relying on formal instruction, written formulae, and dangerous exactness. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -34194,7 +34194,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Hurts someone with pow. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Strike the victim with the evil eye and let harm travel through hostile attention. It belongs to malignant workings meant to afflict, weaken, or trouble the victim rather than merely frighten them. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Curse",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -34270,7 +34270,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Hurts someone with pow. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Strike the victim with the evil eye and let harm travel through hostile attention. It belongs to malignant workings meant to afflict, weaken, or trouble the victim rather than merely frighten them. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Necromancy"
                     ],
@@ -34897,7 +34897,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Drives a possessive spirit or being out from a victim. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Drive out an occupying or attached supernatural force through forceful holy rejection. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Protection",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -34992,7 +34992,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: If the caster overcomes the possessive beings pow, the being is expelled.",
-                    "description": "Drives a possessive spirit or being out from a victim. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Drive out an occupying or attached supernatural force through forceful holy rejection. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Grimoire",
                         "Religion"
@@ -35639,7 +35639,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Uses divination to trick a victim to disbelief. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Twist, burden, or redirect the target's faith through supernatural pressure. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Divination",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -35715,7 +35715,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: If the caster overcomes the target's faith, the target gains the **lost faith** active effect.",
-                    "description": "Uses divination to trick a victim to disbelief. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Twist, burden, or redirect the target's faith through supernatural pressure. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Divination"
                     ],
@@ -36342,7 +36342,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "A knot that when hidden on a victim makes him view the caster more favorably. If the target overcomes the target's intelligence, the target gains **friendly** active effect vs caster and allies. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Tie a knot that bends another's favor, sympathy, or goodwill toward you. It is worked through cords, bindings, and held tension, as is common in knot magic. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Knot",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -36453,7 +36453,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "A knot that when hidden on a victim makes him view the caster more favorably. If the target overcomes the target's intelligence, the target gains **friendly** active effect vs caster and allies. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Tie a knot that bends another's favor, sympathy, or goodwill toward you. It is worked through cords, bindings, and held tension, as is common in knot magic. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Knot"
                     ],
@@ -37115,7 +37115,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Induces life into dead matter. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Carries matter through the alchemical stage of inward living change and dangerous ripening. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Alchemy",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -37260,7 +37260,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Can animate dead actors for a limited period of time. Animated actors are mindless unless **possessed**.",
-                    "description": "Induces life into dead matter. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Carries matter through the alchemical stage of inward living change and dangerous ripening. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Alchemy"
                     ],
@@ -37956,7 +37956,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Reveals the caster of a curse. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Use divinatory means to identify the guilty party behind a hidden wrong. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Divination",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -38101,7 +38101,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: If the caster overcomes the casterÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢s power he will know itÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢s name.",
-                    "description": "Reveals the caster of a curse. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Use divinatory means to identify the guilty party behind a hidden wrong. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Divination"
                     ],
@@ -38797,7 +38797,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Locates objects and people. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Seek the place or trail of something hidden, missing, or carried away. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Divination",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -38942,7 +38942,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: If the caster overcomes a set check by the DM on the difficulty of the finding its location is known.",
-                    "description": "Locates objects and people. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Seek the place or trail of something hidden, missing, or carried away. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Divination"
                     ],
@@ -39638,7 +39638,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Makes the caster look better. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Lay a glamour over appearance, perception, or first understanding. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "SpellKind": "Divination",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -39783,7 +39783,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: The caster gains the **beautiful** active effect.",
-                    "description": "Makes the caster look better. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Lay a glamour over appearance, perception, or first understanding. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                     "schools": [
                         "Divination"
                     ],
@@ -40479,7 +40479,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Creates a Golem.   \nAn unmoving golem is created. **Possess** is needed to give it movement. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Fashion or awaken an artificial servant body fit for imposed purpose. It is an alchemical working, concerned with refinement, corruption, union, or remaking through controlled process. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "SpellKind": "Alchemy",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -40643,7 +40643,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Creates a Golem.   \nAn unmoving golem is created. **Possess** is needed to give it movement. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Fashion or awaken an artificial servant body fit for imposed purpose. It is an alchemical working, concerned with refinement, corruption, union, or remaking through controlled process. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                     "schools": [
                         "Alchemy",
                         "Grimoire"
@@ -41359,7 +41359,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Sleep with grave dirt to get a dream message from the deceased. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Sleep near the grave so the dead or the earth of burial may answer in dreams. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "SpellKind": "Divination",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -41510,7 +41510,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: The player gets a message in the dreams from the person whose dirt is used in the spell. The DM decides the content of the message.",
-                    "description": "Sleep with grave dirt to get a dream message from the deceased. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Sleep near the grave so the dead or the earth of burial may answer in dreams. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                     "schools": [
                         "Necromancy"
                     ],
@@ -42212,7 +42212,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "A more potent version of the salt border. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Lay a protective border of grave soil and salt to mark a place the dead or uncanny should hesitate to cross. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                 "SpellKind": "Protection",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -42376,7 +42376,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "Canonical effect: Modifies the defence check by **salt** with advantage.",
-                    "description": "A more potent version of the salt border. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Lay a protective border of grave soil and salt to mark a place the dead or uncanny should hesitate to cross. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                     "schools": [
                         "Necromancy",
                         "Wards"
@@ -43092,7 +43092,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Two threads together to make two people fall in love. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Twine the target's heart toward attachment, longing, or yielding affection. It belongs to knot-work, where intent is fastened into loops, crossings, and things bound tight by hand. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Knot",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -43203,7 +43203,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Two threads together to make two people fall in love. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Twine the target's heart toward attachment, longing, or yielding affection. It belongs to knot-work, where intent is fastened into loops, crossings, and things bound tight by hand. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Knot"
                     ],
@@ -43865,7 +43865,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Creates a Homonculus. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Prepare and bring forth an artificial lesser being through alchemical and occult craft. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "SpellKind": "Alchemy",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -44029,7 +44029,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Creates a Homonculus. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Prepare and bring forth an artificial lesser being through alchemical and occult craft. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                     "schools": [
                         "Alchemy",
                         "Grimoire"
@@ -44745,7 +44745,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Rebalances the four humors. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Correct a body's dangerous imbalance by restoring its humors toward better order. It is an alchemical working, concerned with refinement, corruption, union, or remaking through controlled process. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "SpellKind": "Alchemy",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -44821,7 +44821,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Rebalances the four humors. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Correct a body's dangerous imbalance by restoring its humors toward better order. It is an alchemical working, concerned with refinement, corruption, union, or remaking through controlled process. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                     "schools": [
                         "Alchemy"
                     ],
@@ -45448,7 +45448,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "A knot that inflicts someone with an Ill luck Curse while the knot is in his possession. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Tie misfortune into the victim so accidents and failures gather around them. It is a harmful working, laying decline, disturbance, or coercive spiritual force upon the target. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Curse",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -45559,7 +45559,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "A knot that inflicts someone with an Ill luck Curse while the knot is in his possession. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Tie misfortune into the victim so accidents and failures gather around them. It is a harmful working, laying decline, disturbance, or coercive spiritual force upon the target. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Knot"
                     ],
@@ -46221,7 +46221,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "A loop that turns curses back to the sender. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Loop a hostile turn back on itself so harm doubles or circles the wrong way. It belongs to knot-work, where intent is fastened into loops, crossings, and things bound tight by hand. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Knot",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -46332,7 +46332,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "A loop that turns curses back to the sender. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Loop a hostile turn back on itself so harm doubles or circles the wrong way. It belongs to knot-work, where intent is fastened into loops, crossings, and things bound tight by hand. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Knot"
                     ],
@@ -46994,7 +46994,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Creates a pact. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Call on the living force of an existing pact so its promise answers now. It is an oath-bound working, concerned with promise, witness, obligation, and the cost of breaking what has been sworn. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Oath",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -47139,7 +47139,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Creates a pact. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Call on the living force of an existing pact so its promise answers now. It is an oath-bound working, concerned with promise, witness, obligation, and the cost of breaking what has been sworn. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -47835,7 +47835,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Creates a seal to stop supernatural beings sensitive to cold iron. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Set an iron-bound seal against intrusion, escape, or spirit passage. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Protection",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -47986,7 +47986,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Creates a seal to stop supernatural beings sensitive to cold iron. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Set an iron-bound seal against intrusion, escape, or spirit passage. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Wards"
                     ],
@@ -48688,7 +48688,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "A knot that limits movement of the victim. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Catch the target's limbs in a magical snare that hinders motion and control. It is worked through cords, bindings, and held tension, as is common in knot magic. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Knot",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -48764,7 +48764,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "A knot that limits movement of the victim. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Catch the target's limbs in a magical snare that hinders motion and control. It is worked through cords, bindings, and held tension, as is common in knot magic. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Knot"
                     ],
@@ -49391,7 +49391,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Moves a **bound** spirit to a person in order to control its feelings. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Bind another person in love, fixation, or compelled attachment. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                 "SpellKind": "Grimoire",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -49502,7 +49502,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Moves a **bound** spirit to a person in order to control its feelings. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Bind another person in love, fixation, or compelled attachment. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -50164,7 +50164,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "A spell to reveal forgotten memories. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Snarl memory so recollection becomes confused, delayed, or unreliable. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "SpellKind": "Divination",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -50309,7 +50309,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "A spell to reveal forgotten memories. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Snarl memory so recollection becomes confused, delayed, or unreliable. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                     "schools": [
                         "Knot"
                     ],
@@ -51005,7 +51005,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "An alchemic procedure to harden the skin. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Shift the nature or place of metals through alchemical substitution. It is an alchemical working, concerned with refinement, corruption, union, or remaking through controlled process. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "SpellKind": "Alchemy",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -51150,7 +51150,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "An alchemic procedure to harden the skin. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Shift the nature or place of metals through alchemical substitution. It is an alchemical working, concerned with refinement, corruption, union, or remaking through controlled process. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                     "schools": [
                         "Alchemy"
                     ],
@@ -51846,7 +51846,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Forces a being to reveal its true name. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Force a hidden being or presence into a name that can be spoken and used. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Grimoire",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -51991,7 +51991,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Forces a being to reveal its true name. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Force a hidden being or presence into a name that can be spoken and used. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -52687,7 +52687,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "The first step of an alchemic transformation. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "The blackening, the first alchemical descent into corruption, undoing, and necessary ruin. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Alchemy",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -52763,7 +52763,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "The first step of an alchemic transformation. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "The blackening, the first alchemical descent into corruption, undoing, and necessary ruin. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Alchemy"
                     ],
@@ -53390,7 +53390,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Can enter another personÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢s dreams to hurt them. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Ride the sleeper through the night and oppress them with unseen presence. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Necromancy",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -53472,7 +53472,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Can enter another personÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢s dreams to hurt them. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Ride the sleeper through the night and oppress them with unseen presence. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Necromancy"
                     ],
@@ -54105,7 +54105,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Binds subjects to an oath. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Tie an oath into a knot so promise and consequence stay fast together. It belongs to oath-work, where spoken vows are fixed hard enough to reward, punish, or bind. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Oath",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -54216,7 +54216,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Binds subjects to an oath. It deals with bonds, compulsions, vows, or other forms of magical obligation. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Tie an oath into a knot so promise and consequence stay fast together. It belongs to oath-work, where spoken vows are fixed hard enough to reward, punish, or bind. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Knot"
                     ],
@@ -54878,7 +54878,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Binds subjects to an oath. It deals with bonds, compulsions, vows, or other forms of magical obligation. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Fix an oath under the authority of three witnessing presences or persons. It is an oath-bound working, concerned with promise, witness, obligation, and the cost of breaking what has been sworn. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                 "SpellKind": "Oath",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -55023,7 +55023,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Binds subjects to an oath. It deals with bonds, compulsions, vows, or other forms of magical obligation. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Fix an oath under the authority of three witnessing presences or persons. It is an oath-bound working, concerned with promise, witness, obligation, and the cost of breaking what has been sworn. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                     "schools": [
                         "Wards"
                     ],
@@ -55719,7 +55719,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Reads information from an object. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Draw out what an object remembers of what has been done with it or near it. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                 "SpellKind": "Divination",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -55870,7 +55870,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Reads information from an object. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Draw out what an object remembers of what has been done with it or near it. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                     "schools": [
                         "Divination"
                     ],
@@ -56572,7 +56572,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Binds a **bound** entity to a person if it overcomes the power of the target. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Enter and seize a host body through direct supernatural occupation. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Grimoire",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -56648,7 +56648,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Binds a **bound** entity to a person if it overcomes the power of the target. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Enter and seize a host body through direct supernatural occupation. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -57275,7 +57275,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Uses one of the planets to influence love, war, health, authority or wealth. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Invoke a planet's influence and draw its force into the working. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "SpellKind": "Divination",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -57439,7 +57439,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Uses one of the planets to influence love, war, health, authority or wealth. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Invoke a planet's influence and draw its force into the working. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                     "schools": [
                         "Astrology",
                         "Grimoire"
@@ -58155,7 +58155,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Predicts the future. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Speak or receive a prophecy that reaches beyond ordinary knowing. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Divination",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -58338,7 +58338,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Predicts the future. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Speak or receive a prophecy that reaches beyond ordinary knowing. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Astrology",
                         "Divination",
@@ -59074,7 +59074,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Gives a positive or negative answer of what will be the effect of an action. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Read a prospect for what it is likely to yield, conceal, or become. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "SpellKind": "Divination",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -59238,7 +59238,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Gives a positive or negative answer of what will be the effect of an action. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Read a prospect for what it is likely to yield, conceal, or become. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                     "schools": [
                         "Astrology",
                         "Divination"
@@ -59954,7 +59954,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "A rhyme that protects against supernatural. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Speak a protective rhyme to strengthen the bearer against common harm or uncanny trouble. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "SpellKind": "Protection",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -60084,7 +60084,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "A rhyme that protects against supernatural. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Speak a protective rhyme to strengthen the bearer against common harm or uncanny trouble. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                     "schools": [
                         "Wards",
                         "Religion"
@@ -60766,7 +60766,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Draws a protective salt line that stops magic. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Lay a protective border that marks where hostile force should not pass freely. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "SpellKind": "Protection",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -60902,7 +60902,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Draws a protective salt line that stops magic. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Lay a protective border that marks where hostile force should not pass freely. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                     "schools": [
                         "Wards",
                         "Religion"
@@ -61590,7 +61590,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Draws a protective chalk circle that stops supernatural and spirits from entering. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Set a ritual circle as a defensive boundary against intrusion and corruption. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Protection",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -61726,7 +61726,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Draws a protective chalk circle that stops supernatural and spirits from entering. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Set a ritual circle as a defensive boundary against intrusion and corruption. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Wards",
                         "Religion"
@@ -62414,7 +62414,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Makes a person impervious to evil eye for a time period. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Pray against the evil eye and lift or resist its wasting influence. It belongs to malignant workings meant to afflict, weaken, or trouble the victim rather than merely frighten them. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "SpellKind": "Curse",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -62525,7 +62525,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Makes a person impervious to evil eye for a time period. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Pray against the evil eye and lift or resist its wasting influence. It belongs to malignant workings meant to afflict, weaken, or trouble the victim rather than merely frighten them. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                     "schools": [
                         "Religion"
                     ],
@@ -63187,7 +63187,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Read a person or situation to understand him/it. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Read signs, patterns, or tokens for hidden meaning beyond common judgment. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "SpellKind": "Divination",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -63351,7 +63351,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Read a person or situation to understand him/it. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Read signs, patterns, or tokens for hidden meaning beyond common judgment. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                     "schools": [
                         "Astrology",
                         "Divination"
@@ -64067,7 +64067,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Powerful warding spell to protect an area. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Perform a rite of refusal to deny entry, claim, or forced supernatural attachment. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Protection",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -64162,7 +64162,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Powerful warding spell to protect an area. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Perform a rite of refusal to deny entry, claim, or forced supernatural attachment. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Wards",
                         "Religion"
@@ -64809,7 +64809,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Changes the knowledge about an event or person. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Alter how the past is remembered, read, or made to stand in the present. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Grimoire",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -64954,7 +64954,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Changes the knowledge about an event or person. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Alter how the past is remembered, read, or made to stand in the present. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -65650,7 +65650,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "The fourth stage in an alchemic transformation. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "The reddening, the culminating alchemical transformation of completion, force, and perfected change. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "SpellKind": "Alchemy",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -65897,7 +65897,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "The fourth stage in an alchemic transformation. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "The reddening, the culminating alchemical transformation of completion, force, and perfected change. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                     "schools": [
                         "Alchemy"
                     ],
@@ -66695,7 +66695,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Removes curses on a person. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Sanctify a person, object, or place so it stands under holy claim. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Protection",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -66825,7 +66825,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Removes curses on a person. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Sanctify a person, object, or place so it stands under holy claim. It is a warding or defensive working, meant to deny entry, blunt corruption, or preserve what lies within the protection. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Religion",
                         "Wards"
@@ -67507,7 +67507,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Get visions of distant places. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Seek distant sight through a prepared medium and the narrowing of attention. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "SpellKind": "Divination",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -67671,7 +67671,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Get visions of distant places. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Seek distant sight through a prepared medium and the narrowing of attention. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                     "schools": [
                         "Divination",
                         "Grimoire"
@@ -68387,7 +68387,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Creates a seal to keep a being from escaping. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Set a seal that closes, forbids, preserves, or holds something under rule. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "SpellKind": "Protection",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -68557,7 +68557,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Creates a seal to keep a being from escaping. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Set a seal that closes, forbids, preserves, or holds something under rule. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                     "schools": [
                         "Grimoire",
                         "Religion"
@@ -69279,7 +69279,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Extracts a substance from something. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Separate what was mixed together so hidden distinctions stand apart again. It works through alchemical operations, using prepared matter and disciplined change rather than prayer or folk habit. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "SpellKind": "Alchemy",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -69424,7 +69424,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Extracts a substance from something. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Separate what was mixed together so hidden distinctions stand apart again. It works through alchemical operations, using prepared matter and disciplined change rather than prayer or folk habit. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                     "schools": [
                         "Alchemy"
                     ],
@@ -70120,7 +70120,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Bind a spirit to haunt a living person. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Fasten a clinging shadow or unseen follower onto the target. It is a necromantic working, leaning on grave-power, lingering presence, and the perilous nearness of the dead. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "SpellKind": "Necromancy",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -70231,7 +70231,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Bind a spirit to haunt a living person. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Fasten a clinging shadow or unseen follower onto the target. It is a necromantic working, leaning on grave-power, lingering presence, and the perilous nearness of the dead. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                     "schools": [
                         "Necromancy"
                     ],
@@ -70893,7 +70893,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Let the caster take the shape of something or someone else. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Change bodily form and wear another shape through dangerous transformation. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                 "SpellKind": "Divination",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -71023,7 +71023,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Let the caster take the shape of something or someone else. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Change bodily form and wear another shape through dangerous transformation. It is used to draw out hidden truth, read signs, or reach knowledge that will not yield itself to ordinary sense alone. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                     "schools": [
                         "Grimoire",
                         "Divination"
@@ -71705,7 +71705,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Let the caster change his appearance to a copy of someone else. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Make a crafted likeness that imitates a living form or person. It belongs to grimoire practice, relying on formal instruction, written formulae, and dangerous exactness. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                 "SpellKind": "Grimoire",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -71850,7 +71850,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Let the caster change his appearance to a copy of someone else. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Make a crafted likeness that imitates a living form or person. It belongs to grimoire practice, relying on formal instruction, written formulae, and dangerous exactness. It is a forceful working, one that can leave lasting changes in body, bond, place, or spirit when it takes hold.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -72546,7 +72546,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Gets information from a dead person. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Draw answers from a dead person or their lingering remains. It works at the edge of death, drawing on corpse, burial, remnant life, or the unsettled dead. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Necromancy",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -72691,7 +72691,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Gets information from a dead person. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Draw answers from a dead person or their lingering remains. It works at the edge of death, drawing on corpse, burial, remnant life, or the unsettled dead. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Necromancy"
                     ],
@@ -73387,7 +73387,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Detects the presence of spirits. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Open the senses to spirits, traces, and presences not plainly visible. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Divination",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -73517,7 +73517,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Detects the presence of spirits. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Open the senses to spirits, traces, and presences not plainly visible. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Necromancy",
                         "Religion"
@@ -74199,7 +74199,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Make sure that a corpse can not provide information to other magicians. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Still the tongue so the dead or living find speech difficult or impossible. It works at the edge of death, drawing on corpse, burial, remnant life, or the unsettled dead. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "SpellKind": "Necromancy",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -74310,7 +74310,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Make sure that a corpse can not provide information to other magicians. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Still the tongue so the dead or living find speech difficult or impossible. It works at the edge of death, drawing on corpse, burial, remnant life, or the unsettled dead. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                     "schools": [
                         "Necromancy"
                     ],
@@ -74972,7 +74972,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Uses a being's **true name** to summon them. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Call a being by true name or prepared rite into your presence. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "SpellKind": "Grimoire",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -75117,7 +75117,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Uses a being's **true name** to summon them. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Call a being by true name or prepared rite into your presence. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -75813,7 +75813,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Makes it difficult for the victim to talk about a subject. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Tie the tongue against confession, accusation, or dangerous speech. It is worked through cords, bindings, and held tension, as is common in knot magic. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                 "SpellKind": "Knot",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -75958,7 +75958,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Makes it difficult for the victim to talk about a subject. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Tie the tongue against confession, accusation, or dangerous speech. It is worked through cords, bindings, and held tension, as is common in knot magic. It sits in the middle range of dangerous practice, demanding steadiness, preparation, and someone who knows what they are doing.",
                     "schools": [
                         "Knot"
                     ],
@@ -76654,7 +76654,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Make changes to oneself to gain stats. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Change your own body to gain other strengths, forms, or capacities. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "SpellKind": "Grimoire",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -76833,7 +76833,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Make changes to oneself to gain stats. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Change your own body to gain other strengths, forms, or capacities. It is a learned occult working, shaped more by text, sign, and named authority than by inherited folk custom. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                     "schools": [
                         "Grimoire"
                     ],
@@ -77563,7 +77563,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Detect protective wards. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Sense protective wards, charged thresholds, and defended boundaries nearby. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                 "SpellKind": "Divination",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -77708,7 +77708,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Detect protective wards. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Sense protective wards, charged thresholds, and defended boundaries nearby. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                     "schools": [
                         "Divination"
                     ],
@@ -78404,7 +78404,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Give someone difficulty to lie. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Lay pressure on the tongue and conscience so falsehood becomes harder to carry. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "SpellKind": "Divination",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -78515,7 +78515,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Give someone difficulty to lie. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Lay pressure on the tongue and conscience so falsehood becomes harder to carry. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It is a serious working that usually demands care, preparation, and a practiced hand.",
                     "schools": [
                         "Divination"
                     ],
@@ -79177,7 +79177,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Inflicts a target with a spiritual doubt curse while in his possession. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Tie doubt and wavering into the victim until resolve loosens. It is a knot-working, carrying its force through tied form, repeated turns, and what is made to hold. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Knot",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -79288,7 +79288,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Inflicts a target with a spiritual doubt curse while in his possession. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Tie doubt and wavering into the victim until resolve loosens. It is a knot-working, carrying its force through tied form, repeated turns, and what is made to hold. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Knot"
                     ],
@@ -79950,7 +79950,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Gives knowledge if a document or letter has been opened. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Set a wax seal that both closes and spiritually marks what lies beneath it. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "SpellKind": "Protection",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -80101,7 +80101,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Gives knowledge if a document or letter has been opened. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Set a wax seal that both closes and spiritually marks what lies beneath it. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                     "schools": [
                         "Wards"
                     ],
@@ -80803,7 +80803,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Increase the wind to give better sailing. It is worked through cords, bindings, and held tension, as is common in knot magic. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Tie the wind into knots so it may later be loosed for sailing or weather-work. It is a knot-working, carrying its force through tied form, repeated turns, and what is made to hold. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "SpellKind": "Knot",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -80948,7 +80948,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Increase the wind to give better sailing. It is worked through cords, bindings, and held tension, as is common in knot magic. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Tie the wind into knots so it may later be loosed for sailing or weather-work. It is a knot-working, carrying its force through tied form, repeated turns, and what is made to hold. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                     "schools": [
                         "Knot"
                     ],
@@ -81644,7 +81644,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Combines multiple spells in one knot. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "Description": "Braid a witch's ladder to carry bound intention through knots, feathers, and fixed sequence. It belongs to knot-work, where intent is fastened into loops, crossings, and things bound tight by hand. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "SpellKind": "Knot",
                 "Strength": 2,
                 "Complexity": "Medium",
@@ -81720,7 +81720,7 @@
                     "failureProfile": "Major",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Combines multiple spells in one knot. It is worked through cords, bindings, and held tension, as is common in knot magic. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                    "description": "Braid a witch's ladder to carry bound intention through knots, feathers, and fixed sequence. It belongs to knot-work, where intent is fastened into loops, crossings, and things bound tight by hand. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                     "schools": [
                         "Knot"
                     ],
@@ -82347,7 +82347,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "A knot that when in a subject's possession slowly makes his health degrade. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "Description": "Tie a wasting force into the victim so health declines by slow degrees. It is worked to burden a victim with wasting, fear, misfortune, or other hostile pressure that lingers after the moment of casting. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "SpellKind": "Curse",
                 "Strength": 3,
                 "Complexity": "Hard",
@@ -82458,7 +82458,7 @@
                     "failureProfile": "Catastrophic",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "A knot that when in a subject's possession slowly makes his health degrade. It is chiefly used to burden a victim with decline, weakness, disturbance, or misfortune through deliberate malice. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                    "description": "Tie a wasting force into the victim so health declines by slow degrees. It is worked to burden a victim with wasting, fear, misfortune, or other hostile pressure that lingers after the moment of casting. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                     "schools": [
                         "Knot"
                     ],
@@ -83120,7 +83120,7 @@
             "modifiers": [],
             "template": "2kiWw3Cv5Zk1lZxn",
             "props": {
-                "Description": "Let the caster traverse the zone. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "Description": "Pass through the zone by occult transit rather than ordinary movement. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "SpellKind": "Grimoire",
                 "Strength": 1,
                 "Complexity": "Easy",
@@ -83265,7 +83265,7 @@
                     "failureProfile": "Minor",
                     "randomOutcome": false,
                     "spellNotes": "",
-                    "description": "Let the caster traverse the zone. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                    "description": "Pass through the zone by occult transit rather than ordinary movement. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                     "schools": [
                         "Grimoire"
                     ],

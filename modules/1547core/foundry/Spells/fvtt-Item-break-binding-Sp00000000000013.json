@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Releases a bound being. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Releases a being from an imposed binding, fastening, or occult confinement. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
             "SpellKind": "Grimoire",
             "Strength": 1,
             "Complexity": "Easy",
@@ -721,7 +721,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: The being gets out.",
-                "description": "Releases a bound being. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Releases a being from an imposed binding, fastening, or occult confinement. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "schools": [
                     "Grimoire"
                 ],

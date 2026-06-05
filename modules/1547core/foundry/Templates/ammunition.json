@@ -12,7 +12,7 @@
     "addDice": [],
     "tags": [],
     "resultModifiers": [],
-    "description": "Standard arrow for bows.",
+    "description": "A standard shafted missile for bows, built to carry a head cleanly and fly with stable force. In play, it is the base ammunition for bow shots, with its final character shaped by the bow and any attached head or treatment.",
     "img": "media/home/games/1547/Items/Standard arrow.webp",
     "addDamageQualifiers": [],
     "overrideDamageType": null
@@ -30,7 +30,7 @@
     "addDice": [],
     "tags": [],
     "resultModifiers": [],
-    "description": "Standard crossbow bolt.",
+    "description": "A shorter, heavier missile for crossbows, built for direct flight and strong impact at the shot. In play, it is the base ammunition for crossbow fire, with its final effect shaped by the weapon, head, and any added treatment.",
     "img": "media/home/games/1547/Items/Standard arrow.webp",
     "addDamageQualifiers": [],
     "overrideDamageType": null
@@ -48,7 +48,7 @@
     "addDice": [],
     "tags": [],
     "resultModifiers": [],
-    "description": "Standard lead ball for firearms.",
+    "description": "A compact lead shot for handgonne, arquebus, and pistol fire, built for dense impact rather than cutting wound shape. In play, it is the base ammunition for firearms, with its final effect shaped by the weapon and any added treatment.",
     "img": "media/home/games/1547/Items/Bullet.webp",
     "addDamageQualifiers": [],
     "overrideDamageType": null

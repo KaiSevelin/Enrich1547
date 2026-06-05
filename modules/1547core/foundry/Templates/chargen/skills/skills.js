@@ -1,389 +1,642 @@
+function buildSkill({
+    name,
+    uuid,
+    folder = "Skills",
+    group,
+    stat,
+    canRoll = true,
+    minLevel,
+    maxLevel,
+    scope,
+    actions,
+    play
+}) {
+    const description = [
+        scope,
+        actions,
+        play,
+        `Base stat: ${stat}. Levels: ${minLevel}-${maxLevel}.${canRoll ? "" : " This skill is not rolled directly."}`
+    ].join(" ");
+
+    return {
+        name,
+        uuid,
+        folder,
+        group,
+        stat,
+        canRoll,
+        minLevel,
+        maxLevel,
+        description
+    };
+}
+
 const SKILL_INTERFACES = [
-    {
-        "name": "Art Creative",
-        "uuid": "Item.3ssOYdjj50y5HMlZ",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 1
-    },
-    {
-        "name": "Art Expertise Dance",
-        "uuid": "Item.ZZ12L5yJNKZswgkF",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Art Expertise Music",
-        "uuid": "Item.Ttqs89del0HbbZSR",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Art Expertise Painting",
-        "uuid": "Item.gvI6WmGXC2iTYYQz",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Art Expertise Writing",
-        "uuid": "Item.lciQamwqcsqekGRF",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Charisma Perform",
-        "uuid": "Item.yK8twhFqVhpXoqgU",
-        "folder": "Skills",
-        "minLevel": 0,
-        "maxLevel": 2
-    },
-    {
-        "name": "Combat Firearm",
-        "uuid": "Item.3rmcikTMMXLQyzfb",
-        "folder": "Skills",
-        "minLevel": 0,
-        "maxLevel": 3
-    },
-    {
-        "name": "Combat Melee",
-        "uuid": "Item.6W0w1AV1grz8V6Z7",
-        "folder": "Skills",
-        "minLevel": 0,
-        "maxLevel": 3
-    },
-    {
-        "name": "Combat Ranged",
-        "uuid": "Item.Y0SfW0f3l5E5JHd5",
-        "folder": "Skills",
-        "minLevel": 0,
-        "maxLevel": 3
-    },
-    {
-        "name": "Combat Thrown",
-        "uuid": "Item.fLIefMop44DdTwzl",
-        "folder": "Skills",
-        "minLevel": 0,
-        "maxLevel": 3
-    },
-    {
-        "name": "Combat Unarmed",
-        "uuid": "Item.UU75zjUE8ySUKzoC",
-        "folder": "Skills",
-        "minLevel": 0,
-        "maxLevel": 3
-    },
-    {
-        "name": "Faith Ascetic",
-        "uuid": "Item.qTiSpIavE5Yryz6A",
-        "folder": "Skills",
-        "minLevel": 0,
-        "maxLevel": 2
-    },
-    {
-        "name": "Intelligence Investigation",
-        "uuid": "Item.CUiBkYMSGbFRUVoK",
-        "folder": "Skills",
-        "minLevel": 0,
-        "maxLevel": 2
-    },
-    {
-        "name": "Learning Expertise Alchemy",
-        "uuid": "Item.pQ1qZGqEvNCun2pc",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Learning Expertise Apothecary",
-        "uuid": "Item.I28pxbqeoKMdNgxr",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Learning Expertise Art",
-        "uuid": "Item.jFRLqzcUavG6hsUM",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Learning Expertise Astrology",
-        "uuid": "Item.DGOKXfiahX4RZhJL",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Learning Expertise Law",
-        "uuid": "Item.00wKdoVpnYkW0LUk",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Learning Expertise Lore",
-        "uuid": "Item.3rONx9nVxk10fyZ4",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Learning Expertise Medicine",
-        "uuid": "Item.rA14pwn4o08IusWY",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Learning Expertise Nobility",
-        "uuid": "Item.yRsiAyzSCh6v6wMm",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Learning Expertise Occult",
-        "uuid": "Item.WjngVZIgku8cBETw",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Learning Expertise Religion",
-        "uuid": "Item.7VoeHrMi683vwBeS",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Learning Scholar",
-        "uuid": "Item.WVdJOfiwZCSPrOHE",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 1
-    },
-    {
-        "name": "Manufacturing Craft",
-        "uuid": "Item.l3euj72k8YDI7WFv",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 1
-    },
-    {
-        "name": "Manufacturing Expertise Food",
-        "uuid": "Item.WfmlOA5KomA8Wfnw",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Manufacturing Expertise Glass",
-        "uuid": "Item.1IK3By3aRaQTkvdU",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Manufacturing Expertise Jewelry",
-        "uuid": "Item.uvM0DC5zg0gEavyb",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Manufacturing Expertise Mechanics",
-        "uuid": "Item.cR0l72jFwycnWamb",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Manufacturing Expertise Metal",
-        "uuid": "Item.U8Re3snZayr53CyN",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Manufacturing Expertise Paper",
-        "uuid": "Item.BzXKFA8YPCex5Gsz",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Manufacturing Expertise Soft",
-        "uuid": "Item.cXG8MEvoZlFeiU3t",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Manufacturing Expertise Stone",
-        "uuid": "Item.ie2GIgz9WXiRPyFt",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Manufacturing Expertise Wood",
-        "uuid": "Item.AtpamHqzRTgSqaSR",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 2
-    },
-    {
-        "name": "Outdoor Navigation",
-        "uuid": "Item.Bta0YOZtc2Z7jjT3",
-        "folder": "Skills",
-        "minLevel": 0,
-        "maxLevel": 2
-    },
-    {
-        "name": "Outdoor Riding",
-        "uuid": "Item.X7zC0glgUPw5qOiU",
-        "folder": "Skills",
-        "minLevel": 0,
-        "maxLevel": 2
-    },
-    {
-        "name": "Outdoor Survival",
-        "uuid": "Item.HnJ6EllrZl41RPLQ",
-        "folder": "Skills",
-        "minLevel": 0,
-        "maxLevel": 2
-    },
-    {
-        "name": "Outdoor Swimming",
-        "uuid": "Item.qj5otlLucXNqnJkj",
-        "folder": "Skills",
-        "minLevel": 0,
-        "maxLevel": 2
-    },
-    {
-        "name": "Pagan Expertise Amulet",
-        "uuid": "Item.hQfvmQ10qHxVY3ni",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Pagan Expertise Divination",
-        "uuid": "Item.2vTglrIXgGVEisl6",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Pagan Expertise Herbalism",
-        "uuid": "Item.lPAQTWr30t44JFeJ",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Pagan Expertise Knot",
-        "uuid": "Item.QeV7gHxmUVJWyBlC",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Pagan Expertise Necromancy",
-        "uuid": "Item.ivrUWUcZCZHVlGCe",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Pagan Expertise Potion",
-        "uuid": "Item.2QFZcbgsyvU6kYcO",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Pagan Expertise Warding",
-        "uuid": "Item.YYw6eQCJIWhyroR9",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Pagan Low Magic",
-        "uuid": "Item.jSmkCryle69Qvw6j",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 1
-    },
-    {
-        "name": "Services Barber",
-        "uuid": "Item.UhhJ9dc4uPNpGp7r",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 1
-    },
-    {
-        "name": "Services Expertise Surgeon",
-        "uuid": "Item.65Rf3FrHzu6XwOfd",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Strength Athletics",
-        "uuid": "Item.zXuCnw9eUnBOb1Vp",
-        "folder": "Skills",
-        "minLevel": 0,
-        "maxLevel": 2
-    },
-    {
-        "name": "Subterfuge Criminal",
-        "uuid": "Item.PmNFvXH9Emt3hIMg",
-        "folder": "Skills",
-        "minLevel": 0,
-        "maxLevel": 1
-    },
-    {
-        "name": "Subterfuge Expertise Locks",
-        "uuid": "Item.RvWnsh13xndC3BDJ",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Subterfuge Expertise Procuring",
-        "uuid": "Item.F0NfycHV3L1nXozL",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Subterfuge Expertise Spying",
-        "uuid": "Item.38r2fiOwNtIlpoMe",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Subterfuge Expertise Stealth",
-        "uuid": "Item.fmgOxAd61kbBC3oF",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    },
-    {
-        "name": "Subterfuge Expertise Thieving",
-        "uuid": "Item.0k3dXTEU5oN3rHSs",
-        "folder": "Skills",
-        "minLevel": 1,
-        "maxLevel": 3
-    }
+    buildSkill({
+        name: "Art Creative",
+        uuid: "Item.3ssOYdjj50y5HMlZ",
+        group: "Art",
+        stat: "Charisma",
+        minLevel: 1,
+        maxLevel: 1,
+        scope: "This skill covers the broad creative sense behind artistic work, composition, and style.",
+        actions: "It governs conceiving performances, images, texts, and crafted expressions that depend on taste and inventive direction.",
+        play: "In play, it is used when imagination, aesthetic judgment, or artistic authorship matters more than the technical specialty itself."
+    }),
+    buildSkill({
+        name: "Art Expertise Dance",
+        uuid: "Item.ZZ12L5yJNKZswgkF",
+        group: "Art",
+        stat: "Dexterity",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers trained dance, formal movement, and patterned bodily expression before others.",
+        actions: "It governs rhythm, balance, posture, partnered movement, and the ability to communicate through disciplined motion.",
+        play: "In play, it is used when success depends on deliberate danced performance, court display, ritual movement, or movement-as-art rather than simple agility."
+    }),
+    buildSkill({
+        name: "Art Expertise Music",
+        uuid: "Item.Ttqs89del0HbbZSR",
+        group: "Art",
+        stat: "Charisma",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers musical performance, song, and the practiced shaping of sound.",
+        actions: "It governs keeping measure, carrying melody, sustaining tone, and directing mood through instrument or voice.",
+        play: "In play, it is used when a character must perform music well enough to move, impress, calm, gather, or focus listeners."
+    }),
+    buildSkill({
+        name: "Art Expertise Painting",
+        uuid: "Item.gvI6WmGXC2iTYYQz",
+        group: "Art",
+        stat: "Dexterity",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers painting, icon-making, pigment work, and other controlled image-making by hand.",
+        actions: "It governs brush control, line, color placement, surface handling, and the execution of visual composition.",
+        play: "In play, it is used when a character must render an image accurately, beautifully, or symbolically enough for the task to matter."
+    }),
+    buildSkill({
+        name: "Art Expertise Writing",
+        uuid: "Item.lciQamwqcsqekGRF",
+        group: "Art",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers deliberate literary expression, composition, and crafted writing beyond basic literacy.",
+        actions: "It governs phrasing, structure, rhetorical shape, poetic craft, and written style intended to affect readers.",
+        play: "In play, it is used when success depends on composing text well, beautifully, persuasively, or memorably rather than merely writing words down."
+    }),
+    buildSkill({
+        name: "Charisma Perform",
+        uuid: "Item.yK8twhFqVhpXoqgU",
+        group: "Charisma",
+        stat: "Charisma",
+        minLevel: 0,
+        maxLevel: 2,
+        scope: "This skill covers deliberate performance before others, whether through speech, music, posture, dance, or display.",
+        actions: "It governs entertaining, holding attention, shaping mood, and carrying presence in public.",
+        play: "In play, it is used when success depends on winning or directing an audience rather than merely speaking to them."
+    }),
+    buildSkill({
+        name: "Combat Firearm",
+        uuid: "Item.3rmcikTMMXLQyzfb",
+        group: "Combat",
+        stat: "Dexterity",
+        minLevel: 0,
+        maxLevel: 3,
+        scope: "This skill covers the use of handgonne, arquebus, musket, and pistol in live fighting.",
+        actions: "It governs aiming, timing the shot, managing recoil, and keeping enough composure to fire effectively under pressure.",
+        play: "In play, it is the default skill for firearm attacks and for tense handling of loaded black-powder weapons."
+    }),
+    buildSkill({
+        name: "Combat Melee",
+        uuid: "Item.6W0w1AV1grz8V6Z7",
+        group: "Combat",
+        stat: "Dexterity",
+        minLevel: 0,
+        maxLevel: 3,
+        scope: "This skill covers fighting with hand weapons in close reach.",
+        actions: "It governs timing, pressure, measure, striking, parrying, and weapon control in melee.",
+        play: "In play, it is the default skill for swords, polearms, blunt weapons, and similar armed close combat."
+    }),
+    buildSkill({
+        name: "Combat Ranged",
+        uuid: "Item.Y0SfW0f3l5E5JHd5",
+        group: "Combat",
+        stat: "Dexterity",
+        minLevel: 0,
+        maxLevel: 3,
+        scope: "This skill covers aimed missile fire with bows, crossbows, and similar ranged weapons.",
+        actions: "It governs draw, release, sighting, steadiness, and judging distance under real conditions.",
+        play: "In play, it is used whenever success depends on placing a deliberate ranged shot rather than simply throwing something at a target."
+    }),
+    buildSkill({
+        name: "Combat Thrown",
+        uuid: "Item.fLIefMop44DdTwzl",
+        group: "Combat",
+        stat: "Dexterity",
+        minLevel: 0,
+        maxLevel: 3,
+        scope: "This skill covers thrown weapons and other intentionally hurled objects used to strike.",
+        actions: "It governs grip, release, arc, range judgment, and the feel of sending force from the hand into flight.",
+        play: "In play, it is used for knives, axes, stones, and similar thrown attacks where placement matters."
+    }),
+    buildSkill({
+        name: "Combat Unarmed",
+        uuid: "Item.UU75zjUE8ySUKzoC",
+        group: "Combat",
+        stat: "Strength",
+        minLevel: 0,
+        maxLevel: 3,
+        scope: "This skill covers striking, grappling, and controlling an opponent without weapons.",
+        actions: "It governs balance in a clinch, body positioning, raw impact, leverage, and close violence with hands, feet, and body.",
+        play: "In play, it is used when a fight turns to fists, holds, shoves, wrestling, or improvised bodily force."
+    }),
+    buildSkill({
+        name: "Faith Ascetic",
+        uuid: "Item.qTiSpIavE5Yryz6A",
+        group: "Faith",
+        stat: "Faith",
+        minLevel: 0,
+        maxLevel: 2,
+        scope: "This skill covers disciplined self-denial, devotional endurance, and the ability to order body and appetite for sacred purpose.",
+        actions: "It governs fasting, vigil, purification, penitential restraint, and the keeping of severe observance when easier comforts call.",
+        play: "In play, it is used when holiness, restraint, endurance in devotion, or the authority of lived piety matters."
+    }),
+    buildSkill({
+        name: "Intelligence Investigation",
+        uuid: "Item.CUiBkYMSGbFRUVoK",
+        group: "Intelligence",
+        stat: "Intelligence",
+        minLevel: 0,
+        maxLevel: 2,
+        scope: "This skill covers patient inquiry, close examination, and the piecing together of overlooked details.",
+        actions: "It governs following leads, reading traces, comparing accounts, and extracting meaning from scattered evidence.",
+        play: "In play, it is used when solving a matter depends on careful reasoning and observation rather than mere suspicion or intuition."
+    }),
+    buildSkill({
+        name: "Learning Expertise Alchemy",
+        uuid: "Item.pQ1qZGqEvNCun2pc",
+        group: "Learning",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers learned alchemical theory, symbolic operations, and the disciplined handling of transformation through art.",
+        actions: "It governs reading alchemical processes, preparing operations, and understanding how substances, bodies, and principles are changed.",
+        play: "In play, it is used for scholarly alchemy, authored procedures, and the interpretation or execution of alchemical workings."
+    }),
+    buildSkill({
+        name: "Learning Expertise Apothecary",
+        uuid: "Item.I28pxbqeoKMdNgxr",
+        group: "Learning",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers the learned preparation, storage, and dispensing of medicinal substances.",
+        actions: "It governs measuring ingredients, recognizing useful preparations, and safely turning materia into practical remedies.",
+        play: "In play, it is used when a character must make, assess, or provide compounds intended to heal, soothe, preserve, or support the body."
+    }),
+    buildSkill({
+        name: "Learning Expertise Art",
+        uuid: "Item.jFRLqzcUavG6hsUM",
+        group: "Learning",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers the learned study of artistic form, symbolism, style, and crafted visual or literary tradition.",
+        actions: "It governs recognizing schools, reading artistic meaning, and speaking with trained judgment about works and techniques.",
+        play: "In play, it is used when a character must interpret, identify, authenticate, or contextualize art through education rather than performance."
+    }),
+    buildSkill({
+        name: "Learning Expertise Astrology",
+        uuid: "Item.DGOKXfiahX4RZhJL",
+        group: "Learning",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers the learned reading of celestial motions, conjunctions, and influences.",
+        actions: "It governs casting charts, judging times, and interpreting how heavenly order bears on earthly actions and fates.",
+        play: "In play, it is used when a character seeks auspicious timing, celestial meaning, or formal astrological knowledge."
+    }),
+    buildSkill({
+        name: "Learning Expertise Law",
+        uuid: "Item.00wKdoVpnYkW0LUk",
+        group: "Learning",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers learned law, procedure, rights, duties, and the formal language of judgment.",
+        actions: "It governs reading legal claims, understanding process, and recognizing how authority is properly argued or applied.",
+        play: "In play, it is used when a dispute, accusation, contract, or obligation turns on trained legal understanding."
+    }),
+    buildSkill({
+        name: "Learning Expertise Lore",
+        uuid: "Item.3rONx9nVxk10fyZ4",
+        group: "Learning",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers learned memory of histories, traditions, lineages, and commonly cited bodies of knowledge.",
+        actions: "It governs recalling relevant facts, placing events in context, and recognizing the significance of names, customs, and inherited stories.",
+        play: "In play, it is used when a problem can be answered by broad learned knowledge rather than narrow technical expertise."
+    }),
+    buildSkill({
+        name: "Learning Expertise Medicine",
+        uuid: "Item.rA14pwn4o08IusWY",
+        group: "Learning",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers learned medical theory, diagnosis, and treatment of the body through trained understanding.",
+        actions: "It governs reading symptoms, judging bodily balance, and deciding what treatment or regimen is likely to help or harm.",
+        play: "In play, it is used when care depends on medical knowledge rather than practical cutting, barbering, or household remedies alone."
+    }),
+    buildSkill({
+        name: "Learning Expertise Nobility",
+        uuid: "Item.yRsiAyzSCh6v6wMm",
+        group: "Learning",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers noble houses, heraldic culture, courtly precedence, and the habits of high estate.",
+        actions: "It governs recognizing rank, reading noble behavior, and understanding how honor, marriage, patronage, and display shape elite dealings.",
+        play: "In play, it is used when a character must navigate, interpret, or identify noble society with educated precision."
+    }),
+    buildSkill({
+        name: "Learning Expertise Occult",
+        uuid: "Item.WjngVZIgku8cBETw",
+        group: "Learning",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers learned occult knowledge, ritual understanding, hidden correspondences, and dangerous supernatural theory.",
+        actions: "It governs identifying occult phenomena, interpreting ritual logic, and handling grimoire-based workings with informed intent.",
+        play: "In play, it is used for scholarly or formal occult practice, especially where misunderstanding carries risk."
+    }),
+    buildSkill({
+        name: "Learning Expertise Religion",
+        uuid: "Item.7VoeHrMi683vwBeS",
+        group: "Learning",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers learned theology, doctrine, scripture, liturgy, and the formal understanding of sacred order.",
+        actions: "It governs interpreting religious texts, judging orthodoxy, and applying trained religious knowledge to rite or dispute.",
+        play: "In play, it is used when a matter turns on formal religion as taught, debated, or administered rather than simply personal devotion."
+    }),
+    buildSkill({
+        name: "Learning Scholar",
+        uuid: "Item.WVdJOfiwZCSPrOHE",
+        group: "Learning",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 1,
+        scope: "This skill covers broad scholarly formation: literacy, book-learning, habits of study, and comfort with formal knowledge.",
+        actions: "It governs working with texts, following learned argument, and functioning competently inside educated disciplines.",
+        play: "In play, it is used when a character's general scholarly training matters even before a narrower field of expertise is brought to bear."
+    }),
+    buildSkill({
+        name: "Manufacturing Craft",
+        uuid: "Item.l3euj72k8YDI7WFv",
+        group: "Manufacturing",
+        stat: "Dexterity",
+        minLevel: 1,
+        maxLevel: 1,
+        scope: "This skill covers broad practical craft ability and the disciplined handwork behind making useful things well.",
+        actions: "It governs tool use, material handling, measured shaping, and the steady labor that turns plan into object.",
+        play: "In play, it is used when a task depends on general craftsmanship before a more exact manufacturing specialty takes over."
+    }),
+    buildSkill({
+        name: "Manufacturing Expertise Food",
+        uuid: "Item.WfmlOA5KomA8Wfnw",
+        group: "Manufacturing",
+        stat: "Dexterity",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers skilled food preparation, preservation, and the controlled making of edible goods.",
+        actions: "It governs timing, handling, seasoning, processing, and the practical craft of turning raw stores into reliable fare.",
+        play: "In play, it is used when success depends on practiced food craft rather than merely cooking something simple."
+    }),
+    buildSkill({
+        name: "Manufacturing Expertise Glass",
+        uuid: "Item.1IK3By3aRaQTkvdU",
+        group: "Manufacturing",
+        stat: "Dexterity",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers glassworking, blowing, forming, and handling brittle heated material with precision.",
+        actions: "It governs heat judgment, shaping, cooling, and the control needed to produce sound glassware or components.",
+        play: "In play, it is used when a character must craft, repair, or assess worked glass through trained practice."
+    }),
+    buildSkill({
+        name: "Manufacturing Expertise Jewelry",
+        uuid: "Item.uvM0DC5zg0gEavyb",
+        group: "Manufacturing",
+        stat: "Dexterity",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers fine ornamental work in precious materials, settings, and small-scale decorative manufacture.",
+        actions: "It governs delicate shaping, setting, finishing, and the exact handwork needed for adornment worth wearing or valuing.",
+        play: "In play, it is used when producing, repairing, or judging jewelry demands practiced precision."
+    }),
+    buildSkill({
+        name: "Manufacturing Expertise Mechanics",
+        uuid: "Item.cR0l72jFwycnWamb",
+        group: "Manufacturing",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers the making and understanding of moving parts, mechanisms, and carefully fitted working devices.",
+        actions: "It governs assembly, adjustment, tension, and the logic of how separate components act together.",
+        play: "In play, it is used when a character must build, repair, or comprehend mechanical devices beyond rough common tinkering."
+    }),
+    buildSkill({
+        name: "Manufacturing Expertise Metal",
+        uuid: "Item.U8Re3snZayr53CyN",
+        group: "Manufacturing",
+        stat: "Dexterity",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers worked metal manufacture, including forging, shaping, fitting, and finishing useful metal pieces.",
+        actions: "It governs hammer control, heat use, edge shaping, and the hand-skill needed to produce durable metalwork.",
+        play: "In play, it is used whenever success depends on practiced metal craft rather than merely knowing what metal should do."
+    }),
+    buildSkill({
+        name: "Manufacturing Expertise Paper",
+        uuid: "Item.BzXKFA8YPCex5Gsz",
+        group: "Manufacturing",
+        stat: "Dexterity",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers the craft of making, preparing, and finishing paper or similar writing surfaces.",
+        actions: "It governs pulping, pressing, sizing, drying, and producing workable sheets suitable for record, art, or ritual use.",
+        play: "In play, it is used when paper quality, preparation, or manufacture matters materially to the task at hand."
+    }),
+    buildSkill({
+        name: "Manufacturing Expertise Soft",
+        uuid: "Item.cXG8MEvoZlFeiU3t",
+        group: "Manufacturing",
+        stat: "Dexterity",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers cloth, leather, padding, and other soft-material craft shaped by cut, stitch, layer, or binding.",
+        actions: "It governs patterning, sewing, joining, and finishing flexible goods that depend on the hand more than the forge.",
+        play: "In play, it is used when making or repairing garments, padded goods, straps, covers, and similar soft work."
+    }),
+    buildSkill({
+        name: "Manufacturing Expertise Stone",
+        uuid: "Item.ie2GIgz9WXiRPyFt",
+        group: "Manufacturing",
+        stat: "Strength",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers cutting, shaping, placing, and finishing stone for durable practical or decorative work.",
+        actions: "It governs reading the grain of stone, striking cleanly, and controlling force well enough to shape heavy resistant material.",
+        play: "In play, it is used when stone must be worked accurately rather than simply broken or moved."
+    }),
+    buildSkill({
+        name: "Manufacturing Expertise Wood",
+        uuid: "Item.AtpamHqzRTgSqaSR",
+        group: "Manufacturing",
+        stat: "Dexterity",
+        minLevel: 1,
+        maxLevel: 2,
+        scope: "This skill covers woodworking, joinery, shaping, and the making of useful objects from timber.",
+        actions: "It governs cutting, fitting, smoothing, and assembling wood into sound forms that hold and serve.",
+        play: "In play, it is used whenever the job depends on more than rough carpentry and calls for practiced woodcraft."
+    }),
+    buildSkill({
+        name: "Outdoor Navigation",
+        uuid: "Item.Bta0YOZtc2Z7jjT3",
+        group: "Outdoor",
+        stat: "Intelligence",
+        minLevel: 0,
+        maxLevel: 2,
+        scope: "This skill covers finding direction, holding a route, and judging place beyond familiar streets and landmarks.",
+        actions: "It governs reading terrain, remembering paths, using signs of land and sky, and not losing the line of travel.",
+        play: "In play, it is used when reaching the right place matters as much as enduring the road itself."
+    }),
+    buildSkill({
+        name: "Outdoor Riding",
+        uuid: "Item.X7zC0glgUPw5qOiU",
+        group: "Outdoor",
+        stat: "Dexterity",
+        minLevel: 0,
+        maxLevel: 2,
+        scope: "This skill covers riding animals with enough control to travel, maneuver, and remain effective in motion.",
+        actions: "It governs seat, balance, handling, and the disciplined partnership between rider and mount.",
+        play: "In play, it is used when success depends on competent mounted movement rather than merely sitting atop a beast."
+    }),
+    buildSkill({
+        name: "Outdoor Survival",
+        uuid: "Item.HnJ6EllrZl41RPLQ",
+        group: "Outdoor",
+        stat: "Intelligence",
+        minLevel: 0,
+        maxLevel: 2,
+        scope: "This skill covers enduring and functioning in wild or exposed conditions.",
+        actions: "It governs shelter, fire, forage, weather sense, and practical field decisions that keep a body going.",
+        play: "In play, it is used when staying capable in difficult terrain matters more than speed, elegance, or formal planning."
+    }),
+    buildSkill({
+        name: "Outdoor Swimming",
+        uuid: "Item.qj5otlLucXNqnJkj",
+        group: "Outdoor",
+        stat: "Stamina",
+        minLevel: 0,
+        maxLevel: 2,
+        scope: "This skill covers staying afloat, moving through water, and keeping control when the body is resisted by current or depth.",
+        actions: "It governs breathing, pace, endurance, and the repeated bodily discipline needed to cross or survive water.",
+        play: "In play, it is used when aquatic movement, rescue, or survival in water cannot be waved aside."
+    }),
+    buildSkill({
+        name: "Pagan Expertise Amulet",
+        uuid: "Item.hQfvmQ10qHxVY3ni",
+        group: "Pagan",
+        stat: "Power",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers the making and charging of charms worn, carried, or placed for protection, luck, or directed effect.",
+        actions: "It governs selecting forms, matching signs to purpose, and fastening power into a tangible warding object.",
+        play: "In play, it is used when practical magical work is invested into an amulet rather than a spoken charm alone."
+    }),
+    buildSkill({
+        name: "Pagan Expertise Divination",
+        uuid: "Item.2vTglrIXgGVEisl6",
+        group: "Pagan",
+        stat: "Power",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers omen reading, sign interpretation, and practical folk methods of uncertain knowledge.",
+        actions: "It governs asking questions the world may answer, reading patterns, and judging whether a sign truly bears meaning.",
+        play: "In play, it is used when revelation comes through folk divinatory practice rather than learned astrology or theology."
+    }),
+    buildSkill({
+        name: "Pagan Expertise Herbalism",
+        uuid: "Item.lPAQTWr30t44JFeJ",
+        group: "Pagan",
+        stat: "Power",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers the magical and practical use of herbs in folk working.",
+        actions: "It governs gathering, pairing, preparing, and applying plants for blessing, curse, remedy, or rite in ways shaped by living tradition.",
+        play: "In play, it is used when herbs matter not merely as medicine, but as carriers of practiced low magic."
+    }),
+    buildSkill({
+        name: "Pagan Expertise Knot",
+        uuid: "Item.QeV7gHxmUVJWyBlC",
+        group: "Pagan",
+        stat: "Power",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers knot-working as a living magical craft, binding force into cord, form, and repetition.",
+        actions: "It governs tying spells, fastening intent, and working practical knot magic through learned tradition.",
+        play: "In play, it is used when a working depends on knotted structure rather than written rite or formal theology."
+    }),
+    buildSkill({
+        name: "Pagan Expertise Necromancy",
+        uuid: "Item.ivrUWUcZCZHVlGCe",
+        group: "Pagan",
+        stat: "Power",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers folk dealings with corpse, grave, spirit, and the dangerous nearness of the dead.",
+        actions: "It governs rites of contact, quieting, questioning, and protection where the dead or restless are concerned.",
+        play: "In play, it is used when necromantic work arises from practical folk tradition rather than learned occult ceremony."
+    }),
+    buildSkill({
+        name: "Pagan Expertise Potion",
+        uuid: "Item.2QFZcbgsyvU6kYcO",
+        group: "Pagan",
+        stat: "Power",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers brewing magical draughts, infusions, and charged liquids intended to alter body, fortune, or relation.",
+        actions: "It governs blending ingredients, timing preparation, and carrying intention into something swallowed, poured, or anointing.",
+        play: "In play, it is used when a magical working is delivered through prepared drink, liquid, or dose."
+    }),
+    buildSkill({
+        name: "Pagan Expertise Warding",
+        uuid: "Item.YYw6eQCJIWhyroR9",
+        group: "Pagan",
+        stat: "Power",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers practical protective magic worked through marks, thresholds, objects, and set boundaries.",
+        actions: "It governs placing defenses, fixing signs, and holding back intrusion, corruption, or hostile spiritual force.",
+        play: "In play, it is used when a protective working depends on folk warding practice rather than church rite or learned seal-work."
+    }),
+    buildSkill({
+        name: "Pagan Low Magic",
+        uuid: "Item.jSmkCryle69Qvw6j",
+        group: "Pagan",
+        stat: "Power",
+        minLevel: 1,
+        maxLevel: 1,
+        scope: "This skill covers the broad foundation of household and village magic practiced through inherited habit rather than formal scholarship.",
+        actions: "It governs simple charms, ordinary precautions, and the common workings from which more exact pagan expertise grows.",
+        play: "In play, it is used when a character relies on basic lived folk magic without leaning on a narrower advanced specialty."
+    }),
+    buildSkill({
+        name: "Services Barber",
+        uuid: "Item.UhhJ9dc4uPNpGp7r",
+        group: "Services",
+        stat: "Dexterity",
+        minLevel: 1,
+        maxLevel: 1,
+        scope: "This skill covers barbering as a practical service trade concerned with hair, beard, grooming, and minor bodily handling.",
+        actions: "It governs clean cutting, shaving, orderly presentation, and the steady hand expected in everyday bodily care.",
+        play: "In play, it is used when grooming, trimming, or ordinary bodily service work must be done competently and safely."
+    }),
+    buildSkill({
+        name: "Services Expertise Surgeon",
+        uuid: "Item.65Rf3FrHzu6XwOfd",
+        group: "Services",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers invasive practical surgery: cutting, stitching, extraction, and the bodily risks of hands-on intervention.",
+        actions: "It governs knowing where and how to cut, what must be removed or bound, and how to keep a living body from failing in the process.",
+        play: "In play, it is used when treatment requires decisive surgical craft rather than broad medical theory alone."
+    }),
+    buildSkill({
+        name: "Strength Athletics",
+        uuid: "Item.zXuCnw9eUnBOb1Vp",
+        group: "Strength",
+        stat: "Strength",
+        minLevel: 0,
+        maxLevel: 2,
+        scope: "This skill covers exertive bodily effort: lifting, climbing, hauling, leaping, and forcing the body through resistance.",
+        actions: "It governs raw power applied with enough coordination to move yourself, move burdens, or overcome physical obstacles.",
+        play: "In play, it is used when a task is won by strength put to practical athletic use rather than by combat technique."
+    }),
+    buildSkill({
+        name: "Subterfuge Criminal",
+        uuid: "Item.PmNFvXH9Emt3hIMg",
+        group: "Subterfuge",
+        stat: "Intelligence",
+        minLevel: 0,
+        maxLevel: 1,
+        scope: "This skill covers general underworld sense, illicit practice, and the habits of moving around wrongdoing without innocence.",
+        actions: "It governs recognizing criminal opportunity, reading shady dealings, and understanding how unlawful work is commonly arranged.",
+        play: "In play, it is used when broad familiarity with vice, theft, concealment, or the black market matters before a narrower specialty applies."
+    }),
+    buildSkill({
+        name: "Subterfuge Expertise Locks",
+        uuid: "Item.RvWnsh13xndC3BDJ",
+        group: "Subterfuge",
+        stat: "Dexterity",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers opening, bypassing, and understanding locks and fastenings without rightful entry.",
+        actions: "It governs delicate tool work, feel, patience, and the reading of mechanisms meant to keep others out.",
+        play: "In play, it is used when access depends on defeating a lock quietly and skillfully rather than breaking the barrier by force."
+    }),
+    buildSkill({
+        name: "Subterfuge Expertise Procuring",
+        uuid: "Item.F0NfycHV3L1nXozL",
+        group: "Subterfuge",
+        stat: "Charisma",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers obtaining restricted, illicit, scarce, or quietly available goods through the right channels and favors.",
+        actions: "It governs knowing whom to ask, how to ask, what price to imply, and how to move through concealed exchange.",
+        play: "In play, it is used when success depends on quietly acquiring what cannot simply be bought in the open."
+    }),
+    buildSkill({
+        name: "Subterfuge Expertise Spying",
+        uuid: "Item.38r2fiOwNtIlpoMe",
+        group: "Subterfuge",
+        stat: "Intelligence",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers covert information gathering through watching, listening, following, and piecing together what others mean to hide.",
+        actions: "It governs patience, noticing useful detail, reading patterns of behavior, and turning scraps into actionable knowledge.",
+        play: "In play, it is used when secrecy, surveillance, and informed reporting matter more than open questioning."
+    }),
+    buildSkill({
+        name: "Subterfuge Expertise Stealth",
+        uuid: "Item.fmgOxAd61kbBC3oF",
+        group: "Subterfuge",
+        stat: "Dexterity",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers moving unseen, unheard, or unnoticed where discovery would matter.",
+        actions: "It governs concealment, quiet movement, shadowing, and the discipline of not drawing attention.",
+        play: "In play, it is used when success depends on avoiding notice rather than deceiving someone face to face."
+    }),
+    buildSkill({
+        name: "Subterfuge Expertise Thieving",
+        uuid: "Item.0k3dXTEU5oN3rHSs",
+        group: "Subterfuge",
+        stat: "Dexterity",
+        minLevel: 1,
+        maxLevel: 3,
+        scope: "This skill covers taking, lifting, or quietly appropriating what is not yours without open contest.",
+        actions: "It governs sleight of hand, timing, concealment of intent, and the practiced motions of theft.",
+        play: "In play, it is used when the crime itself depends on deft unlawful taking rather than access, fences, or surveillance."
+    })
 ];
 
 export default SKILL_INTERFACES;

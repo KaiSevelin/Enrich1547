@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Powerful warding spell to protect an area. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Perform a rite of refusal to deny entry, claim, or forced supernatural attachment. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
             "SpellKind": "Protection",
             "Strength": 2,
             "Complexity": "Medium",
@@ -671,7 +671,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Powerful warding spell to protect an area. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Perform a rite of refusal to deny entry, claim, or forced supernatural attachment. It belongs to protective working, setting limits, cleansing entry, or strengthening what must hold against danger. It is no trivial charm, but a working that rewards preparation and punishes carelessness.",
                 "schools": [
                     "Wards",
                     "Religion"

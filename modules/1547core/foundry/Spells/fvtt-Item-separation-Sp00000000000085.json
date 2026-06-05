@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Extracts a substance from something. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Separate what was mixed together so hidden distinctions stand apart again. It works through alchemical operations, using prepared matter and disciplined change rather than prayer or folk habit. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
             "SpellKind": "Alchemy",
             "Strength": 1,
             "Complexity": "Easy",
@@ -721,7 +721,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Extracts a substance from something. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Separate what was mixed together so hidden distinctions stand apart again. It works through alchemical operations, using prepared matter and disciplined change rather than prayer or folk habit. It is counted a lighter working, but light magic still has teeth when it slips or turns.",
                 "schools": [
                     "Alchemy"
                 ],

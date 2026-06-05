@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Removes poison, diseases and curses. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a serious working that usually demands care, preparation, and a practiced hand.",
+            "Description": "Burns matter down toward its harsher truth through the first destructive labor of alchemy. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is a serious working that usually demands care, preparation, and a practiced hand.",
             "SpellKind": "Alchemy",
             "Strength": 2,
             "Complexity": "Medium",
@@ -721,7 +721,7 @@
                 "failureProfile": "Major",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Removes all active effects of type poison, disease and cure.",
-                "description": "Removes poison, diseases and curses. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. It is a serious working that usually demands care, preparation, and a practiced hand.",
+                "description": "Burns matter down toward its harsher truth through the first destructive labor of alchemy. It belongs to the labor of alchemy, where matter, body, and hidden principle are forced through deliberate transformation. It is a serious working that usually demands care, preparation, and a practiced hand.",
                 "schools": [
                     "Alchemy"
                 ],

@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Create a new potion by combining potions. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Joins separated principles into a single working union through alchemical marriage. It is an alchemical working, concerned with refinement, corruption, union, or remaking through controlled process. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
             "SpellKind": "Alchemy",
             "Strength": 1,
             "Complexity": "Easy",
@@ -721,7 +721,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": true,
                 "spellNotes": "Canonical effect: Can mix two or more potions. Random effect unless following a **recipe**.",
-                "description": "Create a new potion by combining potions. It belongs to the transformative operations of alchemy, where matter and body are refined, separated, or remade. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Joins separated principles into a single working union through alchemical marriage. It is an alchemical working, concerned with refinement, corruption, union, or remaking through controlled process. It is a lesser working, often attempted more readily, though failure can still leave an ugly mark.",
                 "schools": [
                     "Alchemy"
                 ],

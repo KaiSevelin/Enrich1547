@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Gives knowledge if a document or letter has been opened. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Set a wax seal that both closes and spiritually marks what lies beneath it. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
             "SpellKind": "Protection",
             "Strength": 1,
             "Complexity": "Easy",
@@ -727,7 +727,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Gives knowledge if a document or letter has been opened. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Set a wax seal that both closes and spiritually marks what lies beneath it. It is chiefly used to secure a boundary, person, object, or place against intrusion, corruption, or hostile influence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "schools": [
                     "Wards"
                 ],

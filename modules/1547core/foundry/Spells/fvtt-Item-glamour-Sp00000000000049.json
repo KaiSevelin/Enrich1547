@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Makes the caster look better. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "Lay a glamour over appearance, perception, or first understanding. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
             "SpellKind": "Divination",
             "Strength": 3,
             "Complexity": "Hard",
@@ -721,7 +721,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: The caster gains the **beautiful** active effect.",
-                "description": "Makes the caster look better. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "Lay a glamour over appearance, perception, or first understanding. It belongs to divinatory practice, where questions are put to signs, distance, dream, or omen rather than answered by direct witness. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "schools": [
                     "Divination"
                 ],

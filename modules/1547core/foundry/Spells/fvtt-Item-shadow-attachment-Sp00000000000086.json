@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Bind a spirit to haunt a living person. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "Fasten a clinging shadow or unseen follower onto the target. It is a necromantic working, leaning on grave-power, lingering presence, and the perilous nearness of the dead. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
             "SpellKind": "Necromancy",
             "Strength": 3,
             "Complexity": "Hard",
@@ -687,7 +687,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "",
-                "description": "Bind a spirit to haunt a living person. It belongs to the dangerous traffic of corpse, grave, spirit, and restless dead. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "Fasten a clinging shadow or unseen follower onto the target. It is a necromantic working, leaning on grave-power, lingering presence, and the perilous nearness of the dead. It is among the weightier workings, capable of changing more than the moment if it succeeds cleanly.",
                 "schools": [
                     "Necromancy"
                 ],

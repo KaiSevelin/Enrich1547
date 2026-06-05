@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Sleep with grave dirt to get a dream message from the deceased. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+            "Description": "Sleep near the grave so the dead or the earth of burial may answer in dreams. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
             "SpellKind": "Divination",
             "Strength": 1,
             "Complexity": "Easy",
@@ -727,7 +727,7 @@
                 "failureProfile": "Minor",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: The player gets a message in the dreams from the person whose dirt is used in the spell. The DM decides the content of the message.",
-                "description": "Sleep with grave dirt to get a dream message from the deceased. It is chiefly used to uncover hidden truth, read signs, or gain uncertain knowledge beyond ordinary sense. Among ritual workings it is considered slight, though even slight magic can miscarry.",
+                "description": "Sleep near the grave so the dead or the earth of burial may answer in dreams. It is a seeking working, used when truth must be drawn from sign, distance, memory, or hidden correspondence. Among ritual workings it is considered slight, though even slight magic can miscarry.",
                 "schools": [
                     "Necromancy"
                 ],

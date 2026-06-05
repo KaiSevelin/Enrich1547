@@ -576,7 +576,7 @@
         "modifiers": [],
         "template": "2kiWw3Cv5Zk1lZxn",
         "props": {
-            "Description": "Infuses an object with a **bound** being. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+            "Description": "Imbue an object with prepared magical force so it carries more than its common use. It belongs to grimoire practice, relying on formal instruction, written formulae, and dangerous exactness. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
             "SpellKind": "Grimoire",
             "Strength": 3,
             "Complexity": "Hard",
@@ -727,7 +727,7 @@
                 "failureProfile": "Catastrophic",
                 "randomOutcome": false,
                 "spellNotes": "Canonical effect: Transfer a being into an object, use the enchantment stat on the object if the type of object is allowed, otherwise the being is just bound to the object.",
-                "description": "Infuses an object with a **bound** being. It depends on learned occult instruction, seals, names, or written operations rather than common household charm-lore. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
+                "description": "Imbue an object with prepared magical force so it carries more than its common use. It belongs to grimoire practice, relying on formal instruction, written formulae, and dangerous exactness. It is a potent working whose success can alter lives, bodies, bindings, or spiritual conditions in lasting ways.",
                 "schools": [
                     "Grimoire"
                 ],
