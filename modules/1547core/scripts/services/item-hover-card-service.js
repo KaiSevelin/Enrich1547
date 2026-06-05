@@ -113,21 +113,54 @@ async function buildHoverCardHtml(item) {
     `.trim();
 }
 
+function getTooltipManager() {
+    // v12+: game.tooltip is a TooltipManager singleton with activate/deactivate.
+    return globalThis.game?.tooltip ?? null;
+}
+
 function attachTooltipAttrs(el, item) {
     if (!el || !item) return;
     if (el.dataset.hoverCard1547Bound === "1") return; // idempotent
     el.dataset.hoverCard1547Bound = "1";
-    let cached = null;
-    // Lazy-enrich on first hover so we don't pay enrichHTML cost for every
-    // item in a long inventory list at render time.
-    const handler = async () => {
-        if (cached) return;
-        cached = await buildHoverCardHtml(item);
-        el.dataset.tooltipHtml = cached;
-        el.dataset.tooltipClass = TOOLTIP_CLASS;
-        el.dataset.tooltipDirection = "RIGHT";
+    // Visual cue that the element is interactive (and confirms our service
+    // bound to it — useful for diagnosing "no tooltip appearing" reports).
+    el.style.cursor = el.style.cursor || "pointer";
+
+    let cachedHtml = null;
+    let inFlight = null;
+
+    const enter = async (event) => {
+        const tooltip = getTooltipManager();
+        if (!tooltip?.activate) return;
+        if (!cachedHtml) {
+            if (!inFlight) inFlight = buildHoverCardHtml(item);
+            cachedHtml = await inFlight;
+        }
+        // If the user moved away during enrichment, don't pop the tooltip.
+        if (!el.matches?.(":hover")) return;
+        try {
+            tooltip.activate(el, {
+                html: cachedHtml,
+                cssClass: TOOLTIP_CLASS,
+                direction: "RIGHT"
+            });
+        } catch (err) {
+            console.warn(`${MODULE_ID} | hover-card activate failed`, err);
+        }
     };
-    el.addEventListener("pointerenter", handler);
+
+    const leave = () => {
+        const tooltip = getTooltipManager();
+        if (!tooltip) return;
+        // v13 dropped `deactivate` in favor of `dismiss`. Try both.
+        try {
+            tooltip.deactivate?.();
+            tooltip.dismiss?.();
+        } catch { /* non-fatal */ }
+    };
+
+    el.addEventListener("pointerenter", enter);
+    el.addEventListener("pointerleave", leave);
 }
 
 function findItemForElement(el, actor) {
@@ -146,45 +179,67 @@ function findItemForElement(el, actor) {
 }
 
 function decorateRoot(root, actor) {
-    if (!root?.querySelectorAll) return;
+    if (!root?.querySelectorAll) return 0;
     const candidates = root.querySelectorAll(
         "[data-item-id], [data-document-id], [data-hud-weapon-profile], [data-hud-weapon-attack], [data-hud-item-equip], [data-hud-item-unequip]"
     );
+    let decorated = 0;
     for (const el of candidates) {
         const item = findItemForElement(el, actor);
-        if (item) attachTooltipAttrs(el, item);
+        if (item) {
+            attachTooltipAttrs(el, item);
+            decorated++;
+        }
     }
+    if (globalThis.HoverCard1547_DEBUG && candidates.length > 0) {
+        console.log(`${MODULE_ID} | hover-card: scanned ${candidates.length} item-shaped elements, decorated ${decorated}`);
+    }
+    return decorated;
+}
+
+function normalizeRoot(html) {
+    // jQuery render hooks pass html as a jQuery object — html[0] is the element.
+    // ApplicationV2 render hooks pass an HTMLElement directly.
+    if (!html) return null;
+    if (html instanceof HTMLElement) return html;
+    if (html?.[0] instanceof HTMLElement) return html[0];
+    if (typeof html === "object" && typeof html.querySelectorAll === "function") return html;
+    return null;
+}
+
+function findActor(app) {
+    return app?.actor ?? app?.object?.actor ?? app?.document?.parent ?? null;
 }
 
 export function registerItemHoverCardService() {
-    Hooks.on("renderActorSheet", (app, html) => {
-        const root = html?.[0] ?? html;
-        const actor = app?.actor ?? app?.object;
-        decorateRoot(root, actor);
-    });
-
-    Hooks.on("renderApplication", (app, html) => {
-        // Catches the 1547core HUD (which is a non-ActorSheet ApplicationV2)
-        // and other item lists that don't go through renderActorSheet.
-        const root = html?.[0] ?? html;
-        const actor = app?.actor ?? app?.object?.actor ?? null;
+    const handler = (app, html) => {
+        const root = normalizeRoot(html);
         if (!root) return;
-        decorateRoot(root, actor);
-    });
+        decorateRoot(root, findActor(app));
+    };
 
-    Hooks.on("renderCompendium", (_app, html) => {
-        const root = html?.[0] ?? html;
-        decorateRoot(root, null);
-    });
+    // v1 Application hooks
+    Hooks.on("renderActorSheet", handler);
+    Hooks.on("renderApplication", handler);
+    Hooks.on("renderCompendium", handler);
+    Hooks.on("renderItemDirectory", handler);
 
-    Hooks.on("renderItemDirectory", (_app, html) => {
-        const root = html?.[0] ?? html;
-        decorateRoot(root, null);
-    });
+    // v2 ApplicationV2 hook — fires for any v2 application (CSB sheets in
+    // v13, the HUD, settings menus, etc.).
+    Hooks.on("renderApplicationV2", handler);
+
+    console.log(`${MODULE_ID} | item-hover-card service registered`);
 
     const moduleApi = game.modules?.get(MODULE_ID);
     if (moduleApi) {
         moduleApi.api = moduleApi.api ?? {};
         moduleApi.api.buildItemHoverCardHtml = buildHoverCardHtml;
+        // Manual rescan API so you can run game.modules.get("1547core").api.hoverCard.rescan()
+        // in the console to verify decoration counts without needing to re-open a sheet.
+        moduleApi.api.hoverCard = {
+            rescan: (rootEl = document.body) => decorateRoot(rootEl, null),
+            enableDebug: () => { globalThis.HoverCard1547_DEBUG = true; },
+            disableDebug: () => { globalThis.HoverCard1547_DEBUG = false; }
+        };
     }
 }
