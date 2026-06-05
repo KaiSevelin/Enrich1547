@@ -146,12 +146,17 @@ function attachTooltipHandlers(el, item) {
     });
 }
 
+const VALID_FOUNDRY_ID = /^[A-Za-z0-9]{16}$/;
+
 function findItemForElement(el, actor) {
-    // Restricted to true item rows. The previous HUD-specific selectors
-    // (data-hud-weapon-profile etc.) were dropped — they live on HUD action
-    // buttons and pointerenter handlers there interfered with HUD UX.
-    const id = el.dataset?.itemId ?? el.dataset?.documentId;
+    // data-item-id: classic Foundry actor sheets / inventory grids
+    // data-document-id: compendium browser, sidebar item directory
+    // data-entry-id: CSB v13 grid renderer (this is the bulk on actor sheets)
+    const id = el.dataset?.itemId ?? el.dataset?.documentId ?? el.dataset?.entryId;
     if (!id) return null;
+    // CSB stamps `data-entry-id` on many non-item DOM nodes (props, panels);
+    // only the ones whose value is a real Foundry ID resolve to an item.
+    if (!VALID_FOUNDRY_ID.test(id)) return null;
     if (actor?.items?.get) {
         const fromActor = actor.items.get(id);
         if (fromActor) return fromActor;
@@ -162,7 +167,7 @@ function findItemForElement(el, actor) {
 function decorateRoot(root, actor) {
     try {
         if (!root?.querySelectorAll) return 0;
-        const candidates = root.querySelectorAll("[data-item-id], [data-document-id]");
+        const candidates = root.querySelectorAll("[data-item-id], [data-document-id], [data-entry-id]");
         let decorated = 0;
         for (const el of candidates) {
             try {
@@ -175,8 +180,10 @@ function decorateRoot(root, actor) {
                 console.warn(`${MODULE_ID} | hover-card per-element failure`, err);
             }
         }
-        if (globalThis.HoverCard1547_DEBUG && candidates.length > 0) {
-            console.log(`${MODULE_ID} | hover-card: scanned ${candidates.length} item-shaped elements, decorated ${decorated}`);
+        // Log unconditionally when debug is on so a "0 decorated" outcome is
+        // distinguishable from "hook didn't fire" during diagnosis.
+        if (globalThis.HoverCard1547_DEBUG) {
+            console.log(`${MODULE_ID} | hover-card: scanned ${candidates.length} candidate elements, decorated ${decorated}`);
         }
         return decorated;
     } catch (err) {
