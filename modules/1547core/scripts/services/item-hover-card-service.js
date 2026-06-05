@@ -173,7 +173,9 @@ function findHoverableAncestor(target, actor = null) {
         "[data-hud-weapon-ammo]",
         "[data-hud-item-equip]",
         "[data-hud-item-unequip]",
-        "[data-hud-open-item]"
+        "[data-hud-open-item]",
+        "[data-hud-maneuver-select]",
+        "[data-hud-pre-maneuver]"
     ];
     let firstAncestor = null;
     for (const sel of selectors) {
@@ -282,7 +284,8 @@ function findItemForElement(el, actor) {
         ?? d?.hudWeaponProfile ?? d?.hudWeaponAttack ?? d?.hudWeaponRange
         ?? d?.hudWeaponReload ?? d?.hudWeaponAmmo
         ?? d?.hudItemEquip ?? d?.hudItemUnequip
-        ?? d?.hudOpenItem;
+        ?? d?.hudOpenItem
+        ?? d?.hudManeuverSelect ?? d?.hudPreManeuver;
     if (!id) return null;
     if (!VALID_FOUNDRY_ID.test(id)) return null;
     if (actor?.items?.get) {
