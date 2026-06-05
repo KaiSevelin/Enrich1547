@@ -56,6 +56,33 @@ function getDescriptionHtml(item) {
     ).trim();
 }
 
+function getAttachedModifiers(item) {
+    if (!item?.parent?.items?.get) return [];
+    const flags = item.flags ?? {};
+    const ids = flags["1547Core"]?.attachedModifierIds
+        ?? flags["1547core"]?.attachedModifierIds
+        ?? item.system?.props?.AttachedModifierIds
+        ?? [];
+    const list = Array.isArray(ids) ? ids : [];
+    return list.map((id) => item.parent.items.get(id)).filter(Boolean);
+}
+
+function buildModifierBlock(item) {
+    const modifiers = getAttachedModifiers(item);
+    if (!modifiers.length) return "";
+    const rows = modifiers.map((m) => {
+        const p = m.system?.props ?? {};
+        const detailParts = [];
+        if (p.AddDice) detailParts.push(`+${p.AddDice}`);
+        if (p.AddDamageQualifiers) detailParts.push(p.AddDamageQualifiers);
+        if (p.OverrideDamageType) detailParts.push(p.OverrideDamageType);
+        if (p.RemoveDice) detailParts.push(`-${p.RemoveDice}`);
+        const detail = detailParts.length ? ` <span style="color:#5e4f38;">(${escapeHtml(detailParts.join(", "))})</span>` : "";
+        return `<li>${escapeHtml(m.name)}${detail}</li>`;
+    }).join("");
+    return `<div class="hc-divider"></div><div class="hc-modifiers"><strong>Modifiers:</strong><ul style="margin:0.2rem 0 0 1.2rem;padding:0;">${rows}</ul></div>`;
+}
+
 function buildStatsLine(item) {
     const p = item?.system?.props ?? {};
     const parts = [];
@@ -97,7 +124,8 @@ async function buildHoverCardHtml(item) {
             }
         }
         const stats = buildStatsLine(item);
-        const html = `<div class="hc-head"><img class="hc-img" src="${img}" alt="" /><div class="hc-meta"><div class="hc-name">${name}</div><div class="hc-category">${category}</div></div></div>${desc ? `<div class="hc-divider"></div><div class="hc-desc">${desc}</div>` : ""}${stats ? `<div class="hc-divider"></div><div class="hc-stats">${escapeHtml(stats)}</div>` : ""}`;
+        const modifiers = buildModifierBlock(item);
+        const html = `<div class="hc-head"><img class="hc-img" src="${img}" alt="" /><div class="hc-meta"><div class="hc-name">${name}</div><div class="hc-category">${category}</div></div></div>${desc ? `<div class="hc-divider"></div><div class="hc-desc">${desc}</div>` : ""}${stats ? `<div class="hc-divider"></div><div class="hc-stats">${escapeHtml(stats)}</div>` : ""}${modifiers}`;
         return html;
     } catch (err) {
         console.warn(`${MODULE_ID} | hover-card buildHtml failed`, err);
