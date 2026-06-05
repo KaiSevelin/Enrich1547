@@ -75,34 +75,34 @@ function buildStatsLine(item) {
 }
 
 async function buildHoverCardHtml(item) {
-    if (!item) return "";
-    const img = escapeHtml(item.img ?? "icons/svg/item-bag.svg");
-    const name = escapeHtml(item.name ?? "Item");
-    const category = escapeHtml(getCategoryLabel(item));
-    const descRaw = getDescriptionHtml(item);
-    let desc = "";
-    if (descRaw) {
-        try {
-            const enricher = globalThis.foundry?.applications?.ux?.TextEditor?.implementation?.enrichHTML
-                ?? globalThis.TextEditor?.enrichHTML;
-            if (enricher) desc = await enricher(descRaw, { async: true });
-            else desc = descRaw;
-        } catch {
-            desc = descRaw;
+    try {
+        if (!item) return "<div class='hc-head'><div class='hc-meta'><div class='hc-name'>No item</div></div></div>";
+        const img = escapeHtml(item.img ?? "icons/svg/item-bag.svg");
+        const name = escapeHtml(item.name ?? "Item");
+        const category = escapeHtml(getCategoryLabel(item));
+        const descRaw = getDescriptionHtml(item);
+        let desc = "";
+        if (descRaw) {
+            try {
+                const enricher = globalThis.foundry?.applications?.ux?.TextEditor?.implementation?.enrichHTML
+                    ?? globalThis.TextEditor?.enrichHTML;
+                if (typeof enricher === "function") {
+                    const result = await enricher(descRaw, { async: true });
+                    desc = typeof result === "string" ? result : descRaw;
+                } else {
+                    desc = descRaw;
+                }
+            } catch {
+                desc = descRaw;
+            }
         }
+        const stats = buildStatsLine(item);
+        const html = `<div class="hc-head"><img class="hc-img" src="${img}" alt="" /><div class="hc-meta"><div class="hc-name">${name}</div><div class="hc-category">${category}</div></div></div>${desc ? `<div class="hc-divider"></div><div class="hc-desc">${desc}</div>` : ""}${stats ? `<div class="hc-divider"></div><div class="hc-stats">${escapeHtml(stats)}</div>` : ""}`;
+        return html;
+    } catch (err) {
+        console.warn(`${MODULE_ID} | hover-card buildHtml failed`, err);
+        return `<div class='hc-head'><div class='hc-meta'><div class='hc-name'>${escapeHtml(item?.name ?? "Item")}</div><div class='hc-category'>error rendering</div></div></div>`;
     }
-    const stats = escapeHtml(buildStatsLine(item));
-    return `
-        <div class="hc-head">
-            <img class="hc-img" src="${img}" alt="" />
-            <div class="hc-meta">
-                <div class="hc-name">${name}</div>
-                <div class="hc-category">${category}</div>
-            </div>
-        </div>
-        ${desc ? `<div class="hc-divider"></div><div class="hc-desc">${desc}</div>` : ""}
-        ${stats ? `<div class="hc-divider"></div><div class="hc-stats">${stats}</div>` : ""}
-    `.trim();
 }
 
 // Single shared panel element — avoids version-dependent TooltipManager
@@ -160,12 +160,18 @@ function attachTooltipHandlers(el, item) {
 
     el.addEventListener("pointerenter", async (event) => {
         try {
+            if (globalThis.HoverCard1547_DEBUG) console.log(`${MODULE_ID} | hover enter:`, item?.name);
             if (!cachedHtml) {
                 if (!inFlight) inFlight = buildHoverCardHtml(item);
                 cachedHtml = await inFlight;
+                if (globalThis.HoverCard1547_DEBUG) console.log(`${MODULE_ID} | hover html ready, length:`, cachedHtml?.length);
             }
-            if (!el.matches?.(":hover")) return;
-            showPanel(cachedHtml, event.clientX, event.clientY);
+            // Note: previously gated on el.matches(":hover") to avoid popping
+            // after the mouse moved away during async enrich, but it also
+            // suppressed legitimate hovers and broke synthetic-event testing.
+            // pointerleave will hide it; that's enough.
+            showPanel(cachedHtml || "<div>(empty)</div>", event.clientX, event.clientY);
+            if (globalThis.HoverCard1547_DEBUG) console.log(`${MODULE_ID} | panel shown at`, event.clientX, event.clientY);
         } catch (err) {
             console.warn(`${MODULE_ID} | hover-card enter failed`, err);
         }
