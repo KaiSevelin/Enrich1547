@@ -219,6 +219,30 @@ function buildManeuverProps(maneuver) {
         RequirementText: requirements.text ?? "",
         TargetRequirement: requirements.target ?? "",
         RequiredWeaponTags: requiredTagParts.join(", "),
+        RequiredWeaponTraits: Array.isArray(requirements.requiredWeaponTraits)
+            ? requirements.requiredWeaponTraits.join(", ")
+            : (requirements.requiredWeaponTraits ?? ""),
+        RequiredWeaponGroups: Array.isArray(requirements.requiredWeaponGroups)
+            ? requirements.requiredWeaponGroups.join(", ")
+            : (requirements.requiredWeaponGroups ?? ""),
+        RequiredActorConditions: Array.isArray(requirements.requiredActorConditions)
+            ? requirements.requiredActorConditions.join(", ")
+            : (requirements.requiredActorConditions ?? ""),
+        ProhibitedActorConditions: Array.isArray(requirements.prohibitedActorConditions)
+            ? requirements.prohibitedActorConditions.join(", ")
+            : (requirements.prohibitedActorConditions ?? ""),
+        RequiredTargetConditions: Array.isArray(requirements.requiredTargetConditions)
+            ? requirements.requiredTargetConditions.join(", ")
+            : (requirements.requiredTargetConditions ?? ""),
+        RequiresHidden: requirements.requiresHidden ? "true" : "",
+        RequiresMounted: requirements.requiresMounted ? "true" : "",
+        RequiresUnmounted: requirements.requiresUnmounted ? "true" : "",
+        RequiresVisibleAlly: requirements.requiresVisibleAlly ? "true" : "",
+        RequiresAdjacentAllyTarget: requirements.requiresAdjacentAllyTarget ? "true" : "",
+        RequiresFormationPartner: requirements.requiresFormationPartner ? "true" : "",
+        RequiresFlankingAlly: requirements.requiresFlankingAlly ? "true" : "",
+        RequiresPolearmAlly: requirements.requiresPolearmAlly ? "true" : "",
+        RequiresTargetLocked: requirements.requiresTargetLocked ? "true" : "",
         ExcludedWeaponTags: Array.isArray(requirements.excludedWeaponTags)
             ? requirements.excludedWeaponTags.join(", ")
             : (requirements.excludedWeaponTags ?? ""),

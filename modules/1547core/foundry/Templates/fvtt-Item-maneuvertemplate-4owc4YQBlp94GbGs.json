@@ -498,19 +498,19 @@
                                                                             "options":  [
                                                                                             {
                                                                                                 "key":  "reaction",
-                                                                                                "value":  "Reaction"
+                                                                                                "value":  "Reactions"
                                                                                             },
                                                                                             {
                                                                                                 "key":  "pre",
-                                                                                                "value":  "Pre"
+                                                                                                "value":  "Preparations"
                                                                                             },
                                                                                             {
                                                                                                 "key":  "post",
-                                                                                                "value":  "Post"
+                                                                                                "value":  "Criticals"
                                                                                             },
                                                                                             {
                                                                                                 "key":  "full-turn",
-                                                                                                "value":  "Full turn"
+                                                                                                "value":  "Full turn actions"
                                                                                             }
                                                                                         ]
                                                                         },

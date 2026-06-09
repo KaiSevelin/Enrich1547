@@ -123,10 +123,10 @@ const CSB_TEMPLATE_IDS = {
 };
 const MANEUVER_FILTER_OPTIONS = [
     { value: "all", label: "All" },
-    { value: "pre", label: "Pre" },
-    { value: "full-turn", label: "Full turn" },
-    { value: "post", label: "Post" },
-    { value: "reaction", label: "Reaction" },
+    { value: "pre", label: "Preparations" },
+    { value: "full-turn", label: "Full turn actions" },
+    { value: "post", label: "Criticals" },
+    { value: "reaction", label: "Reactions" },
 ];
 const MANEUVER_COST_SHORT_LABELS = {
     StrengthPoints: "STR",
@@ -220,7 +220,7 @@ function getManeuverEffectSummary(maneuver) {
     if (Number(effect.addMoveSquares ?? 0) > 0) parts.push(`+${effect.addMoveSquares} move`);
     if (Number(effect.reduceDamageTaken ?? 0) > 0) parts.push(`Reduce damage by ${effect.reduceDamageTaken}`);
     if (effect.ignoreHighestArmorDie === true) parts.push("Ignore highest armor die");
-    if (effect.createsSafeAttack === true) parts.push("Makes the attack safe");
+    if (effect.safeAttack === true || effect.createsSafeAttack === true) parts.push("Makes the attack safe");
     if (String(effect.createsPersistentEffect ?? "").trim()) {
         parts.push(`Creates ${getPersistentEffectLabel(effect.createsPersistentEffect)}`);
     }

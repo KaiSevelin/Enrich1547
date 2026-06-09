@@ -89,6 +89,7 @@ function resolveAttachedWeaponModifiers({ actor, parentItem, attachedModifierIds
 export function createsSafeAttack(maneuver) {
     const effect = maneuver?.effectData ?? {};
     return Boolean(
+        effect.safeAttack ||
         effect.createFreeSafeAttack ||
         effect.createSecondSafeAttack ||
         effect.createFreeSafeCounterattack ||
@@ -104,6 +105,7 @@ export function summarizeEffectData(effect = {}) {
         addRiskDice: Number(effect?.addRiskDice ?? 0) || 0,
         addMoveSquares: Number(effect?.addMoveSquares ?? 0) || 0,
         safeAttack: Boolean(
+            effect?.safeAttack ||
             effect?.createFreeSafeAttack ||
             effect?.createSecondSafeAttack ||
             effect?.createFreeSafeCounterattack ||

@@ -215,10 +215,35 @@ function passesActionEconomyGate(maneuver, context) {
 function passesActorStateGate(maneuver, context) {
     const actorConditions = toNameSet(context.actorConditions);
     const armorState = getEquippedArmorState(context);
-    const skillText = String(maneuver.requirements?.skill ?? "");
     const requirementText = String(maneuver.requirements?.text ?? "");
+    const requiredActorConditions = toNameSet(maneuver.requirements?.requiredActorConditions);
+    const prohibitedActorConditions = toNameSet(maneuver.requirements?.prohibitedActorConditions);
+    const requiresHidden = Boolean(maneuver.requirements?.requiresHidden);
+    const requiresMounted = Boolean(maneuver.requirements?.requiresMounted);
+    const requiresUnmounted = Boolean(maneuver.requirements?.requiresUnmounted);
+    const requiresVisibleAlly = Boolean(maneuver.requirements?.requiresVisibleAlly);
 
-    if (skillText.includes("Subterfuge") && armorState.traits.has("Noisy")) {
+    if (requiredActorConditions.size && ![...requiredActorConditions].every((condition) => actorConditions.has(condition))) {
+        return false;
+    }
+
+    if (prohibitedActorConditions.size && [...prohibitedActorConditions].some((condition) => actorConditions.has(condition))) {
+        return false;
+    }
+
+    if (requiresHidden && !actorConditions.has("hidden")) {
+        return false;
+    }
+
+    if (requiresMounted && !actorConditions.has("mounted")) {
+        return false;
+    }
+
+    if (requiresUnmounted && actorConditions.has("mounted")) {
+        return false;
+    }
+
+    if (requiresVisibleAlly && context.hasVisibleAlly !== true) {
         return false;
     }
 
@@ -352,6 +377,36 @@ function passesProfileGate(maneuver, context) {
 function passesTargetStateGate(maneuver, context) {
     const targetConditions = toNameSet(context.targetConditions);
     const requirementText = String(maneuver.requirements?.text ?? "");
+    const requiredTargetConditions = toNameSet(maneuver.requirements?.requiredTargetConditions);
+    const requiresTargetLocked = Boolean(maneuver.requirements?.requiresTargetLocked);
+    const requiresAdjacentAllyTarget = Boolean(maneuver.requirements?.requiresAdjacentAllyTarget);
+    const requiresFormationPartner = Boolean(maneuver.requirements?.requiresFormationPartner);
+    const requiresFlankingAlly = Boolean(maneuver.requirements?.requiresFlankingAlly);
+    const requiresPolearmAlly = Boolean(maneuver.requirements?.requiresPolearmAlly);
+
+    if (requiredTargetConditions.size && ![...requiredTargetConditions].every((condition) => targetConditions.has(condition))) {
+        return false;
+    }
+
+    if (requiresTargetLocked && !targetConditions.has("locked")) {
+        return false;
+    }
+
+    if (requiresAdjacentAllyTarget && context.hasAdjacentAllyTarget !== true) {
+        return false;
+    }
+
+    if (requiresFormationPartner && context.hasFormationPartner !== true) {
+        return false;
+    }
+
+    if (requiresFlankingAlly && context.hasFlankingAlly !== true) {
+        return false;
+    }
+
+    if (requiresPolearmAlly && context.hasPolearmAlly !== true) {
+        return false;
+    }
 
     if (
         (maneuver.name === "Choke" || /target already locked/i.test(requirementText)) &&

@@ -233,6 +233,11 @@ export function normalizeManeuver(maneuver) {
     const parsedEffectData = parseJsonString(props.EffectData, null);
     const parsedUsageLimit = parseJsonString(props.UsageLimitData, null);
     const maxUses = Number(props.UsageLimit);
+
+    const parseBoolean = (value) => {
+        if (typeof value === "boolean") return value;
+        return String(value ?? "").trim().toLowerCase() === "true";
+    };
     return {
         ...source,
         _id: source._id ?? source.id ?? maneuver.id ?? maneuver._id ?? null,
@@ -251,11 +256,36 @@ export function normalizeManeuver(maneuver) {
             requiredWeaponTags: Array.isArray(sourceRequirements.requiredWeaponTags)
                 ? sourceRequirements.requiredWeaponTags
                 : String(props.RequiredWeaponTags ?? "").split(",").map((entry) => entry.trim()).filter(Boolean),
+            requiredWeaponTraits: Array.isArray(sourceRequirements.requiredWeaponTraits)
+                ? sourceRequirements.requiredWeaponTraits
+                : String(props.RequiredWeaponTraits ?? "").split(",").map((entry) => entry.trim()).filter(Boolean),
+            requiredWeaponGroups: Array.isArray(sourceRequirements.requiredWeaponGroups)
+                ? sourceRequirements.requiredWeaponGroups
+                : String(props.RequiredWeaponGroups ?? "").split(",").map((entry) => entry.trim()).filter(Boolean),
             excludedWeaponTags: Array.isArray(sourceRequirements.excludedWeaponTags)
                 ? sourceRequirements.excludedWeaponTags
                 : String(props.ExcludedWeaponTags ?? "").split(",").map((entry) => entry.trim()).filter(Boolean),
+            requiredActorConditions: Array.isArray(sourceRequirements.requiredActorConditions)
+                ? sourceRequirements.requiredActorConditions
+                : String(props.RequiredActorConditions ?? "").split(",").map((entry) => entry.trim()).filter(Boolean),
+            prohibitedActorConditions: Array.isArray(sourceRequirements.prohibitedActorConditions)
+                ? sourceRequirements.prohibitedActorConditions
+                : String(props.ProhibitedActorConditions ?? "").split(",").map((entry) => entry.trim()).filter(Boolean),
+            requiredTargetConditions: Array.isArray(sourceRequirements.requiredTargetConditions)
+                ? sourceRequirements.requiredTargetConditions
+                : String(props.RequiredTargetConditions ?? "").split(",").map((entry) => entry.trim()).filter(Boolean),
+            requiresHidden: parseBoolean(sourceRequirements.requiresHidden ?? props.RequiresHidden),
+            requiresMounted: parseBoolean(sourceRequirements.requiresMounted ?? props.RequiresMounted),
+            requiresUnmounted: parseBoolean(sourceRequirements.requiresUnmounted ?? props.RequiresUnmounted),
+            requiresVisibleAlly: parseBoolean(sourceRequirements.requiresVisibleAlly ?? props.RequiresVisibleAlly),
+            requiresAdjacentAllyTarget: parseBoolean(sourceRequirements.requiresAdjacentAllyTarget ?? props.RequiresAdjacentAllyTarget),
+            requiresFormationPartner: parseBoolean(sourceRequirements.requiresFormationPartner ?? props.RequiresFormationPartner),
+            requiresFlankingAlly: parseBoolean(sourceRequirements.requiresFlankingAlly ?? props.RequiresFlankingAlly),
+            requiresPolearmAlly: parseBoolean(sourceRequirements.requiresPolearmAlly ?? props.RequiresPolearmAlly),
+            requiresTargetLocked: parseBoolean(sourceRequirements.requiresTargetLocked ?? props.RequiresTargetLocked),
         },
         effectData: source.effectData ?? parsedEffectData ?? {},
+
         usageLimit: source.usageLimit ?? parsedUsageLimit ?? (Number.isFinite(maxUses) ? { maxUses } : {}),
         tags: Array.isArray(source.tags) ? source.tags : String(props.Tags ?? "").split(",").map((entry) => entry.trim()).filter(Boolean),
     };

@@ -41,6 +41,11 @@ assert.strictEqual(
     al.summarizeEffectData({ ifEscapeSucceedsCreateFreeSafeAttack: true }).safeAttack,
     true
 );
+assert.strictEqual(
+    al.summarizeEffectData({ safeAttack: true }).safeAttack,
+    true,
+    "direct safeAttack flag flips safeAttack to true"
+);
 console.log("  ✓ zero defaults + safeAttack triggers");
 
 console.log("\nattack-lifecycle.mergeModifierSummaries...");

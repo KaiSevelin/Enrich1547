@@ -174,7 +174,7 @@ Examples:
 
 ```js
 {
-  forceSafeAttack: true
+  safeAttack: true
 }
 ```
 
@@ -185,6 +185,11 @@ Examples:
 ```
 
 Rules:
+- may be empty
+- should be used for generic effects before creating custom handlers
+- should remain serializable and content-safe
+- if `safeAttack: true` is set, the attack is treated as a safe attack
+  regardless of other follow-up effect flags
 
 - may be empty
 - should be used for generic effects before creating custom handlers
@@ -291,22 +296,48 @@ Examples:
 
 ```js
 {
-  requiresWeaponTag: "melee"
+  requiredWeaponTags: ["melee"],
+  requiredWeaponTraits: ["Fast"]
 }
 ```
 
 ```js
 {
-  requiresAttackType: "ranged"
+  requiredTargetConditions: ["locked"],
+  requiresAdjacentAllyTarget: true
 }
 ```
 
 ```js
 {
-  requiresTrigger: "threat-zone-entered"
+  requiredActorConditions: ["hidden"],
+  prohibitedActorConditions: ["locked", "prone"],
+  requiresVisibleAlly: true
 }
 ```
 
+Recommended structured fields:
+
+- `requiredWeaponTags`
+- `requiredWeaponTraits`
+- `requiredWeaponGroups`
+- `excludedWeaponTags`
+- `requiredActorConditions`
+- `prohibitedActorConditions`
+- `requiredTargetConditions`
+- `requiresHidden`
+- `requiresMounted`
+- `requiresUnmounted`
+- `requiresVisibleAlly`
+- `requiresAdjacentAllyTarget`
+- `requiresFormationPartner`
+- `requiresFlankingAlly`
+- `requiresPolearmAlly`
+- `requiresTargetLocked`
+
+These fields are preferred over free-form `requirements.text` because they
+allow the legality engine to evaluate maneuver prerequisites directly and
+consistently.
 ### `duration`
 
 Describes maneuver duration.
