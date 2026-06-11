@@ -4,6 +4,9 @@ import { announceWinner } from "./winner-splash.js";
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
 const MODULE_ID = "raceboard";
+// Number of event-marker states a box cycles through on right-click, including
+// "none" (0). 3 = none → red (1) → amber (2) → none. Bump to add more colors.
+const EVENT_STATE_COUNT = 3;
 const PAGE_TYPE = `${MODULE_ID}.race`;
 const FOLDER_NAME = "RaceBoards";
 const EPHEMERAL_KEY = "__ephemeral__";
@@ -67,15 +70,26 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   async _prepareContext() {
     const data = this.data;
-    const rows = data.rows.map((r, idx) => ({
-      idx,
-      label: r.label,
-      filled: r.filled,
-      total: r.total,
-      isWon: r.filled >= r.total,
-      canRemoveBox: r.total > MIN_BOXES,
-      boxes: Array.from({ length: r.total }, (_, i) => ({ checked: i < r.filled, idx: i }))
-    }));
+    const rows = data.rows.map((r, idx) => {
+      const eventStates = new Map((r.events ?? []).map(e => [e.index, e.state]));
+      return {
+        idx,
+        label: r.label,
+        filled: r.filled,
+        total: r.total,
+        isWon: r.filled >= r.total,
+        canRemoveBox: r.total > MIN_BOXES,
+        boxes: Array.from({ length: r.total }, (_, i) => {
+          const eventState = eventStates.get(i) ?? 0;
+          return {
+            checked: i < r.filled,
+            idx: i,
+            eventState,
+            reached: eventState > 0 && i < r.filled
+          };
+        })
+      };
+    });
     return {
       rows,
       canEdit: this.canEdit,
@@ -148,6 +162,29 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     });
   }
 
+  /**
+   * Right-click a box to cycle its "event step" marker through its states
+   * (none → red → amber → none). Visual only — signals that something happens
+   * when an actor reaches this box.
+   */
+  async _onMarkBox(event) {
+    event.preventDefault();
+    if (!this.canEdit) return;
+    const box = event.currentTarget;
+    const rowIdx = Number(box.dataset.row);
+    const boxIdx = Number(box.dataset.box);
+    if (!Number.isInteger(rowIdx) || !Number.isInteger(boxIdx)) return;
+    await this._updateData(d => {
+      const row = d.rows[rowIdx];
+      const events = (row.events ?? []).filter(e => e.index !== boxIdx);
+      const current = (row.events ?? []).find(e => e.index === boxIdx)?.state ?? 0;
+      const next = (current + 1) % EVENT_STATE_COUNT;
+      if (next > 0) events.push({ index: boxIdx, state: next });
+      events.sort((a, b) => a.index - b.index);
+      row.events = events;
+    });
+  }
+
   async _onRowAddBox(event, target) {
     if (!this.canEdit) return;
     const rowIdx = Number(target.dataset.row);
@@ -167,6 +204,8 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
           d.announcedWinners = d.announcedWinners.filter(i => i !== rowIdx);
         }
       }
+      // Drop any event markers that fell off the end of the track.
+      row.events = (row.events ?? []).filter(e => e.index < row.total);
     });
   }
 
@@ -200,7 +239,8 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       d.rows.push({
         label: RaceBoardData.nextOpponentLabel(d.rows),
         filled: 0,
-        total: DEFAULT_BOXES
+        total: DEFAULT_BOXES,
+        events: []
       });
     });
   }
@@ -310,6 +350,11 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
   async _onRender(context, options) {
     await super._onRender?.(context, options);
     this._hasBeenRendered = true;
+    if (this.canEdit) {
+      for (const box of this.element.querySelectorAll('.rb-box[data-action="tick"]')) {
+        box.addEventListener("contextmenu", this._onMarkBox.bind(this));
+      }
+    }
   }
 
   async _onClose(options) {

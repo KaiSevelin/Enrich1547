@@ -18,7 +18,7 @@
         <div class="rb-row-body">
           <div class="rb-boxes">
             {{#each boxes}}
-              <span class="rb-box {{#if checked}}is-checked{{/if}}">
+              <span class="rb-box {{#if checked}}is-checked{{/if}} {{#if reached}}is-reached{{/if}}" data-event-state="{{eventState}}">
                 <i class="fa-{{#if checked}}solid{{else}}regular{{/if}} fa-square{{#if checked}}-check{{/if}}"></i>
               </span>
             {{/each}}

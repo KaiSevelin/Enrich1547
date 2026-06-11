@@ -27,5 +27,6 @@
   "RACEBOARD.SaveTitle": "Save RaceBoard",
   "RACEBOARD.SavePrompt": "Name this RaceBoard. It will be created as a Journal page in the \"RaceBoards\" folder.",
   "RACEBOARD.SavedAs": "Saved RaceBoard \"{name}\".",
-  "RACEBOARD.AlreadySaved": "This RaceBoard is already saved — edits auto-save."
+  "RACEBOARD.AlreadySaved": "This RaceBoard is already saved — edits auto-save.",
+  "RACEBOARD.MarkEventTitle": "Left-click to tick • Right-click to cycle event marker (none → red → amber)"
 }

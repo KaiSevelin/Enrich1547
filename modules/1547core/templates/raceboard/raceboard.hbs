@@ -34,8 +34,9 @@
       <div class="rb-row-body">
         <div class="rb-boxes">
           {{#each boxes}}
-            <span class="rb-box {{#if checked}}is-checked{{/if}}"
-                  {{#if ../../canEdit}}data-action="tick" data-row="{{../idx}}"{{/if}}>
+            <span class="rb-box {{#if checked}}is-checked{{/if}} {{#if reached}}is-reached{{/if}}"
+                  data-event-state="{{eventState}}"
+                  {{#if ../../canEdit}}data-action="tick" data-row="{{../idx}}" data-box="{{idx}}" title="{{localize "RACEBOARD.MarkEventTitle"}}"{{/if}}>
               <i class="fa-{{#if checked}}solid{{else}}regular{{/if}} fa-square{{#if checked}}-check{{/if}}"></i>
             </span>
           {{/each}}
