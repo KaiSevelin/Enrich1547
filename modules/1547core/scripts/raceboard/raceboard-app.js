@@ -70,6 +70,7 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   async _prepareContext() {
     const data = this.data;
+    const isGM = game.user.isGM;
     const rows = data.rows.map((r, idx) => {
       const eventStates = new Map((r.events ?? []).map(e => [e.index, e.state]));
       return {
@@ -80,7 +81,8 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
         isWon: r.filled >= r.total,
         canRemoveBox: r.total > MIN_BOXES,
         boxes: Array.from({ length: r.total }, (_, i) => {
-          const eventState = eventStates.get(i) ?? 0;
+          // Event markers are GM-only — players never receive a non-zero state.
+          const eventState = isGM ? (eventStates.get(i) ?? 0) : 0;
           return {
             checked: i < r.filled,
             idx: i,

@@ -24,6 +24,7 @@ export class RaceBoardPageSheet extends HandlebarsApplicationMixin(BasePageSheet
   async _prepareContext(options) {
     const context = (await super._prepareContext?.(options)) ?? {};
     const sys = this.document.system;
+    const isGM = game.user.isGM;
     context.rows = sys.rows.map((r, idx) => {
       const eventStates = new Map((r.events ?? []).map(e => [e.index, e.state]));
       return {
@@ -33,7 +34,8 @@ export class RaceBoardPageSheet extends HandlebarsApplicationMixin(BasePageSheet
         total: r.total,
         isWon: r.filled >= r.total,
         boxes: Array.from({ length: r.total }, (_, i) => {
-          const eventState = eventStates.get(i) ?? 0;
+          // Event markers are GM-only — players never receive a non-zero state.
+          const eventState = isGM ? (eventStates.get(i) ?? 0) : 0;
           return {
             checked: i < r.filled,
             eventState,
