@@ -1,0 +1,554 @@
+{
+  "name": "DiseaseTemplate",
+  "type": "_equippableItemTemplate",
+  "_id": "DZ7sK2mLp9Qx4TvR",
+  "img": "icons/svg/biohazard.svg",
+  "system": {
+    "body": {
+      "key": "custom_body",
+      "type": "panel",
+      "title": "",
+      "titleStyle": "default",
+      "flow": "vertical",
+      "align": "left",
+      "verticalAlign": "top",
+      "collapsible": false,
+      "defaultCollapsed": false,
+      "contents": [
+        {
+          "key": "Phases",
+          "type": "dynamicTable",
+          "contents": [],
+          "rowLayout": [
+            {
+              "key": "Phase",
+              "type": "select",
+              "size": "full-size",
+              "defaultValue": "Incubation",
+              "selectedOptionType": "custom",
+              "options": [
+                {
+                  "key": "Incubation",
+                  "value": "Incubation"
+                },
+                {
+                  "key": "Symptoms",
+                  "value": "Symptoms"
+                },
+                {
+                  "key": "Onset",
+                  "value": "Onset"
+                },
+                {
+                  "key": "Crisis",
+                  "value": "Crisis"
+                },
+                {
+                  "key": "Resolution",
+                  "value": "Resolution"
+                },
+                {
+                  "key": "Convalescence",
+                  "value": "Convalescence"
+                }
+              ],
+              "colName": "Phase"
+            },
+            {
+              "key": "Duration",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "1d6 days",
+              "colName": "Duration"
+            },
+            {
+              "key": "Condition",
+              "type": "select",
+              "size": "full-size",
+              "defaultValue": "None",
+              "selectedOptionType": "custom",
+              "options": [
+                {
+                  "key": "None",
+                  "value": "None"
+                },
+                {
+                  "key": "Weak",
+                  "value": "Weak"
+                },
+                {
+                  "key": "Exhausted",
+                  "value": "Exhausted"
+                }
+              ],
+              "colName": "Condition"
+            },
+            {
+              "key": "Effect",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "",
+              "colName": "Effect"
+            }
+          ],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "No phases defined.",
+          "predefinedLines": [],
+          "canPlayerAdd": true,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "sortPredicates": []
+        },
+        {
+          "key": "CureBoard",
+          "type": "dynamicTable",
+          "contents": [],
+          "rowLayout": [
+            {
+              "key": "Phase",
+              "type": "select",
+              "size": "full-size",
+              "defaultValue": "Onset And Before",
+              "selectedOptionType": "custom",
+              "options": [
+                {
+                  "key": "OnsetAndBefore",
+                  "value": "Onset And Before"
+                },
+                {
+                  "key": "Onset",
+                  "value": "Onset"
+                },
+                {
+                  "key": "Crisis",
+                  "value": "Crisis"
+                },
+                {
+                  "key": "All",
+                  "value": "All"
+                }
+              ],
+              "colName": "Phase"
+            },
+            {
+              "key": "Role",
+              "type": "select",
+              "size": "full-size",
+              "defaultValue": "Physician",
+              "selectedOptionType": "custom",
+              "options": [
+                {
+                  "key": "Physician",
+                  "value": "Physician"
+                },
+                {
+                  "key": "BarberSurgeon",
+                  "value": "Barber-Surgeon"
+                },
+                {
+                  "key": "Apothecary",
+                  "value": "Apothecary"
+                },
+                {
+                  "key": "Cleric",
+                  "value": "Cleric"
+                },
+                {
+                  "key": "Player",
+                  "value": "Player"
+                }
+              ],
+              "colName": "Role"
+            },
+            {
+              "key": "Action",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "",
+              "colName": "Action"
+            },
+            {
+              "key": "Skill",
+              "type": "select",
+              "size": "full-size",
+              "defaultValue": "Medicine",
+              "selectedOptionType": "custom",
+              "options": [
+                {
+                  "key": "Medicine",
+                  "value": "Medicine"
+                },
+                {
+                  "key": "Surgeon",
+                  "value": "Surgeon"
+                },
+                {
+                  "key": "Herbalism",
+                  "value": "Herbalism"
+                },
+                {
+                  "key": "Religion",
+                  "value": "Religion"
+                },
+                {
+                  "key": "Stamina",
+                  "value": "Stamina"
+                },
+                {
+                  "key": "Alchemy",
+                  "value": "Alchemy"
+                }
+              ],
+              "colName": "Skill"
+            },
+            {
+              "key": "Difficulty",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "2d6",
+              "colName": "Difficulty"
+            }
+          ],
+          "head": false,
+          "deleteWarning": false,
+          "labelWhenEmpty": "No cure-board boxes defined.",
+          "predefinedLines": [],
+          "canPlayerAdd": true,
+          "hiddenColumns": [],
+          "sortOption": "manual",
+          "sortPredicates": []
+        },
+        {
+          "key": "DescriptivePanel",
+          "type": "panel",
+          "title": "Notes",
+          "titleStyle": "default",
+          "flow": "vertical",
+          "align": "left",
+          "verticalAlign": "top",
+          "collapsible": false,
+          "defaultCollapsed": false,
+          "contents": [
+            {
+              "key": "ResolutionText",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Resolution:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "Prevention",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Prevention:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "Diagnosis",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Diagnosis:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "Cure",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Cure:",
+              "defaultValue": "",
+              "style": "sheet"
+            },
+            {
+              "key": "ConvalescenceNotes",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Convalescence:",
+              "defaultValue": "",
+              "style": "sheet"
+            }
+          ]
+        },
+        {
+          "key": "LiveStatePanel",
+          "type": "panel",
+          "title": "Active Affliction (live state)",
+          "titleStyle": "default",
+          "flow": "grid-2",
+          "align": "left",
+          "verticalAlign": "top",
+          "collapsible": false,
+          "defaultCollapsed": false,
+          "contents": [
+            {
+              "key": "CurrentPhase",
+              "type": "select",
+              "size": "full-size",
+              "label": "Current Phase:",
+              "defaultValue": "Incubation",
+              "selectedOptionType": "custom",
+              "options": [
+                {
+                  "key": "Incubation",
+                  "value": "Incubation"
+                },
+                {
+                  "key": "Symptoms",
+                  "value": "Symptoms"
+                },
+                {
+                  "key": "Onset",
+                  "value": "Onset"
+                },
+                {
+                  "key": "Crisis",
+                  "value": "Crisis"
+                },
+                {
+                  "key": "Resolution",
+                  "value": "Resolution"
+                },
+                {
+                  "key": "Convalescence",
+                  "value": "Convalescence"
+                }
+              ]
+            },
+            {
+              "key": "PhaseDaysElapsed",
+              "type": "numberField",
+              "size": "full-size",
+              "label": "Days In Phase:",
+              "defaultValue": "0",
+              "allowDecimal": false,
+              "minVal": "0",
+              "maxVal": "9999",
+              "allowRelative": false,
+              "showControls": true,
+              "controlsStyle": "hover",
+              "inputStyle": "text"
+            },
+            {
+              "key": "CureBoxesFilled",
+              "type": "textArea",
+              "size": "full-size",
+              "label": "Filled Cure Boxes:",
+              "defaultValue": "",
+              "style": "sheet"
+            }
+          ]
+        }
+      ]
+    },
+    "display": {
+      "width": 780,
+      "height": 860,
+      "fix_size": false,
+      "pp_width": 64,
+      "pp_height": 64
+    },
+    "header": {
+      "key": "custom_header",
+      "type": "panel",
+      "title": "",
+      "titleStyle": "default",
+      "flow": "vertical",
+      "align": "left",
+      "verticalAlign": "top",
+      "collapsible": false,
+      "defaultCollapsed": false,
+      "contents": [
+        {
+          "key": "Description",
+          "type": "textArea",
+          "size": "full-size",
+          "label": "",
+          "defaultValue": "",
+          "style": "sheet"
+        },
+        {
+          "key": "DiseaseIdentityPanel",
+          "type": "panel",
+          "title": "Disease Identity",
+          "titleStyle": "default",
+          "flow": "grid-2",
+          "align": "left",
+          "verticalAlign": "top",
+          "collapsible": false,
+          "defaultCollapsed": false,
+          "contents": [
+            {
+              "key": "DiseaseCause",
+              "type": "select",
+              "size": "full-size",
+              "label": "Cause:",
+              "defaultValue": "Humour",
+              "selectedOptionType": "custom",
+              "options": [
+                {
+                  "key": "Humour",
+                  "value": "Humour"
+                },
+                {
+                  "key": "AstralMiasma",
+                  "value": "Astral Miasma"
+                },
+                {
+                  "key": "EnglishMiasma",
+                  "value": "English Miasma"
+                },
+                {
+                  "key": "StaleMiasma",
+                  "value": "Stale Miasma"
+                },
+                {
+                  "key": "MarshMiasma",
+                  "value": "Marsh Miasma"
+                },
+                {
+                  "key": "Spirit",
+                  "value": "Spirit"
+                },
+                {
+                  "key": "Unnatural",
+                  "value": "Unnatural"
+                }
+              ]
+            },
+            {
+              "key": "AssociatedHumour",
+              "type": "select",
+              "size": "full-size",
+              "label": "Associated Humour:",
+              "defaultValue": "None",
+              "selectedOptionType": "custom",
+              "options": [
+                {
+                  "key": "None",
+                  "value": "None"
+                },
+                {
+                  "key": "Blood",
+                  "value": "Blood"
+                },
+                {
+                  "key": "YellowBile",
+                  "value": "Yellow Bile"
+                },
+                {
+                  "key": "BlackBile",
+                  "value": "Black Bile"
+                },
+                {
+                  "key": "Phlegm",
+                  "value": "Phlegm"
+                }
+              ]
+            },
+            {
+              "key": "ContagionStat",
+              "type": "select",
+              "size": "full-size",
+              "label": "Contagion Stat:",
+              "defaultValue": "Stamina",
+              "selectedOptionType": "custom",
+              "options": [
+                {
+                  "key": "Stamina",
+                  "value": "Stamina"
+                },
+                {
+                  "key": "Faith",
+                  "value": "Faith"
+                },
+                {
+                  "key": "Power",
+                  "value": "Power"
+                }
+              ]
+            },
+            {
+              "key": "ContagionDifficulty",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Contagion Difficulty:",
+              "defaultValue": "3d6"
+            },
+            {
+              "key": "ImmunityRule",
+              "type": "select",
+              "size": "full-size",
+              "label": "Immunity Rule:",
+              "defaultValue": "None",
+              "selectedOptionType": "custom",
+              "options": [
+                {
+                  "key": "None",
+                  "value": "None"
+                },
+                {
+                  "key": "OnlyHumour",
+                  "value": "Only Humour"
+                },
+                {
+                  "key": "BalancedImmune",
+                  "value": "Balanced Immune"
+                },
+                {
+                  "key": "FaithExceedsSpirit",
+                  "value": "Faith Exceeds Spirit"
+                }
+              ]
+            },
+            {
+              "key": "ResistanceRule",
+              "type": "select",
+              "size": "full-size",
+              "label": "Resistance Rule:",
+              "defaultValue": "None",
+              "selectedOptionType": "custom",
+              "options": [
+                {
+                  "key": "None",
+                  "value": "None"
+                },
+                {
+                  "key": "NotHumour",
+                  "value": "Not Humour"
+                },
+                {
+                  "key": "FaithDiceAtLeast",
+                  "value": "Faith Dice At Least"
+                }
+              ]
+            },
+            {
+              "key": "ResistanceValue",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Resistance Value:",
+              "defaultValue": ""
+            }
+          ]
+        }
+      ]
+    },
+    "hidden": [],
+    "modifiers": [],
+    "uniqueId": "DZ7sK2mLp9Qx4TvR"
+  },
+  "effects": [],
+  "folder": null,
+  "flags": {
+    "custom-system-builder": {
+      "version": "5.2.0"
+    }
+  },
+  "items": [],
+  "ownership": {
+    "default": 0
+  }
+}

@@ -107,9 +107,24 @@ Hooks.once("init", () => {
         (module) => module.registerUsageEffectActionResolver()
     );
     void runImportedModuleStep(
+        "registerConditionRegistry",
+        () => import("./services/condition-registry.js"),
+        (module) => module.registerConditionRegistry()
+    );
+    void runImportedModuleStep(
         "registerSpellCastingService",
         () => import("./services/spell-casting-service.js"),
         (module) => module.registerSpellCastingService()
+    );
+    void runImportedModuleStep(
+        "registerDiseaseService",
+        () => import("./services/disease-service.js"),
+        (module) => module.registerDiseaseService()
+    );
+    void runImportedModuleStep(
+        "registerFailureEffectService",
+        () => import("./services/failure-effect-service.js"),
+        (module) => module.registerFailureEffectService()
     );
     void runImportedModuleStep(
         "registerDiagnosticsService",

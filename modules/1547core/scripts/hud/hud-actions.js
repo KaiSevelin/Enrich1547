@@ -1,4 +1,5 @@
 ﻿import { buildDefenderPool, toFoundryFormula } from "../combat/pool-builder.mjs";
+import { conditionCombatDisadvantage } from "../services/condition-registry.js";
 
 function consumePersistentEffectIfPresent(actor, effectType, deps = {}) {
     const { MODULE_ID, game } = deps;
@@ -7,8 +8,11 @@ function consumePersistentEffectIfPresent(actor, effectType, deps = {}) {
     return consumer(actor, effectType);
 }
 
-function buildDefenseRollFormula(armorSummary) {
+function buildDefenseRollFormula(armorSummary, defender = null) {
     const pool = buildDefenderPool(Array.isArray(armorSummary?.defenseDice) ? armorSummary.defenseDice : undefined);
+    // Conditions (Locked, Weakened, Exhausted, Cursed) add Risk dice to the defence pool.
+    const disadvantage = defender ? conditionCombatDisadvantage(defender) : 0;
+    for (let i = 0; i < disadvantage; i += 1) pool.push("Risk");
     return toFoundryFormula(pool);
 }
 
@@ -160,6 +164,8 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
         return;
     }
     const currentManeuverEffects = summarizeManeuverEffects(currentSummary.selectedPreManeuvers);
+    // Conditions (Weakened, Exhausted, Cursed, Locked) add Risk dice to the attack pool.
+    currentManeuverEffects.addDisadvantage = Number(currentManeuverEffects.addDisadvantage ?? 0) + conditionCombatDisadvantage(context.actor);
     const baseWeaponRollContext = buildWeaponRollContext(currentSummary, currentManeuverEffects);
     const effectiveWeaponRollContext = {
         ...baseWeaponRollContext,
@@ -282,7 +288,7 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
                 name: "Unprotected",
             };
 
-        const defenseFormula = buildDefenseRollFormula(defenderArmor);
+        const defenseFormula = buildDefenseRollFormula(defenderArmor, targetActor);
         const defenderSpeaker = ChatMessage.getSpeaker({ actor: targetActor, token: context.primaryTarget?.document });
         const defenseRollSummary = defenseFormula
             ? await rollFormulaToChatAndSummarize({

@@ -2,7 +2,7 @@
     "id":  "1547core",
     "title":  "1547 Core",
     "description":  "Core rules and shared runtime for 1547",
-    "version":  "0.3.26",
+    "version":  "0.3.27",
     "compatibility":  {
                           "minimum":  "11",
                           "verified":  "13.350"
@@ -35,6 +35,7 @@
                                           "rulebook",
                                           "maneuvers",
                                           "spells",
+                                          "diseases",
                                           "monster-magic",
                                           "weapons",
                                           "armors",
@@ -76,6 +77,17 @@
                       "name":  "spells",
                       "label":  "1547 Spells",
                       "path":  "packs/spells",
+                      "type":  "Item",
+                      "system":  "custom-system-builder",
+                      "ownership":  {
+                                        "PLAYER":  "OBSERVER",
+                                        "ASSISTANT":  "OWNER"
+                                    }
+                  },
+                  {
+                      "name":  "diseases",
+                      "label":  "1547 Diseases",
+                      "path":  "packs/diseases",
                       "type":  "Item",
                       "system":  "custom-system-builder",
                       "ownership":  {

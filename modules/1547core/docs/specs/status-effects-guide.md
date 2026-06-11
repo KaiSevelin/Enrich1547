@@ -259,7 +259,6 @@ transformations.
 - `Bad Luck`
 - `Confused`
 - `Cursed`
-- `Diseased`
 - `Doomed`
 - `Fear`
 - `Possessed`
@@ -277,6 +276,85 @@ transformations.
 
 These should remain editable and inspectable, with clear duration support and
 room for later rules text, rather than being hidden implementation details.
+
+## Formalized Spell Conditions (first set)
+
+The conditions below are the first spell-facing states given real rules impact
+(promoted from the proposed list above). They are the set the ritual failure tables
+rely on, so that "apply Weakened" or "apply Doomed" means something mechanical rather
+than a GM sticky-note. They are authored as editable, inspectable active effects with
+duration.
+
+Throughout this section, **disadvantage** means the actor rolls **one fewer die** on the
+affected pool (minimum one die) — the inverse of an advantage die — consistent with how
+advantage adds a die to a stat pool.
+
+### Weakened
+
+- Type: `condition` (spell-facing)
+- Applied by: draining or backlash failure results, curses
+- Removed by: expiry (Scene to Days), full rest, or cleansing
+- Rules impact:
+  - disadvantage on every action that uses `Strength`, `Stamina`, or `Dexterity`,
+    including attack and defence pools
+  - does not stack; a second application refreshes duration rather than deepening it
+
+### Cursed
+
+- Type: `condition`
+- Applied by: curse workings, catastrophic failures
+- Removed by: a Remove Curse rite or the curse's authored `RemovalMethod` only — it does
+  **not** fade on its own
+- Rules impact:
+  - disadvantage on **all** action rolls, physical and supernatural
+  - persists until lifted; an actor carries only their single worst active curse unless an
+    effect says otherwise
+
+### Restless
+
+- Type: `condition`
+- Applied by: hauntings, spirit attention, disturbed-dead failures
+- Removed by: a peaceful, warded night; cleansing; or expiry
+- Rules impact:
+  - the actor gains no benefit from sleep or rest — no `HP`/`Stamina`/strain recovery
+  - any state that ends "after a full night's rest" cannot end while Restless
+
+### Marked
+
+- Type: `condition` / visible tell
+- Applied by: failures that draw attention, marking curses
+- Removed by: a concealment or cleansing rite, or expiry
+- Rules impact:
+  - divination, spirit-sight, and supernatural tracking **against** the actor roll with
+    advantage
+  - the mark is a visible or divinatory tell; it is the usual hook by which pursuit (see
+    Doomed) finds its target
+
+### Doomed
+
+- Type: `condition` (a hanging sentence)
+- Applied by: catastrophic failures, death-curses, the attention of a hostile power
+- Removed by: an appropriate averting rite, fulfilling/breaking the doom, or a removal
+  effect
+- Rules impact:
+  - the actor gains no benefit from advantage dice — fortune deserts them
+  - the **first** defence check failed, or failure-table result suffered, while Doomed is
+    read **one severity tier worse** (Minor → Major → Catastrophic); Doomed is then
+    consumed
+  - until consumed it lingers; it pairs naturally with Marked, which lets the doom find
+    its target
+
+### Exhausted
+
+- Type: `condition`
+- Applied by: a disease's Crisis phase; extreme strain, deprivation, or unrelenting effort
+- Removed by: rest and recovery once the cause ends (e.g. convalescence)
+- Rules impact:
+  - disadvantage on **all** action rolls, physical and mental — heavier than Weakened,
+    which is physical only
+  - the actor gains no benefit from advantage dice
+  - movement is halved and the actor cannot take strenuous or full-effort actions
+  - **supersedes Weakened** — the two do not stack; while Exhausted, ignore Weakened
 
 ## Future Battlefield Effects
 

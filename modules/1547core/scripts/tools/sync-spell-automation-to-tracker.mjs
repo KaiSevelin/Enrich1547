@@ -265,7 +265,7 @@ const READY_EFFECTS = {
         createEmptyEffect({ spellName: "Consumption Oath", effectSubtype: "Consumption Oath", targetType: "Actor", durationType: "UntilBroken" })
     ],
     "Disease Knot": [
-        createEmptyEffect({ spellName: "Disease Knot", effectSubtype: "Diseased", targetType: "Actor", durationType: "Days", durationValue: "1d6" })
+        createEmptyEffect({ spellName: "Disease Knot", effectType: "Grant", effectSubtype: "ConditionItem", targetType: "Actor", durationType: "UntilBroken" })
     ],
     "Dream Warding": [
         createEmptyEffect({ spellName: "Dream Warding", effectSubtype: "Dream Warded", targetType: "Actor", durationType: "Days", durationValue: "1" })

@@ -36,9 +36,9 @@ Allowed subtypes:
 - `Charmed`
 - `Confused`
 - `Cursed`
-- `Diseased`
 - `Dominated`
 - `Doomed`
+- `Exhausted`
 - `Friendly`
 - `Hidden`
 - `IllLuck`
@@ -316,7 +316,6 @@ mode, typical duration, and the payload fields most likely to matter.
 | Status | Charmed | Target becomes favorably disposed or compliant. | CreateActiveEffect | Scene to Days | `PayloadValue`, `ResistanceFormula` |
 | Status | Confused | Target misjudges actions, allies, or surroundings. | CreateActiveEffect | Scene | `PayloadValue`, `OnPartial` |
 | Status | Cursed | Target is under an active harmful magical condition. | CreateActiveEffect | Days to UntilBroken | `PayloadValue`, `RemovalMethod` |
-| Status | Diseased | Target is carrying an active disease state. | CreateActiveEffect | Days to Weeks | `PayloadValue`, `RemovalMethod` |
 | Status | Dominated | Target is forced into obedience or direct control. | CreateActiveEffect | Scene to UntilBroken | `PayloadValue`, `ResistanceFormula` |
 | Status | Doomed | Target is marked for worsening misfortune or death. | CreateActiveEffect | Days to Permanent | `PayloadValue`, `ExpiryTrigger` |
 | Status | Friendly | Target treats source as ally or favorable contact. | CreateActiveEffect | Scene to Days | `PayloadValue` |
@@ -533,7 +532,6 @@ Use these rows as the default building blocks for monsters, spells, powers, and 
 | Charmed | Status | Charmed | `Status` | Scene to Days | Yes |
 | Confused | Status | Confused | `Status` | Scene | Yes |
 | Cursed | Status | Cursed | `Status` | Days to UntilBroken | Yes |
-| Diseased | Status | Diseased | `Status` | Days to Weeks | Yes |
 | Dominated | Status | Dominated | `Status` | Scene to UntilBroken | Yes |
 | Doomed | Status | Doomed | `Status` | Days to Permanent | Yes |
 | Friendly | Status | Friendly | `Status` | Scene to Days | Yes |

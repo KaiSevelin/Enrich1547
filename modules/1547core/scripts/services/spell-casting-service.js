@@ -1,5 +1,7 @@
 import { isManualSpellItem } from "./spell-manual-support.js";
 import { findTable, getTableById } from "./content-registry.js";
+import { applyFailureEffect } from "./failure-effect-service.js";
+import { applyConditionDiceModifier } from "./condition-registry.js";
 
 const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
@@ -230,11 +232,21 @@ async function rollSpellFailure(spell) {
     const rollResult = await table.roll();
     const result = Array.isArray(rollResult.results) ? rollResult.results[0] : rollResult.results;
     const text = String(result?.text ?? "").trim() || "The spell fails, but the table returned no text.";
+    const effect = result?.flags?.[SOURCE_FLAG_SCOPE]?.spellFailureEntry?.effect ?? null;
+    const actor = spell?.parent ?? null;
+    if (effect && actor) {
+        try {
+            await applyFailureEffect(actor, effect);
+        } catch (err) {
+            console.error("1547core | applyFailureEffect failed", err);
+        }
+    }
     return {
         ok: true,
         failureProfile,
         failureTableRef,
         text,
+        effect,
         table,
         rollResult
     };
@@ -245,7 +257,7 @@ function getPrimaryStatFormula(actor, statLabel, bonusDice = 0) {
     const safeLabel = String(statLabel ?? "").trim();
     const diceKey = `Stats_${safeLabel}Dice`;
     const modKey = `Stats_${safeLabel}Mod`;
-    const dice = Math.max(0, Number(props?.[diceKey] ?? 0) + Math.max(0, Number(bonusDice) || 0));
+    const dice = applyConditionDiceModifier(actor, safeLabel, Number(props?.[diceKey] ?? 0), Number(bonusDice) || 0);
     const mod = Number(props?.[modKey] ?? 0);
     if (dice <= 0 && mod === 0) return "0";
     if (mod === 0) return `${dice}d6`;

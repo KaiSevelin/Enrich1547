@@ -294,6 +294,54 @@ Authoring intent:
 - Use state description fields to record the narrative and procedural meaning
   of each status.
 
+## Disease Template
+
+Template ID: `Item.DZ7sK2mLp9Qx4TvR` *(provisional — minted for this template)*
+
+A disease is authored as an item. The **same item is granted onto an actor when contracted**;
+the actor's copy carries the live `CurrentPhase` / `PhaseDaysElapsed` / `CureBoxesFilled`
+state, so one template serves both as the canonical definition and as the on-sheet
+affliction. See [`disease-system-spec-v1.md`](disease-system-spec-v1.md) for the rules.
+
+Fields — **definition**:
+
+- `Description`
+- `DiseaseCause` — select: `Humour`, `AstralMiasma`, `EnglishMiasma`, `StaleMiasma`,
+  `MarshMiasma`, `Spirit`, `Unnatural`
+- `AssociatedHumour` — select: `None`, `Blood`, `YellowBile`, `BlackBile`, `Phlegm`
+- `ContagionStat` — select: `Stamina`, `Faith`, `Power`
+- `ContagionDifficulty` — text formula (`3d6`, or `SpiritPower` for a vs-spirit contest)
+- `ImmunityRule` — select: `None`, `OnlyHumour` (only the associated humour can contract),
+  `BalancedImmune` (no dominant humour → immune), `FaithExceedsSpirit`
+- `ResistanceRule` — select: `None`, `NotHumour` (advantage when not dominated by a humour),
+  `FaithDiceAtLeast` (advantage when Faith dice ≥ value)
+- `ResistanceValue` — number/text param for the resistance rule
+- `Phases` — dynamic table: `Phase` (Incubation/Symptoms/Onset/Crisis/Resolution/
+  Convalescence) · `Duration` (text formula, e.g. `1d3 days`, `NA`) · `Condition`
+  (None/Weak/Exhausted) · `Effect` (narrative + permanent stat steps)
+- `CureBoard` — dynamic table: `Phase` (OnsetAndBefore/Onset/Crisis/All) · `Role`
+  (Physician/Barber-Surgeon/Apothecary/Cleric/Player) · `Action` (text) · `Skill`
+  (Medicine/Surgeon/Herbalism/Apothecary/Alchemy/Religion/Stamina) · `Difficulty` (text formula). One row per
+  cure-board box.
+- text fields: `ResolutionText`, `Prevention`, `Diagnosis`, `Cure`, `Convalescence`
+
+Fields — **live affliction state** (populated on the actor's copy):
+
+- `CurrentPhase` — select (the phase enum)
+- `PhaseDaysElapsed` — number
+- `CureBoxesFilled` — text/JSON list of filled cure-board box ids for the current phase
+
+Authoring intent:
+
+- The `disease-service` reads `ContagionStat` / `ContagionDifficulty` / `ImmunityRule` /
+  `ResistanceRule` to automate the contraction check against `Humour_*`, Faith dice, or a
+  spirit's Power.
+- On contraction it grants the disease item to the actor and sets `CurrentPhase` to the
+  first timed phase.
+- It advances `CurrentPhase` when `PhaseDaysElapsed` exceeds the phase `Duration`.
+- It builds the treatment race board from the `CureBoard` rows whose `Phase` matches
+  `CurrentPhase` (boxes = those rows), resetting `CureBoxesFilled` on phase advance.
+
 ## Usage Effect Placement
 
 Use `usage-effect` items in the container that reflects outcome role:

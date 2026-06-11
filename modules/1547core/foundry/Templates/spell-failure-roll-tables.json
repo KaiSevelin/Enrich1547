@@ -1,5 +1,1182 @@
 [
-{"id":"SpellFailure_Minor","name":"Spell Failure Minor","severity":"Minor","drawFormula":"3d6","drawMode":"single","entries":[{"id":"SFM01","resultText":"The working fizzles. The rite fails without further harm, but the materials are spoiled.","resultTag":"Fizzle","resultNotes":"No spell effect. Replace consumable ritual materials."},{"id":"SFM02","resultText":"The power slips sideways. A harmless but unsettling omen appears nearby.","resultTag":"Omen","resultNotes":"GM adds a brief manifestation, sign, or sensory disturbance."},{"id":"SFM03","resultText":"The caster is left spiritually winded and suffers a moment of weakness.","resultTag":"Fatigue","resultNotes":"Apply a short-lived weakness or narrative fatigue."},{"id":"SFM04","resultText":"The rite lingers imperfectly. The spell cannot be attempted again until the next dawn.","resultTag":"Delay","resultNotes":"Temporary lockout on this spell."},{"id":"SFM05","resultText":"The sign is misread. The next omen or divinatory answer concerning the same matter is clouded.","resultTag":"CloudedOmen","resultNotes":"Penalty is narrative unless later system support is added."},{"id":"SFM06","resultText":"The caster draws attention. Nearby spirits, hidden folk, or watching powers become faintly aware of the rite.","resultTag":"Notice","resultNotes":"Use as a future complication hook."},{"id":"SFM07","resultText":"The working rebounds softly. A minor inconvenience or ill-luck clings to the caster for the scene.","resultTag":"IllLuck","resultNotes":"Suitable for mild curse flavor."},{"id":"SFM08","resultText":"The spell half-forms and stains its tools. The ritual focus or vessel gains an obvious occult tell.","resultTag":"Taint","resultNotes":"Best used for item-focused workings."}]},
-{"id":"SpellFailure_Major","name":"Spell Failure Major","severity":"Major","drawFormula":"3d6","drawMode":"single","entries":[{"id":"SFG01","resultText":"The caster is struck by backlash and suffers a real weakening of body or spirit.","resultTag":"Backlash","resultNotes":"Apply Weakened, a stat loss, or comparable short-term debility."},{"id":"SFG02","resultText":"The spell fastens to the wrong target: the caster, a helper, or a sympathetic object nearby.","resultTag":"Misfire","resultNotes":"Redirect success effect or a softened version of it."},{"id":"SFG03","resultText":"An intrusive presence answers the rite. Something unseen now watches, follows, or remembers the caster.","resultTag":"Attention","resultNotes":"Strong future complication."},{"id":"SFG04","resultText":"The rite leaves a stain in place. Threshold, room, grave, or vessel becomes spiritually troubled.","resultTag":"BlightedPlace","resultNotes":"Use for local haunting, ill feeling, or ritual instability."},{"id":"SFG05","resultText":"The caster is marked by the failure. A visible or divinatory tell reveals recent occult misuse.","resultTag":"Marked","resultNotes":"Could become a trait or discoverable sign."},{"id":"SFG06","resultText":"The spell opens too far. A hostile omen, false message, or deceptive sign replaces the intended result.","resultTag":"FalseRevelation","resultNotes":"Especially appropriate for divination and prophecy."},{"id":"SFG07","resultText":"The materials turn against the rite. A vessel breaks, wax collapses, cord knots itself, or ink blackens the hand.","resultTag":"MaterialRuin","resultNotes":"Narrative item damage and failed rite."},{"id":"SFG08","resultText":"The working binds strain to the caster. Until properly cleansed, later rites of the same school are harder to perform.","resultTag":"SchoolStrain","resultNotes":"Track as temporary magical strain."}]},
-{"id":"SpellFailure_Catastrophic","name":"Spell Failure Catastrophic","severity":"Catastrophic","drawFormula":"3d6","drawMode":"single","entries":[{"id":"SFC01","resultText":"The power breaks loose completely. A hostile force, entity, or effect manifests beyond the caster's control.","resultTag":"Manifestation","resultNotes":"Best for grimoire, summoning, pact, and necromancy disasters."},{"id":"SFC02","resultText":"The spell inverts. The intended blessing becomes a curse, the ward becomes an opening, or the binding becomes a release.","resultTag":"Inversion","resultNotes":"Reverse the spell's broad intent."},{"id":"SFC03","resultText":"The caster is spiritually torn. A lasting curse, mark, or pact-strain is inflicted.","resultTag":"LastingCurse","resultNotes":"Good place to create a Supernatural Mark later."},{"id":"SFC04","resultText":"The ritual contaminates the place. Ground, room, vessel, or threshold becomes dangerous until ritually repaired.","resultTag":"RitualBlight","resultNotes":"Strong area complication."},{"id":"SFC05","resultText":"Something is lost in the crossing. Memory, voice, warmth, shadow, or name is partially taken from the caster.","resultTag":"Loss","resultNotes":"Use as a severe narrative cost or direct stat/trait loss."},{"id":"SFC06","resultText":"The caster is seized by backlash and collapses under body-and-soul strain.","resultTag":"Collapse","resultNotes":"Could cause unconsciousness, wounds, or a scene-ending breakdown."},{"id":"SFC07","resultText":"The spell binds itself into the wrong thing permanently: a tool, corpse, vessel, home, or living bystander.","resultTag":"WrongBinding","resultNotes":"Creates a new problem creature, cursed item, or haunted place."},{"id":"SFC08","resultText":"The failure tears open a path that should have remained shut. The world is left thinner, stranger, and easier for later horrors to breach.","resultTag":"Breach","resultNotes":"Best for Zone, Unnatural, and Unseen complications."}]}
+  {
+    "id": "SpellFailure_Minor",
+    "name": "Spell Failure Minor",
+    "severity": "Minor",
+    "drawFormula": "3d6",
+    "drawMode": "single",
+    "entries": [
+      {
+        "id": "SFM01",
+        "resultText": "The working fizzles and fails without further harm, but the materials are spoiled.",
+        "resultTag": "Fizzle",
+        "resultNotes": "No effect; replace consumable materials."
+      },
+      {
+        "id": "SFM02",
+        "resultText": "The power slips sideways. A brief, harmless but unsettling omen appears nearby.",
+        "resultTag": "Omen",
+        "resultNotes": "Sensory sign only.",
+        "effect": {
+          "type": "Descriptive",
+          "subtype": "Omen",
+          "payloadValue": "A brief unsettling omen (GM describes)."
+        }
+      },
+      {
+        "id": "SFM03",
+        "resultText": "The caster is left spiritually winded and weak for a time.",
+        "resultTag": "Winded",
+        "resultNotes": "Brief Weakened.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Weakened",
+          "durationType": "Scene"
+        }
+      },
+      {
+        "id": "SFM04",
+        "resultText": "The rite lingers imperfectly; the spell cannot be attempted again until the next dawn.",
+        "resultTag": "Lockout",
+        "resultNotes": "Temporary lockout on this spell.",
+        "effect": {
+          "type": "Tag",
+          "subtype": "ConditionTag",
+          "payloadTag": "SpellLockout",
+          "durationType": "UntilDawn"
+        }
+      },
+      {
+        "id": "SFM05",
+        "resultText": "The working leaves a small mark on the caster's body — a brand, pallor, or thin scar.",
+        "resultTag": "RiteMark",
+        "resultNotes": "Cosmetic body mark in the bio.",
+        "effect": {
+          "type": "Bio",
+          "subtype": "Mark",
+          "payloadValue": "A small physical mark left by the working (GM/player describes)."
+        }
+      },
+      {
+        "id": "SFM06",
+        "resultText": "The caster's voice fails; words will not come for a while.",
+        "resultTag": "TongueTied",
+        "resultNotes": "Brief speech loss.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Silenced",
+          "durationType": "Scene"
+        }
+      },
+      {
+        "id": "SFM07",
+        "resultText": "Sleep will not come easily; the caster is left restless and ill at ease.",
+        "resultTag": "Restless",
+        "resultNotes": "Restless for some days.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Restless",
+          "durationType": "Days"
+        }
+      },
+      {
+        "id": "SFM08",
+        "resultText": "The rite plants a small, nagging compulsion in the caster.",
+        "resultTag": "SmallPull",
+        "resultNotes": "A minor new drive.",
+        "effect": {
+          "type": "Drive",
+          "subtype": "Compulsion",
+          "payloadValue": "A small new compulsion tied to the rite (GM/player phrases it)."
+        }
+      }
+    ]
+  },
+  {
+    "id": "SpellFailure_Major",
+    "name": "Spell Failure Major",
+    "severity": "Major",
+    "drawFormula": "3d6",
+    "drawMode": "single",
+    "entries": [
+      {
+        "id": "SFG01",
+        "resultText": "The caster is struck by backlash and suffers a real weakening of body and spirit.",
+        "resultTag": "Backlash",
+        "resultNotes": "Weakened for days.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Weakened",
+          "durationType": "Days"
+        }
+      },
+      {
+        "id": "SFG02",
+        "resultText": "The spell fastens to the wrong target: the caster, a helper, or a sympathetic object nearby.",
+        "resultTag": "Misfire",
+        "resultNotes": "GM redirects the intended effect (or a softened version) to the wrong target.",
+        "effect": {
+          "type": "Descriptive",
+          "subtype": "Misfire",
+          "payloadValue": "The working's effect lands on the wrong target."
+        }
+      },
+      {
+        "id": "SFG03",
+        "resultText": "Something from the other side takes notice and turns its attention on the caster.",
+        "resultTag": "Attention",
+        "resultNotes": "Relational hook — GM names what now watches/follows.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Marked",
+          "payloadValue": "Noticed by a being from the other side (GM names it).",
+          "durationType": "UntilLifted"
+        }
+      },
+      {
+        "id": "SFG04",
+        "resultText": "The rite leaves a stain in the place; threshold, room, or grave becomes spiritually troubled.",
+        "resultTag": "BlightedPlace",
+        "resultNotes": "A troubled site.",
+        "effect": {
+          "type": "Binding",
+          "subtype": "BindToPlace",
+          "payloadValue": "A spiritually troubled, stained place."
+        }
+      },
+      {
+        "id": "SFG05",
+        "resultText": "The failure brands the caster with a lasting occult mark.",
+        "resultTag": "MarkedFlesh",
+        "resultNotes": "Grant a Curse Supernatural Mark.",
+        "effect": {
+          "type": "Grant",
+          "subtype": "ConditionItem",
+          "payloadValue": "Witches' mark",
+          "payloadNotes": "Grant a Curse Supernatural Mark, e.g. Witches' mark or Ritual scars."
+        }
+      },
+      {
+        "id": "SFG06",
+        "resultText": "The caster's voice is taken; speech will not return until the loss is lifted.",
+        "resultTag": "VoiceTaken",
+        "resultNotes": "Lasting speech loss.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Silenced",
+          "durationType": "UntilLifted"
+        }
+      },
+      {
+        "id": "SFG07",
+        "resultText": "Strain binds to the caster; later rites of the same school are harder until cleansed.",
+        "resultTag": "SchoolStrain",
+        "resultNotes": "Casting penalty until cleansed.",
+        "effect": {
+          "type": "Stat",
+          "subtype": "Threshold",
+          "payloadTarget": "Casting",
+          "payloadValue": "-1",
+          "durationType": "UntilCleansed"
+        }
+      },
+      {
+        "id": "SFG08",
+        "resultText": "The working plants a deep new drive — an obsession the caster cannot easily shake.",
+        "resultTag": "Driven",
+        "resultNotes": "A strong new drive.",
+        "effect": {
+          "type": "Drive",
+          "subtype": "Obsession",
+          "payloadValue": "A strong new drive or obsession from the rite (GM/player phrases it)."
+        }
+      }
+    ]
+  },
+  {
+    "id": "SpellFailure_Catastrophic",
+    "name": "Spell Failure Catastrophic",
+    "severity": "Catastrophic",
+    "drawFormula": "3d6",
+    "drawMode": "single",
+    "entries": [
+      {
+        "id": "SFC01",
+        "resultText": "A being from the other side is now your enemy — and it knows you.",
+        "resultTag": "Enmity",
+        "resultNotes": "Relational hook — GM fleshes out the hostile being and its pursuit.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Marked",
+          "payloadValue": "A named being from beyond is now hostile and hunts the caster (GM fleshes it out).",
+          "durationType": "UntilLifted"
+        }
+      },
+      {
+        "id": "SFC02",
+        "resultText": "The failure tears a way open; something can cross over here.",
+        "resultTag": "TheWayOpens",
+        "resultNotes": "A breach — battlefield/zone effect (frontier).",
+        "effect": {
+          "type": "Battlefield",
+          "subtype": "Breach",
+          "payloadValue": "An open crossing lingers in the place; GM fleshes what crosses and when.",
+          "notes": "Frontier: needs the battlefield-effect system; GM-handled for now."
+        }
+      },
+      {
+        "id": "SFC03",
+        "resultText": "An unhealthy bond forms — a being from the other side is now tied to the caster.",
+        "resultTag": "UnholyBond",
+        "resultNotes": "An unwanted pact (GM sets patron, obligation, tension).",
+        "effect": {
+          "type": "Grant",
+          "subtype": "Pact",
+          "payloadValue": "An unwanted, nascent pact with a being from beyond (GM sets patron, obligation, and tension)."
+        }
+      },
+      {
+        "id": "SFC04",
+        "resultText": "The caster is spiritually torn; a lasting curse settles into them.",
+        "resultTag": "LastingCurse",
+        "resultNotes": "Grant a Curse Supernatural Mark.",
+        "effect": {
+          "type": "Grant",
+          "subtype": "ConditionItem",
+          "payloadValue": "Soul leakage",
+          "payloadNotes": "Grant a Curse Supernatural Mark, e.g. Soul leakage, Corrupted, or Witches' mark."
+        }
+      },
+      {
+        "id": "SFC05",
+        "resultText": "Fortune turns its face away; the caster is marked for worsening misfortune.",
+        "resultTag": "Doomed",
+        "resultNotes": "Doomed.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Doomed",
+          "durationType": "UntilLifted"
+        }
+      },
+      {
+        "id": "SFC06",
+        "resultText": "The caster is seized by backlash and collapses, body and soul.",
+        "resultTag": "Collapse",
+        "resultNotes": "Heavy HP damage; on a hard fall also Exhausted.",
+        "effect": {
+          "type": "Stat",
+          "subtype": "Resource",
+          "payloadTarget": "HP",
+          "payloadDice": "-2d6",
+          "onPartial": "Half damage and no collapse."
+        }
+      },
+      {
+        "id": "SFC07",
+        "resultText": "Something is taken in the crossing — a name, a voice, warmth, or a shadow — and does not return.",
+        "resultTag": "SomethingTaken",
+        "resultNotes": "Permanent loss; GM picks what is taken and the matching stat.",
+        "effect": {
+          "type": "Stat",
+          "subtype": "PrimaryStat",
+          "payloadTarget": "Charisma",
+          "payloadValue": "-1",
+          "durationType": "Permanent",
+          "payloadNotes": "GM picks what is taken (name, voice, warmth, shadow) and the matching permanent step loss."
+        }
+      },
+      {
+        "id": "SFC08",
+        "resultText": "The spell binds itself permanently into the wrong thing — a tool, corpse, vessel, or living bystander.",
+        "resultTag": "WrongBinding",
+        "resultNotes": "Creates a cursed object or haunted bystander.",
+        "effect": {
+          "type": "Binding",
+          "subtype": "BindToItem",
+          "payloadValue": "A cursed object, vessel, or haunted bystander.",
+          "durationType": "UntilBroken"
+        }
+      }
+    ]
+  },
+  {
+    "id": "SpellFailure_Undead_Major",
+    "name": "Spell Failure Undead (Major)",
+    "severity": "Major",
+    "entityNature": "Undead",
+    "drawFormula": "3d6",
+    "drawMode": "single",
+    "entries": [
+      {
+        "id": "SFUDG01",
+        "resultText": "The chill of the grave clings to the caster; limbs grow heavy and the spirit gutters.",
+        "resultTag": "GraveCold",
+        "resultNotes": "Undead mid-rank backlash.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Weakened",
+          "payloadDice": "1d3",
+          "durationType": "Scene",
+          "resistanceFormula": "2d6",
+          "onPartial": "Weakened for a single round instead of the scene."
+        }
+      },
+      {
+        "id": "SFUDG02",
+        "resultText": "Corpse-taint seeps into the working, and the caster sickens with the rot of what was disturbed.",
+        "resultTag": "CorpseTaint",
+        "resultNotes": "Corpse-contact contagion — the caster rolls a disease contraction (disease-service).",
+        "effect": {
+          "type": "Disease",
+          "subtype": "Contract",
+          "payloadValue": "a corpse-borne disease",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUDG03",
+        "resultText": "A shade takes notice. Something among the dead now watches, follows, or remembers the caster.",
+        "resultTag": "ShadeNotice",
+        "resultNotes": "Future haunting hook.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Marked",
+          "payloadValue": "Watched by the dead",
+          "durationType": "Days",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUDG04",
+        "resultText": "The nearest grave, bone, or remains will not lie still; the place turns restless.",
+        "resultTag": "RestlessDead",
+        "resultNotes": "Troubled grave or site.",
+        "effect": {
+          "type": "Binding",
+          "subtype": "BindToPlace",
+          "payloadValue": "Restless dead",
+          "durationType": "UntilBroken",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUDG05",
+        "resultText": "The dead disturb the caster's rest. Sleep brings cold dreams and no peace.",
+        "resultTag": "Restless",
+        "resultNotes": "Undead Restless.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Restless",
+          "durationType": "Days",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUDG06",
+        "resultText": "Something grave-cold drinks the caster's vigour to sustain itself.",
+        "resultTag": "BorrowedChill",
+        "resultNotes": "Stamina drain.",
+        "effect": {
+          "type": "Stat",
+          "subtype": "Resource",
+          "payloadTarget": "Stamina",
+          "payloadDice": "-1d3",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUDG07",
+        "resultText": "The working fastens to nearby remains instead of its mark, waking a small wrongness in them.",
+        "resultTag": "GraveMisfire",
+        "resultNotes": "Binds to remains, or redirect SuccessEffects onto them.",
+        "effect": {
+          "type": "Binding",
+          "subtype": "BindToItem",
+          "payloadValue": "Corpse or relic",
+          "durationType": "UntilBroken",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUDG08",
+        "resultText": "The caster takes on the grave's pallor: a cold, corpse-touched tell the watchful can read.",
+        "resultTag": "GravePallor",
+        "resultNotes": "Visible tell.",
+        "effect": {
+          "type": "Trait",
+          "subtype": "VisibleTell",
+          "payloadValue": "Grave-pallor",
+          "durationType": "Days",
+          "resistanceFormula": "2d6"
+        }
+      }
+    ]
+  },
+  {
+    "id": "SpellFailure_Undead_Catastrophic",
+    "name": "Spell Failure Undead (Catastrophic)",
+    "severity": "Catastrophic",
+    "entityNature": "Undead",
+    "drawFormula": "3d6",
+    "drawMode": "single",
+    "entries": [
+      {
+        "id": "SFUDC01",
+        "resultText": "The dead walk. A revenant or hungry shade tears loose from the rite, beyond the caster's command.",
+        "resultTag": "TheDeadWalk",
+        "resultNotes": "The being is loosed — the headline undead disaster.",
+        "effect": {
+          "type": "Grant",
+          "subtype": "BoundEntity",
+          "payloadValue": "Hostile undead (revenant or shade)",
+          "resistanceFormula": "3d6",
+          "onPartial": "The dead thing is loosed but slow, confused, or bound to the site for now."
+        }
+      },
+      {
+        "id": "SFUDC02",
+        "resultText": "The dead fix upon the caster and will not be turned aside; they are marked for the grave's pursuit.",
+        "resultTag": "Doomed",
+        "resultNotes": "Pursued by the dead.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Doomed",
+          "durationType": "UntilBroken",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUDC03",
+        "resultText": "The spell binds itself permanently into a corpse, relic, or vessel, animating its wrongness.",
+        "resultTag": "CorpseBinding",
+        "resultNotes": "Cursed remains / problem object.",
+        "effect": {
+          "type": "Binding",
+          "subtype": "BindToItem",
+          "payloadValue": "Animated remains",
+          "durationType": "UntilBroken",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUDC04",
+        "resultText": "The ground itself is fouled with death; the place becomes a dead-haunted danger until cleansed.",
+        "resultTag": "GraveBlight",
+        "resultNotes": "Dangerous haunted site.",
+        "effect": {
+          "type": "Binding",
+          "subtype": "BindToPlace",
+          "payloadValue": "Dead-haunted ground",
+          "durationType": "UntilBroken",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUDC05",
+        "resultText": "Warmth is taken in the crossing. Something of the caster's living heat is given to the dead and does not return.",
+        "resultTag": "StolenWarmth",
+        "resultNotes": "Permanent vitality loss.",
+        "effect": {
+          "type": "Stat",
+          "subtype": "PrimaryStat",
+          "payloadTarget": "Stamina",
+          "payloadValue": "-1",
+          "durationType": "Permanent",
+          "resistanceFormula": "3d6",
+          "onPartial": "The loss is temporary, returning after a long rest."
+        }
+      },
+      {
+        "id": "SFUDC06",
+        "resultText": "The disturbed dead lay a curse upon the one who woke them.",
+        "resultTag": "DeadMansCurse",
+        "resultNotes": "Lasting curse / Supernatural Mark.",
+        "effect": {
+          "type": "Grant",
+          "subtype": "ConditionItem",
+          "payloadValue": "Soul leakage",
+          "payloadNotes": "Grant the Soul leakage Curse Supernatural Mark.",
+          "durationType": "UntilBroken",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUDC07",
+        "resultText": "The grave reaches back. The caster is seized by deathly strain and collapses, body and soul.",
+        "resultTag": "Collapse",
+        "resultNotes": "HP damage plus Wounded.",
+        "effect": {
+          "type": "Stat",
+          "subtype": "Resource",
+          "payloadTarget": "HP",
+          "payloadDice": "-2d6",
+          "resistanceFormula": "3d6",
+          "onPartial": "Half damage and no lasting wound."
+        }
+      },
+      {
+        "id": "SFUDC08",
+        "resultText": "A path to the dead is left open. The veil between here and the grave is thinned, and worse may follow.",
+        "resultTag": "GraveBreach",
+        "resultNotes": "Battlefield effect (not yet a built system) — narrative until then.",
+        "effect": {
+          "type": "Battlefield",
+          "subtype": "DeathCrossing",
+          "payloadValue": "An open crossing to the dead lingers in the place",
+          "durationType": "UntilBroken",
+          "resistanceFormula": "3d6",
+          "notes": "Frontier: needs the battlefield-effect system; GM-handled for now."
+        }
+      }
+    ]
+  },
+  {
+    "id": "SpellFailure_Unseen_Major",
+    "name": "Spell Failure The Unseen (Major)",
+    "severity": "Major",
+    "entityNature": "Unseen",
+    "drawFormula": "3d6",
+    "drawMode": "single",
+    "entries": [
+      {
+        "id": "SFUNG01",
+        "resultText": "Something hidden now watches and follows the caster, just out of sight.",
+        "resultTag": "Watched",
+        "resultNotes": "Relational hook — GM names the watcher.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Marked",
+          "payloadValue": "Watched and followed by a hidden being (GM names it).",
+          "durationType": "UntilLifted",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUNG02",
+        "resultText": "The hidden disturb the caster's rest; sleep brings whispers and no peace.",
+        "resultTag": "NoPeace",
+        "resultNotes": "Restless.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Restless",
+          "durationType": "Days",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUNG03",
+        "resultText": "Judgement and paths slip sideways; the caster is subtly misled.",
+        "resultTag": "LedAstray",
+        "resultNotes": "Mind/route led astray.",
+        "effect": {
+          "type": "Movement",
+          "subtype": "LeadAstray",
+          "payloadValue": "Thoughts and ways turn astray.",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUNG04",
+        "resultText": "A faint glamour clings to the caster — an uncanny tell the watchful can read.",
+        "resultTag": "GlamourTouch",
+        "resultNotes": "Cosmetic occult tell.",
+        "effect": {
+          "type": "Bio",
+          "subtype": "Mark",
+          "payloadValue": "A faint glamour-tell on the caster (GM/player describes)."
+        }
+      },
+      {
+        "id": "SFUNG05",
+        "resultText": "Before the hidden, the caster's words falter and fail.",
+        "resultTag": "WordsFalter",
+        "resultNotes": "Speech loss.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Silenced",
+          "durationType": "Days",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUNG06",
+        "resultText": "An unasked-for gift or favour is pressed on the caster, and a debt with it.",
+        "resultTag": "ColdDebt",
+        "resultNotes": "A nagging fae-debt; GM may grow it.",
+        "effect": {
+          "type": "Drive",
+          "subtype": "Obsession",
+          "payloadValue": "A compulsion to repay or return an unwanted hidden-folk debt."
+        }
+      },
+      {
+        "id": "SFUNG07",
+        "resultText": "A threshold or boundary near the rite is weakened and troubled.",
+        "resultTag": "ThresholdThin",
+        "resultNotes": "A troubled threshold.",
+        "effect": {
+          "type": "Binding",
+          "subtype": "BindToPlace",
+          "payloadValue": "A weakened, troubled threshold.",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUNG08",
+        "resultText": "The hidden take a little of the caster's vigour for themselves.",
+        "resultTag": "VigourTaken",
+        "resultNotes": "Stamina drain.",
+        "effect": {
+          "type": "Stat",
+          "subtype": "Resource",
+          "payloadTarget": "Stamina",
+          "payloadDice": "-1d3",
+          "resistanceFormula": "2d6"
+        }
+      }
+    ]
+  },
+  {
+    "id": "SpellFailure_Unseen_Catastrophic",
+    "name": "Spell Failure The Unseen (Catastrophic)",
+    "severity": "Catastrophic",
+    "entityNature": "Unseen",
+    "drawFormula": "3d6",
+    "drawMode": "single",
+    "entries": [
+      {
+        "id": "SFUNC01",
+        "resultText": "One of the Unseen crosses over, drawn and angered by the rite.",
+        "resultTag": "OneCrosses",
+        "resultNotes": "The being is loosed.",
+        "effect": {
+          "type": "Grant",
+          "subtype": "BoundEntity",
+          "payloadValue": "An Unseen power (GM details).",
+          "resistanceFormula": "3d6",
+          "onPartial": "It crosses but is slow, bound to the site, or briefly bargaining."
+        }
+      },
+      {
+        "id": "SFUNC02",
+        "resultText": "A way opens between here and the hidden world.",
+        "resultTag": "TheWayThins",
+        "resultNotes": "A breach (battlefield frontier).",
+        "effect": {
+          "type": "Battlefield",
+          "subtype": "Breach",
+          "payloadValue": "A crossing to the hidden world lingers here.",
+          "notes": "Frontier: GM-handled until the battlefield-effect system lands.",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUNC03",
+        "resultText": "A bargain is struck, whether the caster willed it or not.",
+        "resultTag": "BargainForced",
+        "resultNotes": "An unwanted pact (GM sets terms).",
+        "effect": {
+          "type": "Grant",
+          "subtype": "Pact",
+          "payloadValue": "A forced pact with an Unseen patron (GM sets obligation and tension).",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUNC04",
+        "resultText": "The hidden now know the caster's true name, and will use it.",
+        "resultTag": "NameKnown",
+        "resultNotes": "True name known — pursuit.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Marked",
+          "payloadValue": "The caster's true name is known to the Unseen, who can call and bind by it.",
+          "durationType": "UntilLifted",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUNC05",
+        "resultText": "The caster's fate is tangled into the hidden world — a lasting curse.",
+        "resultTag": "FateBound",
+        "resultNotes": "Curse mark: Fate bound.",
+        "effect": {
+          "type": "Grant",
+          "subtype": "ConditionItem",
+          "payloadValue": "Fate bound",
+          "payloadNotes": "Grant the Fate bound Curse Supernatural Mark.",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUNC06",
+        "resultText": "Something is carried across — a name, a year of life, warmth, or a shadow — and does not return.",
+        "resultTag": "Taken",
+        "resultNotes": "Permanent loss; GM picks what is taken.",
+        "effect": {
+          "type": "Stat",
+          "subtype": "PrimaryStat",
+          "payloadTarget": "Charisma",
+          "payloadValue": "-1",
+          "durationType": "Permanent",
+          "payloadNotes": "GM picks what is taken and the matching permanent step loss.",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUNC07",
+        "resultText": "Night is no longer safe; the dark answers to the hidden now.",
+        "resultTag": "Nightbound",
+        "resultNotes": "Curse mark: Nightbound.",
+        "effect": {
+          "type": "Grant",
+          "subtype": "ConditionItem",
+          "payloadValue": "Nightbound",
+          "payloadNotes": "Grant the Nightbound Curse Supernatural Mark.",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUNC08",
+        "resultText": "The hidden mark the caster for worsening misfortune.",
+        "resultTag": "Doomed",
+        "resultNotes": "Doomed.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Doomed",
+          "durationType": "UntilLifted",
+          "resistanceFormula": "3d6"
+        }
+      }
+    ]
+  },
+  {
+    "id": "SpellFailure_Unnatural_Major",
+    "name": "Spell Failure Unnatural (Major)",
+    "severity": "Major",
+    "entityNature": "Unnatural",
+    "drawFormula": "3d6",
+    "drawMode": "single",
+    "entries": [
+      {
+        "id": "SFUUG01",
+        "resultText": "A corrupting touch weakens the caster's body and spirit.",
+        "resultTag": "Tainted",
+        "resultNotes": "Weakened.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Weakened",
+          "durationType": "Days",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUUG02",
+        "resultText": "The unnatural brands the caster with a tell the discerning can read.",
+        "resultTag": "Branded",
+        "resultNotes": "Occult tell.",
+        "effect": {
+          "type": "Bio",
+          "subtype": "Mark",
+          "payloadValue": "An unnatural brand or tell on the caster."
+        }
+      },
+      {
+        "id": "SFUUG03",
+        "resultText": "Intrusive whispers gnaw at the caster; rest is poisoned.",
+        "resultTag": "Whispers",
+        "resultNotes": "Restless.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Restless",
+          "durationType": "Days",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUUG04",
+        "resultText": "A tempting compulsion is planted, sweet and wrong.",
+        "resultTag": "Temptation",
+        "resultNotes": "A planted temptation drive.",
+        "effect": {
+          "type": "Drive",
+          "subtype": "Obsession",
+          "payloadValue": "A tempting, unnatural compulsion (GM/player phrases it)."
+        }
+      },
+      {
+        "id": "SFUUG05",
+        "resultText": "The place is fouled with unnatural taint.",
+        "resultTag": "BlightedGround",
+        "resultNotes": "A fouled place.",
+        "effect": {
+          "type": "Binding",
+          "subtype": "BindToPlace",
+          "payloadValue": "Ground fouled with unnatural taint.",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUUG06",
+        "resultText": "A minor curse clings to the caster.",
+        "resultTag": "SmallCurse",
+        "resultNotes": "Cursed.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Cursed",
+          "durationType": "UntilBroken",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUUG07",
+        "resultText": "An object of the rite is claimed and twisted by the unnatural.",
+        "resultTag": "OfferingClaimed",
+        "resultNotes": "A twisted object.",
+        "effect": {
+          "type": "Binding",
+          "subtype": "BindToItem",
+          "payloadValue": "An object twisted by unnatural claim.",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFUUG08",
+        "resultText": "The unnatural presence drinks the caster's vigour.",
+        "resultTag": "Drained",
+        "resultNotes": "Stamina drain.",
+        "effect": {
+          "type": "Stat",
+          "subtype": "Resource",
+          "payloadTarget": "Stamina",
+          "payloadDice": "-1d3",
+          "resistanceFormula": "2d6"
+        }
+      }
+    ]
+  },
+  {
+    "id": "SpellFailure_Unnatural_Catastrophic",
+    "name": "Spell Failure Unnatural (Catastrophic)",
+    "severity": "Catastrophic",
+    "entityNature": "Unnatural",
+    "drawFormula": "3d6",
+    "drawMode": "single",
+    "entries": [
+      {
+        "id": "SFUUC01",
+        "resultText": "An unnatural thing breaks loose, manifest and beyond the caster's control.",
+        "resultTag": "ItManifests",
+        "resultNotes": "The being is loosed.",
+        "effect": {
+          "type": "Grant",
+          "subtype": "BoundEntity",
+          "payloadValue": "A manifest unnatural being (demon, conjured horror — GM details).",
+          "resistanceFormula": "3d6",
+          "onPartial": "It manifests but weak, contained, or briefly bargaining."
+        }
+      },
+      {
+        "id": "SFUUC02",
+        "resultText": "The unnatural seizes the caster's body and will.",
+        "resultTag": "Possessed",
+        "resultNotes": "Contract Spirit possession.",
+        "effect": {
+          "type": "Disease",
+          "subtype": "Contract",
+          "payloadValue": "Spirit possession",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUUC03",
+        "resultText": "A pact is forced upon the caster, signed in spite of themselves.",
+        "resultTag": "DevilsBargain",
+        "resultNotes": "An unwanted pact (GM sets terms).",
+        "effect": {
+          "type": "Grant",
+          "subtype": "Pact",
+          "payloadValue": "A forced devil's bargain (GM sets obligation and tension).",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUUC04",
+        "resultText": "A lasting corruption settles into the caster.",
+        "resultTag": "Corrupted",
+        "resultNotes": "Curse mark: Corrupted.",
+        "effect": {
+          "type": "Grant",
+          "subtype": "ConditionItem",
+          "payloadValue": "Corrupted",
+          "payloadNotes": "Grant the Corrupted Curse Supernatural Mark.",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUUC05",
+        "resultText": "An unnatural, hollow hunger takes root and will not be fed.",
+        "resultTag": "HollowHunger",
+        "resultNotes": "Curse mark: Hollow hunger.",
+        "effect": {
+          "type": "Grant",
+          "subtype": "ConditionItem",
+          "payloadValue": "Hollow hunger",
+          "payloadNotes": "Grant the Hollow hunger Curse Supernatural Mark.",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUUC06",
+        "resultText": "The spell inverts: the blessing becomes a curse, the ward an opening.",
+        "resultTag": "Inversion",
+        "resultNotes": "GM inverts the working's intent.",
+        "effect": {
+          "type": "Descriptive",
+          "subtype": "Inversion",
+          "payloadValue": "The working's broad intent is reversed."
+        }
+      },
+      {
+        "id": "SFUUC07",
+        "resultText": "The spell binds permanently into the wrong vessel — a tool, corpse, or bystander.",
+        "resultTag": "WrongVessel",
+        "resultNotes": "A cursed vessel/bystander.",
+        "effect": {
+          "type": "Binding",
+          "subtype": "BindToItem",
+          "payloadValue": "A cursed vessel or possessed bystander.",
+          "durationType": "UntilBroken",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFUUC08",
+        "resultText": "The caster is marked for ruin and worsening misfortune.",
+        "resultTag": "Damned",
+        "resultNotes": "Doomed.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Doomed",
+          "durationType": "UntilLifted",
+          "resistanceFormula": "3d6"
+        }
+      }
+    ]
+  },
+  {
+    "id": "SpellFailure_NatureSpirit_Major",
+    "name": "Spell Failure Nature Spirits (Major)",
+    "severity": "Major",
+    "entityNature": "NatureSpirit",
+    "drawFormula": "3d6",
+    "drawMode": "single",
+    "entries": [
+      {
+        "id": "SFNSG01",
+        "resultText": "The place turns cold to the caster; nothing sits easy here.",
+        "resultTag": "LandsUnease",
+        "resultNotes": "Restless.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Restless",
+          "durationType": "Days",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFNSG02",
+        "resultText": "A land-wight takes notice of the one who disturbed its seat.",
+        "resultTag": "WightWatches",
+        "resultNotes": "Relational hook — GM names the wight.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Marked",
+          "payloadValue": "A nature spirit of the place now watches the caster (GM names it).",
+          "durationType": "UntilLifted",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFNSG03",
+        "resultText": "The land draws the strength from the caster's limbs.",
+        "resultTag": "Sapped",
+        "resultNotes": "Weakened.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Weakened",
+          "durationType": "Days",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFNSG04",
+        "resultText": "Paths twist and the caster loses the way out.",
+        "resultTag": "LedAstray",
+        "resultNotes": "Led astray.",
+        "effect": {
+          "type": "Movement",
+          "subtype": "LeadAstray",
+          "payloadValue": "Routes twist; the caster loses the way.",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFNSG05",
+        "resultText": "A small blight settles on crop, beast, or the spot itself.",
+        "resultTag": "SmallBlight",
+        "resultNotes": "A blighted place.",
+        "effect": {
+          "type": "Binding",
+          "subtype": "BindToPlace",
+          "payloadValue": "A small blight on the place.",
+          "resistanceFormula": "2d6"
+        }
+      },
+      {
+        "id": "SFNSG06",
+        "resultText": "A leaf-brand, bark-rough patch, or mossy tell marks the caster.",
+        "resultTag": "GreenMark",
+        "resultNotes": "Cosmetic tell.",
+        "effect": {
+          "type": "Bio",
+          "subtype": "Mark",
+          "payloadValue": "A green or earthen mark on the caster."
+        }
+      },
+      {
+        "id": "SFNSG07",
+        "resultText": "An aversion begins to take root — the touch of worked iron now grates.",
+        "resultTag": "IronAversion",
+        "resultNotes": "A growing aversion.",
+        "effect": {
+          "type": "Drive",
+          "subtype": "Compulsion",
+          "payloadValue": "A new aversion (e.g. to cold iron) takes root."
+        }
+      },
+      {
+        "id": "SFNSG08",
+        "resultText": "The land takes its tithe of the caster's vigour.",
+        "resultTag": "Tithe",
+        "resultNotes": "Stamina drain.",
+        "effect": {
+          "type": "Stat",
+          "subtype": "Resource",
+          "payloadTarget": "Stamina",
+          "payloadDice": "-1d3",
+          "resistanceFormula": "2d6"
+        }
+      }
+    ]
+  },
+  {
+    "id": "SpellFailure_NatureSpirit_Catastrophic",
+    "name": "Spell Failure Nature Spirits (Catastrophic)",
+    "severity": "Catastrophic",
+    "entityNature": "NatureSpirit",
+    "drawFormula": "3d6",
+    "drawMode": "single",
+    "entries": [
+      {
+        "id": "SFNSC01",
+        "resultText": "A nature spirit rises in wrath, manifest and beyond appeasement.",
+        "resultTag": "SpiritRises",
+        "resultNotes": "The being is loosed.",
+        "effect": {
+          "type": "Grant",
+          "subtype": "BoundEntity",
+          "payloadValue": "An angered nature spirit (GM details).",
+          "resistanceFormula": "3d6",
+          "onPartial": "It rises but slow, bound to its seat, or open to appeasement."
+        }
+      },
+      {
+        "id": "SFNSC02",
+        "resultText": "The ground itself turns hostile and claimed; it no longer suffers the caster.",
+        "resultTag": "GroundTurns",
+        "resultNotes": "Claimed, hostile ground.",
+        "effect": {
+          "type": "Binding",
+          "subtype": "BindToPlace",
+          "payloadValue": "The place is claimed and turns hostile to the caster.",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFNSC03",
+        "resultText": "A bargain with the wild is forced upon the caster.",
+        "resultTag": "PactOfWild",
+        "resultNotes": "An unwanted pact (GM sets terms).",
+        "effect": {
+          "type": "Grant",
+          "subtype": "Pact",
+          "payloadValue": "A forced pact with the spirit of the place (GM sets obligation and tension).",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFNSC04",
+        "resultText": "A lasting blight roots itself in the caster.",
+        "resultTag": "Blighting",
+        "resultNotes": "Curse mark: Blighting.",
+        "effect": {
+          "type": "Grant",
+          "subtype": "ConditionItem",
+          "payloadValue": "Blighting",
+          "payloadNotes": "Grant the Blighting Curse Supernatural Mark.",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFNSC05",
+        "resultText": "The caster is led away and lost in the spirit's domain.",
+        "resultTag": "LostToWild",
+        "resultNotes": "Severe leading-astray; GM may strand the caster.",
+        "effect": {
+          "type": "Movement",
+          "subtype": "LeadAstray",
+          "payloadValue": "The caster is led deep into the wild and lost.",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFNSC06",
+        "resultText": "Something bestial takes root in the caster's blood.",
+        "resultTag": "BeastBlood",
+        "resultNotes": "Curse mark: Beast blood.",
+        "effect": {
+          "type": "Grant",
+          "subtype": "ConditionItem",
+          "payloadValue": "Beast blood",
+          "payloadNotes": "Grant the Beast blood Curse Supernatural Mark.",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFNSC07",
+        "resultText": "A spirit-borne sickness takes the caster — fire of the limbs.",
+        "resultTag": "SpiritSickness",
+        "resultNotes": "Contract St Anthony's Fire.",
+        "effect": {
+          "type": "Disease",
+          "subtype": "Contract",
+          "payloadValue": "St Anthony's Fire",
+          "resistanceFormula": "3d6"
+        }
+      },
+      {
+        "id": "SFNSC08",
+        "resultText": "The land lays its doom on the caster.",
+        "resultTag": "Doomed",
+        "resultNotes": "Doomed.",
+        "effect": {
+          "type": "Status",
+          "subtype": "Doomed",
+          "durationType": "UntilLifted",
+          "resistanceFormula": "3d6"
+        }
+      }
+    ]
+  }
 ]

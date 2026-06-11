@@ -571,7 +571,7 @@ function removalMatchesEffect(activeEffect, effect) {
         case "Ward":
             return storedType === "Ward" || storedType === "Protection";
         case "Curse":
-            return storedType === "Status" && ["Cursed", "IllLuck", "Doomed", "Diseased", "LostFaith", "Weakened"].includes(storedSubtype);
+            return storedType === "Status" && ["Cursed", "IllLuck", "Doomed", "LostFaith", "Weakened"].includes(storedSubtype);
         case "Tag":
             return String(stored.PayloadTag ?? "").trim() && String(stored.PayloadTag ?? "").trim() === String(effect.PayloadTag ?? "").trim();
         case "Status":

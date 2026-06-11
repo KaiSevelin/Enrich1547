@@ -105,7 +105,9 @@ export function refreshRaceboardApi() {
     globalThis.RaceBoard = {
         open: (uuid) => openRaceBoardApp({ uuid, show: false }),
         show: (uuid) => openRaceBoardApp({ uuid, show: true }),
-        new: () => newEphemeralRaceBoard()
+        new: () => newEphemeralRaceBoard(),
+        // Open an ephemeral board from a custom state ({ rows:[{label,filled,total}], announcedWinners:[] }).
+        openState: (state, { show = false } = {}) => openRaceBoardApp({ state, show })
     };
 
     // Safety net: if the Journal sidebar already rendered before our hooks

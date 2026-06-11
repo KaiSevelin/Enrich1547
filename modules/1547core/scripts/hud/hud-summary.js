@@ -1,4 +1,6 @@
-﻿const MODULE_ID = "1547core";
+﻿import { conditionCombatDisadvantage } from "../services/condition-registry.js";
+
+const MODULE_ID = "1547core";
 const SOURCE_FLAG_SCOPE = "1547Core";
 
 function parseManeuverJson(value, fallback = null) {
@@ -776,6 +778,8 @@ export function summarizeActor(actor, token, deps = {}) {
     };
 
     const maneuverEffects = summarizeManeuverEffects(selectedPreManeuvers);
+    // Conditions (Weakened, Exhausted, Cursed, Locked, …) add combat disadvantage (Risk dice).
+    maneuverEffects.addDisadvantage = Number(maneuverEffects.addDisadvantage ?? 0) + conditionCombatDisadvantage(actor);
     const effectiveWeaponRollContext = buildWeaponRollContext({ weaponRollContext, rollContext }, maneuverEffects);
     const diceTab = {
         attackOptions: attackDiceOptions.map((option) => ({

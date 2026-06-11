@@ -244,21 +244,22 @@ const EFFECTS = {
         durationType: "Days",
         durationValue: "1d6"
     }),
-    "Status/Diseased": effectBase({
-        applicationMode: "CreateActiveEffect",
-        effectType: "Status",
-        effectSubtype: "Diseased",
+    "Grant/Disease": effectBase({
+        applicationMode: "GrantItem",
+        effectType: "Grant",
+        effectSubtype: "ConditionItem",
         targetType: "Actor",
         checkType: "Contest",
         checkFormula: "caster Power",
         resistanceType: "Stamina",
         resistanceFormula: "target Stamina",
-        payloadTarget: "Status",
-        payloadValue: "Diseased",
-        payloadNotes: "Disease, wasting, or occult sickness.",
-        durationType: "Days",
-        durationValue: "1d6",
-        removalMethod: "Healing, alchemy, miracle, or disease-lifting rite."
+        payloadTarget: "Disease",
+        payloadOperation: "Grant",
+        payloadValue: "Disease contracted",
+        grantedItemTemplate: "Disease",
+        payloadNotes: "Target contracts a disease (granted at Incubation via the disease system); the GM/caster picks the specific disease.",
+        durationType: "UntilBroken",
+        removalMethod: "Cure the disease (medical treatment / disease-service)."
     }),
     "Status/Doomed": effectBase({
         applicationMode: "CreateActiveEffect",
@@ -1221,7 +1222,7 @@ const SPELL_MAP = {
     "Danger Sense": ["Revelation/Omen", "Status/Protected"],
     "Death Knots": ["Status/Doomed", "Status/Weakened"],
     "Delay": ["Binding/BindToActor", "Status/Weakened"],
-    "Disease Knot": ["Status/Diseased", "Status/Cursed"],
+    "Disease Knot": ["Grant/Disease", "Status/Cursed"],
     "Dissolution": ["Remove/Binding", "Transformation/Object"],
     "Distillation": ["Transformation/Object", "Trait/PassiveRule"],
     "Divine Guidance": ["Status/Blessed", "Revelation/Omen"],

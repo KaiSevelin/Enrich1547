@@ -1,0 +1,1527 @@
+[
+  {
+    "_id": "Ds00000000000001",
+    "name": "Plague",
+    "img": "icons/svg/biohazard.svg",
+    "description": "Caused by Astral miasma, poisonous air seeping from another plane of existence. Fevers and pain give way to swollen, hemorrhaging lymphs and gangrene.",
+    "cause": "Astral Miasma",
+    "associatedHumour": "None",
+    "contagionStat": "Stamina",
+    "contagionDifficulty": "3d6",
+    "immunityRule": "None",
+    "resistanceRule": "Not Humour",
+    "resistanceValue": "Blood",
+    "phases": [
+      {
+        "phase": "Incubation",
+        "duration": "1d6 days",
+        "condition": "None",
+        "effect": "Everything seems well."
+      },
+      {
+        "phase": "Symptoms",
+        "duration": "0 days",
+        "condition": "None",
+        "effect": ""
+      },
+      {
+        "phase": "Onset",
+        "duration": "1d3 days",
+        "condition": "Weak",
+        "effect": "Gradual fevers, pain, and finally swollen lymphs."
+      },
+      {
+        "phase": "Crisis",
+        "duration": "1d3 days",
+        "condition": "Exhausted",
+        "effect": "Lymphs hemorrhage; gangrene: 1) 1d3 fingers (perm -1 Dexterity); 2) nose tip (perm -1 Charisma); 3) 1d3 toes, a limp (perm -1 Dexterity); 4) none."
+      },
+      {
+        "phase": "Resolution",
+        "duration": "",
+        "condition": "None",
+        "effect": "Stamina vs 4d6 or die; otherwise recover."
+      },
+      {
+        "phase": "Convalescence",
+        "duration": "1d6 days",
+        "condition": "None",
+        "effect": "1d6 days from crisis; 1d3 from onset; 0 from incubation."
+      }
+    ],
+    "cureBoard": [
+      {
+        "phase": "Onset",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Barber-Surgeon",
+        "action": "Bloodletting",
+        "skill": "Surgeon",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Apothecary",
+        "action": "Mix herbs",
+        "skill": "Herbalism",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Apothecary",
+        "action": "Mix sulphur",
+        "skill": "Alchemy",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Player",
+        "action": "Stamina or die",
+        "skill": "Stamina",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Physician",
+        "action": "Treat disease",
+        "skill": "Medicine",
+        "difficulty": "3d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Barber-Surgeon",
+        "action": "Bloodletting",
+        "skill": "Surgeon",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Apothecary",
+        "action": "Mix herbs",
+        "skill": "Herbalism",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Apothecary",
+        "action": "Mix sulphur",
+        "skill": "Alchemy",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Player",
+        "action": "Stamina or die",
+        "skill": "Stamina",
+        "difficulty": "3d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Treat disease",
+        "skill": "Medicine",
+        "difficulty": "4d6"
+      }
+    ],
+    "resolutionText": "If the player fails a stamina check against 4d6 the player dies, otherwise he recovers.",
+    "prevention": "Avoid places with astral miasma.",
+    "diagnosis": "Easy in the crisis phase.",
+    "cure": "Bloodletting, sulphur fumigation, and herbs. The treatment takes 1 day.",
+    "convalescence": "1d6 days from crisis; 1d3 days from onset; 0 days from incubation."
+  },
+  {
+    "_id": "Ds00000000000002",
+    "name": "Smallpox",
+    "img": "icons/svg/biohazard.svg",
+    "description": "Caused by too much impure blood; ill-placed stars worsen the risk. Fevers and vomiting give way to body-covering blisters.",
+    "cause": "Humour",
+    "associatedHumour": "Blood",
+    "contagionStat": "Stamina",
+    "contagionDifficulty": "3d6",
+    "immunityRule": "Only Humour",
+    "resistanceRule": "None",
+    "resistanceValue": "",
+    "phases": [
+      {
+        "phase": "Incubation",
+        "duration": "1d6+6 days",
+        "condition": "None",
+        "effect": ""
+      },
+      {
+        "phase": "Symptoms",
+        "duration": "0 days",
+        "condition": "None",
+        "effect": ""
+      },
+      {
+        "phase": "Onset",
+        "duration": "1d6+10 days",
+        "condition": "Weak",
+        "effect": "Fevers, vomiting, muscle pain."
+      },
+      {
+        "phase": "Crisis",
+        "duration": "1d3 days",
+        "condition": "Exhausted",
+        "effect": "Blisters show and cover the body."
+      },
+      {
+        "phase": "Resolution",
+        "duration": "",
+        "condition": "None",
+        "effect": "Stamina vs 2d6 or die; otherwise recover."
+      },
+      {
+        "phase": "Convalescence",
+        "duration": "1d6 days",
+        "condition": "None",
+        "effect": "1d6 days from crisis; 1d2 from onset; 0 from incubation."
+      }
+    ],
+    "cureBoard": [
+      {
+        "phase": "Onset",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "3d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Apothecary",
+        "action": "Mix cooling",
+        "skill": "Alchemy",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Apothecary",
+        "action": "Mix herbs",
+        "skill": "Herbalism",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Physician",
+        "action": "Treat disease",
+        "skill": "Medicine",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Apothecary",
+        "action": "Mix cooling",
+        "skill": "Alchemy",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Apothecary",
+        "action": "Mix herbs",
+        "skill": "Herbalism",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Treat disease",
+        "skill": "Medicine",
+        "difficulty": "3d6"
+      }
+    ],
+    "resolutionText": "If the player fails a stamina check against 2d6 the player dies, otherwise he recovers.",
+    "prevention": "Bloodletting prevents any chance of contracting smallpox for a week.",
+    "diagnosis": "Easier in the crisis phase.",
+    "cure": "A cooling regiment and herbs. The treatment takes 1d2 days.",
+    "convalescence": "1d6 days from crisis; 1d2 days from onset; 0 days from incubation."
+  },
+  {
+    "_id": "Ds00000000000003",
+    "name": "Great pox",
+    "img": "icons/svg/biohazard.svg",
+    "description": "Astral miasma from a sex partner; sometimes a spirit's punishment. Years of blisters and pain end in a deformed face.",
+    "cause": "Astral Miasma",
+    "associatedHumour": "Blood",
+    "contagionStat": "Stamina",
+    "contagionDifficulty": "2d6",
+    "immunityRule": "Only Humour",
+    "resistanceRule": "None",
+    "resistanceValue": "",
+    "phases": [
+      {
+        "phase": "Incubation",
+        "duration": "1d6*10+10 days",
+        "condition": "None",
+        "effect": ""
+      },
+      {
+        "phase": "Symptoms",
+        "duration": "2d6+2 years",
+        "condition": "None",
+        "effect": "Genital blisters, sore throat, hair loss."
+      },
+      {
+        "phase": "Onset",
+        "duration": "1d6 years",
+        "condition": "None",
+        "effect": "Muscle pain, inflammations, swollenness."
+      },
+      {
+        "phase": "Crisis",
+        "duration": "Permanent",
+        "condition": "None",
+        "effect": "Deformed face. Permanent -2 Charisma."
+      },
+      {
+        "phase": "Resolution",
+        "duration": "",
+        "condition": "None",
+        "effect": "No resolution."
+      },
+      {
+        "phase": "Convalescence",
+        "duration": "1d2 days",
+        "condition": "None",
+        "effect": "1d2 days from onset; 0 from incubation."
+      }
+    ],
+    "cureBoard": [
+      {
+        "phase": "Onset And Before",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "4d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Apothecary",
+        "action": "Mix mercury",
+        "skill": "Alchemy",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Player",
+        "action": "Stamina or die",
+        "skill": "Stamina",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Physician",
+        "action": "Treat disease",
+        "skill": "Medicine",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Barber-Surgeon",
+        "action": "Trepanning",
+        "skill": "Surgeon",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Player",
+        "action": "Stamina or die",
+        "skill": "Stamina",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Treat disease",
+        "skill": "Medicine",
+        "difficulty": "3d6"
+      }
+    ],
+    "resolutionText": "No resolution.",
+    "prevention": "Avoid sex.",
+    "diagnosis": "Hard to diagnose in the onset phase.",
+    "cure": "Mercury (1d10 days). If it reaches crisis, only a trepanning to let the spirit out can cure it.",
+    "convalescence": "1d2 days from onset; 0 days from incubation."
+  },
+  {
+    "_id": "Ds00000000000004",
+    "name": "English sweat",
+    "img": "icons/svg/biohazard.svg",
+    "description": "Caused by English miasma. Sudden dread and cold shivers turn to fever, delirium, and thirst.",
+    "cause": "English Miasma",
+    "associatedHumour": "None",
+    "contagionStat": "Stamina",
+    "contagionDifficulty": "2d6",
+    "immunityRule": "Balanced Immune",
+    "resistanceRule": "None",
+    "resistanceValue": "",
+    "phases": [
+      {
+        "phase": "Incubation",
+        "duration": "1d6 days",
+        "condition": "None",
+        "effect": ""
+      },
+      {
+        "phase": "Crisis",
+        "duration": "1d3+7 hours",
+        "condition": "Exhausted",
+        "effect": "Apprehension, violent cold shivers, then fevers, delirium and intense thirst."
+      },
+      {
+        "phase": "Resolution",
+        "duration": "",
+        "condition": "None",
+        "effect": "Stamina vs 3d6 to survive, otherwise die."
+      },
+      {
+        "phase": "Convalescence",
+        "duration": "1d6+2 days",
+        "condition": "None",
+        "effect": "1d6+2 days; 0 from incubation."
+      }
+    ],
+    "cureBoard": [
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Bed regiment",
+        "skill": "Religion",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Apothecary",
+        "action": "Mix herbs",
+        "skill": "Herbalism",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Treat disease",
+        "skill": "Medicine",
+        "difficulty": "3d6"
+      }
+    ],
+    "resolutionText": "If the player succeeds with a stamina check against 3d6 the player survives, otherwise he dies.",
+    "prevention": "General balancing of the humors gives advantage to saves for a week.",
+    "diagnosis": "Only diagnosable in the crisis phase.",
+    "cure": "A bed regiment and herbs. The treatment takes 1d4 hours.",
+    "convalescence": "1d6+2 days; 0 days from incubation."
+  },
+  {
+    "_id": "Ds00000000000005",
+    "name": "Ship fever",
+    "img": "icons/svg/biohazard.svg",
+    "description": "Caused by stale miasma, associated with an imbalance of phlegm. Flu-like fever turns to a spreading rash and delirium.",
+    "cause": "Stale Miasma",
+    "associatedHumour": "Phlegm",
+    "contagionStat": "Stamina",
+    "contagionDifficulty": "2d6",
+    "immunityRule": "Only Humour",
+    "resistanceRule": "None",
+    "resistanceValue": "",
+    "phases": [
+      {
+        "phase": "Incubation",
+        "duration": "2d6+4 days",
+        "condition": "None",
+        "effect": ""
+      },
+      {
+        "phase": "Onset",
+        "duration": "1d4+5 days",
+        "condition": "Weak",
+        "effect": "Flu-like symptoms with fever."
+      },
+      {
+        "phase": "Crisis",
+        "duration": "2d10 days",
+        "condition": "Exhausted",
+        "effect": "A rash spreads with delirium and sensitivity to light."
+      },
+      {
+        "phase": "Resolution",
+        "duration": "",
+        "condition": "None",
+        "effect": "Stamina vs 4d6 to survive; otherwise coma and death."
+      },
+      {
+        "phase": "Convalescence",
+        "duration": "2d4 days",
+        "condition": "None",
+        "effect": "2d4 days; 0 from incubation."
+      }
+    ],
+    "cureBoard": [
+      {
+        "phase": "Onset",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "4d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Barber-Surgeon",
+        "action": "Bloodletting",
+        "skill": "Surgeon",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Apothecary",
+        "action": "Mix herbs",
+        "skill": "Herbalism",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Apothecary",
+        "action": "Mix smoke",
+        "skill": "Alchemy",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Physician",
+        "action": "Treat disease",
+        "skill": "Medicine",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "3d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Barber-Surgeon",
+        "action": "Bloodletting",
+        "skill": "Surgeon",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Apothecary",
+        "action": "Mix herbs",
+        "skill": "Herbalism",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Apothecary",
+        "action": "Mix smoke",
+        "skill": "Alchemy",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Treat disease",
+        "skill": "Medicine",
+        "difficulty": "3d6"
+      }
+    ],
+    "resolutionText": "If the player succeeds with a stamina check against 4d6 the player survives, otherwise he enters a coma and dies.",
+    "prevention": "Avoid stale miasma; quarantine; phlegm sessions for +4 to save for a week.",
+    "diagnosis": "Hard to diagnose; often mistaken for common fevers.",
+    "cure": "Bloodletting, smoke and herbs. The treatment takes 1d3 days.",
+    "convalescence": "2d4 days; 0 days from incubation."
+  },
+  {
+    "_id": "Ds00000000000006",
+    "name": "Agues",
+    "img": "icons/svg/biohazard.svg",
+    "description": "A fever disease caused by marsh miasma and too much yellow bile.",
+    "cause": "Marsh Miasma",
+    "associatedHumour": "Yellow Bile",
+    "contagionStat": "Stamina",
+    "contagionDifficulty": "1d6",
+    "immunityRule": "Only Humour",
+    "resistanceRule": "None",
+    "resistanceValue": "",
+    "phases": [
+      {
+        "phase": "Incubation",
+        "duration": "1d6+8 days",
+        "condition": "None",
+        "effect": ""
+      },
+      {
+        "phase": "Onset",
+        "duration": "1d2 days",
+        "condition": "Weak",
+        "effect": "Heavy fevers."
+      },
+      {
+        "phase": "Crisis",
+        "duration": "1 day",
+        "condition": "Exhausted",
+        "effect": "Eyes cannot turn together; cramps."
+      },
+      {
+        "phase": "Resolution",
+        "duration": "",
+        "condition": "None",
+        "effect": "Stamina vs 4d6 to survive; otherwise coma and death."
+      },
+      {
+        "phase": "Convalescence",
+        "duration": "2d4 days",
+        "condition": "None",
+        "effect": "2d4 days; 0 from incubation."
+      }
+    ],
+    "cureBoard": [
+      {
+        "phase": "Onset",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Barber-Surgeon",
+        "action": "Bloodletting",
+        "skill": "Surgeon",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Apothecary",
+        "action": "Mix herbs",
+        "skill": "Herbalism",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset",
+        "role": "Physician",
+        "action": "Treat disease",
+        "skill": "Medicine",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Barber-Surgeon",
+        "action": "Bloodletting",
+        "skill": "Surgeon",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Apothecary",
+        "action": "Mix herbs",
+        "skill": "Herbalism",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Treat disease",
+        "skill": "Medicine",
+        "difficulty": "4d6"
+      }
+    ],
+    "resolutionText": "If the player succeeds with a stamina check against 4d6 the player survives, otherwise he enters a coma and dies.",
+    "prevention": "Avoid marsh miasma; rumors tell of a bark that can be chewed to avoid it.",
+    "diagnosis": "A medic can diagnose it quite easily.",
+    "cure": "Intervals of bloodletting and cooling herbs. The treatment takes 1 day.",
+    "convalescence": "2d4 days; 0 days from incubation."
+  },
+  {
+    "_id": "Ds00000000000007",
+    "name": "Bloody flux",
+    "img": "icons/svg/biohazard.svg",
+    "description": "A stomach disease of bloody diarrhea; too much black bile is the cause.",
+    "cause": "Humour",
+    "associatedHumour": "Black Bile",
+    "contagionStat": "Stamina",
+    "contagionDifficulty": "3d6",
+    "immunityRule": "Only Humour",
+    "resistanceRule": "None",
+    "resistanceValue": "",
+    "phases": [
+      {
+        "phase": "Incubation",
+        "duration": "1d3 days",
+        "condition": "None",
+        "effect": ""
+      },
+      {
+        "phase": "Symptoms",
+        "duration": "1d2 days",
+        "condition": "None",
+        "effect": "Diarrhea."
+      },
+      {
+        "phase": "Onset",
+        "duration": "1d6 days",
+        "condition": "Weak",
+        "effect": "Dehydration and pain."
+      },
+      {
+        "phase": "Crisis",
+        "duration": "1d6 days",
+        "condition": "Exhausted",
+        "effect": "Bloody diarrhea."
+      },
+      {
+        "phase": "Resolution",
+        "duration": "",
+        "condition": "None",
+        "effect": "Stamina vs 1d6 to survive."
+      },
+      {
+        "phase": "Convalescence",
+        "duration": "1d6+1 days",
+        "condition": "None",
+        "effect": "1d6+1 days; 0 from incubation."
+      }
+    ],
+    "cureBoard": [
+      {
+        "phase": "Onset And Before",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Apothecary",
+        "action": "Mix opium",
+        "skill": "Alchemy",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Player",
+        "action": "Stamina or addicted",
+        "skill": "Stamina",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Cleric",
+        "action": "Pray",
+        "skill": "Religion",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Physician",
+        "action": "Treat disease",
+        "skill": "Medicine",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Apothecary",
+        "action": "Mix opium",
+        "skill": "Alchemy",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Player",
+        "action": "Stamina or addicted",
+        "skill": "Stamina",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Pray",
+        "skill": "Religion",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Treat disease",
+        "skill": "Medicine",
+        "difficulty": "2d6"
+      }
+    ],
+    "resolutionText": "If the player succeeds with a stamina check against 1d6 he survives.",
+    "prevention": "A vomiting session reduces black bile and gives +4 on stamina saves for a week.",
+    "diagnosis": "Quite easy to diagnose.",
+    "cure": "A strict opium regiment combined with prayers. It takes 1d3 days.",
+    "convalescence": "1d6+1 days; 0 days from incubation."
+  },
+  {
+    "_id": "Ds00000000000008",
+    "name": "Consumption",
+    "img": "icons/svg/biohazard.svg",
+    "description": "A lung disease caused by black bile.",
+    "cause": "Humour",
+    "associatedHumour": "Black Bile",
+    "contagionStat": "Stamina",
+    "contagionDifficulty": "1d6",
+    "immunityRule": "Only Humour",
+    "resistanceRule": "None",
+    "resistanceValue": "",
+    "phases": [
+      {
+        "phase": "Symptoms",
+        "duration": "6d6 days",
+        "condition": "None",
+        "effect": "Cough, typically with blood."
+      },
+      {
+        "phase": "Onset",
+        "duration": "6d6 days",
+        "condition": "Weak",
+        "effect": "Fevers, powerlessness, paleness. Permanent -1 Strength."
+      },
+      {
+        "phase": "Crisis",
+        "duration": "1d6 days",
+        "condition": "Exhausted",
+        "effect": "Breathing problems."
+      },
+      {
+        "phase": "Resolution",
+        "duration": "",
+        "condition": "None",
+        "effect": "Stamina vs 3d6 to survive; otherwise die."
+      },
+      {
+        "phase": "Convalescence",
+        "duration": "4d6 days",
+        "condition": "None",
+        "effect": "4d6 days to fully recover."
+      }
+    ],
+    "cureBoard": [
+      {
+        "phase": "All",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "All",
+        "role": "Cleric",
+        "action": "Diet",
+        "skill": "Religion",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "All",
+        "role": "Apothecary",
+        "action": "Mix herbs",
+        "skill": "Herbalism",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "All",
+        "role": "Physician",
+        "action": "Treat disease",
+        "skill": "Medicine",
+        "difficulty": "2d6"
+      }
+    ],
+    "resolutionText": "If the player succeeds with a stamina save vs 3d6 the player survives, otherwise he dies.",
+    "prevention": "A black bile balancing session gives advantage for a week; joyful experiences (theatre, opera, parties) also give advantage for a week.",
+    "diagnosis": "Easy to diagnose.",
+    "cure": "Move the patient to mountain or sea air for at least 15 days with a goat-milk diet. The treatment takes 15 days.",
+    "convalescence": "4d6 days to fully recover."
+  },
+  {
+    "_id": "Ds00000000000009",
+    "name": "Lepra",
+    "img": "icons/svg/biohazard.svg",
+    "description": "A deforming disease caused by chronically corrupted humors, especially black bile.",
+    "cause": "Humour",
+    "associatedHumour": "Black Bile",
+    "contagionStat": "Stamina",
+    "contagionDifficulty": "1d6",
+    "immunityRule": "Only Humour",
+    "resistanceRule": "Faith Dice At Least",
+    "resistanceValue": "2",
+    "phases": [
+      {
+        "phase": "Incubation",
+        "duration": "1d2+4 years",
+        "condition": "None",
+        "effect": ""
+      },
+      {
+        "phase": "Symptoms",
+        "duration": "2d6 years",
+        "condition": "None",
+        "effect": "Small deformations in extremities, pink rashes sensitive to heat."
+      },
+      {
+        "phase": "Onset",
+        "duration": "1d6 years",
+        "condition": "Weak",
+        "effect": "Deformation of fingers, face and toes. Permanent -1 to Strength, Dexterity, Stamina and Charisma."
+      },
+      {
+        "phase": "Crisis",
+        "duration": "1d3 years",
+        "condition": "Exhausted",
+        "effect": "Paralysis and loss of tissue. The player is removed from play."
+      },
+      {
+        "phase": "Resolution",
+        "duration": "",
+        "condition": "None",
+        "effect": "Entering crisis is game over."
+      },
+      {
+        "phase": "Convalescence",
+        "duration": "3d6 months",
+        "condition": "None",
+        "effect": "3d6 months to fully recover."
+      }
+    ],
+    "cureBoard": [
+      {
+        "phase": "Onset And Before",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Cleric",
+        "action": "Pilgrimage",
+        "skill": "Religion",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Cleric",
+        "action": "Processions",
+        "skill": "Religion",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Cleric",
+        "action": "Prayers",
+        "skill": "Religion",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Pilgrimage",
+        "skill": "Religion",
+        "difficulty": "3d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Processions",
+        "skill": "Religion",
+        "difficulty": "3d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Prayers",
+        "skill": "Religion",
+        "difficulty": "3d6"
+      }
+    ],
+    "resolutionText": "If the player enters the crisis phase it is game over.",
+    "prevention": "A humor balancing session gives advantage on saves for a week.",
+    "diagnosis": "A medic can diagnose it quite easily.",
+    "cure": "Stay in a lepra colony for 1d4 years with pilgrimage, processions and prayers. Treatment time is 1d6 years.",
+    "convalescence": "3d6 months to fully recover."
+  },
+  {
+    "_id": "Ds00000000000010",
+    "name": "St Anthony's Fire",
+    "img": "icons/svg/biohazard.svg",
+    "description": "A disease caused by spirits. Swollen limbs, blisters, hallucinations and finally gangrene.",
+    "cause": "Spirit",
+    "associatedHumour": "None",
+    "contagionStat": "Stamina",
+    "contagionDifficulty": "SpiritPower",
+    "immunityRule": "Balanced Immune",
+    "resistanceRule": "None",
+    "resistanceValue": "",
+    "phases": [
+      {
+        "phase": "Incubation",
+        "duration": "3d6 days",
+        "condition": "None",
+        "effect": ""
+      },
+      {
+        "phase": "Symptoms",
+        "duration": "3d6 days",
+        "condition": "None",
+        "effect": "Rashes, blisters and swollen limbs."
+      },
+      {
+        "phase": "Onset",
+        "duration": "3d6 days",
+        "condition": "Weak",
+        "effect": "Spreading symptoms; temporary hallucinations."
+      },
+      {
+        "phase": "Crisis",
+        "duration": "2d6 days",
+        "condition": "Exhausted",
+        "effect": "Gangrene forcing amputation. 1-3 Arm (perm -2 Dexterity/Strength/Stamina, one hand for equipment); 4-6 Leg (perm -2 Dexterity/Strength/Stamina, movement halved with prosthesis)."
+      },
+      {
+        "phase": "Resolution",
+        "duration": "",
+        "condition": "None",
+        "effect": "Entering crisis is game over."
+      },
+      {
+        "phase": "Convalescence",
+        "duration": "2d6 days",
+        "condition": "None",
+        "effect": "2d6 days to fully recover."
+      }
+    ],
+    "cureBoard": [
+      {
+        "phase": "Onset And Before",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "3d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Cleric",
+        "action": "Fasting",
+        "skill": "Religion",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Apothecary",
+        "action": "Wine and lard",
+        "skill": "Herbalism",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Cleric",
+        "action": "Prayers",
+        "skill": "Religion",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Fasting",
+        "skill": "Religion",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Apothecary",
+        "action": "Wine and lard",
+        "skill": "Herbalism",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Prayers",
+        "skill": "Religion",
+        "difficulty": "3d6"
+      }
+    ],
+    "resolutionText": "If the player enters the crisis phase it is game over.",
+    "prevention": "A humor balancing session gives advantage on saves for a week.",
+    "diagnosis": "Diagnosed only with difficulty in the beginning.",
+    "cure": "Fasting, prayers, and special wine and lard. Treatment time is 1d6 years.",
+    "convalescence": "2d6 days to fully recover."
+  },
+  {
+    "_id": "Ds00000000000011",
+    "name": "Melancholy",
+    "img": "icons/svg/biohazard.svg",
+    "description": "A disease caused by excess of black bile. Gloom deepens into permanent depression.",
+    "cause": "Humour",
+    "associatedHumour": "Black Bile",
+    "contagionStat": "Faith",
+    "contagionDifficulty": "1d6",
+    "immunityRule": "Only Humour",
+    "resistanceRule": "Faith Dice At Least",
+    "resistanceValue": "2",
+    "phases": [
+      {
+        "phase": "Incubation",
+        "duration": "1d2 days",
+        "condition": "None",
+        "effect": ""
+      },
+      {
+        "phase": "Symptoms",
+        "duration": "1d6 days",
+        "condition": "Weak",
+        "effect": "Gloominess."
+      },
+      {
+        "phase": "Onset",
+        "duration": "3d6 days",
+        "condition": "None",
+        "effect": "Depression. Permanent -1 Faith."
+      },
+      {
+        "phase": "Crisis",
+        "duration": "3d6 days",
+        "condition": "None",
+        "effect": "Permanent -1 to Power, Charisma and Faith."
+      },
+      {
+        "phase": "Resolution",
+        "duration": "",
+        "condition": "None",
+        "effect": "None."
+      },
+      {
+        "phase": "Convalescence",
+        "duration": "",
+        "condition": "None",
+        "effect": "None."
+      }
+    ],
+    "cureBoard": [
+      {
+        "phase": "Onset And Before",
+        "role": "Cleric",
+        "action": "Diagnose",
+        "skill": "Religion",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Cleric",
+        "action": "Dance, wine, music",
+        "skill": "Religion",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Diagnose",
+        "skill": "Religion",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Dance, wine, music",
+        "skill": "Religion",
+        "difficulty": "3d6"
+      }
+    ],
+    "resolutionText": "None.",
+    "prevention": "A humor balancing session gives advantage on saves for a week.",
+    "diagnosis": "A cleric can diagnose it quite easily.",
+    "cure": "A regime of wine, music and dance. Treatment time is 1d6 days.",
+    "convalescence": "None."
+  },
+  {
+    "_id": "Ds00000000000012",
+    "name": "Mania",
+    "img": "icons/svg/biohazard.svg",
+    "description": "Caused by excess of yellow bile or corruption from a spirit. Hysterical outbreaks and anger.",
+    "cause": "Humour",
+    "associatedHumour": "Yellow Bile",
+    "contagionStat": "Faith",
+    "contagionDifficulty": "1d6",
+    "immunityRule": "Only Humour",
+    "resistanceRule": "Faith Dice At Least",
+    "resistanceValue": "2",
+    "phases": [
+      {
+        "phase": "Incubation",
+        "duration": "1d6 days",
+        "condition": "None",
+        "effect": ""
+      },
+      {
+        "phase": "Symptoms",
+        "duration": "1d6 days",
+        "condition": "None",
+        "effect": "Disadvantage on all Charisma checks."
+      },
+      {
+        "phase": "Onset",
+        "duration": "3d6 days",
+        "condition": "None",
+        "effect": "Hysteria. Permanent -1 Charisma."
+      },
+      {
+        "phase": "Crisis",
+        "duration": "3d6 days",
+        "condition": "None",
+        "effect": "Permanent -1 to Intelligence and Charisma."
+      },
+      {
+        "phase": "Resolution",
+        "duration": "",
+        "condition": "None",
+        "effect": "None."
+      },
+      {
+        "phase": "Convalescence",
+        "duration": "",
+        "condition": "None",
+        "effect": "None."
+      }
+    ],
+    "cureBoard": [
+      {
+        "phase": "Onset And Before",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Barber-Surgeon",
+        "action": "Shave head",
+        "skill": "Surgeon",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Apothecary",
+        "action": "Opiates",
+        "skill": "Alchemy",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Physician",
+        "action": "Restrain",
+        "skill": "Medicine",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Apothecary",
+        "action": "Odors",
+        "skill": "Herbalism",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Diagnose",
+        "skill": "Medicine",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Barber-Surgeon",
+        "action": "Shave head",
+        "skill": "Surgeon",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Apothecary",
+        "action": "Opiates",
+        "skill": "Alchemy",
+        "difficulty": "3d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Physician",
+        "action": "Restrain",
+        "skill": "Medicine",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Apothecary",
+        "action": "Odors",
+        "skill": "Herbalism",
+        "difficulty": "1d6"
+      }
+    ],
+    "resolutionText": "None.",
+    "prevention": "A humor balancing session gives advantage on saves for a week.",
+    "diagnosis": "A cleric can diagnose it quite easily.",
+    "cure": "Restraints and odor therapy with head-shaving and opiates. Treatment time is 1d6 days.",
+    "convalescence": "None."
+  },
+  {
+    "_id": "Ds00000000000013",
+    "name": "Dancing mania",
+    "img": "icons/svg/biohazard.svg",
+    "description": "Caused by corruption from a spirit. The victim dances uncontrollably, ignoring food, until death.",
+    "cause": "Spirit",
+    "associatedHumour": "None",
+    "contagionStat": "Power",
+    "contagionDifficulty": "SpiritPower",
+    "immunityRule": "Faith Exceeds Spirit",
+    "resistanceRule": "None",
+    "resistanceValue": "",
+    "phases": [
+      {
+        "phase": "Incubation",
+        "duration": "1d6 days",
+        "condition": "None",
+        "effect": ""
+      },
+      {
+        "phase": "Symptoms",
+        "duration": "2d6 days",
+        "condition": "None",
+        "effect": "Sudden short bouts of dancing."
+      },
+      {
+        "phase": "Onset",
+        "duration": "1 day",
+        "condition": "Weak",
+        "effect": "Constant dancing; ignores food."
+      },
+      {
+        "phase": "Crisis",
+        "duration": "1 day",
+        "condition": "Exhausted",
+        "effect": ""
+      },
+      {
+        "phase": "Resolution",
+        "duration": "",
+        "condition": "None",
+        "effect": "The player dies."
+      },
+      {
+        "phase": "Convalescence",
+        "duration": "",
+        "condition": "None",
+        "effect": "None."
+      }
+    ],
+    "cureBoard": [
+      {
+        "phase": "Onset And Before",
+        "role": "Cleric",
+        "action": "Diagnose",
+        "skill": "Religion",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Cleric",
+        "action": "Vows and prayers",
+        "skill": "Religion",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Cleric",
+        "action": "Soothing music",
+        "skill": "Religion",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Diagnose",
+        "skill": "Religion",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Vows and prayers",
+        "skill": "Religion",
+        "difficulty": "3d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Soothing music",
+        "skill": "Religion",
+        "difficulty": "3d6"
+      }
+    ],
+    "resolutionText": "The player dies.",
+    "prevention": "None.",
+    "diagnosis": "A cleric can diagnose it quite easily.",
+    "cure": "Vows with soothing music. Treatment time is 1 day.",
+    "convalescence": "None."
+  },
+  {
+    "_id": "Ds00000000000014",
+    "name": "Spirit possession",
+    "img": "icons/svg/biohazard.svg",
+    "description": "A spirit or unnatural inhabits the body and seizes control. Filthy language, a changed voice, and vomiting.",
+    "cause": "Spirit",
+    "associatedHumour": "None",
+    "contagionStat": "Faith",
+    "contagionDifficulty": "SpiritPower",
+    "immunityRule": "Faith Exceeds Spirit",
+    "resistanceRule": "None",
+    "resistanceValue": "",
+    "phases": [
+      {
+        "phase": "Incubation",
+        "duration": "1 day",
+        "condition": "None",
+        "effect": ""
+      },
+      {
+        "phase": "Symptoms",
+        "duration": "1d6 days",
+        "condition": "None",
+        "effect": "Signs of possession: unnatural stances, strange speech, the spirit's aversions."
+      },
+      {
+        "phase": "Crisis",
+        "duration": "6d6 days",
+        "condition": "None",
+        "effect": "Each interval, Power vs the spirit/unnatural to keep free will."
+      },
+      {
+        "phase": "Resolution",
+        "duration": "",
+        "condition": "None",
+        "effect": "The player dies as the spirit claims the soul."
+      },
+      {
+        "phase": "Convalescence",
+        "duration": "1d6 days",
+        "condition": "None",
+        "effect": "1d6 days."
+      }
+    ],
+    "cureBoard": [
+      {
+        "phase": "Onset And Before",
+        "role": "Cleric",
+        "action": "Diagnose",
+        "skill": "Religion",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Cleric",
+        "action": "Fasting",
+        "skill": "Religion",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Apothecary",
+        "action": "Opiates",
+        "skill": "Alchemy",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Onset And Before",
+        "role": "Cleric",
+        "action": "Exorcism (ritual spell)",
+        "skill": "Religion",
+        "difficulty": "As per the spell"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Diagnose",
+        "skill": "Religion",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Fasting",
+        "skill": "Religion",
+        "difficulty": "1d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Apothecary",
+        "action": "Opiates",
+        "skill": "Alchemy",
+        "difficulty": "2d6"
+      },
+      {
+        "phase": "Crisis",
+        "role": "Cleric",
+        "action": "Exorcism (ritual spell)",
+        "skill": "Religion",
+        "difficulty": "As per the spell"
+      }
+    ],
+    "resolutionText": "The player dies as the spirit or unnatural claims his soul.",
+    "prevention": "None.",
+    "diagnosis": "A cleric can diagnose it.",
+    "cure": "An exorcism spell with fasting and opiates. Treatment time is 1d6 days.",
+    "convalescence": "1d6 days."
+  }
+]

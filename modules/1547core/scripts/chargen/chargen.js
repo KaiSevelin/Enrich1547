@@ -764,6 +764,14 @@ export class SkillTreeChargenApp extends FormApplication {
 
             await actor.setFlag("world", "baselineStatsApplied", true);
         }
+        if (!actor.getFlag("world", "baselinePlayerTypeApplied")) {
+            // Generated characters are Players (this also satisfies the
+            // Player-only visibility gate on the Dominant Humours panel).
+            // The humours themselves are set later by the birth-humours step;
+            // they default to false (balanced) via the actor template.
+            await actor.update({ "system.props.TypeDropdown": "Player" });
+            await actor.setFlag("world", "baselinePlayerTypeApplied", true);
+        }
         if (!actor.getFlag("world", "baselineMinZeroSkillsApplied")) {
             const baselineSkills = await app._getBaselineMinZeroSkills();
             const baselineGrantResults = [];
@@ -2782,6 +2790,7 @@ export class SkillTreeChargenApp extends FormApplication {
         const icon = String(props.ChoiceCard ?? props.ChoiceIcon ?? item?.img ?? "").trim();
         const tags = SkillTreeChargenApp._stringListFromCSV(props.ChoiceTags);
         const bio = String(props.ChoiceBio ?? "").trim();
+        const humourChange = SkillTreeChargenApp._parseHumourChange(props.HumourChange);
         const deferredType = String(props.DeferredType ?? "").trim().toLowerCase();
         const deferredOrigin = String(props.DeferredOrigin ?? "").trim();
         const deferredDelay = String(props.DeferredDelay ?? "").trim();
@@ -2805,6 +2814,7 @@ export class SkillTreeChargenApp extends FormApplication {
             const parsed = {
                 choice: { title, text, icon, tags },
                 bio,
+                humourChange,
                 deferred,
                 rewards: [{ weight: 1, changes: [] }],
                 effectTables
@@ -2860,11 +2870,29 @@ export class SkillTreeChargenApp extends FormApplication {
         const parsed = {
             choice: { title, text, icon, tags },
             bio,
+            humourChange,
             deferred,
             rewards
         };
         SkillTreeChargenApp._validateParsedResultSchema(parsed, tableName);
         return parsed;
+    }
+
+    // Parse a HumourChange directive: a CSV of +Humour / -Humour tokens, e.g.
+    // "+YellowBile,-Phlegm". Valid humours: Blood, YellowBile, BlackBile, Phlegm.
+    static _parseHumourChange(raw) {
+        const VALID = new Set(["Blood", "YellowBile", "BlackBile", "Phlegm"]);
+        const add = [];
+        const remove = [];
+        for (const tokenRaw of String(raw ?? "").split(/[,\n;]+/)) {
+            const token = tokenRaw.trim();
+            if (token.length < 2) continue;
+            const name = token.slice(1).trim();
+            if (!VALID.has(name)) continue;
+            if (token[0] === "+") add.push(name);
+            else if (token[0] === "-") remove.push(name);
+        }
+        return { add, remove };
     }
 
     static _tableStageType(table = null) {
@@ -4620,6 +4648,79 @@ export class SkillTreeChargenApp extends FormApplication {
         await this._addBio(run, `Learned language: ${newLanguage}.`);
     }
 
+    // Birth-humours step: set the actor's Humour_* flags from the chosen
+    // complexion. Gated to the birth-humours table so other cards can't trigger
+    // it. None checked = balanced; one = dominated; multiple = disturbed.
+    // Mixed / Unbalanced / Mystery are intentionally left for a confirmed
+    // mapping (see open question in the disease/humour design).
+    async _applyBirthHumours(run, table, data) {
+        const name = String(table?.name ?? "");
+        const uuid = String(run?.tableUuid ?? table?.uuid ?? "");
+        if (name !== "Humors" && !uuid.includes("BhHumors")) return;
+
+        const ALL = ["Humour_Blood", "Humour_YellowBile", "Humour_BlackBile", "Humour_Phlegm"];
+        const pickRandom = (count) => {
+            const pool = [...ALL];
+            const out = [];
+            while (out.length < count && pool.length) {
+                out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+            }
+            return out;
+        };
+
+        const title = String(data?.choice?.title ?? "").trim().toLowerCase();
+        let dominant;
+        switch (title) {
+            case "blood": dominant = ["Humour_Blood"]; break;
+            case "phlegm": dominant = ["Humour_Phlegm"]; break;
+            case "yellow bile": dominant = ["Humour_YellowBile"]; break;
+            case "black bile": dominant = ["Humour_BlackBile"]; break;
+            case "balanced humors":
+            case "mystery humors": dominant = []; break;            // balanced — no dominant humour
+            case "mixed humors": dominant = pickRandom(2); break;   // two random humours
+            case "unbalanced humors": dominant = pickRandom(3 + Math.floor(Math.random() * 2)); break; // 3 or 4 random
+            default: return;                                        // not a humour outcome
+        }
+
+        const update = {};
+        for (const key of ALL) update[`system.props.${key}`] = dominant.includes(key);
+        await this.actor.update(update);
+
+        const LABELS = {
+            Humour_Blood: "Blood",
+            Humour_YellowBile: "Yellow Bile",
+            Humour_BlackBile: "Black Bile",
+            Humour_Phlegm: "Phlegm"
+        };
+        const detail = dominant.length ? dominant.map(k => LABELS[k]).join(", ") : "balanced";
+        await this._addBio(run, `Birth humour set: ${data.choice.title} (${detail}).`);
+    }
+
+    // Life-event humour change: add or remove specific humour checks on the
+    // actor (idempotent). Runs for every card; driven by the item's HumourChange
+    // directive. Adding an already-set humour or removing an unset one is a no-op.
+    async _applyHumourChange(run, data) {
+        const hc = data?.humourChange;
+        if (!hc || (!hc.add?.length && !hc.remove?.length)) return;
+        const VALID = new Set(["Blood", "YellowBile", "BlackBile", "Phlegm"]);
+        const props = this.actor.system?.props ?? {};
+        const update = {};
+        const changed = [];
+        for (const h of hc.add ?? []) {
+            if (!VALID.has(h)) continue;
+            const key = `Humour_${h}`;
+            if (props[key] !== true) { update[`system.props.${key}`] = true; changed.push(`+${h}`); }
+        }
+        for (const h of hc.remove ?? []) {
+            if (!VALID.has(h)) continue;
+            const key = `Humour_${h}`;
+            if (props[key] === true) { update[`system.props.${key}`] = false; changed.push(`-${h}`); }
+        }
+        if (!Object.keys(update).length) return;
+        await this.actor.update(update);
+        await this._addBio(run, `Humour change: ${changed.join(", ")}.`);
+    }
+
     async _applyChanges(run, changes = []) {
         return applyRewardChanges(this, run, changes, {
             advanceStat,
@@ -5201,6 +5302,8 @@ export class SkillTreeChargenApp extends FormApplication {
             const currentTable = await this._getRollTable(run.tableUuid);
             run._bioContext = this._buildBioContext(run, currentTable, picked);
             if (data.bio) await this._addBio(run, String(data.bio));
+            await this._applyBirthHumours(run, currentTable, data);
+            await this._applyHumourChange(run, data);
 
             const reward = Array.isArray(data.effectTables) && data.effectTables.length
                 ? this._resolveRewardFromEffectTables(data.effectTables)

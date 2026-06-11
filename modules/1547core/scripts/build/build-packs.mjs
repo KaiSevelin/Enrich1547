@@ -32,6 +32,7 @@ const SOURCE_FLAG_SCOPE = "1547Core";
 const TEMPLATE_FILES = {
     maneuver: "fvtt-Item-maneuvertemplate-4owc4YQBlp94GbGs.json",
     spell: "fvtt-Item-spelltemplate-2kiWw3Cv5Zk1lZxn.json",
+    disease: "fvtt-Item-diseasetemplate-DZ7sK2mLp9Qx4TvR.json",
     monsterMagic: "fvtt-Item-monstermagictemplate-M0nMgk7Yp2RsT5Vu.json",
     weapon: "fvtt-Item-weapontemplate-qZCfLEYQ7egbm1B9.json",
     armor: "fvtt-Item-armortemplate-uLlgZXz3GlXPFtsj.json",
@@ -331,6 +332,54 @@ async function buildSpellsPack() {
         makeItemDoc(src, template, src.img ?? template.img ?? "icons/svg/book.svg", buildSpellProps, "Spells")
     );
     await compilePackFromDocs("spells", docs);
+}
+
+// --- Diseases ------------------------------------------------------------
+
+function buildDiseaseProps(d) {
+    // Select fields store the sanitized option key (no spaces/punctuation),
+    // matching the disease template's option keys; text fields store as-is.
+    const k = (v) => String(v ?? "").replace(/[^A-Za-z0-9]/g, "");
+    return {
+        Description: d.description ?? "",
+        DiseaseCause: k(d.cause ?? "Humour"),
+        AssociatedHumour: k(d.associatedHumour ?? "None"),
+        ContagionStat: k(d.contagionStat ?? "Stamina"),
+        ContagionDifficulty: d.contagionDifficulty ?? "3d6",
+        ImmunityRule: k(d.immunityRule ?? "None"),
+        ResistanceRule: k(d.resistanceRule ?? "None"),
+        ResistanceValue: d.resistanceValue ?? "",
+        Phases: Array.isArray(d.phases) ? d.phases.map((p) => ({
+            Phase: k(p.phase),
+            Duration: p.duration ?? "",
+            Condition: k(p.condition ?? "None"),
+            Effect: p.effect ?? ""
+        })) : [],
+        CureBoard: Array.isArray(d.cureBoard) ? d.cureBoard.map((c) => ({
+            Phase: k(c.phase),
+            Role: k(c.role),
+            Action: c.action ?? "",
+            Skill: k(c.skill),
+            Difficulty: c.difficulty ?? ""
+        })) : [],
+        ResolutionText: d.resolutionText ?? "",
+        Prevention: d.prevention ?? "",
+        Diagnosis: d.diagnosis ?? "",
+        Cure: d.cure ?? "",
+        ConvalescenceNotes: d.convalescence ?? "",
+        CurrentPhase: k(d.currentPhase ?? "Incubation"),
+        PhaseDaysElapsed: Number(d.phaseDaysElapsed ?? 0),
+        CureBoxesFilled: d.cureBoxesFilled ?? ""
+    };
+}
+
+async function buildDiseasesPack() {
+    const diseases = loadJson(path.join(TEMPLATES_DIR, "diseases.json"));
+    const template = loadJson(path.join(TEMPLATES_DIR, TEMPLATE_FILES.disease));
+    const docs = diseases.map((src) =>
+        makeItemDoc(src, template, src.img ?? template.img ?? "icons/svg/biohazard.svg", buildDiseaseProps, "Diseases")
+    );
+    await compilePackFromDocs("diseases", docs);
 }
 
 // --- Monster Magic (Powers) ----------------------------------------------
@@ -1538,6 +1587,7 @@ async function main() {
     await buildRulebookPack();
     await buildManeuversPack();
     await buildSpellsPack();
+    await buildDiseasesPack();
     await buildMonsterMagicPack();
     await buildWeaponsPack();
     await buildArmorsPack();
