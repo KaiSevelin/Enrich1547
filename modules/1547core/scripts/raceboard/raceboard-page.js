@@ -1,4 +1,5 @@
 import { openRaceBoardApp } from "./raceboard-app.js";
+import { buildAlarmContext } from "./raceboard-data.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -25,6 +26,7 @@ export class RaceBoardPageSheet extends HandlebarsApplicationMixin(BasePageSheet
     const context = (await super._prepareContext?.(options)) ?? {};
     const sys = this.document.system;
     const isGM = game.user.isGM;
+    const showExtras = isGM || !!sys.revealToPlayers;
     context.rows = sys.rows.map((r, idx) => {
       const eventStates = new Map((r.events ?? []).map(e => [e.index, e.state]));
       return {
@@ -34,8 +36,7 @@ export class RaceBoardPageSheet extends HandlebarsApplicationMixin(BasePageSheet
         total: r.total,
         isWon: r.filled >= r.total,
         boxes: Array.from({ length: r.total }, (_, i) => {
-          // Event markers are GM-only — players never receive a non-zero state.
-          const eventState = isGM ? (eventStates.get(i) ?? 0) : 0;
+          const eventState = showExtras ? (eventStates.get(i) ?? 0) : 0;
           return {
             checked: i < r.filled,
             eventState,
@@ -44,6 +45,8 @@ export class RaceBoardPageSheet extends HandlebarsApplicationMixin(BasePageSheet
         })
       };
     });
+    // Read-only page: alarm is never controllable here, only displayed.
+    context.alarm = buildAlarmContext(sys.alarm, { isGM, revealToPlayers: !!sys.revealToPlayers, canControl: false });
     context.canEdit = game.user.isGM;
     context.docName = this.document.name;
     return context;

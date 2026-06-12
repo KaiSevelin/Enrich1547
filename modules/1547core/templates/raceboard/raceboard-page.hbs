@@ -8,6 +8,13 @@
     {{/if}}
   </header>
 
+  {{#if alarm.show}}
+    <div class="rb-alarm" data-alarm-level="{{alarm.level}}">
+      <span class="rb-alarm-icon"><i class="fa-solid {{alarm.icon}}"></i></span>
+      <span class="rb-alarm-label">{{alarm.label}}</span>
+    </div>
+  {{/if}}
+
   <div class="rb-rows rb-readonly">
     {{#each rows}}
       <div class="rb-row {{#if isWon}}is-won{{/if}}">

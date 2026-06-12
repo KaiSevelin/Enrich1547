@@ -1,4 +1,7 @@
-import { RaceBoardData, MIN_TRACKS, MAX_TRACKS, MIN_BOXES, DEFAULT_BOXES } from "./raceboard-data.js";
+import {
+  RaceBoardData, MIN_TRACKS, MAX_TRACKS, MIN_BOXES, DEFAULT_BOXES,
+  ALARM_MAX_LEVEL, defaultAlarm, buildAlarmContext
+} from "./raceboard-data.js";
 import { announceWinner } from "./winner-splash.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
@@ -23,7 +26,12 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     this._readOnly = !!options.readOnly;
     this._state = options.state ?? null;
     if (!this._uuid && !this._state) {
-      this._state = { rows: RaceBoardData.defaultRows(), announcedWinners: [] };
+      this._state = {
+        rows: RaceBoardData.defaultRows(),
+        announcedWinners: [],
+        revealToPlayers: false,
+        alarm: defaultAlarm()
+      };
     }
   }
 
@@ -47,7 +55,11 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       "reset": function(event, target) { return this._onReset(event, target); },
       "discard": function(event, target) { return this._onDiscard(event, target); },
       "save": function(event, target) { return this._onSave(event, target); },
-      "show-to-players": function(event, target) { return this._onShowToPlayers(event, target); }
+      "show-to-players": function(event, target) { return this._onShowToPlayers(event, target); },
+      "alarm-add": function(event, target) { return this._onAlarmAdd(event, target); },
+      "alarm-remove": function(event, target) { return this._onAlarmRemove(event, target); },
+      "alarm-up": function(event, target) { return this._onAlarmUp(event, target); },
+      "reveal-toggle": function(event, target) { return this._onToggleReveal(event, target); }
     }
   };
 
@@ -61,7 +73,12 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   get data() {
     const doc = this.document;
-    if (doc) return { rows: doc.system.rows, announcedWinners: doc.system.announcedWinners ?? [] };
+    if (doc) return {
+      rows: doc.system.rows,
+      announcedWinners: doc.system.announcedWinners ?? [],
+      revealToPlayers: doc.system.revealToPlayers ?? false,
+      alarm: doc.system.alarm ?? defaultAlarm()
+    };
     return this._state;
   }
 
@@ -71,6 +88,9 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
   async _prepareContext() {
     const data = this.data;
     const isGM = game.user.isGM;
+    const revealToPlayers = !!data.revealToPlayers;
+    // Colored squares + alarm are shown to players only when the GM reveals them.
+    const showExtras = isGM || revealToPlayers;
     const rows = data.rows.map((r, idx) => {
       const eventStates = new Map((r.events ?? []).map(e => [e.index, e.state]));
       return {
@@ -81,8 +101,7 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
         isWon: r.filled >= r.total,
         canRemoveBox: r.total > MIN_BOXES,
         boxes: Array.from({ length: r.total }, (_, i) => {
-          // Event markers are GM-only — players never receive a non-zero state.
-          const eventState = isGM ? (eventStates.get(i) ?? 0) : 0;
+          const eventState = showExtras ? (eventStates.get(i) ?? 0) : 0;
           return {
             checked: i < r.filled,
             idx: i,
@@ -92,8 +111,11 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
         })
       };
     });
+    const alarm = buildAlarmContext(data.alarm, { isGM, revealToPlayers, canControl: this.canEdit });
     return {
       rows,
+      alarm,
+      revealToPlayers,
       canEdit: this.canEdit,
       canAddRow: data.rows.length < MAX_TRACKS,
       canDeleteRow: data.rows.length > MIN_TRACKS,
@@ -112,7 +134,9 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     } else {
       await this.document.update({
         "system.rows": data.rows,
-        "system.announcedWinners": data.announcedWinners
+        "system.announcedWinners": data.announcedWinners,
+        "system.revealToPlayers": !!data.revealToPlayers,
+        "system.alarm": data.alarm ?? defaultAlarm()
       });
     }
     this._checkForWinners();
@@ -184,6 +208,47 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       if (next > 0) events.push({ index: boxIdx, state: next });
       events.sort((a, b) => a.index - b.index);
       row.events = events;
+    });
+  }
+
+  /* ----- Alarm meter ----- */
+
+  async _onAlarmAdd() {
+    if (!this.canEdit) return;
+    await this._updateData(d => {
+      d.alarm = { ...defaultAlarm(), ...(d.alarm ?? {}), enabled: true };
+    });
+  }
+
+  async _onAlarmRemove() {
+    if (!this.canEdit) return;
+    await this._updateData(d => { d.alarm = defaultAlarm(); });
+  }
+
+  /** Toggle whether players see the colored squares + alarm (board-level). */
+  async _onToggleReveal() {
+    if (!this.canEdit) return;
+    await this._updateData(d => { d.revealToPlayers = !d.revealToPlayers; });
+  }
+
+  /** Left-click raises the alarm one stage. */
+  async _onAlarmUp() {
+    if (!this.canEdit) return;
+    await this._updateData(d => {
+      const a = d.alarm ?? defaultAlarm();
+      a.level = Math.min(ALARM_MAX_LEVEL, (a.level ?? 0) + 1);
+      d.alarm = a;
+    });
+  }
+
+  /** Right-click lowers the alarm one stage. */
+  async _onAlarmDown(event) {
+    event.preventDefault();
+    if (!this.canEdit) return;
+    await this._updateData(d => {
+      const a = d.alarm ?? defaultAlarm();
+      a.level = Math.max(0, (a.level ?? 0) - 1);
+      d.alarm = a;
     });
   }
 
@@ -273,6 +338,7 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     await this._updateData(d => {
       for (const row of d.rows) row.filled = 0;
       d.announcedWinners = [];
+      if (d.alarm) d.alarm.level = 0;
     });
   }
 
@@ -322,7 +388,9 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       type: PAGE_TYPE,
       system: {
         rows: this._state.rows,
-        announcedWinners: this._state.announcedWinners
+        announcedWinners: this._state.announcedWinners,
+        revealToPlayers: !!this._state.revealToPlayers,
+        alarm: this._state.alarm ?? defaultAlarm()
       }
     }]);
 
@@ -356,6 +424,8 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       for (const box of this.element.querySelectorAll('.rb-box[data-action="tick"]')) {
         box.addEventListener("contextmenu", this._onMarkBox.bind(this));
       }
+      const alarmIcon = this.element.querySelector('.rb-alarm-icon[data-action="alarm-up"]');
+      alarmIcon?.addEventListener("contextmenu", this._onAlarmDown.bind(this));
     }
   }
 

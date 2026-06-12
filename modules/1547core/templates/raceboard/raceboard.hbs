@@ -20,6 +20,24 @@
   {{/if}}
 </header>
 
+{{#if alarm.show}}
+  <div class="rb-alarm" data-alarm-level="{{alarm.level}}">
+    <span class="rb-alarm-icon"
+          {{#if alarm.canControl}}data-action="alarm-up" title="{{localize "RACEBOARD.AlarmIconTitle"}}"{{/if}}>
+      <i class="fa-solid {{alarm.icon}}"></i>
+    </span>
+    <span class="rb-alarm-label">{{alarm.label}}</span>
+    {{#if alarm.canControl}}
+      <div class="rb-alarm-controls">
+        <button type="button" class="rb-btn rb-btn-icon rb-btn-danger" data-action="alarm-remove"
+                title="{{localize "RACEBOARD.AlarmRemove"}}">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    {{/if}}
+  </div>
+{{/if}}
+
 <div class="rb-rows">
   {{#each rows}}
     <div class="rb-row {{#if isWon}}is-won{{/if}}" data-row="{{idx}}">
@@ -70,6 +88,15 @@
     <button type="button" class="rb-btn" data-action="add-row"
             {{#unless canAddRow}}disabled{{/unless}}>
       <i class="fa-solid fa-plus"></i> {{localize "RACEBOARD.AddTrack"}}
+    </button>
+    {{#unless alarm.enabled}}
+      <button type="button" class="rb-btn" data-action="alarm-add">
+        <i class="fa-solid fa-eye"></i> {{localize "RACEBOARD.AddAlarm"}}
+      </button>
+    {{/unless}}
+    <button type="button" class="rb-btn {{#if revealToPlayers}}rb-btn-primary{{/if}}" data-action="reveal-toggle"
+            title="{{#if revealToPlayers}}{{localize "RACEBOARD.RevealOnTitle"}}{{else}}{{localize "RACEBOARD.RevealOffTitle"}}{{/if}}">
+      <i class="fa-solid {{#if revealToPlayers}}fa-eye{{else}}fa-eye-slash{{/if}}"></i> {{localize "RACEBOARD.RevealToPlayers"}}
     </button>
     <div class="rb-footer-right">
       {{#if isEphemeral}}
