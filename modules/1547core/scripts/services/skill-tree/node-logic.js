@@ -13,8 +13,22 @@ function asOptionalNonNegativeInt(value) {
     return Math.max(0, Math.floor(n));
 }
 
+// Foundry's getFlag/setFlag validate the flag scope against *active* modules and
+// throw "Flag scope … not valid or not currently active" when the legacy
+// "skilltreehelper" module isn't installed. We keep storing under that scope for
+// back-compat (the external module + chargen1547_v2 read the same path), but
+// read/write it directly so binding works in any world.
+function readSkillTreeFlag(doc, key) {
+    return foundry.utils.getProperty(doc?.flags ?? {}, `${MODULE_ID}.${key}`);
+}
+async function writeSkillTreeFlag(doc, key, value) {
+    if (typeof doc?.update !== "function") return false;
+    await doc.update({ [`flags.${MODULE_ID}.${key}`]: value });
+    return true;
+}
+
 function getLevelFromActorItem(item) {
-    const flagged = Number(item?.getFlag?.(MODULE_ID, "skillTree")?.level);
+    const flagged = Number(readSkillTreeFlag(item, "skillTree")?.level);
     if (Number.isFinite(flagged) && flagged >= 0) return Math.floor(flagged);
 
     const candidates = [
@@ -461,10 +475,10 @@ export function resolveNodeIdForItem(item, graphData = {}) {
 }
 
 export async function bindItemToNode(item, nodeId) {
-    if (!item?.setFlag) return null;
+    if (typeof item?.update !== "function") return null;
     const normalized = String(nodeId ?? "").trim();
     if (!normalized) return null;
-    await item.setFlag(MODULE_ID, "nodeId", normalized);
+    await writeSkillTreeFlag(item, "nodeId", normalized);
     return normalized;
 }
 
@@ -861,7 +875,7 @@ export async function grantFirstAvailableNode(actor, nodeId, targetLevel = 1, op
     if (existing) {
         const currentLevel = getLevelFromActorItem(existing);
         const newLevel = Math.max(currentLevel, Number(next.level ?? 1));
-        await existing.setFlag(MODULE_ID, "skillTree", { level: newLevel });
+        await writeSkillTreeFlag(existing, "skillTree", { level: newLevel });
         await bindItemToNode(existing, next.nodeId);
 
         return {

@@ -118,7 +118,9 @@ export function registerSkillTreeService() {
     Hooks.on("createItem", async (item) => {
         try {
             if (!item?.parent || item.parent.documentName !== "Actor") return;
-            if (item.getFlag(LEGACY_NAMESPACE, "nodeId")) return;
+            // Read directly: getFlag throws when the legacy "skilltreehelper"
+            // module isn't active in this world (see node-logic flag helpers).
+            if (foundry.utils.getProperty(item.flags ?? {}, `${LEGACY_NAMESPACE}.nodeId`)) return;
 
             const graph = await getGraphData();
             await ensureActorItemNodeRef(item, graph);

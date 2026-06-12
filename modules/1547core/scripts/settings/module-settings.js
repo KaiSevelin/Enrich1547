@@ -12,6 +12,7 @@ const TEMPLATE_FILES = {
     onHitEffect: "fvtt-Item-onhiteffecttemplate-OnH1tEffectTmpl0.json",
     supernaturalMark: "fvtt-Item-supernaturalmarktemplate-w9ky0ZTDvXDs5Ce7.json",
     monsterMagic: "fvtt-Item-monstermagictemplate-M0nMgk7Yp2RsT5Vu.json",
+    disease: "fvtt-Item-diseasetemplate-DZ7sK2mLp9Qx4TvR.json",
     spell: "fvtt-Item-spelltemplate-2kiWw3Cv5Zk1lZxn.json",
     pact: "fvtt-Item-pacttemplate-HPYYc2P0Ouagicmr.json",
     ritual: "fvtt-Item-ritualtemplate-Qv6pN2Lm8R4tY1Ks.json",
@@ -2025,7 +2026,7 @@ function createModuleSetupFormApplicationClass() {
         }
 
         async #importItemsFromData({ maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts, supernaturalMarks }) {
-            const [actorTemplate, maneuverTemplate, weaponTemplate, armorTemplate, ammoTemplate, weaponModifierTemplate, onHitEffectTemplate, supernaturalMarkTemplate, monsterMagicTemplate, spellTemplate, pactTemplate, ritualTemplate, ritualStepTemplate, usageEffectTemplate, changeSetTemplate, changeTemplate, requirementTemplate] = await Promise.all([
+            const [actorTemplate, maneuverTemplate, weaponTemplate, armorTemplate, ammoTemplate, weaponModifierTemplate, onHitEffectTemplate, supernaturalMarkTemplate, monsterMagicTemplate, spellTemplate, pactTemplate, ritualTemplate, ritualStepTemplate, usageEffectTemplate, changeSetTemplate, changeTemplate, requirementTemplate, diseaseTemplate] = await Promise.all([
                 this.#loadTemplate(TEMPLATE_FILES.actorTemplate),
                 this.#loadTemplate(TEMPLATE_FILES.maneuver),
                 this.#loadTemplate(TEMPLATE_FILES.weapon),
@@ -2042,7 +2043,8 @@ function createModuleSetupFormApplicationClass() {
                 this.#loadTemplate(TEMPLATE_FILES.usageEffect),
                 this.#loadTemplate(TEMPLATE_FILES.changeSet),
                 this.#loadTemplate(TEMPLATE_FILES.change),
-                this.#loadTemplate(TEMPLATE_FILES.requirement)
+                this.#loadTemplate(TEMPLATE_FILES.requirement),
+                this.#loadTemplate(TEMPLATE_FILES.disease)
             ]);
 
             const templateDocs = [
@@ -2061,7 +2063,8 @@ function createModuleSetupFormApplicationClass() {
                 makeTemplateDoc(usageEffectTemplate),
                 makeTemplateDoc(changeSetTemplate),
                 makeTemplateDoc(changeTemplate),
-                makeTemplateDoc(requirementTemplate)
+                makeTemplateDoc(requirementTemplate),
+                makeTemplateDoc(diseaseTemplate)
             ];
             await upsertWorldItems(templateDocs);
             await pruneDuplicateTemplates(templateDocs);
