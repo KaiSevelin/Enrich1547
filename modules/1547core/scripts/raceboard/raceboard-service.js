@@ -97,7 +97,9 @@ async function migrateLegacyRacePages() {
             return clone;
         });
         try {
-            await entry.update({ pages });
+            // recursive:false force-replaces each page's system field, which
+            // Foundry requires when a document's type changes.
+            await entry.update({ pages }, { recursive: false });
             migrated += count;
         } catch (err) {
             console.error(`1547core | raceboard: failed migrating legacy race pages in "${entry.name}"`, err);
