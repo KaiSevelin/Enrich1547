@@ -16,6 +16,7 @@ import { applyConditionDiceModifier, applyCondition, removeCondition } from "./c
 
 const MODULE_ID = "1547core";
 const DISEASE_PACK = "1547core.diseases";
+const DISEASE_TEMPLATE_ID = "DZ7sK2mLp9Qx4TvR";
 const PHASE_CONDITION = { Weak: "Weakened", Exhausted: "Exhausted" };
 
 const HUMOUR_PROP = {
@@ -328,7 +329,31 @@ async function postChat(actor, carrier, content) {
     await ChatMessage.create({ speaker, flavor: carrier?.name ? `Disease — ${carrier.name}` : "Disease", content });
 }
 
+// Add a "Treat" button to an actor-owned disease (affliction) item sheet that
+// opens the cure race board for its current phase. Only shown on afflictions
+// carried by an actor — not on world/compendium disease definitions.
+function addTreatmentHeaderButton(app, buttons) {
+    const item = app?.object;
+    if (item?.system?.template !== DISEASE_TEMPLATE_ID) return;
+    if (item?.parent?.documentName !== "Actor") return;
+    buttons.unshift({
+        class: "open-treatment-board",
+        icon: "fas fa-kit-medical",
+        label: "Treat",
+        onclick: () => {
+            void openTreatmentBoard(item.parent, item).catch((error) => {
+                console.error(`${MODULE_ID} | Failed to open treatment board`, error);
+                ui.notifications.error(`1547 Core: failed to open treatment board. ${error.message}`);
+            });
+        }
+    });
+}
+
 export function registerDiseaseService() {
+    Hooks.on("getItemSheetHeaderButtons", (app, buttons) => {
+        addTreatmentHeaderButton(app, buttons);
+    });
+
     const api = { rollContraction, contractDisease, advanceDiseasePhase, openTreatmentBoard, resolveDisease };
     const coreModule = game.modules.get(MODULE_ID);
     if (coreModule) {

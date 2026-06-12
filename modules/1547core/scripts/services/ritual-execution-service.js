@@ -11,7 +11,7 @@
  * difficulty. All icons below are FontAwesome 6 *Free* solid.
  */
 
-import { generateRitualStepsFromSpell } from "./ritual-generation-service.js";
+import { generateRitualStepsFromSpell, createRitualFromSpell } from "./ritual-generation-service.js";
 
 const MODULE_ID = "1547core";
 const SPELL_TEMPLATE_ID = "2kiWw3Cv5Zk1lZxn";
@@ -151,10 +151,94 @@ function addOpenRitualBoardHeaderButton(app, buttons) {
     });
 }
 
+/* -------------------------------------------------- */
+/*  Right-click context menu: spell → ritual          */
+/*  v13 CSB sheets don't fire the header-button hook,  */
+/*  so the directory/compendium context menu is the    */
+/*  reliable, discoverable entry point.                */
+/* -------------------------------------------------- */
+
+function getEntryId(li) {
+    const el = li instanceof HTMLElement ? li : li?.[0];
+    const d = el?.dataset ?? {};
+    return d.entryId ?? d.documentId ?? d.itemId ?? null;
+}
+
+// Sync spell check for a directory/compendium entry: a world spell item, or any
+// entry belonging to the 1547core.spells compendium.
+function isSpellEntry(li) {
+    const id = getEntryId(li);
+    if (!id) return false;
+    const world = game.items?.get(id);
+    if (world) return world.system?.template === SPELL_TEMPLATE_ID;
+    return !!game.packs?.get(SPELL_PACK)?.index?.get(id);
+}
+
+async function resolveSpellEntry(li) {
+    const id = getEntryId(li);
+    if (!id) return null;
+    const world = game.items?.get(id);
+    if (isSpellItem(world)) return world;
+    const pack = game.packs?.get(SPELL_PACK);
+    if (pack) {
+        const doc = await pack.getDocument(id).catch(() => null);
+        if (isSpellItem(doc)) return doc;
+    }
+    return null;
+}
+
+function addSpellRitualContextOptions(options) {
+    if (!Array.isArray(options) || options.__ritualOptionsInjected) return;
+    options.__ritualOptionsInjected = true;
+    options.push({
+        name: "Open Ritual Board",
+        icon: '<i class="fa-solid fa-flag-checkered"></i>',
+        condition: (li) => isSpellEntry(li),
+        callback: async (li) => {
+            const spell = await resolveSpellEntry(li);
+            if (spell) await openRitualBoard(spell);
+        }
+    });
+    options.push({
+        name: "Generate Ritual",
+        icon: '<i class="fa-solid fa-wand-sparkles"></i>',
+        condition: (li) => isSpellEntry(li),
+        callback: async (li) => {
+            const spell = await resolveSpellEntry(li);
+            if (!spell) return;
+            try {
+                const ritual = await createRitualFromSpell(spell);
+                ui.notifications?.info(`1547 Core: generated ritual '${ritual?.name ?? `${spell.name} Ritual`}'.`);
+            } catch (error) {
+                console.error(`${MODULE_ID} | Failed to generate ritual`, error);
+                ui.notifications?.error(`1547 Core: failed to generate ritual. ${error.message}`);
+            }
+        }
+    });
+}
+
+function registerSpellRitualContextMenu() {
+    const handler = (a, b) => {
+        const options = Array.isArray(b) ? b : (Array.isArray(a) ? a : null);
+        if (options) addSpellRitualContextOptions(options);
+    };
+    for (const hook of [
+        "getItemContextOptions",
+        "getItemDirectoryEntryContext",
+        "getCompendiumEntryContext",
+        "getCompendiumDirectoryEntryContext"
+    ]) {
+        Hooks.on(hook, handler);
+    }
+}
+
 export function registerRitualExecutionService() {
+    // Legacy header button (still wired for any sheet build that fires the hook).
     Hooks.on("getItemSheetHeaderButtons", (app, buttons) => {
         addOpenRitualBoardHeaderButton(app, buttons);
     });
+    // Reliable v13 entry point: right-click a spell in the sidebar / compendium.
+    registerSpellRitualContextMenu();
 
     const moduleApi = game.modules.get(MODULE_ID);
     if (moduleApi) {
