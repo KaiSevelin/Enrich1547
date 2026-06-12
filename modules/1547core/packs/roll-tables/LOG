@@ -1,5 +1,5 @@
-2026/06/12-14:26:26.375 521c Delete type=3 #1
-2026/06/12-14:26:26.378 acac Level-0 table #5: started
-2026/06/12-14:26:26.380 acac Level-0 table #5: 79834 bytes OK
-2026/06/12-14:26:26.381 acac Delete type=0 #3
-2026/06/12-14:26:26.381 acac Manual compaction at level-0 from '!tables!1Mj0BzpZwDcHQaAw' @ 72057594037927935 : 1 .. '!tables.results!vrl94fLmeC0aHE0n.wmjp5VnTOQdLXJ3R' @ 0 : 0; will stop at (end)
+2026/06/12-14:45:12.853 5a1c Delete type=3 #1
+2026/06/12-14:45:12.855 72cc Level-0 table #5: started
+2026/06/12-14:45:12.857 72cc Level-0 table #5: 79834 bytes OK
+2026/06/12-14:45:12.858 72cc Delete type=0 #3
+2026/06/12-14:45:12.858 72cc Manual compaction at level-0 from '!tables!1Mj0BzpZwDcHQaAw' @ 72057594037927935 : 1 .. '!tables.results!vrl94fLmeC0aHE0n.wmjp5VnTOQdLXJ3R' @ 0 : 0; will stop at (end)

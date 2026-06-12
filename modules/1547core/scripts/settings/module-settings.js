@@ -855,6 +855,46 @@ function buildPactProps(pact) {
     };
 }
 
+// Mirrors the disease mapping in scripts/build/build-packs.mjs so seeded world
+// diseases match the compendium docs. Select fields store the sanitized option
+// key (no spaces/punctuation); text fields store as-is.
+function buildDiseaseProps(d) {
+    const k = (v) => String(v ?? "").replace(/[^A-Za-z0-9]/g, "");
+    return {
+        Description: d.description ?? "",
+        DiseaseCause: k(d.cause ?? "Humour"),
+        AssociatedHumour: k(d.associatedHumour ?? "None"),
+        ContagionStat: k(d.contagionStat ?? "Stamina"),
+        ContagionDifficulty: d.contagionDifficulty ?? "3d6",
+        ImmunityRule: k(d.immunityRule ?? "None"),
+        ResistanceRule: k(d.resistanceRule ?? "None"),
+        ResistanceValue: d.resistanceValue ?? "",
+        Phases: Array.isArray(d.phases) ? d.phases.map((p) => ({
+            Phase: k(p.phase),
+            Duration: p.duration ?? "",
+            Condition: k(p.condition ?? "None"),
+            Effect: p.effect ?? ""
+        })) : [],
+        CureBoard: Array.isArray(d.cureBoard) ? d.cureBoard.map((c) => ({
+            Phase: k(c.phase),
+            Role: k(c.role),
+            Action: c.action ?? "",
+            Skill: k(c.skill),
+            Difficulty: c.difficulty ?? "",
+            Icon: c.icon ?? "",
+            Tooltip: c.tooltip ?? ""
+        })) : [],
+        ResolutionText: d.resolutionText ?? "",
+        Prevention: d.prevention ?? "",
+        Diagnosis: d.diagnosis ?? "",
+        Cure: d.cure ?? "",
+        ConvalescenceNotes: d.convalescence ?? "",
+        CurrentPhase: k(d.currentPhase ?? "Incubation"),
+        PhaseDaysElapsed: Number(d.phaseDaysElapsed ?? 0),
+        CureBoxesFilled: d.cureBoxesFilled ?? ""
+    };
+}
+
 function buildBoostRollTableDoc(table, folderId, folderHint = null) {
     const normalized = normalizeSourceEntry(table, "boostRollTable", "RollTable");
     const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
