@@ -181,15 +181,22 @@ async function openRitualBoardFromRitual(ritualOrUuid) {
 /*    ritual → Open Ritual Board                       */
 /* -------------------------------------------------- */
 
-function getEntryId(li) {
+// Resolve the id/uuid from a right-clicked directory/compendium entry. v13
+// entries vary in which dataset key they expose, so read several.
+function getEntryRef(li) {
     const el = li instanceof HTMLElement ? li : li?.[0];
     const d = el?.dataset ?? {};
-    return d.entryId ?? d.documentId ?? d.itemId ?? null;
+    return {
+        id: d.entryId ?? d.documentId ?? d.itemId ?? null,
+        uuid: d.uuid ?? d.entryUuid ?? d.documentUuid ?? null,
+        el
+    };
 }
 
 // World spell item, or any entry in the 1547core.spells compendium.
 function isSpellEntry(li) {
-    const id = getEntryId(li);
+    const { id, uuid } = getEntryRef(li);
+    if (uuid && uuid.includes(`.${SPELL_PACK}.`)) return true;
     if (!id) return false;
     const world = game.items?.get(id);
     if (world) return world.system?.template === SPELL_TEMPLATE_ID;
@@ -197,23 +204,28 @@ function isSpellEntry(li) {
 }
 
 async function resolveSpellEntry(li) {
-    const id = getEntryId(li);
-    if (!id) return null;
-    const world = game.items?.get(id);
-    if (isSpellItem(world)) return world;
-    const pack = game.packs?.get(SPELL_PACK);
-    if (pack) {
-        const doc = await pack.getDocument(id).catch(() => null);
-        if (isSpellItem(doc)) return doc;
+    const { id, uuid } = getEntryRef(li);
+    if (uuid) {
+        const d = await fromUuid(uuid).catch(() => null);
+        if (isSpellItem(d)) return d;
+    }
+    if (id) {
+        const world = game.items?.get(id);
+        if (isSpellItem(world)) return world;
+        const pack = game.packs?.get(SPELL_PACK);
+        if (pack) {
+            const doc = await pack.getDocument(id).catch(() => null);
+            if (isSpellItem(doc)) return doc;
+        }
     }
     return null;
 }
 
 // Ritual items are always world items (created by Generate Ritual).
 function isRitualEntry(li) {
-    const id = getEntryId(li);
-    if (!id) return false;
-    return game.items?.get(id)?.system?.template === RITUAL_TEMPLATE_ID;
+    const { id, uuid } = getEntryRef(li);
+    const ritual = (id && game.items?.get(id)) || (uuid ? fromUuidSync?.(uuid) : null);
+    return ritual?.system?.template === RITUAL_TEMPLATE_ID;
 }
 
 async function getOrCreateRitualsFolder() {
@@ -224,7 +236,11 @@ async function getOrCreateRitualsFolder() {
 
 async function generateRitualFromEntry(li) {
     const spell = await resolveSpellEntry(li);
-    if (!spell) return;
+    if (!spell) {
+        console.warn(`${MODULE_ID} | Generate Ritual: could not resolve a spell from entry`, getEntryRef(li));
+        ui.notifications?.warn("1547 Core: couldn't resolve the spell for this entry — see console (F12).");
+        return;
+    }
     try {
         const folder = await getOrCreateRitualsFolder();
         const ritual = await createRitualFromSpell(spell, { folderId: folder.id });
@@ -237,7 +253,8 @@ async function generateRitualFromEntry(li) {
 }
 
 async function openBoardFromRitualEntry(li) {
-    const ritual = game.items?.get(getEntryId(li));
+    const { id, uuid } = getEntryRef(li);
+    const ritual = (id && game.items?.get(id)) || (uuid ? await fromUuid(uuid).catch(() => null) : null);
     if (ritual) await openRitualBoardFromRitual(ritual);
 }
 
