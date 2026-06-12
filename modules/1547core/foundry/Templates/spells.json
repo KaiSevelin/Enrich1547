@@ -83,7 +83,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -138,7 +140,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -268,7 +272,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -403,7 +409,9 @@
                 "StepText": "Meet the Astrology school casting requirement.",
                 "SkillCheck": "Learning Expertise Astrology",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Astrology school casting requirement. (trivial)"
             },
             {
                 "StepScope": "Alternative",
@@ -412,7 +420,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -478,7 +488,9 @@
                 "StepText": "Meet the Astrology school casting requirement.",
                 "SkillCheck": "Learning Expertise Astrology",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Astrology school casting requirement. (easy)"
             },
             {
                 "StepScope": "Alternative",
@@ -487,7 +499,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -553,7 +567,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (average)"
             },
             {
                 "StepScope": "Alternative",
@@ -562,7 +578,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -697,7 +715,9 @@
                 "StepText": "Meet the Wards school casting requirement.",
                 "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Wards school casting requirement. (trivial)"
             },
             {
                 "StepScope": "Alternative",
@@ -706,7 +726,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -761,7 +783,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -816,7 +840,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -957,7 +983,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (easy)"
             },
             {
                 "StepScope": "Mandatory",
@@ -966,7 +994,9 @@
                 "StepText": "Meet the Wards school casting requirement.",
                 "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Wards school casting requirement. (trivial)"
             }
         ],
         "complexity": "Medium",
@@ -1090,7 +1120,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -1248,7 +1280,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -1372,7 +1406,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -1496,7 +1532,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -1626,7 +1664,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -1750,7 +1790,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -1874,7 +1916,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -2015,7 +2059,9 @@
                 "StepText": "Meet the Wards school casting requirement.",
                 "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Wards school casting requirement. (easy)"
             },
             {
                 "StepScope": "Alternative",
@@ -2024,7 +2070,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -2182,7 +2230,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -2306,7 +2356,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -2464,7 +2516,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -2519,7 +2573,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -2643,7 +2699,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -2767,7 +2825,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -2857,7 +2917,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -2998,7 +3060,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (easy)"
             },
             {
                 "StepScope": "Alternative",
@@ -3007,7 +3071,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -3137,7 +3203,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -3192,7 +3260,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -3288,7 +3358,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -3412,7 +3484,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -3467,7 +3541,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -3591,7 +3667,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -3681,7 +3759,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -3805,7 +3885,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -3929,7 +4011,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -4064,7 +4148,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (average)"
             },
             {
                 "StepScope": "Alternative",
@@ -4073,7 +4159,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -4163,7 +4251,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -4293,7 +4383,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -4389,7 +4481,9 @@
                 "StepText": "Meet the Wards school casting requirement.",
                 "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Wards school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -4519,7 +4613,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -4649,7 +4745,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -4704,7 +4802,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -4770,7 +4870,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
             },
             {
                 "StepScope": "Alternative",
@@ -4779,7 +4881,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -4834,7 +4938,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -4924,7 +5030,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -5048,7 +5156,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -5172,7 +5282,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -5296,7 +5408,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -5420,7 +5534,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -5555,7 +5671,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (average)"
             },
             {
                 "StepScope": "Alternative",
@@ -5564,7 +5682,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -5694,7 +5814,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -5829,7 +5951,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (trivial)"
             },
             {
                 "StepScope": "Mandatory",
@@ -5838,7 +5962,9 @@
                 "StepText": "Meet the Wards school casting requirement.",
                 "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Wards school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -5928,7 +6054,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -6063,7 +6191,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (average)"
             },
             {
                 "StepScope": "Mandatory",
@@ -6072,7 +6202,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
             }
         ],
         "complexity": "Hard",
@@ -6127,7 +6259,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -6217,7 +6351,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -6307,7 +6443,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -6431,7 +6569,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -6561,7 +6701,9 @@
                 "StepText": "Meet the Wards school casting requirement.",
                 "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Wards school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -6616,7 +6758,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -6706,7 +6850,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -6830,7 +6976,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -6954,7 +7102,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -7078,7 +7228,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -7133,7 +7285,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -7194,7 +7348,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -7284,7 +7440,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -7408,7 +7566,9 @@
                 "StepText": "Meet the Wards school casting requirement.",
                 "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Wards school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -7538,7 +7698,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -7593,7 +7755,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -7728,7 +7892,9 @@
                 "StepText": "Meet the Astrology school casting requirement.",
                 "SkillCheck": "Learning Expertise Astrology",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Astrology school casting requirement. (average)"
             },
             {
                 "StepScope": "Mandatory",
@@ -7737,7 +7903,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (trivial)"
             }
         ],
         "complexity": "Hard",
@@ -7883,7 +8051,9 @@
                 "StepText": "Meet the Astrology school casting requirement.",
                 "SkillCheck": "Learning Expertise Astrology",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Astrology school casting requirement. (easy)"
             },
             {
                 "StepScope": "Alternative",
@@ -7892,7 +8062,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (easy)"
             },
             {
                 "StepScope": "Alternative",
@@ -7901,7 +8073,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -8036,7 +8210,9 @@
                 "StepText": "Meet the Astrology school casting requirement.",
                 "SkillCheck": "Learning Expertise Astrology",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Astrology school casting requirement. (trivial)"
             },
             {
                 "StepScope": "Alternative",
@@ -8045,7 +8221,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -8146,7 +8324,9 @@
                 "StepText": "Meet the Wards school casting requirement.",
                 "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Wards school casting requirement. (trivial)"
             },
             {
                 "StepScope": "Alternative",
@@ -8155,7 +8335,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -8262,7 +8444,9 @@
                 "StepText": "Meet the Wards school casting requirement.",
                 "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Wards school casting requirement. (trivial)"
             },
             {
                 "StepScope": "Alternative",
@@ -8271,7 +8455,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -8378,7 +8564,9 @@
                 "StepText": "Meet the Wards school casting requirement.",
                 "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Wards school casting requirement. (easy)"
             },
             {
                 "StepScope": "Alternative",
@@ -8387,7 +8575,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -8477,7 +8667,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -8612,7 +8804,9 @@
                 "StepText": "Meet the Astrology school casting requirement.",
                 "SkillCheck": "Learning Expertise Astrology",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Astrology school casting requirement. (trivial)"
             },
             {
                 "StepScope": "Alternative",
@@ -8621,7 +8815,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -8687,7 +8883,9 @@
                 "StepText": "Meet the Wards school casting requirement.",
                 "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Wards school casting requirement. (easy)"
             },
             {
                 "StepScope": "Alternative",
@@ -8696,7 +8894,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -8820,7 +9020,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -9046,7 +9248,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -9147,7 +9351,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (easy)"
             },
             {
                 "StepScope": "Mandatory",
@@ -9156,7 +9362,9 @@
                 "StepText": "Meet the Wards school casting requirement.",
                 "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Wards school casting requirement. (trivial)"
             }
         ],
         "complexity": "Medium",
@@ -9291,7 +9499,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (average)"
             },
             {
                 "StepScope": "Alternative",
@@ -9300,7 +9510,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
             }
         ],
         "complexity": "Hard",
@@ -9441,7 +9653,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
             },
             {
                 "StepScope": "Alternative",
@@ -9450,7 +9664,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -9574,7 +9790,9 @@
                 "StepText": "Meet the Alchemy school casting requirement.",
                 "SkillCheck": "Learning Expertise Alchemy",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Alchemy school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -9664,7 +9882,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -9765,7 +9985,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (average)"
             },
             {
                 "StepScope": "Alternative",
@@ -9774,7 +9996,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -9898,7 +10122,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -10022,7 +10248,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -10123,7 +10351,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (trivial)"
             },
             {
                 "StepScope": "Alternative",
@@ -10132,7 +10362,9 @@
                 "StepText": "Meet the Religion school casting requirement.",
                 "SkillCheck": "Learning Expertise Religion",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Religion school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -10222,7 +10454,9 @@
                 "StepText": "Meet the Necromancy school casting requirement.",
                 "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -10346,7 +10580,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -10470,7 +10706,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -10628,7 +10866,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -10752,7 +10992,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -10842,7 +11084,9 @@
                 "StepText": "Meet the Divination school casting requirement.",
                 "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Divination school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -10932,7 +11176,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -11062,7 +11308,9 @@
                 "StepText": "Meet the Wards school casting requirement.",
                 "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Wards school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -11186,7 +11434,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",
@@ -11241,7 +11491,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "2",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (easy)"
             }
         ],
         "complexity": "Medium",
@@ -11331,7 +11583,9 @@
                 "StepText": "Meet the Knot school casting requirement.",
                 "SkillCheck": "Pagan Expertise Knot",
                 "Difficulty": "3",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (average)"
             }
         ],
         "complexity": "Hard",
@@ -11455,7 +11709,9 @@
                 "StepText": "Meet the Grimoire school casting requirement.",
                 "SkillCheck": "Learning Expertise Occult",
                 "Difficulty": "1",
-                "StepNotes": "Static core school requirement."
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Grimoire school casting requirement. (trivial)"
             }
         ],
         "complexity": "Easy",

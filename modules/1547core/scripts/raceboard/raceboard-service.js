@@ -44,6 +44,12 @@ function registerSocket() {
                 }
                 return;
             }
+            case "hide": {
+                // GM set visibility to hidden — close the player's copy.
+                const app = msg.uuid ? getOpenAppForUuid(msg.uuid) : getEphemeralApp();
+                app?.close();
+                return;
+            }
             case "ephemeral-update": {
                 const app = getEphemeralApp();
                 if (app) {
@@ -106,7 +112,16 @@ export function refreshRaceboardApi() {
         open: (uuid) => openRaceBoardApp({ uuid, show: false }),
         show: (uuid) => openRaceBoardApp({ uuid, show: true }),
         new: () => newEphemeralRaceBoard(),
-        // Open an ephemeral board from a custom state ({ rows:[{label,filled,total}], announcedWinners:[] }).
+        // Open an ephemeral board from a custom state. Shape:
+        //   { rows: [{ label, filled, total, events? }],
+        //     announcedWinners?: [],
+        //     visibility?: 0|1|2,
+        //     alarm?: { enabled, level },
+        //     columns?: [{ icon, tooltip }] }   // per-column header overrides
+        // `columns` labels the header row: entry i sets column i's icon/tooltip,
+        // e.g. { icon: "fa-user-doctor", tooltip: "Diagnose (easy)" }. Missing
+        // entries fall back to numbered defaults (fa-1 "First", …). The header
+        // shows as many columns as the widest track has boxes.
         openState: (state, { show = false } = {}) => openRaceBoardApp({ state, show })
     };
 

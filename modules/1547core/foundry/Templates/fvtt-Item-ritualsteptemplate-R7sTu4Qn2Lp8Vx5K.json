@@ -135,6 +135,20 @@
               "label": "Difficulty:",
               "defaultValue": "",
               "visibilityFormula": "equalText(StepType, 'Skill')"
+            },
+            {
+              "key": "Icon",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Icon:",
+              "defaultValue": ""
+            },
+            {
+              "key": "Tooltip",
+              "type": "textField",
+              "size": "full-size",
+              "label": "Tooltip:",
+              "defaultValue": ""
             }
           ]
         }

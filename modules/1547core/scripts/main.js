@@ -102,6 +102,11 @@ Hooks.once("init", () => {
         (module) => module.registerRitualGenerationService()
     );
     void runImportedModuleStep(
+        "registerRitualExecutionService",
+        () => import("./services/ritual-execution-service.js"),
+        (module) => module.registerRitualExecutionService()
+    );
+    void runImportedModuleStep(
         "registerUsageEffectActionResolver",
         () => import("./services/usage-effect-action-resolver.js"),
         (module) => module.registerUsageEffectActionResolver()

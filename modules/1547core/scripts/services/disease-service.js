@@ -230,6 +230,48 @@ async function notePhase(actor, affliction, phase) {
 /*  Treatment race board                    */
 /* ---------------------------------------- */
 
+// Cure-board column header icons by medical Role. All FontAwesome 6 *Free*
+// solid icons. Unknown roles fall back to a generic medical kit.
+const ROLE_ICON = {
+    "Physician": "fa-user-doctor",
+    "Barber-Surgeon": "fa-scissors",
+    "BarberSurgeon": "fa-scissors",
+    "Apothecary": "fa-tablets",
+    "Cleric": "fa-hands-praying",
+    "Player": "fa-user"
+};
+
+// General difficulty names by opposing-d6 count (Trivial 1 … Rough 5), matching
+// the HUD's general-check scale. Used to render "2d6" as "(easy)" in tooltips.
+const GENERAL_DIFFICULTY = { 1: "Trivial", 2: "Easy", 3: "Average", 4: "Hard", 5: "Rough" };
+
+function roleIcon(role) {
+    return ROLE_ICON[String(role ?? "").trim()] ?? "fa-kit-medical";
+}
+
+function difficultyName(raw) {
+    const s = String(raw ?? "").trim();
+    const m = s.match(/(\d+)\s*d6/i);
+    if (m) {
+        const name = GENERAL_DIFFICULTY[Number(m[1])];
+        if (name) return name.toLowerCase();
+    }
+    return s.toLowerCase();
+}
+
+// One race-board column header per cure box. Uses the box's authored Icon /
+// Tooltip when present, else derives defaults (Role icon + "Action (difficulty)").
+function cureColumn(box) {
+    const authoredIcon = String(box.Icon ?? "").trim();
+    const authoredTooltip = String(box.Tooltip ?? "").trim();
+    const action = String(box.Action ?? "").trim() || humourLabel(box.Role) || "Step";
+    const diff = difficultyName(box.Difficulty);
+    return {
+        icon: authoredIcon || roleIcon(box.Role),
+        tooltip: authoredTooltip || (diff ? `${action} (${diff})` : action)
+    };
+}
+
 function cureRowsForPhase(affliction, phase) {
     const rows = props(affliction).CureBoard ?? [];
     return rows.filter((r) => {
@@ -257,7 +299,12 @@ async function openTreatmentBoard(actorOrToken, afflictionOrId) {
     }
 
     const label = `${affliction.name} — ${phaseLabel(phase)}`;
-    const state = { rows: [{ label, filled: 0, total: boxes.length }], announcedWinners: [] };
+    const state = {
+        rows: [{ label, filled: 0, total: boxes.length }],
+        announcedWinners: [],
+        // Label each box with the treatment step it represents (icon + tooltip).
+        columns: boxes.map(cureColumn)
+    };
     globalThis.RaceBoard?.openState?.(state, { show: true });
 
     const rowHtml = boxes.map((b) =>

@@ -15,6 +15,16 @@
     </div>
   {{/if}}
 
+  {{#if header.show}}
+    <div class="rb-header-row">
+      <div class="rb-boxes rb-header-boxes">
+        {{#each header.cells}}
+          <span class="rb-box rb-header-cell" title="{{tooltip}}"><i class="fa-solid {{icon}}"></i></span>
+        {{/each}}
+      </div>
+    </div>
+  {{/if}}
+
   <div class="rb-rows rb-readonly">
     {{#each rows}}
       <div class="rb-row {{#if isWon}}is-won{{/if}}">

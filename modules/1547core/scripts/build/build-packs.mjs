@@ -360,7 +360,9 @@ function buildDiseaseProps(d) {
             Role: k(c.role),
             Action: c.action ?? "",
             Skill: k(c.skill),
-            Difficulty: c.difficulty ?? ""
+            Difficulty: c.difficulty ?? "",
+            Icon: c.icon ?? "",
+            Tooltip: c.tooltip ?? ""
         })) : [],
         ResolutionText: d.resolutionText ?? "",
         Prevention: d.prevention ?? "",

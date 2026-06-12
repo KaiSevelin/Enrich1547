@@ -208,6 +208,20 @@
               "size": "full-size",
               "defaultValue": "2d6",
               "colName": "Difficulty"
+            },
+            {
+              "key": "Icon",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "",
+              "colName": "Icon"
+            },
+            {
+              "key": "Tooltip",
+              "type": "textField",
+              "size": "full-size",
+              "defaultValue": "",
+              "colName": "Tooltip"
             }
           ],
           "head": false,

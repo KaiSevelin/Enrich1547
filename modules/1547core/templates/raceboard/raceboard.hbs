@@ -38,6 +38,20 @@
   </div>
 {{/if}}
 
+{{#if header.show}}
+  <div class="rb-header-row">
+    <div class="rb-boxes rb-header-boxes">
+      {{#each header.cells}}
+        <span class="rb-box rb-header-cell{{#if ../canEdit}} rb-header-editable{{/if}}"
+              title="{{tooltip}}"
+              {{#if ../canEdit}}data-action="edit-header" data-col="{{@index}}"{{/if}}>
+          <i class="fa-solid {{icon}}"></i>
+        </span>
+      {{/each}}
+    </div>
+  </div>
+{{/if}}
+
 <div class="rb-rows">
   {{#each rows}}
     <div class="rb-row {{#if isWon}}is-won{{/if}}" data-row="{{idx}}">
@@ -86,27 +100,36 @@
 {{#if canEdit}}
   <footer class="rb-footer">
     <button type="button" class="rb-btn" data-action="add-row"
-            {{#unless canAddRow}}disabled{{/unless}}>
-      <i class="fa-solid fa-plus"></i> {{localize "RACEBOARD.AddTrack"}}
+            {{#unless canAddRow}}disabled{{/unless}}
+            title="{{localize "RACEBOARD.AddTrackTitle"}}">
+      <i class="fa-solid fa-plus"></i> {{localize "RACEBOARD.AddTrackShort"}}
     </button>
     {{#unless alarm.enabled}}
-      <button type="button" class="rb-btn" data-action="alarm-add">
-        <i class="fa-solid fa-eye"></i> {{localize "RACEBOARD.AddAlarm"}}
+      <button type="button" class="rb-btn" data-action="alarm-add"
+              title="{{localize "RACEBOARD.AddAlarm"}}">
+        <i class="fa-solid fa-bell"></i> {{localize "RACEBOARD.AddAlarmShort"}}
       </button>
     {{/unless}}
-    <button type="button" class="rb-btn {{#if revealToPlayers}}rb-btn-primary{{/if}}" data-action="reveal-toggle"
-            title="{{#if revealToPlayers}}{{localize "RACEBOARD.RevealOnTitle"}}{{else}}{{localize "RACEBOARD.RevealOffTitle"}}{{/if}}">
-      <i class="fa-solid {{#if revealToPlayers}}fa-eye{{else}}fa-eye-slash{{/if}}"></i> {{localize "RACEBOARD.RevealToPlayers"}}
-    </button>
+
+    <div class="rb-reveal" role="radiogroup" aria-label="{{localize "RACEBOARD.RevealAria"}}">
+      <span class="rb-reveal-label">{{localize "RACEBOARD.RevealLabel"}}</span>
+      {{#each visibilityOptions}}
+        <button type="button" role="radio" aria-checked="{{active}}"
+                class="rb-btn rb-btn-icon rb-reveal-btn {{#if active}}is-active{{/if}}"
+                data-action="set-visibility" data-level="{{level}}"
+                title="{{localize titleKey}}">
+          <i class="fa-solid {{icon}}"></i>
+        </button>
+      {{/each}}
+    </div>
+
     <div class="rb-footer-right">
       {{#if isEphemeral}}
-        <button type="button" class="rb-btn rb-btn-primary" data-action="save">
+        <button type="button" class="rb-btn rb-btn-primary" data-action="save"
+                title="{{localize "RACEBOARD.SaveButtonTitle"}}">
           <i class="fa-solid fa-floppy-disk"></i> {{localize "RACEBOARD.SaveLabel"}}
         </button>
       {{/if}}
-      <button type="button" class="rb-btn rb-btn-primary" data-action="show-to-players">
-        <i class="fa-solid fa-tower-broadcast"></i> {{localize "RACEBOARD.ShowToPlayers"}}
-      </button>
     </div>
   </footer>
 {{/if}}

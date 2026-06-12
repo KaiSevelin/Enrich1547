@@ -1,5 +1,5 @@
 import { openRaceBoardApp } from "./raceboard-app.js";
-import { buildAlarmContext } from "./raceboard-data.js";
+import { buildAlarmContext, buildHeaderCells, normalizeVisibility, VISIBILITY_ALL } from "./raceboard-data.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -26,7 +26,7 @@ export class RaceBoardPageSheet extends HandlebarsApplicationMixin(BasePageSheet
     const context = (await super._prepareContext?.(options)) ?? {};
     const sys = this.document.system;
     const isGM = game.user.isGM;
-    const showExtras = isGM || !!sys.revealToPlayers;
+    const showExtras = isGM || normalizeVisibility(sys.visibility) === VISIBILITY_ALL;
     context.rows = sys.rows.map((r, idx) => {
       const eventStates = new Map((r.events ?? []).map(e => [e.index, e.state]));
       return {
@@ -46,7 +46,10 @@ export class RaceBoardPageSheet extends HandlebarsApplicationMixin(BasePageSheet
       };
     });
     // Read-only page: alarm is never controllable here, only displayed.
-    context.alarm = buildAlarmContext(sys.alarm, { isGM, revealToPlayers: !!sys.revealToPlayers, canControl: false });
+    context.alarm = buildAlarmContext(sys.alarm, { showExtras, canControl: false });
+    const maxBoxes = sys.rows.reduce((m, r) => Math.max(m, r.total ?? 0), 0);
+    const headerCells = buildHeaderCells(sys.columns, maxBoxes);
+    context.header = { show: headerCells.length > 0, cells: headerCells };
     context.canEdit = game.user.isGM;
     context.docName = this.document.name;
     return context;

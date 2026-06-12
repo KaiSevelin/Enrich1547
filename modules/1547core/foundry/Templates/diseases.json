@@ -55,84 +55,108 @@
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (easy)"
       },
       {
         "phase": "Onset",
         "role": "Barber-Surgeon",
         "action": "Bloodletting",
         "skill": "Surgeon",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-scissors",
+        "tooltip": "Bloodletting (easy)"
       },
       {
         "phase": "Onset",
         "role": "Apothecary",
         "action": "Mix herbs",
         "skill": "Herbalism",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix herbs (easy)"
       },
       {
         "phase": "Onset",
         "role": "Apothecary",
         "action": "Mix sulphur",
         "skill": "Alchemy",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix sulphur (easy)"
       },
       {
         "phase": "Onset",
         "role": "Player",
         "action": "Stamina or die",
         "skill": "Stamina",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user",
+        "tooltip": "Stamina or die (easy)"
       },
       {
         "phase": "Onset",
         "role": "Physician",
         "action": "Treat disease",
         "skill": "Medicine",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Treat disease (average)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Barber-Surgeon",
         "action": "Bloodletting",
         "skill": "Surgeon",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-scissors",
+        "tooltip": "Bloodletting (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Apothecary",
         "action": "Mix herbs",
         "skill": "Herbalism",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix herbs (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Apothecary",
         "action": "Mix sulphur",
         "skill": "Alchemy",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix sulphur (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Player",
         "action": "Stamina or die",
         "skill": "Stamina",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-user",
+        "tooltip": "Stamina or die (average)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Treat disease",
         "skill": "Medicine",
-        "difficulty": "4d6"
+        "difficulty": "4d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Treat disease (hard)"
       }
     ],
     "resolutionText": "If the player fails a stamina check against 4d6 the player dies, otherwise he recovers.",
@@ -197,56 +221,72 @@
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (average)"
       },
       {
         "phase": "Onset",
         "role": "Apothecary",
         "action": "Mix cooling",
         "skill": "Alchemy",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix cooling (trivial)"
       },
       {
         "phase": "Onset",
         "role": "Apothecary",
         "action": "Mix herbs",
         "skill": "Herbalism",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix herbs (easy)"
       },
       {
         "phase": "Onset",
         "role": "Physician",
         "action": "Treat disease",
         "skill": "Medicine",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Treat disease (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Apothecary",
         "action": "Mix cooling",
         "skill": "Alchemy",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix cooling (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Apothecary",
         "action": "Mix herbs",
         "skill": "Herbalism",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix herbs (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Treat disease",
         "skill": "Medicine",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Treat disease (average)"
       }
     ],
     "resolutionText": "If the player fails a stamina check against 2d6 the player dies, otherwise he recovers.",
@@ -311,49 +351,63 @@
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "4d6"
+        "difficulty": "4d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (hard)"
       },
       {
         "phase": "Onset And Before",
         "role": "Apothecary",
         "action": "Mix mercury",
         "skill": "Alchemy",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix mercury (trivial)"
       },
       {
         "phase": "Onset And Before",
         "role": "Player",
         "action": "Stamina or die",
         "skill": "Stamina",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user",
+        "tooltip": "Stamina or die (easy)"
       },
       {
         "phase": "Onset And Before",
         "role": "Physician",
         "action": "Treat disease",
         "skill": "Medicine",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Treat disease (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Barber-Surgeon",
         "action": "Trepanning",
         "skill": "Surgeon",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-scissors",
+        "tooltip": "Trepanning (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Player",
         "action": "Stamina or die",
         "skill": "Stamina",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user",
+        "tooltip": "Stamina or die (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Treat disease",
         "skill": "Medicine",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Treat disease (average)"
       }
     ],
     "resolutionText": "No resolution.",
@@ -406,28 +460,36 @@
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Bed regiment",
         "skill": "Religion",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Bed regiment (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Apothecary",
         "action": "Mix herbs",
         "skill": "Herbalism",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix herbs (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Treat disease",
         "skill": "Medicine",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Treat disease (average)"
       }
     ],
     "resolutionText": "If the player succeeds with a stamina check against 3d6 the player survives, otherwise he dies.",
@@ -486,70 +548,90 @@
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "4d6"
+        "difficulty": "4d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (hard)"
       },
       {
         "phase": "Onset",
         "role": "Barber-Surgeon",
         "action": "Bloodletting",
         "skill": "Surgeon",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-scissors",
+        "tooltip": "Bloodletting (easy)"
       },
       {
         "phase": "Onset",
         "role": "Apothecary",
         "action": "Mix herbs",
         "skill": "Herbalism",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix herbs (easy)"
       },
       {
         "phase": "Onset",
         "role": "Apothecary",
         "action": "Mix smoke",
         "skill": "Alchemy",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix smoke (easy)"
       },
       {
         "phase": "Onset",
         "role": "Physician",
         "action": "Treat disease",
         "skill": "Medicine",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Treat disease (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (average)"
       },
       {
         "phase": "Crisis",
         "role": "Barber-Surgeon",
         "action": "Bloodletting",
         "skill": "Surgeon",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-scissors",
+        "tooltip": "Bloodletting (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Apothecary",
         "action": "Mix herbs",
         "skill": "Herbalism",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix herbs (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Apothecary",
         "action": "Mix smoke",
         "skill": "Alchemy",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix smoke (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Treat disease",
         "skill": "Medicine",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Treat disease (average)"
       }
     ],
     "resolutionText": "If the player succeeds with a stamina check against 4d6 the player survives, otherwise he enters a coma and dies.",
@@ -608,56 +690,72 @@
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (easy)"
       },
       {
         "phase": "Onset",
         "role": "Barber-Surgeon",
         "action": "Bloodletting",
         "skill": "Surgeon",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-scissors",
+        "tooltip": "Bloodletting (easy)"
       },
       {
         "phase": "Onset",
         "role": "Apothecary",
         "action": "Mix herbs",
         "skill": "Herbalism",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix herbs (easy)"
       },
       {
         "phase": "Onset",
         "role": "Physician",
         "action": "Treat disease",
         "skill": "Medicine",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Treat disease (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Barber-Surgeon",
         "action": "Bloodletting",
         "skill": "Surgeon",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-scissors",
+        "tooltip": "Bloodletting (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Apothecary",
         "action": "Mix herbs",
         "skill": "Herbalism",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix herbs (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Treat disease",
         "skill": "Medicine",
-        "difficulty": "4d6"
+        "difficulty": "4d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Treat disease (hard)"
       }
     ],
     "resolutionText": "If the player succeeds with a stamina check against 4d6 the player survives, otherwise he enters a coma and dies.",
@@ -722,70 +820,90 @@
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (easy)"
       },
       {
         "phase": "Onset And Before",
         "role": "Apothecary",
         "action": "Mix opium",
         "skill": "Alchemy",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix opium (trivial)"
       },
       {
         "phase": "Onset And Before",
         "role": "Player",
         "action": "Stamina or addicted",
         "skill": "Stamina",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user",
+        "tooltip": "Stamina or addicted (easy)"
       },
       {
         "phase": "Onset And Before",
         "role": "Cleric",
         "action": "Pray",
         "skill": "Religion",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Pray (trivial)"
       },
       {
         "phase": "Onset And Before",
         "role": "Physician",
         "action": "Treat disease",
         "skill": "Medicine",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Treat disease (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Apothecary",
         "action": "Mix opium",
         "skill": "Alchemy",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix opium (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Player",
         "action": "Stamina or addicted",
         "skill": "Stamina",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user",
+        "tooltip": "Stamina or addicted (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Pray",
         "skill": "Religion",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Pray (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Treat disease",
         "skill": "Medicine",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Treat disease (easy)"
       }
     ],
     "resolutionText": "If the player succeeds with a stamina check against 1d6 he survives.",
@@ -844,28 +962,36 @@
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (trivial)"
       },
       {
         "phase": "All",
         "role": "Cleric",
         "action": "Diet",
         "skill": "Religion",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Diet (trivial)"
       },
       {
         "phase": "All",
         "role": "Apothecary",
         "action": "Mix herbs",
         "skill": "Herbalism",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Mix herbs (easy)"
       },
       {
         "phase": "All",
         "role": "Physician",
         "action": "Treat disease",
         "skill": "Medicine",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Treat disease (easy)"
       }
     ],
     "resolutionText": "If the player succeeds with a stamina save vs 3d6 the player survives, otherwise he dies.",
@@ -930,56 +1056,72 @@
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (easy)"
       },
       {
         "phase": "Onset And Before",
         "role": "Cleric",
         "action": "Pilgrimage",
         "skill": "Religion",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Pilgrimage (easy)"
       },
       {
         "phase": "Onset And Before",
         "role": "Cleric",
         "action": "Processions",
         "skill": "Religion",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Processions (easy)"
       },
       {
         "phase": "Onset And Before",
         "role": "Cleric",
         "action": "Prayers",
         "skill": "Religion",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Prayers (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Pilgrimage",
         "skill": "Religion",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Pilgrimage (average)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Processions",
         "skill": "Religion",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Processions (average)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Prayers",
         "skill": "Religion",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Prayers (average)"
       }
     ],
     "resolutionText": "If the player enters the crisis phase it is game over.",
@@ -1044,56 +1186,72 @@
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (average)"
       },
       {
         "phase": "Onset And Before",
         "role": "Cleric",
         "action": "Fasting",
         "skill": "Religion",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Fasting (trivial)"
       },
       {
         "phase": "Onset And Before",
         "role": "Apothecary",
         "action": "Wine and lard",
         "skill": "Herbalism",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-tablets",
+        "tooltip": "Wine and lard (trivial)"
       },
       {
         "phase": "Onset And Before",
         "role": "Cleric",
         "action": "Prayers",
         "skill": "Religion",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Prayers (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Fasting",
         "skill": "Religion",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Fasting (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Apothecary",
         "action": "Wine and lard",
         "skill": "Herbalism",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Wine and lard (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Prayers",
         "skill": "Religion",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Prayers (average)"
       }
     ],
     "resolutionText": "If the player enters the crisis phase it is game over.",
@@ -1158,28 +1316,36 @@
         "role": "Cleric",
         "action": "Diagnose",
         "skill": "Religion",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Diagnose (easy)"
       },
       {
         "phase": "Onset And Before",
         "role": "Cleric",
         "action": "Dance, wine, music",
         "skill": "Religion",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Dance, wine, music (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Diagnose",
         "skill": "Religion",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Diagnose (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Dance, wine, music",
         "skill": "Religion",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Dance, wine, music (average)"
       }
     ],
     "resolutionText": "None.",
@@ -1244,70 +1410,90 @@
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (easy)"
       },
       {
         "phase": "Onset And Before",
         "role": "Barber-Surgeon",
         "action": "Shave head",
         "skill": "Surgeon",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-scissors",
+        "tooltip": "Shave head (trivial)"
       },
       {
         "phase": "Onset And Before",
         "role": "Apothecary",
         "action": "Opiates",
         "skill": "Alchemy",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Opiates (easy)"
       },
       {
         "phase": "Onset And Before",
         "role": "Physician",
         "action": "Restrain",
         "skill": "Medicine",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Restrain (trivial)"
       },
       {
         "phase": "Onset And Before",
         "role": "Apothecary",
         "action": "Odors",
         "skill": "Herbalism",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-tablets",
+        "tooltip": "Odors (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Diagnose",
         "skill": "Medicine",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Diagnose (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Barber-Surgeon",
         "action": "Shave head",
         "skill": "Surgeon",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-scissors",
+        "tooltip": "Shave head (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Apothecary",
         "action": "Opiates",
         "skill": "Alchemy",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-tablets",
+        "tooltip": "Opiates (average)"
       },
       {
         "phase": "Crisis",
         "role": "Physician",
         "action": "Restrain",
         "skill": "Medicine",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-user-doctor",
+        "tooltip": "Restrain (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Apothecary",
         "action": "Odors",
         "skill": "Herbalism",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-tablets",
+        "tooltip": "Odors (trivial)"
       }
     ],
     "resolutionText": "None.",
@@ -1372,42 +1558,54 @@
         "role": "Cleric",
         "action": "Diagnose",
         "skill": "Religion",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Diagnose (trivial)"
       },
       {
         "phase": "Onset And Before",
         "role": "Cleric",
         "action": "Vows and prayers",
         "skill": "Religion",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Vows and prayers (trivial)"
       },
       {
         "phase": "Onset And Before",
         "role": "Cleric",
         "action": "Soothing music",
         "skill": "Religion",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Soothing music (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Diagnose",
         "skill": "Religion",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Diagnose (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Vows and prayers",
         "skill": "Religion",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Vows and prayers (average)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Soothing music",
         "skill": "Religion",
-        "difficulty": "3d6"
+        "difficulty": "3d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Soothing music (average)"
       }
     ],
     "resolutionText": "The player dies.",
@@ -1466,56 +1664,72 @@
         "role": "Cleric",
         "action": "Diagnose",
         "skill": "Religion",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Diagnose (easy)"
       },
       {
         "phase": "Onset And Before",
         "role": "Cleric",
         "action": "Fasting",
         "skill": "Religion",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Fasting (trivial)"
       },
       {
         "phase": "Onset And Before",
         "role": "Apothecary",
         "action": "Opiates",
         "skill": "Alchemy",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-tablets",
+        "tooltip": "Opiates (trivial)"
       },
       {
         "phase": "Onset And Before",
         "role": "Cleric",
         "action": "Exorcism (ritual spell)",
         "skill": "Religion",
-        "difficulty": "As per the spell"
+        "difficulty": "As per the spell",
+        "icon": "fa-hands-praying",
+        "tooltip": "Exorcism (ritual spell) (as per the spell)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Diagnose",
         "skill": "Religion",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Diagnose (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Fasting",
         "skill": "Religion",
-        "difficulty": "1d6"
+        "difficulty": "1d6",
+        "icon": "fa-hands-praying",
+        "tooltip": "Fasting (trivial)"
       },
       {
         "phase": "Crisis",
         "role": "Apothecary",
         "action": "Opiates",
         "skill": "Alchemy",
-        "difficulty": "2d6"
+        "difficulty": "2d6",
+        "icon": "fa-tablets",
+        "tooltip": "Opiates (easy)"
       },
       {
         "phase": "Crisis",
         "role": "Cleric",
         "action": "Exorcism (ritual spell)",
         "skill": "Religion",
-        "difficulty": "As per the spell"
+        "difficulty": "As per the spell",
+        "icon": "fa-hands-praying",
+        "tooltip": "Exorcism (ritual spell) (as per the spell)"
       }
     ],
     "resolutionText": "The player dies as the spirit or unnatural claims his soul.",

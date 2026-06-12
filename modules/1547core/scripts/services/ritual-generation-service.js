@@ -58,6 +58,8 @@ function normalizeStaticStep(step, index) {
         repeatable: Boolean(step?.Repeatable),
         failureConsequence: String(step?.FailureConsequence ?? "").trim(),
         stepNotes: String(step?.StepNotes ?? "").trim(),
+        icon: String(step?.Icon ?? "").trim(),
+        tooltip: String(step?.Tooltip ?? "").trim(),
         required: scope !== "Optional"
     };
 }
@@ -79,6 +81,8 @@ function normalizeRandomStep(step, index) {
         repeatable: Boolean(step?.repeatable),
         failureConsequence: String(step?.failureConsequence ?? "").trim(),
         stepNotes: String(step?.stepNotes ?? "").trim(),
+        icon: String(step?.icon ?? "").trim(),
+        tooltip: String(step?.tooltip ?? "").trim(),
         required: true
     };
 }

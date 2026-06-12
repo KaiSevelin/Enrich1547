@@ -20,7 +20,9 @@
         "dangerTag": "",
         "repeatable": false,
         "failureConsequence": "The focus is spoiled and must be prepared again.",
-        "stepNotes": "A light material component suitable for simple spells."
+        "stepNotes": "A light material component suitable for simple spells.",
+        "icon": "fa-cube",
+        "tooltip": "Prepare a small personal focus for the working."
       },
       {
         "id": "RSE02",
@@ -36,7 +38,9 @@
         "dangerTag": "",
         "repeatable": false,
         "failureConsequence": "The token is too crude to hold the working securely.",
-        "stepNotes": "A common support step for household or charm magic."
+        "stepNotes": "A common support step for household or charm magic.",
+        "icon": "fa-hammer",
+        "tooltip": "Fashion or mark a simple token to hold the spell. (trivial)"
       },
       {
         "id": "RSE03",
@@ -52,7 +56,9 @@
         "dangerTag": "",
         "repeatable": false,
         "failureConsequence": "The form breaks and the step must be begun again.",
-        "stepNotes": "Useful for prayers, charms, and sung folk formulas."
+        "stepNotes": "Useful for prayers, charms, and sung folk formulas.",
+        "icon": "fa-music",
+        "tooltip": "Speak, sing, or recite the working in a fixed measured form. (trivial)"
       },
       {
         "id": "RSE04",
@@ -68,7 +74,9 @@
         "dangerTag": "",
         "repeatable": false,
         "failureConsequence": "The spell may still proceed, but the place offers no help.",
-        "stepNotes": "Pure requirement, no check."
+        "stepNotes": "Pure requirement, no check.",
+        "icon": "fa-mountain-sun",
+        "tooltip": "Perform the working at a simple fitting location."
       },
       {
         "id": "RSE05",
@@ -84,7 +92,9 @@
         "dangerTag": "",
         "repeatable": false,
         "failureConsequence": "The step leaves the working spiritually untidy.",
-        "stepNotes": "Light purification, common in religion and wards."
+        "stepNotes": "Light purification, common in religion and wards.",
+        "icon": "fa-hands-bubbles",
+        "tooltip": "Wash hands, face, tools, or threshold before proceeding. (trivial)"
       },
       {
         "id": "RSE06",
@@ -100,7 +110,9 @@
         "dangerTag": "",
         "repeatable": false,
         "failureConsequence": "The copied sign is malformed and gives no support.",
-        "stepNotes": "A light scripted support step."
+        "stepNotes": "A light scripted support step.",
+        "icon": "fa-pen-nib",
+        "tooltip": "Copy a short word, sign, or mark connected to the working. (trivial)"
       },
       {
         "id": "RSE07",
@@ -116,7 +128,9 @@
         "dangerTag": "",
         "repeatable": false,
         "failureConsequence": "The token is misplaced and the step must be redone.",
-        "stepNotes": "Common for warding, knot magic, and spite work."
+        "stepNotes": "Common for warding, knot magic, and spite work.",
+        "icon": "fa-location-dot",
+        "tooltip": "Hide, bury, hang, or place a minor token in the right spot."
       },
       {
         "id": "RSE08",
@@ -132,7 +146,9 @@
         "dangerTag": "",
         "repeatable": false,
         "failureConsequence": "The omen turns vague or points nowhere useful.",
-        "stepNotes": "A light support step for readings and searches."
+        "stepNotes": "A light support step for readings and searches.",
+        "icon": "fa-eye",
+        "tooltip": "Fix the question or subject through a token, bowl, flame, or trace. (trivial)"
       }
     ]
   },
@@ -157,7 +173,9 @@
         "dangerTag": "",
         "repeatable": false,
         "failureConsequence": "The spell may target weakly or drift to a wrong subject.",
-        "stepNotes": "A stronger personal component than the easy pool."
+        "stepNotes": "A stronger personal component than the easy pool.",
+        "icon": "fa-cube",
+        "tooltip": "Secure a stronger sympathetic link to the subject."
       },
       {
         "id": "RSM02",
@@ -173,7 +191,9 @@
         "dangerTag": "",
         "repeatable": false,
         "failureConsequence": "The receptacle cracks, warps, or fails to hold the force cleanly.",
-        "stepNotes": "A medium-complexity crafted support step."
+        "stepNotes": "A medium-complexity crafted support step.",
+        "icon": "fa-hammer",
+        "tooltip": "Prepare a vessel, wax form, knot-string, or inscribed medium to exacting standards. (easy)"
       },
       {
         "id": "RSM03",
@@ -189,7 +209,9 @@
         "dangerTag": "Fatigue",
         "repeatable": false,
         "failureConsequence": "The rhythm breaks and weakens the assembled working.",
-        "stepNotes": "A longer performative phase rather than a quick charm."
+        "stepNotes": "A longer performative phase rather than a quick charm.",
+        "icon": "fa-music",
+        "tooltip": "Maintain a sustained recitation, song, or patterned movement through the whole middle of the rite. (easy)"
       },
       {
         "id": "RSM04",
@@ -205,7 +227,9 @@
         "dangerTag": "",
         "repeatable": false,
         "failureConsequence": "The rite can only be attempted again under a new fitting condition.",
-        "stepNotes": "Pure requirement, no check."
+        "stepNotes": "Pure requirement, no check.",
+        "icon": "fa-mountain-sun",
+        "tooltip": "Meet a meaningful time or place condition tied to the spell."
       },
       {
         "id": "RSM05",
@@ -221,7 +245,9 @@
         "dangerTag": "Fatigue",
         "repeatable": false,
         "failureConsequence": "The caster begins spiritually compromised.",
-        "stepNotes": "Typical for church and grave magic."
+        "stepNotes": "Typical for church and grave magic.",
+        "icon": "fa-dove",
+        "tooltip": "Observe a short fast, silence, or avoidance before the rite. (easy)"
       },
       {
         "id": "RSM06",
@@ -237,7 +263,9 @@
         "dangerTag": "Exposure",
         "repeatable": false,
         "failureConsequence": "Without the witness the rite cannot proceed in full form.",
-        "stepNotes": "Supports oaths, exposure rites, healing, and exorcism."
+        "stepNotes": "Supports oaths, exposure rites, healing, and exorcism.",
+        "icon": "fa-users",
+        "tooltip": "Require one helper, witness, or target-side presence during the rite."
       },
       {
         "id": "RSM07",
@@ -253,7 +281,9 @@
         "dangerTag": "",
         "repeatable": false,
         "failureConsequence": "The text bears hidden errors that may alter later steps.",
-        "stepNotes": "A medium script step for learned magic."
+        "stepNotes": "A medium script step for learned magic.",
+        "icon": "fa-pen-nib",
+        "tooltip": "Copy or compose a fuller seal, prayer block, or binding text. (easy)"
       },
       {
         "id": "RSM08",
@@ -269,7 +299,9 @@
         "dangerTag": "",
         "repeatable": false,
         "failureConsequence": "A weak side remains open or mismeasured.",
-        "stepNotes": "A stronger version of simple placement."
+        "stepNotes": "A stronger version of simple placement.",
+        "icon": "fa-ring",
+        "tooltip": "Walk, mark, or measure the boundary to be worked in full. (easy)"
       },
       {
         "id": "RSM09",
@@ -285,7 +317,9 @@
         "dangerTag": "",
         "repeatable": false,
         "failureConsequence": "The mixture weakens, fouls, or works against the desired tone.",
-        "stepNotes": "Useful across warding, divination, and grave workings."
+        "stepNotes": "Useful across warding, divination, and grave workings.",
+        "icon": "fa-leaf",
+        "tooltip": "Prepare a fumigation, wash, draught, or herb bundle for the rite. (easy)"
       },
       {
         "id": "RSM10",
@@ -301,7 +335,9 @@
         "dangerTag": "Backlash",
         "repeatable": false,
         "failureConsequence": "The working slips and invites a stronger answer from what resists it.",
-        "stepNotes": "A medium danger step for more forceful rituals."
+        "stepNotes": "A medium danger step for more forceful rituals.",
+        "icon": "fa-hand-fist",
+        "tooltip": "Endure a brief backlash, pressure, or answering sign while holding the rite together. (easy)"
       }
     ]
   },
@@ -326,7 +362,9 @@
         "dangerTag": "Backlash",
         "repeatable": false,
         "failureConsequence": "A false or partial name may miscall, offend, or empower the wrong being.",
-        "stepNotes": "A classic hard grimoire requirement."
+        "stepNotes": "A classic hard grimoire requirement.",
+        "icon": "fa-signature",
+        "tooltip": "Acquire, verify, and speak a true name or equivalent binding identity during the rite. (average)"
       },
       {
         "id": "RSH02",
@@ -342,7 +380,9 @@
         "dangerTag": "ContainmentFailure",
         "repeatable": false,
         "failureConsequence": "A flaw in the geometry creates a breach in the protection.",
-        "stepNotes": "More exacting than ordinary boundary work."
+        "stepNotes": "More exacting than ordinary boundary work.",
+        "icon": "fa-draw-polygon",
+        "tooltip": "Construct a full diagram, seal, circle, or layered warding geometry. (average)"
       },
       {
         "id": "RSH03",
@@ -358,7 +398,9 @@
         "dangerTag": "Spoilage",
         "repeatable": false,
         "failureConsequence": "The material spoils, burns, or turns spiritually unclean.",
-        "stepNotes": "Hard alchemical support or transformation step."
+        "stepNotes": "Hard alchemical support or transformation step.",
+        "icon": "fa-flask",
+        "tooltip": "Perform a difficult operation of separation, conjunction, distillation, or fixation as part of the rite. (average)"
       },
       {
         "id": "RSH04",
@@ -374,7 +416,9 @@
         "dangerTag": "Delay",
         "repeatable": false,
         "failureConsequence": "The entire rite must wait until the condition returns.",
-        "stepNotes": "Pure environmental requirement, no check."
+        "stepNotes": "Pure environmental requirement, no check.",
+        "icon": "fa-clock",
+        "tooltip": "Meet an exact planetary hour, celestial conjunction, or moon condition."
       },
       {
         "id": "RSH05",
@@ -390,7 +434,9 @@
         "dangerTag": "Fatigue",
         "repeatable": false,
         "failureConsequence": "Exhaustion and broken observance weaken every later step.",
-        "stepNotes": "A classic hard devotional burden."
+        "stepNotes": "A classic hard devotional burden.",
+        "icon": "fa-hourglass-half",
+        "tooltip": "Keep a full vigil, prayer-watch, or wake through the night before completion. (average)"
       },
       {
         "id": "RSH06",
@@ -406,7 +452,9 @@
         "dangerTag": "Exposure",
         "repeatable": false,
         "failureConsequence": "The rite loses authority, coherence, or witness confidence at a critical moment.",
-        "stepNotes": "For invocation, conjuration, or public miracle-style workings."
+        "stepNotes": "For invocation, conjuration, or public miracle-style workings.",
+        "icon": "fa-masks-theater",
+        "tooltip": "Maintain a demanding public or ceremonial performance under pressure. (average)"
       },
       {
         "id": "RSH07",
@@ -422,7 +470,9 @@
         "dangerTag": "Exposure",
         "repeatable": false,
         "failureConsequence": "The attempt exposes the rite's intent or leaves the spell impossible to finish for now.",
-        "stepNotes": "A high-cost acquisition step."
+        "stepNotes": "A high-cost acquisition step.",
+        "icon": "fa-gem",
+        "tooltip": "Secure a rare, dangerous, or costly component that cannot be replaced casually. (average)"
       },
       {
         "id": "RSH08",
@@ -438,7 +488,9 @@
         "dangerTag": "SpiritualPollution",
         "repeatable": false,
         "failureConsequence": "The dead is angered, polluted, or becomes useless for the intended question or binding.",
-        "stepNotes": "A hard grave-side task."
+        "stepNotes": "A hard grave-side task.",
+        "icon": "fa-skull",
+        "tooltip": "Handle the dead directly: open, lift, position, uncover, or work through the remains. (average)"
       },
       {
         "id": "RSH09",
@@ -454,7 +506,9 @@
         "dangerTag": "Delay",
         "repeatable": false,
         "failureConsequence": "Breaking the isolation voids the step and may taint the whole rite.",
-        "stepNotes": "Pure requirement, no check."
+        "stepNotes": "Pure requirement, no check.",
+        "icon": "fa-door-closed",
+        "tooltip": "Avoid all human contact for an extended period before the final act."
       },
       {
         "id": "RSH10",
@@ -470,7 +524,9 @@
         "dangerTag": "Exposure",
         "repeatable": false,
         "failureConsequence": "Confusion among the helpers breaks the shape of the rite.",
-        "stepNotes": "For group rites, exorcisms, large wards, and conjurations."
+        "stepNotes": "For group rites, exorcisms, large wards, and conjurations.",
+        "icon": "fa-handshake-angle",
+        "tooltip": "Coordinate multiple helpers in fixed positions or duties during the rite. (average)"
       },
       {
         "id": "RSH11",
@@ -486,7 +542,9 @@
         "dangerTag": "Backlash",
         "repeatable": false,
         "failureConsequence": "The caster or circle collapses under pressure and the ritual turns dangerous immediately.",
-        "stepNotes": "A hard resistance phase."
+        "stepNotes": "A hard resistance phase.",
+        "icon": "fa-shield-halved",
+        "tooltip": "Hold the rite while a hostile pressure, spirit, or consequence pushes back. (average)"
       },
       {
         "id": "RSH12",
@@ -502,7 +560,9 @@
         "dangerTag": "LastingCost",
         "repeatable": false,
         "failureConsequence": "The burden binds wrongly, too strongly, or to the wrong term.",
-        "stepNotes": "A major escalatory step suited to hard spells."
+        "stepNotes": "A major escalatory step suited to hard spells.",
+        "icon": "fa-file-signature",
+        "tooltip": "Take on a spoken vow, burden, or self-binding that lasts beyond the rite. (average)"
       }
     ]
   }

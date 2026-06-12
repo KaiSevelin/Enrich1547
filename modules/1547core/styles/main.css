@@ -2777,6 +2777,47 @@ a.enricher-1547::before {
   gap: 0.5rem;
 }
 
+/* Icon + tooltip header row. Padding matches .rb-row so its cells line up
+   directly over each track's boxes. */
+.rb-header-row {
+  padding: 0 0.7rem;
+  margin-bottom: 0.15rem;
+}
+
+.rb-box.rb-header-cell {
+  font-size: 1.3rem;
+  opacity: 0.65;
+  cursor: default;
+}
+
+.rb-box.rb-header-cell:hover {
+  opacity: 1;
+}
+
+.rb-box.rb-header-cell.rb-header-editable {
+  cursor: pointer;
+}
+
+.rb-box.rb-header-cell.rb-header-editable:hover {
+  transform: scale(1.08);
+}
+
+/* Header edit dialog */
+.rb-edit-header label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.rb-edit-header input {
+  width: 100%;
+}
+
+.rb-edit-header-hint {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
 .rb-row {
   display: flex;
   flex-direction: column;
@@ -2975,16 +3016,16 @@ a.enricher-1547::before {
   margin-left: auto;
 }
 
-/* Escalation colors by level (Eye / awareness theme). */
-.rb-alarm[data-alarm-level="0"] { color: #7a7a7a; }
-.rb-alarm[data-alarm-level="1"] { color: #2a8a4f; }
-.rb-alarm[data-alarm-level="2"] { color: #b9770e; }
-.rb-alarm[data-alarm-level="3"] { color: #d35400; }
+/* Escalation colors by level — green → red heatmap. */
+.rb-alarm[data-alarm-level="0"] { color: #2a8a4f; }
+.rb-alarm[data-alarm-level="1"] { color: #7cb342; }
+.rb-alarm[data-alarm-level="2"] { color: #d4ac0d; }
+.rb-alarm[data-alarm-level="3"] { color: #e67e22; }
 .rb-alarm[data-alarm-level="4"] { color: #c0392b; }
 
-.raceboard-app .rb-alarm[data-alarm-level="0"] { color: #9aa0a6; }
-.raceboard-app .rb-alarm[data-alarm-level="1"] { color: #6ce29b; }
-.raceboard-app .rb-alarm[data-alarm-level="2"] { color: #ffcf6b; }
+.raceboard-app .rb-alarm[data-alarm-level="0"] { color: #6ce29b; }
+.raceboard-app .rb-alarm[data-alarm-level="1"] { color: #b6e36b; }
+.raceboard-app .rb-alarm[data-alarm-level="2"] { color: #ffd95e; }
 .raceboard-app .rb-alarm[data-alarm-level="3"] { color: #ff9d5c; }
 .raceboard-app .rb-alarm[data-alarm-level="4"] { color: #ff6b57; }
 
@@ -2996,6 +3037,34 @@ a.enricher-1547::before {
 @keyframes rb-alarm-pulse {
   0%, 100% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.12); opacity: 0.65; }
+}
+
+/* Reveal radio: "Reveal:" label + three icon-only state buttons. */
+.rb-reveal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.rb-reveal-label {
+  margin-right: 0.15rem;
+  opacity: 0.85;
+}
+
+.rb-reveal-btn {
+  opacity: 0.5;
+  transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+.rb-reveal-btn:hover {
+  opacity: 0.85;
+  transform: scale(1.08);
+}
+
+.rb-reveal-btn.is-active {
+  opacity: 1;
+  color: #6ce29b;
+  text-shadow: 0 0 6px rgba(92, 208, 146, 0.5);
 }
 
 .rb-row-controls {

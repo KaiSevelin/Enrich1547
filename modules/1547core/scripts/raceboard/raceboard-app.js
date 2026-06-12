@@ -1,6 +1,8 @@
 import {
   RaceBoardData, MIN_TRACKS, MAX_TRACKS, MIN_BOXES, DEFAULT_BOXES,
-  ALARM_MAX_LEVEL, defaultAlarm, buildAlarmContext
+  ALARM_MAX_LEVEL, defaultAlarm, buildAlarmContext,
+  VISIBILITY_HIDDEN, VISIBILITY_ALL, VISIBILITY_MAX, VISIBILITY_DEFAULT,
+  normalizeVisibility, buildVisibilityOptions, buildHeaderCells
 } from "./raceboard-data.js";
 import { announceWinner } from "./winner-splash.js";
 
@@ -29,7 +31,8 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       this._state = {
         rows: RaceBoardData.defaultRows(),
         announcedWinners: [],
-        revealToPlayers: false,
+        visibility: VISIBILITY_DEFAULT,
+        columns: [],
         alarm: defaultAlarm()
       };
     }
@@ -55,11 +58,11 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       "reset": function(event, target) { return this._onReset(event, target); },
       "discard": function(event, target) { return this._onDiscard(event, target); },
       "save": function(event, target) { return this._onSave(event, target); },
-      "show-to-players": function(event, target) { return this._onShowToPlayers(event, target); },
       "alarm-add": function(event, target) { return this._onAlarmAdd(event, target); },
       "alarm-remove": function(event, target) { return this._onAlarmRemove(event, target); },
       "alarm-up": function(event, target) { return this._onAlarmUp(event, target); },
-      "reveal-toggle": function(event, target) { return this._onToggleReveal(event, target); }
+      "set-visibility": function(event, target) { return this._onSetVisibility(event, target); },
+      "edit-header": function(event, target) { return this._onEditHeader(event, target); }
     }
   };
 
@@ -76,7 +79,8 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     if (doc) return {
       rows: doc.system.rows,
       announcedWinners: doc.system.announcedWinners ?? [],
-      revealToPlayers: doc.system.revealToPlayers ?? false,
+      visibility: doc.system.visibility ?? VISIBILITY_DEFAULT,
+      columns: doc.system.columns ?? [],
       alarm: doc.system.alarm ?? defaultAlarm()
     };
     return this._state;
@@ -88,9 +92,10 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
   async _prepareContext() {
     const data = this.data;
     const isGM = game.user.isGM;
-    const revealToPlayers = !!data.revealToPlayers;
-    // Colored squares + alarm are shown to players only when the GM reveals them.
-    const showExtras = isGM || revealToPlayers;
+    const visibility = normalizeVisibility(data.visibility);
+    // Colored squares + alarm render for the GM, or for players when the board
+    // visibility is set to "everything" (level 2).
+    const showExtras = isGM || visibility === VISIBILITY_ALL;
     const rows = data.rows.map((r, idx) => {
       const eventStates = new Map((r.events ?? []).map(e => [e.index, e.state]));
       return {
@@ -111,11 +116,15 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
         })
       };
     });
-    const alarm = buildAlarmContext(data.alarm, { isGM, revealToPlayers, canControl: this.canEdit });
+    const alarm = buildAlarmContext(data.alarm, { showExtras, canControl: this.canEdit });
+    const maxBoxes = data.rows.reduce((m, r) => Math.max(m, r.total ?? 0), 0);
+    const headerCells = buildHeaderCells(data.columns, maxBoxes);
     return {
       rows,
       alarm,
-      revealToPlayers,
+      header: { show: headerCells.length > 0, cells: headerCells },
+      visibility,
+      visibilityOptions: buildVisibilityOptions(visibility),
       canEdit: this.canEdit,
       canAddRow: data.rows.length < MAX_TRACKS,
       canDeleteRow: data.rows.length > MIN_TRACKS,
@@ -135,7 +144,8 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       await this.document.update({
         "system.rows": data.rows,
         "system.announcedWinners": data.announcedWinners,
-        "system.revealToPlayers": !!data.revealToPlayers,
+        "system.visibility": normalizeVisibility(data.visibility),
+        "system.columns": data.columns ?? [],
         "system.alarm": data.alarm ?? defaultAlarm()
       });
     }
@@ -225,10 +235,36 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     await this._updateData(d => { d.alarm = defaultAlarm(); });
   }
 
-  /** Toggle whether players see the colored squares + alarm (board-level). */
-  async _onToggleReveal() {
+  /**
+   * Set the player visibility level (0 hidden, 1 board, 2 board+extras) from
+   * the reveal radio. Pushes the board to players (or hides it) when crossing
+   * the hidden boundary; level 1↔2 changes re-render via the normal state sync.
+   */
+  async _onSetVisibility(event, target) {
     if (!this.canEdit) return;
-    await this._updateData(d => { d.revealToPlayers = !d.revealToPlayers; });
+    const level = normalizeVisibility(Number(target.dataset.level));
+    const prev = normalizeVisibility(this.data.visibility);
+    if (level === prev) return;
+    await this._updateData(d => { d.visibility = level; });
+    if (level === VISIBILITY_HIDDEN && prev !== VISIBILITY_HIDDEN) {
+      this._broadcastHide();
+    } else if (level !== VISIBILITY_HIDDEN && prev === VISIBILITY_HIDDEN) {
+      this._broadcastShow();
+    }
+  }
+
+  _broadcastShow() {
+    if (!game.user.isGM || this._readOnly) return;
+    if (this.isEphemeral) {
+      game.socket.emit(`module.${MODULE_ID}`, { type: "show", state: this._state });
+    } else {
+      game.socket.emit(`module.${MODULE_ID}`, { type: "show", uuid: this._uuid });
+    }
+  }
+
+  _broadcastHide() {
+    if (!game.user.isGM || this._readOnly) return;
+    game.socket.emit(`module.${MODULE_ID}`, { type: "hide", uuid: this.isEphemeral ? null : this._uuid });
   }
 
   /** Left-click raises the alarm one stage. */
@@ -249,6 +285,47 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       const a = d.alarm ?? defaultAlarm();
       a.level = Math.max(0, (a.level ?? 0) - 1);
       d.alarm = a;
+    });
+  }
+
+  /**
+   * Click a column header (GM) to edit its icon + tooltip. Lets a GM author
+   * premade boards with labelled columns. Stores the values in `columns[col]`;
+   * clearing both fields reverts that column to its numbered default.
+   */
+  async _onEditHeader(event, target) {
+    if (!this.canEdit) return;
+    const col = Number(target.dataset.col);
+    if (!Number.isInteger(col) || col < 0) return;
+    const data = this.data;
+    const maxBoxes = data.rows.reduce((m, r) => Math.max(m, r.total ?? 0), 0);
+    const current = buildHeaderCells(data.columns, maxBoxes)[col] ?? { icon: "", tooltip: "" };
+    const esc = foundry.utils.escapeHTML;
+    const result = await DialogV2.prompt({
+      window: { title: game.i18n.localize("RACEBOARD.EditHeader") },
+      content: `<div class="rb-edit-header">
+        <label>${game.i18n.localize("RACEBOARD.HeaderIconLabel")}
+          <input type="text" name="icon" value="${esc(current.icon)}" placeholder="fa-flask" autofocus />
+        </label>
+        <label>${game.i18n.localize("RACEBOARD.HeaderTooltipLabel")}
+          <input type="text" name="tooltip" value="${esc(current.tooltip)}" placeholder="${game.i18n.localize("RACEBOARD.HeaderTooltipPlaceholder")}" />
+        </label>
+        <p class="rb-edit-header-hint">${game.i18n.localize("RACEBOARD.HeaderEditHint")}</p>
+      </div>`,
+      ok: {
+        label: game.i18n.localize("RACEBOARD.SaveLabel"),
+        callback: (event, button) => ({
+          icon: button.form.elements.icon.value.trim(),
+          tooltip: button.form.elements.tooltip.value.trim()
+        })
+      }
+    });
+    if (!result) return;
+    await this._updateData(d => {
+      const cols = Array.isArray(d.columns) ? [...d.columns] : [];
+      while (cols.length <= col) cols.push({ icon: "", tooltip: "" });
+      cols[col] = { icon: result.icon, tooltip: result.tooltip };
+      d.columns = cols;
     });
   }
 
@@ -389,7 +466,8 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       system: {
         rows: this._state.rows,
         announcedWinners: this._state.announcedWinners,
-        revealToPlayers: !!this._state.revealToPlayers,
+        visibility: normalizeVisibility(this._state.visibility),
+        columns: this._state.columns ?? [],
         alarm: this._state.alarm ?? defaultAlarm()
       }
     }]);
@@ -405,16 +483,6 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     ui.notifications.info(game.i18n.format("RACEBOARD.SavedAs", { name }));
     this.render();
-  }
-
-  _onShowToPlayers() {
-    if (!this.canEdit) return;
-    if (this.isEphemeral) {
-      game.socket.emit(`module.${MODULE_ID}`, { type: "show", state: this._state });
-    } else {
-      game.socket.emit(`module.${MODULE_ID}`, { type: "show", uuid: this._uuid });
-    }
-    ui.notifications.info(game.i18n.localize("RACEBOARD.ShownToPlayers"));
   }
 
   async _onRender(context, options) {
