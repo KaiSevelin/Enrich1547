@@ -75,29 +75,30 @@ function registerSocket() {
 
 /**
  * Migrate pre-consolidation race-board pages (type "raceboard.race") to the
- * valid "1547core.race" subtype. Such pages fail document validation in v13 and
- * land in their JournalEntry's `invalidDocuments`; we re-create each with the
- * new type, preserving its id and data. GM-only, runs once on ready.
+ * valid "1547core.race" subtype. A type-invalid embedded page can't be read or
+ * deleted through the normal page collection in v13, so we operate on the parent
+ * JournalEntry's raw `_source.pages` and rewrite the type via a full-array
+ * update. GM-only, runs once on ready.
  */
 async function migrateLegacyRacePages() {
     if (!game.user?.isGM) return;
     let migrated = 0;
     for (const entry of game.journal?.contents ?? []) {
-        const invalid = entry.pages?.invalidDocuments;
-        if (!invalid?.size) continue;
-        const legacy = [...invalid.values()].filter((p) => (p?._source?.type ?? p?.type) === LEGACY_PAGE_TYPE);
-        if (!legacy.length) continue;
+        const sourcePages = entry?._source?.pages;
+        if (!Array.isArray(sourcePages)) continue;
+        const count = sourcePages.filter((p) => p?.type === LEGACY_PAGE_TYPE).length;
+        if (!count) continue;
 
-        const sources = legacy.map((p) => {
-            const src = foundry.utils.deepClone(p._source ?? p.toObject?.() ?? {});
-            src.type = PAGE_TYPE;
-            return src;
+        // Rewrite the whole pages array at the source level — correcting the
+        // legacy type, leaving every other page untouched.
+        const pages = sourcePages.map((p) => {
+            const clone = foundry.utils.deepClone(p);
+            if (clone?.type === LEGACY_PAGE_TYPE) clone.type = PAGE_TYPE;
+            return clone;
         });
-        const ids = legacy.map((p) => p.id ?? p._id).filter(Boolean);
         try {
-            await entry.deleteEmbeddedDocuments("JournalEntryPage", ids);
-            await entry.createEmbeddedDocuments("JournalEntryPage", sources, { keepId: true });
-            migrated += sources.length;
+            await entry.update({ pages });
+            migrated += count;
         } catch (err) {
             console.error(`1547core | raceboard: failed migrating legacy race pages in "${entry.name}"`, err);
         }
@@ -154,6 +155,8 @@ export function refreshRaceboardApi() {
         open: (uuid) => openRaceBoardApp({ uuid, show: false }),
         show: (uuid) => openRaceBoardApp({ uuid, show: true }),
         new: () => newEphemeralRaceBoard(),
+        // Re-run the legacy "raceboard.race" → "1547core.race" page migration.
+        migrateLegacyPages: () => migrateLegacyRacePages(),
         // Open an ephemeral board from a custom state. Shape:
         //   { rows: [{ label, filled, total, events? }],
         //     announcedWinners?: [],
