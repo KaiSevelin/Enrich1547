@@ -858,7 +858,7 @@
                                     "filterTags": []
                                 }
                             ],
-                            "name": "Active Effects"
+                            "name": "Conditions & Afflictions"
                         },
                         {
                             "key": "MagicTab",
@@ -1051,7 +1051,7 @@
                     "colSpan": 1,
                     "rowSpan": 1,
                     "cssClass": "",
-                    "role": 0,
+                    "role": 4,
                     "editRole": 0,
                     "permission": 0,
                     "tooltip": "ChangeSets grouped by their pipeline slot. Drop ChangeSet items into the matching group.",
