@@ -27,6 +27,7 @@ const PACK_IDS = {
     items: [
         "1547core.maneuvers",
         "1547core.spells",
+        "1547core.diseases",
         "1547core.monster-magic",
         "1547core.weapons",
         "1547core.armors",

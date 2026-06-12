@@ -1,7 +1,7 @@
 import { newEphemeralRaceBoard, openRaceBoardApp } from "./raceboard-app.js";
 
 const MODULE_ID = "raceboard";
-const PAGE_TYPE = `${MODULE_ID}.race`;
+const PAGE_TYPE = "1547core.race";
 
 /**
  * Add a "New RaceBoard" button to the Journal sidebar header (GM only).

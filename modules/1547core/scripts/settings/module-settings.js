@@ -1721,7 +1721,8 @@ function createModuleSetupFormApplicationClass() {
                     changes,
                     requirements,
                     pacts,
-                    supernaturalMarks
+                    supernaturalMarks,
+                    diseases
                 } = await this.#loadSourceBackedData();
 
                 await this.#importItemsFromData({
@@ -1741,11 +1742,12 @@ function createModuleSetupFormApplicationClass() {
                     changes,
                     requirements,
                     pacts,
-                    supernaturalMarks
+                    supernaturalMarks,
+                    diseases
                 });
 
                 ui.notifications.info(
-                `1547 Core: stored and synced ${maneuvers.length} maneuvers, ${weapons.length} weapons, ${armors.length} armors, ${ammunition.length} ammunition items, ${weaponModifiers.length} weapon modifiers, ${spells.length} spells, ${ritualStepRollTables.length} ritual step roll tables, ${spellFailureRollTables.length} spell failure roll tables, ${spellSupportRollTables.length} spell support roll tables, ${boostRollTables.length} boost roll tables, ${pacts.length} pacts, ${(supernaturalMarks ?? []).length} supernatural marks, ${monsters.length} monsters, ${changeSets.length} change sets, ${changes.length} changes, and ${requirements.length} requirements from source data.`
+                `1547 Core: stored and synced ${maneuvers.length} maneuvers, ${weapons.length} weapons, ${armors.length} armors, ${ammunition.length} ammunition items, ${weaponModifiers.length} weapon modifiers, ${spells.length} spells, ${ritualStepRollTables.length} ritual step roll tables, ${spellFailureRollTables.length} spell failure roll tables, ${spellSupportRollTables.length} spell support roll tables, ${boostRollTables.length} boost roll tables, ${pacts.length} pacts, ${(supernaturalMarks ?? []).length} supernatural marks, ${(diseases ?? []).length} diseases, ${monsters.length} monsters, ${changeSets.length} change sets, ${changes.length} changes, and ${requirements.length} requirements from source data.`
                 );
                 this.render(false);
             } catch (error) {
@@ -1817,7 +1819,7 @@ function createModuleSetupFormApplicationClass() {
         }
 
         async #loadSourceBackedData() {
-            const [maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts, portraitRegistryFile, supernaturalMarks] = await Promise.all([
+            const [maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts, portraitRegistryFile, supernaturalMarks, diseases] = await Promise.all([
                 this.#loadDataset("maneuvers.json"),
                 this.#loadDataset("weapons.json"),
                 this.#loadDataset("armors.json"),
@@ -1835,7 +1837,8 @@ function createModuleSetupFormApplicationClass() {
                 this.#loadDataset("requirements.json"),
                 this.#loadDataset("pacts.json"),
                 this.#loadDataset("portrait-registry.json").catch(() => ({ registry: {} })),
-                this.#loadDataset("supernatural-marks.json").catch(() => [])
+                this.#loadDataset("supernatural-marks.json").catch(() => []),
+                this.#loadDataset("diseases.json").catch(() => [])
             ]);
 
             await Promise.all([
@@ -1860,7 +1863,7 @@ function createModuleSetupFormApplicationClass() {
                 game.settings.set(MODULE_ID, "lastDataSetupAt", new Date().toISOString())
             ]);
 
-            return { maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts, supernaturalMarks: supernaturalMarks ?? [] };
+            return { maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts, supernaturalMarks: supernaturalMarks ?? [], diseases: diseases ?? [] };
         }
 
         /**
@@ -1946,6 +1949,7 @@ function createModuleSetupFormApplicationClass() {
             const spellsFolder = await this.#getOrCreateFolder({ folderName: "Spells", type: "Item", parentId: coreItemFolder.id });
             const ritualStepsFolder = await this.#getOrCreateFolder({ folderName: "Ritual Steps", type: "Item", parentId: spellsFolder.id });
             const pactsFolder = await this.#getOrCreateFolder({ folderName: "Pacts", type: "Item", parentId: coreItemFolder.id });
+            const diseasesFolder = await this.#getOrCreateFolder({ folderName: "Diseases", type: "Item", parentId: coreItemFolder.id });
             const supernaturalMarksFolder = await this.#getOrCreateFolder({ folderName: "Supernatural Marks", type: "Item", parentId: coreItemFolder.id });
             const blessingsFolder = await this.#getOrCreateFolder({ folderName: "Blessings", type: "Item", parentId: supernaturalMarksFolder.id });
             const cursesFolder = await this.#getOrCreateFolder({ folderName: "Curses", type: "Item", parentId: supernaturalMarksFolder.id });
@@ -2003,6 +2007,7 @@ function createModuleSetupFormApplicationClass() {
                 ammoFolder,
                 weaponModifierFolder,
                 onHitEffectsFolder,
+                diseasesFolder,
                 spellsFolder,
                 ritualStepsFolder,
                 pactsFolder,
@@ -2025,7 +2030,7 @@ function createModuleSetupFormApplicationClass() {
             };
         }
 
-        async #importItemsFromData({ maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts, supernaturalMarks }) {
+        async #importItemsFromData({ maneuvers, weapons, armors, ammunition, weaponModifiers, spells, ritualStepRollTables, spellFailureRollTables, spellSupportRollTables, boostRollTables, monsters, monsterMagic, changeSets, changes, requirements, pacts, supernaturalMarks, diseases }) {
             const [actorTemplate, maneuverTemplate, weaponTemplate, armorTemplate, ammoTemplate, weaponModifierTemplate, onHitEffectTemplate, supernaturalMarkTemplate, monsterMagicTemplate, spellTemplate, pactTemplate, ritualTemplate, ritualStepTemplate, usageEffectTemplate, changeSetTemplate, changeTemplate, requirementTemplate, diseaseTemplate] = await Promise.all([
                 this.#loadTemplate(TEMPLATE_FILES.actorTemplate),
                 this.#loadTemplate(TEMPLATE_FILES.maneuver),
@@ -2111,6 +2116,10 @@ function createModuleSetupFormApplicationClass() {
             const spellDocs = normalizedSpells.map((spell) =>
                 makeItemDoc(spell, spellTemplate, spell.img ?? spellTemplate.img ?? "icons/svg/daze.svg", buildSpellProps, folders.spellsFolder.id, "Spells")
             );
+            const diseaseDocs = (diseases ?? []).map((disease) => {
+                const normalized = normalizeSourceEntry(disease, "disease");
+                return makeItemDoc(normalized, diseaseTemplate, normalized.img ?? diseaseTemplate.img ?? "icons/svg/biohazard.svg", buildDiseaseProps, folders.diseasesFolder.id, "Diseases");
+            });
             const pactDocs = (pacts ?? []).map((pact) => {
                 const normalized = normalizeSourceEntry(pact, "pact");
                 return makeItemDoc(normalized, pactTemplate, normalized.img ?? pactTemplate.img ?? "icons/svg/mystery-man.svg", buildPactProps, folders.pactsFolder.id, "Pacts");
@@ -2275,6 +2284,12 @@ function createModuleSetupFormApplicationClass() {
                 folderHint: "Ritual Steps"
             });
             await pruneManagedFolderItems({
+                folderId: folders.diseasesFolder.id,
+                validIds: new Set(diseaseDocs.map((doc) => doc._id)),
+                templateId: diseaseTemplate._id,
+                folderHint: "Diseases"
+            });
+            await pruneManagedFolderItems({
                 folderId: folders.pactsFolder.id,
                 validIds: new Set(pactDocs.map((doc) => doc._id)),
                 templateId: pactTemplate._id,
@@ -2395,6 +2410,7 @@ function createModuleSetupFormApplicationClass() {
                 ...spellDocs,
                 ...spellUsageEffectDocs,
                 ...spellRitualStepDocs,
+                ...diseaseDocs,
                 ...pactDocs,
                 ...supernaturalMarkDocs,
                 ...monsterMagicDocs,

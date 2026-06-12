@@ -3,10 +3,12 @@
  * in 1547core 0.3.1). Owns the floating progress-race tracker UI and
  * its `JournalEntryPage` subtype.
  *
- * Back-compat: the JournalEntryPage subtype key remains "raceboard.race"
- * so existing world race tracks load without migration. Socket namespace
- * stays "module.raceboard" so any in-flight cross-client messages still
- * route correctly during the transition.
+ * The page subtype is "1547core.race": Foundry v13 only accepts document
+ * subtypes namespaced to the owning module *and* declared in module.json
+ * `documentTypes`. The old standalone-module type "raceboard.race" is no
+ * longer valid here and is migrated to the new type on ready (see
+ * migrateLegacyRacePages). Socket namespace stays "module.raceboard" so any
+ * in-flight cross-client messages still route correctly.
  *
  * Consumers continue to use `globalThis.RaceBoard`.
  */
@@ -26,7 +28,10 @@ import {
 } from "./sidebar-buttons.js";
 
 const LEGACY_NAMESPACE = "raceboard";
-const PAGE_TYPE = `${LEGACY_NAMESPACE}.race`;
+const PAGE_TYPE = "1547core.race";
+// Pre-consolidation subtype from the standalone "raceboard" module. Invalid in
+// v13 under 1547core; migrated to PAGE_TYPE on ready.
+const LEGACY_PAGE_TYPE = "raceboard.race";
 
 function registerSocket() {
     game.socket.on(`module.${LEGACY_NAMESPACE}`, (msg) => {
@@ -68,6 +73,38 @@ function registerSocket() {
     });
 }
 
+/**
+ * Migrate pre-consolidation race-board pages (type "raceboard.race") to the
+ * valid "1547core.race" subtype. Such pages fail document validation in v13 and
+ * land in their JournalEntry's `invalidDocuments`; we re-create each with the
+ * new type, preserving its id and data. GM-only, runs once on ready.
+ */
+async function migrateLegacyRacePages() {
+    if (!game.user?.isGM) return;
+    let migrated = 0;
+    for (const entry of game.journal?.contents ?? []) {
+        const invalid = entry.pages?.invalidDocuments;
+        if (!invalid?.size) continue;
+        const legacy = [...invalid.values()].filter((p) => (p?._source?.type ?? p?.type) === LEGACY_PAGE_TYPE);
+        if (!legacy.length) continue;
+
+        const sources = legacy.map((p) => {
+            const src = foundry.utils.deepClone(p._source ?? p.toObject?.() ?? {});
+            src.type = PAGE_TYPE;
+            return src;
+        });
+        const ids = legacy.map((p) => p.id ?? p._id).filter(Boolean);
+        try {
+            await entry.deleteEmbeddedDocuments("JournalEntryPage", ids);
+            await entry.createEmbeddedDocuments("JournalEntryPage", sources, { keepId: true });
+            migrated += sources.length;
+        } catch (err) {
+            console.error(`1547core | raceboard: failed migrating legacy race pages in "${entry.name}"`, err);
+        }
+    }
+    if (migrated) console.log(`1547core | raceboard: migrated ${migrated} legacy race-board page(s) to ${PAGE_TYPE}`);
+}
+
 /** Called from 1547core/scripts/main.js during init. */
 export function registerRaceboardService() {
     Object.assign(CONFIG.JournalEntryPage.dataModels, {
@@ -102,6 +139,11 @@ export function registerRaceboardService() {
         const app = getOpenAppForUuid(page.uuid);
         if (app?.rendered) app.close();
     });
+
+    // One-time migration of legacy "raceboard.race" pages. Guard on game.ready
+    // in case this init-time async import resolved after the ready hook fired.
+    if (game.ready) void migrateLegacyRacePages();
+    else Hooks.once("ready", () => void migrateLegacyRacePages());
 }
 
 /** Called from 1547core/scripts/main.js during ready. */

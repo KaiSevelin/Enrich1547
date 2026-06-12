@@ -12,7 +12,9 @@ const MODULE_ID = "raceboard";
 // Number of event-marker states a box cycles through on right-click, including
 // "none" (0). 3 = none → red (1) → amber (2) → none. Bump to add more colors.
 const EVENT_STATE_COUNT = 3;
-const PAGE_TYPE = `${MODULE_ID}.race`;
+// JournalEntryPage subtype must be namespaced to the owning module ("1547core"),
+// and declared in module.json documentTypes, to be valid in Foundry v13.
+const PAGE_TYPE = "1547core.race";
 const FOLDER_NAME = "RaceBoards";
 const EPHEMERAL_KEY = "__ephemeral__";
 
