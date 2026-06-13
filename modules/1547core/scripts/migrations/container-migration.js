@@ -1,3 +1,4 @@
+import { MODULE_ID, SOURCE_FLAG_SCOPE, WEAPON_TEMPLATE_ID, AMMO_TEMPLATE_ID, MODIFIER_TEMPLATE_ID } from "../lib/constants.mjs";
 /**
  * One-time backfill so existing flag-based modifier attachments populate the
  * native CSB container relationship + the new UsesRemaining prop column.
@@ -17,11 +18,6 @@
  * ship in a later release once this is verified in worlds.
  */
 
-const MODULE_ID = "1547core";
-const SOURCE_FLAG_SCOPE = "1547Core";
-const WEAPON_TEMPLATE_ID = "qZCfLEYQ7egbm1B9";
-const AMMO_TEMPLATE_ID = "389uqkKKn8M1SKux";
-const MODIFIER_TEMPLATE_ID = "WmP9Ld3Qs7Nk2FvR";
 
 function isAttachableTarget(item) {
     const tpl = item?.system?.template;

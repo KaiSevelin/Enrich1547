@@ -15,8 +15,8 @@
  */
 
 import { findChangeSetsByGroup, getItemById } from "./content-registry.js";
+import { MODULE_ID } from "../lib/constants.mjs";
 
-const MODULE_ID = "1547core";
 const ACTOR_TYPES = [
     "HiddenFolk", "TheUnseen", "Beast", "Undead", "Colossal",
     "Unnatural", "Construct", "Zone", "People"

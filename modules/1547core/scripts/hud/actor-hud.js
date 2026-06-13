@@ -69,6 +69,7 @@ import {
     buildEmptyHtml as buildEmptyHtmlFromModule,
 } from "./hud-render.js";
 import { bindHudInteractions as bindHudInteractionsFromModule } from "./hud-bindings.js";
+import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 import {
     getOrderedCombatants,
     resolveCombatantSideId,
@@ -78,8 +79,6 @@ import {
     persistCombatSideState,
 } from "../combat-tracker/side-tracker.js";
 
-const MODULE_ID = "1547core";
-const SOURCE_FLAG_SCOPE = "1547Core";
 const HUD_ROOT_ID = "1547core-actor-hud-root";
 const HUD_GAP = 16;
 const HUD_TOP_MARGIN = 16;

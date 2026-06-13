@@ -1,3 +1,4 @@
+import { MODULE_ID, CHANGESET_TEMPLATE_ID } from "../lib/constants.mjs";
 /**
  * Compendium-import auto-cascade for ChangeSets.
  *
@@ -14,8 +15,6 @@
  * `b7A1z6cSZO4dYTKT`); imported Changes are a different template and skip.
  */
 
-const MODULE_ID = "1547core";
-const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
 const CHANGESETS_PACK_ID = "1547core.changesets";
 
 function getCompendiumSourceId(item) {

@@ -1,4 +1,4 @@
-const MODULE_ID = "1547core";
+import { MODULE_ID } from "../lib/constants.mjs";
 const FLAG_SCOPE = "1547Core";
 const SCHEMA_MIGRATION_CURRENT_VERSION = 1;
 

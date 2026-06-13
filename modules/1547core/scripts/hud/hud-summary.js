@@ -1,7 +1,6 @@
+import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 ﻿import { conditionCombatDisadvantage } from "../services/condition-registry.js";
 
-const MODULE_ID = "1547core";
-const SOURCE_FLAG_SCOPE = "1547Core";
 
 function parseManeuverJson(value, fallback = null) {
     if (typeof value !== "string" || value.trim() === "") return fallback;

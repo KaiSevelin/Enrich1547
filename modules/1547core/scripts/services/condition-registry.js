@@ -1,3 +1,4 @@
+import { MODULE_ID } from "../lib/constants.mjs";
 /**
  * Condition registry. Makes the formalized afflictions (status-effects-guide)
  * machine-readable so they impose their roll effects, in one place.
@@ -15,7 +16,6 @@
  * (Locked, Prone, …) remain handled by the combat pipeline.
  */
 
-const MODULE_ID = "1547core";
 const PHYSICAL = ["Strength", "Stamina", "Dexterity"];
 
 export const CONDITIONS = {

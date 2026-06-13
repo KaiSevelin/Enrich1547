@@ -1,3 +1,4 @@
+import { MODULE_ID, CHANGESET_TEMPLATE_ID } from "../lib/constants.mjs";
 /**
  * Tier display for the actor sheet.
  *
@@ -10,8 +11,6 @@
  * the feature degrades silently rather than throwing.
  */
 
-const MODULE_ID = "1547core";
-const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
 const BADGE_CLASS = "tier-display-1547core";
 
 function isBoostChangeSet(item) {

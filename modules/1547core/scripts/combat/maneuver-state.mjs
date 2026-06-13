@@ -21,8 +21,8 @@
  */
 
 import { firstFiniteNumber } from "./normalisation.mjs";
+import { MODULE_ID } from "../lib/constants.mjs";
 
-const MODULE_ID = "1547core";
 
 export function buildCommittedManeuverRecord(maneuver) {
     return {

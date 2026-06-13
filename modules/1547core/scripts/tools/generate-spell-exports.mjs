@@ -1,13 +1,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 
 const ROOT = path.resolve("modules/1547core");
 const TEMPLATE_PATH = path.join(ROOT, "foundry", "Templates", "fvtt-Item-spelltemplate-2kiWw3Cv5Zk1lZxn.json");
 const SOURCE_PATH = path.join(ROOT, "foundry", "Templates", "spells.json");
 const BUNDLE_PATH = path.join(ROOT, "foundry", "Templates", "fvtt-Items-spells.json");
 const SPELLS_DIR = path.join(ROOT, "foundry", "Spells");
-const SOURCE_FLAG_SCOPE = "1547Core";
 
 function deepClone(value) {
     return JSON.parse(JSON.stringify(value));

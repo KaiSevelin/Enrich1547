@@ -11,9 +11,8 @@
  */
 
 import { findChangeSetsByGroup } from "./content-registry.js";
+import { MODULE_ID, CHANGESET_TEMPLATE_ID } from "../lib/constants.mjs";
 
-const MODULE_ID = "1547core";
-const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
 
 function isChangeSet(item) {
     return item?.system?.template === CHANGESET_TEMPLATE_ID;

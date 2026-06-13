@@ -3,10 +3,9 @@ import { deepClone, ACTOR_TYPES, isValidFoundryId, deriveFoundryIdFromText, norm
 import { buildAmmoProps, buildArmorProps, buildChangeProps, buildChangeSetProps, buildDiseaseProps, buildMonsterMagicProps, buildPactProps, buildRequirementProps, buildSpellProps, buildSupernaturalMarkProps, buildWeaponModifierProps, buildWeaponProps, buildManeuverProps } from "../lib/prop-builders.mjs";
 import { buildBoostResults, ritualStepFormula, ritualStepDescription, buildRitualStepResults, buildBellCurveResults, buildPactResults } from "../lib/rolltable-results.mjs";
 import { csbItemBody, mergeActorParts } from "../lib/doc-builders.mjs";
+import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 ﻿import { buildOnHitEffectItemDoc } from "../services/weapon-modifier-attachment-service.js";
 
-const MODULE_ID = "1547core";
-const SOURCE_FLAG_SCOPE = "1547Core";
 const TEMPLATE_FILES = {
     actorTemplate: "fvtt-Actor-1547-Tgs09eTiTp63Cp7u.json",
     maneuver: "fvtt-Item-maneuvertemplate-4owc4YQBlp94GbGs.json",

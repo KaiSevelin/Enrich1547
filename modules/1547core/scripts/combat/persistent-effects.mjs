@@ -1,3 +1,4 @@
+import { MODULE_ID } from "../lib/constants.mjs";
 /**
  * combat/persistent-effects.mjs
  *
@@ -16,7 +17,6 @@
  * is rewritten in one update.
  */
 
-const MODULE_ID = "1547core";
 
 /**
  * Returns the currently-active persistent-effect entries on `actor`.

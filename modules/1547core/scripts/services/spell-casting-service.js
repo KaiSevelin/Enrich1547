@@ -5,16 +5,7 @@ import { applyConditionDiceModifier } from "./condition-registry.js";
 import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 import { readSourceData, getProps as getSpellProps, isSpellItem, escapeHtml, slugify } from "../lib/foundry-utils.mjs";
 import { emitDomainEvent, DOMAIN_EVENTS } from "./domain-events.js";
-
-function getDefaultSourceTokenForActor(actor) {
-    if (!actor) return null;
-    const controlled = (canvas?.tokens?.controlled ?? []).find((token) => token?.actor?.id === actor.id);
-    if (controlled?.document) return controlled.document;
-    const active = actor.getActiveTokens?.(true, true)?.[0] ?? actor.getActiveTokens?.()[0] ?? null;
-    if (active?.documentName === "Token") return active;
-    if (active?.document?.documentName === "Token") return active.document;
-    return null;
-}
+import { getDefaultSourceTokenForActor } from "./token-utils.mjs";
 
 function resolveSourceTokenForSpell(spell, explicitSourceToken = null) {
     if (explicitSourceToken?.documentName === "Token") return explicitSourceToken;

@@ -1,3 +1,4 @@
+import { MODULE_ID, CHANGESET_TEMPLATE_ID, WEAPON_TEMPLATE_ID } from "../lib/constants.mjs";
 /**
  * Boost service for the monster-maker.
  *
@@ -9,9 +10,6 @@
  * Registered on game.modules.get("1547core").api so CSB label rollMessages can call it.
  */
 
-const MODULE_ID = "1547core";
-const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
-const WEAPON_TEMPLATE_ID = "qZCfLEYQ7egbm1B9";
 const ARMOR_TEMPLATE_ID = "uLlgZXz3GlXPFtsj";
 const STANDARD_BOOST_TABLE_NAME = "Standard Boost";
 const WEAPON_DIE_BOOST_ID = "BoBWpDUv00000001";

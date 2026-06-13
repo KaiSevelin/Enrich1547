@@ -3,6 +3,8 @@ import { isManualSpellItem } from "./spell-manual-support.js";
 import { getItemById } from "./content-registry.js";
 import { MODULE_ID, SOURCE_FLAG_SCOPE, USAGE_EFFECT_TEMPLATE_ID, UNEQUIPPABLE_TEMPLATE_ID } from "../lib/constants.mjs";
 import { readSourceData, getProps as getCarrierProps, escapeHtml, slugify } from "../lib/foundry-utils.mjs";
+import { deepClone, cloneTemplateSystem } from "../lib/build-helpers.mjs";
+import { normalizeTokenDocument, getDefaultSourceTokenForActor } from "./token-utils.mjs";
 const SUPPORTED_CARRIER_TEMPLATE_IDS = new Set([
     "2kiWw3Cv5Zk1lZxn", // Spell
     "w9ky0ZTDvXDs5Ce7", // Supernatural Mark
@@ -28,10 +30,6 @@ const STAT_KEY_MAP = {
     Power: { dice: "Stats_PowerDice", mod: "Stats_PowerMod" },
 };
 
-function deepClone(value) {
-    if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
-    return JSON.parse(JSON.stringify(value));
-}
 
 function getText(source, keys, fallback = "") {
     for (const key of keys) {
@@ -47,13 +45,6 @@ function getBoolean(source, keys, fallback = false) {
         if (typeof value === "boolean") return value;
     }
     return fallback;
-}
-
-function normalizeTokenDocument(tokenLike) {
-    if (!tokenLike) return null;
-    if (tokenLike.documentName === "Token") return tokenLike;
-    if (tokenLike.document?.documentName === "Token") return tokenLike.document;
-    return null;
 }
 
 function isSupportedCarrierItem(item) {
@@ -135,14 +126,6 @@ export function collectUsageEffectsFromCarrier(item) {
     }
 
     return effects.filter((effect) => effect.EffectType && effect.EffectSubtype);
-}
-
-function getDefaultSourceTokenForActor(actor) {
-    if (!actor) return null;
-    const controlled = (canvas?.tokens?.controlled ?? []).find((token) => token?.actor?.id === actor.id);
-    if (controlled?.document) return controlled.document;
-    const active = actor.getActiveTokens?.(true, true)?.[0] ?? actor.getActiveTokens?.()[0] ?? null;
-    return normalizeTokenDocument(active);
 }
 
 function resolveSourceTokenForItem(item, explicitSourceToken = null) {
@@ -569,19 +552,6 @@ async function applyRemovalEffect(carrierItem, effect, targetDoc) {
 
     await targetDoc.deleteEmbeddedDocuments("ActiveEffect", matchingIds);
     return { applied: true, note: `Removed ${matchingIds.length} effect(s).` };
-}
-
-function cloneTemplateSystem(template) {
-    return {
-        body: deepClone(template.system.body),
-        display: deepClone(template.system.display),
-        header: deepClone(template.system.header),
-        hidden: deepClone(template.system.hidden ?? []),
-        modifiers: [],
-        template: template._id,
-        templateSystemUniqueVersion: template.system.templateSystemUniqueVersion,
-        props: {}
-    };
 }
 
 async function applyGrantItemEffect(carrierItem, effect, targetDoc) {

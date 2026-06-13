@@ -1,3 +1,4 @@
+import { MODULE_ID, SOURCE_FLAG_SCOPE, ON_HIT_EFFECT_TEMPLATE_ID } from "../lib/constants.mjs";
 /**
  * combat/normalisation.mjs
  *
@@ -23,8 +24,6 @@
  * the unarmed-default fallback.
  */
 
-const MODULE_ID = "1547core";
-const SOURCE_FLAG_SCOPE = "1547Core";
 const ACTIVE_ATTACK_PROFILE_KEYS = ["Attack", "AttackB", "AttackC"];
 
 // ────────────────────────────────────────────────────────── Generic parsers ──
@@ -328,7 +327,6 @@ export function normalizeAmmoItem(ammo) {
 // Mirror of services/weapon-modifier-attachment-service.js. The combat
 // normaliser is purely a read, so hard-coding the template id keeps it free
 // of cross-package imports.
-const ON_HIT_EFFECT_TEMPLATE_ID = "OnH1tEffectTmpl0";
 
 function normalizeOnHitEffectItem(item) {
     const props = item?.system?.props ?? {};

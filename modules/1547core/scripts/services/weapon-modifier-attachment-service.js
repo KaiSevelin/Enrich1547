@@ -1,10 +1,6 @@
 import { getItemById } from "./content-registry.js";
+import { MODULE_ID, SOURCE_FLAG_SCOPE, MODIFIER_TEMPLATE_ID, WEAPON_TEMPLATE_ID, AMMO_TEMPLATE_ID } from "../lib/constants.mjs";
 
-const MODULE_ID = "1547core";
-const SOURCE_FLAG_SCOPE = "1547Core";
-const MODIFIER_TEMPLATE_ID = "WmP9Ld3Qs7Nk2FvR";
-const WEAPON_TEMPLATE_ID = "qZCfLEYQ7egbm1B9";
-const AMMO_TEMPLATE_ID = "389uqkKKn8M1SKux";
 export const ON_HIT_EFFECT_TEMPLATE_ID = "OnH1tEffectTmpl0";
 const ATTACH_GUARD = `${MODULE_ID}.weaponModifierAttachGuard`;
 

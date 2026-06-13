@@ -14,8 +14,8 @@
  */
 
 import { validateMonster } from "./changeset-drop-hook.js";
+import { MODULE_ID } from "../lib/constants.mjs";
 
-const MODULE_ID = "1547core";
 const BADGE_CLASS = "monster-validation-1547core";
 
 function findCompositionPanelElement(root) {

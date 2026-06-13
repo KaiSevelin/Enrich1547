@@ -1,6 +1,5 @@
-const MODULE_ID = "1547core";
+import { MODULE_ID, CHANGESET_TEMPLATE_ID } from "../lib/constants.mjs";
 const DEFAULT_IMAGE = "icons/svg/mystery-man.svg";
-const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
 
 /**
  * Resolve the portrait/image for an actor by walking the resolution ladder:

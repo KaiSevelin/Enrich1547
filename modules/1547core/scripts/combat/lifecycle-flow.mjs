@@ -43,9 +43,8 @@ import { planApplyDamage, getActorCurrentHitPoints } from "./hp-state.mjs";
 import { resolveThreatReactionActor } from "./reaction-candidates.mjs";
 import { getLegalManeuvers } from "./maneuver-legality.mjs";
 import { COMBAT_EVENTS } from "../services/combat-events.js";
+import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 
-const MODULE_ID = "1547core";
-const SOURCE_FLAG_SCOPE = "1547Core";
 
 function normalizeAttachedModifierIdList(value) {
     if (Array.isArray(value)) {

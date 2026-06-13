@@ -1,10 +1,10 @@
+import { MODULE_ID } from "../lib/constants.mjs";
 ﻿import {
     COMBAT_EVENTS,
     emitCombatEvent,
     onCombatEvent,
 } from "./combat-events.js";
 
-const MODULE_ID = "1547core";
 const DEFAULT_REACTION_WINDOW_SECONDS = 10;
 
 let reactionServiceDisposers = [];

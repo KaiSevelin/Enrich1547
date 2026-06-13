@@ -1,6 +1,7 @@
 ﻿import { COMBAT_EVENTS, emitCombatEvent, onCombatEvent } from "./combat-events.js";
 import { evaluateManeuverLegality, getLegalManeuvers } from "../combat/maneuver-legality.mjs";
 import { buildDefenderPool } from "../combat/pool-builder.mjs";
+import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 import {
     normalizeManeuver,
     normalizeWeapon as normalizeWeaponPure,
@@ -33,8 +34,6 @@ import {
     planCommitFullTurnManeuver,
 } from "../combat/attack-lifecycle.mjs";
 
-const MODULE_ID = "1547core";
-const SOURCE_FLAG_SCOPE = "1547Core";
 // PENDING_ATTACK_KIND now lives in combat/attack-lifecycle.mjs and is re-imported above.
 const DEFAULT_UNARMED_WEAPON_SOURCE = {
     _id: "j2xrFYjojE9yUPYc",

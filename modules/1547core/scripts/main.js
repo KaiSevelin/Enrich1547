@@ -1,6 +1,6 @@
+import { MODULE_ID } from "lib/constants.mjs";
 ﻿import { register1547ModuleSettings } from "./settings/module-settings.js";
 
-const MODULE_ID = "1547core";
 
 function runModuleStep(label, fn) {
     try {

@@ -23,10 +23,8 @@
  */
 
 import { getContainerChildItems } from "./csb-container-helpers.mjs";
+import { MODULE_ID, CHANGESET_TEMPLATE_ID, CHANGE_TEMPLATE_ID } from "../lib/constants.mjs";
 
-const MODULE_ID = "1547core";
-const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
-const CHANGE_TEMPLATE_ID = "WsrkfjBmudnIhvEK";
 const CHANGE_CONTAINER_KEY = "ChangeDisplayer";
 const ROLLED_FLAG = "rolledResult";
 const RESOLVE_GUARD = "_1547core_rollingTables";

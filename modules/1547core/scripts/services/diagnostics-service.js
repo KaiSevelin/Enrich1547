@@ -1,5 +1,4 @@
-const MODULE_ID = "1547core";
-const SOURCE_FLAG_SCOPE = "1547Core";
+import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 
 const SEED_DATA_KEYS = [
     "maneuverData",

@@ -1,3 +1,4 @@
+import { MODULE_ID } from "../lib/constants.mjs";
 /**
  * Universal item hover-card service.
  *
@@ -10,7 +11,6 @@
  * compendiums; HUD-specific selectors are removed.
  */
 
-const MODULE_ID = "1547core";
 const TOOLTIP_CLASS = "hover-card-1547core";
 
 const TEMPLATE_LABELS = {

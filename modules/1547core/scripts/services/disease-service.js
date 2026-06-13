@@ -14,10 +14,9 @@
 
 import { applyConditionDiceModifier, applyCondition, removeCondition } from "./condition-registry.js";
 import { emitDomainEvent, DOMAIN_EVENTS } from "./domain-events.js";
+import { MODULE_ID, DISEASE_TEMPLATE_ID } from "../lib/constants.mjs";
 
-const MODULE_ID = "1547core";
 const DISEASE_PACK = "1547core.diseases";
-const DISEASE_TEMPLATE_ID = "DZ7sK2mLp9Qx4TvR";
 const PHASE_CONDITION = { Weak: "Weakened", Exhausted: "Exhausted" };
 
 const HUMOUR_PROP = {

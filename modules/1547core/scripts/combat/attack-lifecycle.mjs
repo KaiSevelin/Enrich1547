@@ -36,11 +36,10 @@ import {
 // COMBAT_EVENTS is a pure enum — importing it doesn't drag in any
 // Foundry deps. The orchestrator does the actual emitCombatEvent call.
 import { COMBAT_EVENTS } from "../services/combat-events.js";
+import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 
 const MODULE_ID_LOWER = "1547core";
 
-const MODULE_ID = "1547core";
-const SOURCE_FLAG_SCOPE = "1547Core";
 
 function resolveAttachedWeaponModifiers({ actor, parentItem, attachedModifierIds = [] } = {}) {
     const parentId = parentItem?.id ?? parentItem?._id ?? null;

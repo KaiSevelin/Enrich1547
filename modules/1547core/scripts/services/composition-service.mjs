@@ -14,14 +14,11 @@
  */
 
 import { getContainerChildItems, firstRefId } from "./csb-container-helpers.mjs";
+import { MODULE_ID, CHANGESET_TEMPLATE_ID, CHANGE_TEMPLATE_ID, REQUIREMENT_TEMPLATE_ID } from "../lib/constants.mjs";
 
-const MODULE_ID = "1547core";
 const CACHE_KEY = "_1547core_effectiveCache";
 const APPLIED_CHANGES_KEY = "_1547core_appliedChanges";
 
-const CHANGESET_TEMPLATE_ID = "b7A1z6cSZO4dYTKT";
-const CHANGE_TEMPLATE_ID = "WsrkfjBmudnIhvEK";
-const REQUIREMENT_TEMPLATE_ID = "L4ujYgqhGBGcoo2P";
 const CHANGE_CONTAINER_KEY = "ChangeDisplayer";
 const REQUIREMENT_CONTAINER_KEY = "RequirementsDisplayer";
 

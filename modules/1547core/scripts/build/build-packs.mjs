@@ -792,9 +792,6 @@ async function buildRequirementsPack() {
 // expects per-entry _key for embedded collections (results live inside the
 // parent RollTable, not as separate documents — Foundry CLI handles this).
 
-const TEXT_RESULT_TYPE = 0;
-const DOCUMENT_RESULT_TYPE = 1;
-
 function rollTableDoc({ _id, name, description, results, formula, replacement = true, displayRoll = true, flags }) {
     // Decorate each result with the embedded `_key` Foundry expects.
     const decoratedResults = results.map((r) => ({
