@@ -13,6 +13,7 @@
  */
 
 import { applyConditionDiceModifier, applyCondition, removeCondition } from "./condition-registry.js";
+import { emitDomainEvent, DOMAIN_EVENTS } from "./domain-events.js";
 
 const MODULE_ID = "1547core";
 const DISEASE_PACK = "1547core.diseases";
@@ -180,6 +181,7 @@ async function contractDisease(actorOrToken, diseaseOrName) {
 
     const [created] = await actor.createEmbeddedDocuments("Item", [data]);
     await notePhase(actor, created, firstPhase);
+    await emitDomainEvent(DOMAIN_EVENTS.DISEASE_CONTRACTED, { actor, disease: created, phase: firstPhase });
     return created ?? null;
 }
 
@@ -206,6 +208,7 @@ async function advanceDiseasePhase(affliction) {
         "system.props.CureBoxesFilled": ""
     });
     await notePhase(affliction.parent ?? null, affliction, next);
+    await emitDomainEvent(DOMAIN_EVENTS.DISEASE_ADVANCED, { actor: affliction.parent ?? null, disease: affliction, phase: next });
     return next;
 }
 

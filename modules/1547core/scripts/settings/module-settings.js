@@ -1,3 +1,6 @@
+
+import { deepClone, ACTOR_TYPES, isValidFoundryId, deriveFoundryIdFromText, normalizeTraitKey, normalizeTypeList, normalizeSourceEntry, mergeDefinedProps, cloneTemplateSystem } from "../lib/build-helpers.mjs";
+import { buildAmmoProps, buildArmorProps, buildChangeProps, buildChangeSetProps, buildDiseaseProps, buildMonsterMagicProps, buildPactProps, buildRequirementProps, buildSpellProps, buildSupernaturalMarkProps, buildWeaponModifierProps, buildWeaponProps, buildManeuverProps } from "../lib/prop-builders.mjs";
 ﻿import { buildOnHitEffectItemDoc } from "../services/weapon-modifier-attachment-service.js";
 
 const MODULE_ID = "1547core";
@@ -22,19 +25,6 @@ const TEMPLATE_FILES = {
     change: "fvtt-Item-changetemplate-WsrkfjBmudnIhvEK.json",
     requirement: "fvtt-Item-requirementtemplate-L4ujYgqhGBGcoo2P.json"
 };
-const VALID_FOUNDRY_ID = /^[A-Za-z0-9]{16}$/;
-const ACTOR_TYPES = [
-    "Player",
-    "HiddenFolk",
-    "TheUnseen",
-    "Beast",
-    "Undead",
-    "Colossal",
-    "Unnatural",
-    "Construct",
-    "Zone",
-    "People"
-];
 const CHANGE_SET_GROUPS = ["Base", "Domain", "Role", "Motivation", "Loadout", "Quirk", "Boost"];
 const CHANGE_FOLDER_LABELS = {
     Stat: "Stat (Numeric)",
@@ -60,61 +50,6 @@ function getModuleBasePath() {
     return folderName ? `modules/${folderName}` : `modules/${MODULE_ID}`;
 }
 
-function isValidFoundryId(value) {
-    return VALID_FOUNDRY_ID.test(String(value ?? ""));
-}
-
-function deriveFoundryIdFromText(text) {
-    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let hashA = 2166136261;
-    let hashB = 16777619;
-    const source = String(text ?? "1547CoreItem");
-    for (const ch of source) {
-        const code = ch.charCodeAt(0);
-        hashA ^= code;
-        hashA = Math.imul(hashA, 16777619) >>> 0;
-        hashB = (Math.imul(hashB ^ code, 2246822519) + 3266489917) >>> 0;
-    }
-
-    let output = "";
-    for (let i = 0; i < 16; i += 1) {
-        hashA = (Math.imul(hashA ^ (hashB >>> (i % 8)), 1664525) + 1013904223) >>> 0;
-        output += alphabet[hashA % alphabet.length];
-    }
-    return output;
-}
-
-function normalizeSourceEntry(source, kind, documentType = "Item") {
-    const normalized = foundry.utils.deepClone(source);
-    let nextId = normalized._id;
-    const uuidSuffix = typeof normalized.uuid === "string" ? normalized.uuid.split(".").pop() : "";
-
-    if (!isValidFoundryId(nextId)) {
-        if (isValidFoundryId(normalized.id)) {
-            nextId = normalized.id;
-        } else if (isValidFoundryId(uuidSuffix)) {
-            nextId = uuidSuffix;
-        } else {
-            nextId = deriveFoundryIdFromText(`${kind}:${normalized.name}:${normalized.uuid ?? ""}`);
-        }
-    }
-
-    normalized._id = nextId;
-    normalized.id = nextId;
-    normalized.uuid = `${documentType}.${nextId}`;
-    return normalized;
-}
-
-function mergeDefinedProps(baseProps, overrideProps) {
-    const merged = { ...(baseProps ?? {}) };
-    for (const [key, value] of Object.entries(overrideProps ?? {})) {
-        if (value !== undefined) {
-            merged[key] = value;
-        }
-    }
-    return merged;
-}
-
 // Pure helpers exported for unit testing (no behavioural change to the runtime).
 export {
     isValidFoundryId,
@@ -128,183 +63,6 @@ export {
     OBSOLETE_TEMPLATE_NAMES,
     refreshActorItemBodiesFromTemplates,
 };
-
-function normalizeTypeList(values) {
-    if (Array.isArray(values)) return values.map((entry) => String(entry ?? "").trim()).filter(Boolean);
-    if (typeof values === "string" && values.trim()) return [values.trim()];
-    return [];
-}
-
-function cloneTemplateSystem(template) {
-    return {
-        body: foundry.utils.deepClone(template.system.body),
-        display: foundry.utils.deepClone(template.system.display),
-        header: foundry.utils.deepClone(template.system.header),
-        hidden: foundry.utils.deepClone(template.system.hidden ?? []),
-        modifiers: [],
-        template: template._id,
-        templateSystemUniqueVersion: template.system.templateSystemUniqueVersion,
-        props: {}
-    };
-}
-
-function normalizeTraitKey(value) {
-    return String(value ?? "").replace(/[^A-Za-z0-9]/g, "");
-}
-
-function buildWeaponProps(weapon) {
-    const traitKeys = [
-        "Aiming", "ArmorBreaking", "Bracing", "Charging", "Control",
-        "Disarming", "Fast", "Fragile", "Heavy", "Hooking",
-        "Narrow", "Parrying", "PointBlank", "RigidBlade",
-        "Receiving", "Reloading", "Shield", "SmallShield", "Tactical"
-    ];
-    const normalizedTraits = new Set((weapon.traits ?? []).map(normalizeTraitKey));
-    const [a, b, c] = weapon.attackProfiles ?? [];
-
-    const profileText = (profile) => {
-        if (!profile) return "";
-        const diceText = Array.isArray(profile.dice) ? profile.dice.join(", ") : "";
-        return profile.name && profile.name !== "Default"
-            ? `${profile.name}: ${diceText}`
-            : diceText;
-    };
-
-    const profileAmmoText = (profile) => {
-        if (!profile || !weapon.usesAmmo) return "";
-        const allowedAmmoTypes = Array.isArray(profile.allowedAmmoTypes) && profile.allowedAmmoTypes.length > 0
-            ? profile.allowedAmmoTypes
-            : (weapon.ammoType ? [weapon.ammoType] : []);
-        return allowedAmmoTypes.join(", ");
-    };
-
-    const profileDamageType = (profile) => profile?.damageType ?? "";
-    const profileDamageQualifiers = (profile) => Array.isArray(profile?.damageQualifiers)
-        ? profile.damageQualifiers.join(", ")
-        : "";
-
-    const availableProfiles = [a, b, c]
-        .map((profile, index) => profile ? ["Attack", "AttackB", "AttackC"][index] : null)
-        .filter(Boolean);
-    const sourceActiveProfile = String(weapon.activeAttackProfile ?? "").trim();
-    const activeAttackProfile = availableProfiles.includes(sourceActiveProfile)
-        ? sourceActiveProfile
-        : (availableProfiles[0] ?? "Attack");
-
-    const props = {
-        Description: weapon.description ?? "",
-        Weight: weapon.weight ?? 0,
-        Value: weapon.value ?? 0,
-        Equipped: Boolean(weapon.equipped),
-        WeaponType: weapon.category ?? "Blade",
-        MinReach: weapon.minReach ?? "",
-        MaxReach: weapon.maxReach ?? "",
-        ShortRange: weapon.shortRange ?? "",
-        LongRange: weapon.longRange ?? "",
-        MaxRange: weapon.maxRange ?? "",
-        UsesAmmo: Boolean(weapon.usesAmmo),
-        AmmoType: weapon.ammoType ?? "",
-        AmmoCapacity: weapon.ammoCapacity ?? 0,
-        AmmoLoaded: weapon.ammoLoaded ?? 0,
-        LoadedAmmoId: weapon.loadedAmmoId ?? "",
-        ReloadTime: weapon.reloadTime ?? 0,
-        ReloadProgress: weapon.reloadProgress ?? 0,
-        Attack: profileText(a),
-        AttackDamageType: profileDamageType(a),
-        AttackAmmo: profileAmmoText(a),
-        AttackDamageQualifiers: profileDamageQualifiers(a),
-        AttackB: profileText(b),
-        AttackBDamageType: profileDamageType(b),
-        AttackBAmmo: profileAmmoText(b),
-        AttackBDamageQualifiers: profileDamageQualifiers(b),
-        AttackC: profileText(c),
-        AttackCDamageType: profileDamageType(c),
-        AttackCAmmo: profileAmmoText(c),
-        AttackCDamageQualifiers: profileDamageQualifiers(c),
-        ActiveAttackProfile: activeAttackProfile
-    };
-
-    for (const key of traitKeys) {
-        props[`Traits_${key}`] = normalizedTraits.has(key);
-    }
-
-    return props;
-}
-
-function buildArmorProps(armor) {
-    const traitKeys = ["Concealable", "Encumbering", "Flexible", "Noisy", "Soft", "Resistance", "VerySoft"];
-    const normalizedTraits = new Set((armor.traits ?? []).map(normalizeTraitKey));
-    const props = {
-        Description: armor.description ?? "",
-        Weight: armor.weight ?? 0,
-        Value: armor.value ?? 0,
-        Equipped: Boolean(armor.equipped),
-        ArmorType: armor.armorClass ?? "Light",
-        Defense: Array.isArray(armor.defenseDice) ? armor.defenseDice.join(", ") : ""
-    };
-
-    for (const key of traitKeys) {
-        props[`Traits_${key}`] = normalizedTraits.has(key);
-    }
-
-    return props;
-}
-
-function buildAmmoProps(ammo) {
-    const addDice = Array.isArray(ammo.addDice) ? ammo.addDice.join(", ") : "";
-    const addDamageQualifiers = Array.isArray(ammo.addDamageQualifiers)
-        ? ammo.addDamageQualifiers.join(", ")
-        : "";
-    const tags = Array.isArray(ammo.tags) ? ammo.tags.join(", ") : "";
-    const range = ammo.range
-        ?? (ammo.rangeOverride ? { mode: "override", ...ammo.rangeOverride } : null)
-        ?? (ammo.rangeModifier ? { mode: "modify", ...ammo.rangeModifier } : null)
-        ?? null;
-    return {
-        Description: ammo.description ?? "",
-        Weight: ammo.weight ?? 0,
-        Value: ammo.value ?? 0,
-        Quantity: ammo.quantity ?? 1,
-        AmmoType: ammo.ammoType ?? ammo.name ?? "",
-        AddDice: addDice,
-        AddDiceSummary: addDice,
-        AddDamageQualifiers: addDamageQualifiers,
-        OverrideDamageType: ammo.overrideDamageType ?? "",
-        Tags: tags,
-        TagsSummary: tags,
-        RangeModeOverride: String(range?.mode ?? "modify").trim().toLowerCase() === "override",
-        RangeShort: range?.shortRange ?? 0,
-        RangeMedium: range?.longRange ?? 0,
-        RangeLong: range?.maxRange ?? 0,
-        Range: range ? JSON.stringify(range, null, 2) : "",
-        ResultModifiers: JSON.stringify(ammo.resultModifiers ?? [], null, 2)
-    };
-}
-
-function buildWeaponModifierProps(modifier) {
-    const toCsv = (value) => Array.isArray(value) ? value.join(", ") : "";
-    return {
-        Description: modifier.description ?? "",
-        Weight: modifier.weight ?? 0,
-        Value: modifier.value ?? 0,
-        ModifierType: modifier.modifierType ?? "",
-        TargetKinds: toCsv(modifier.targetKinds),
-        AddDamageQualifiers: toCsv(modifier.addDamageQualifiers),
-        RemoveDamageQualifiers: toCsv(modifier.removeDamageQualifiers),
-        OverrideDamageType: modifier.overrideDamageType ?? "",
-        AddDice: toCsv(modifier.addDice),
-        RemoveDice: toCsv(modifier.removeDice),
-        ResultModifiers: JSON.stringify(modifier.resultModifiers ?? [], null, 2),
-        Tags: toCsv(modifier.tags),
-        OnHitEffects: JSON.stringify(modifier.onHitEffects ?? [], null, 2),
-        AppliesToProfiles: toCsv(modifier.appliesToProfiles),
-        DurationType: modifier.durationType ?? "",
-        DurationValue: modifier.durationValue ?? "",
-        StackKey: modifier.stackKey ?? "",
-        StackMode: modifier.stackMode ?? "",
-        Requirements: JSON.stringify(modifier.requirements ?? {}, null, 2)
-    };
-}
 
 // Pre-seeds an OnHitEffect ITEM in the world for every onHitEffects entry on
 // each modifier source. With these in the world, the modifier item's CSB
@@ -464,19 +222,6 @@ function buildWorldSpellRitualStepDocs(spellSources, spellDocs, ritualStepTempla
     return out;
 }
 
-function buildMonsterMagicProps(magic) {
-    return {
-        Description: magic.description ?? "",
-        MagicKind: magic.magicKind ?? "Aura",
-        UseMode: magic.useMode ?? "Activated",
-        TriggerText: magic.triggerText ?? "",
-        RangeText: magic.rangeText ?? "",
-        CostText: magic.costText ?? "",
-        FamilyNotes: magic.familyNotes ?? "",
-        MagicNotes: magic.magicNotes ?? "",
-    };
-}
-
 // Per-power UsageEffectTemplate child docs, one per `magicEffects` entry.
 // Same pattern as spell SuccessEffects: source data is already in PascalCase
 // matching the template's prop keys, so it's passed through verbatim.
@@ -504,54 +249,6 @@ function buildWorldMonsterMagicEffectDocs(monsterMagicSources, monsterMagicDocs,
         });
     }
     return out;
-}
-
-function buildSpellProps(spell) {
-    const schoolSet = new Set((spell.schools ?? []).map((entry) => String(entry ?? "").trim()));
-    const complexity = spell.complexity ?? "Medium";
-    const failureProfile = spell.failureProfile ?? "Minor";
-    const failureTable = String(spell.failureTable ?? "").trim() || `SpellFailure_${failureProfile}`;
-    const supportRollTable = String(spell.supportRollTable ?? "").trim()
-        || (spell.name === "Angelic Boon" ? "AngelicBoons" : "");
-    const supportRollNotes = String(spell.supportRollNotes ?? "").trim()
-        || (spell.name === "Angelic Boon"
-            ? "Roll once on the authored Angelic Boons table and present the result in chat or apply it manually."
-            : "");
-    const randomStepRollFormula = spell.randomStepRollFormula
-        ?? (complexity === "Easy" ? "1d2" : complexity === "Hard" ? "1d6" : "1d3");
-    return {
-        Description: spell.description ?? "",
-        SpellKind: spell.spellKind ?? "Protection",
-        Strength: spell.strength ?? 1,
-        Complexity: complexity,
-        RitualProfile: spell.ritualProfile ?? "",
-        SchoolRequirementMode: spell.schoolRequirementMode ?? "Any",
-        FailureProfile: failureProfile,
-        RandomOutcome: Boolean(spell.randomOutcome),
-        SpellNotes: spell.spellNotes ?? "",
-        SchoolRequirementsTable: Array.isArray(spell.schoolRequirements) ? foundry.utils.deepClone(spell.schoolRequirements) : [],
-        PrerequisitesTable: Array.isArray(spell.prerequisitesTable) ? foundry.utils.deepClone(spell.prerequisitesTable) : [],
-        StaticRitualSteps: Array.isArray(spell.staticRitualSteps) ? foundry.utils.deepClone(spell.staticRitualSteps) : [],
-        SuccessEffects: Array.isArray(spell.successEffects) ? foundry.utils.deepClone(spell.successEffects) : [],
-        RitualStrengthTable: spell.ritualStrengthTable ?? "",
-        RandomStepRollFormula: randomStepRollFormula,
-        RitualStepTable: spell.ritualStepTable ?? "",
-        RitualModifierTable: spell.ritualModifierTable ?? "",
-        RitualAssemblyNotes: spell.ritualAssemblyNotes ?? "",
-        FailureTable: failureTable,
-        FailureEscalationTable: spell.failureEscalationTable ?? "",
-        FailureNotes: spell.failureNotes ?? "",
-        SupportRollTable: supportRollTable,
-        SupportRollNotes: supportRollNotes,
-        School_Alchemy: schoolSet.has("Alchemy"),
-        School_Astrology: schoolSet.has("Astrology"),
-        School_Divination: schoolSet.has("Divination"),
-        School_Grimoire: schoolSet.has("Grimoire"),
-        School_Knot: schoolSet.has("Knot"),
-        School_Necromancy: schoolSet.has("Necromancy"),
-        School_Religion: schoolSet.has("Religion"),
-        School_Wards: schoolSet.has("Wards")
-    };
 }
 
 function buildRitualStepRollTableDescription(table) {
@@ -589,23 +286,31 @@ function buildSpellSupportRollTableDescription(table) {
 function buildRitualStepRollTableDoc(table, folderId, folderHint = null) {
     const normalized = normalizeSourceEntry(table, "ritualStepRollTable", "RollTable");
     const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
-    const tableFormula = `1d${Math.max(entries.length, 1)}`;
+    // Big d6-pool pick: roll the table's Xd6 sum and read the matching band.
+    // Mirrors build-packs so seeded and compiled tables are identical. Entry
+    // pickRange/pickFormula are authored in the table JSON (single source).
+    const tableFormula = String(normalized.pickFormula ?? "").trim() || `1d${Math.max(entries.length, 1)}`;
     const textResultType = globalThis.CONST?.TABLE_RESULT_TYPES?.TEXT ?? 0;
 
-    const results = entries.map((entry, index) => ({
-        _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
-        type: textResultType,
-        text: entry.stepText ?? `Ritual step ${index + 1}`,
-        img: "icons/svg/d20-grey.svg",
-        weight: 1,
-        range: [index + 1, index + 1],
-        drawn: false,
-        flags: {
-            [SOURCE_FLAG_SCOPE]: {
-                ritualStepEntry: foundry.utils.deepClone(entry)
+    const results = entries.map((entry, index) => {
+        const range = Array.isArray(entry.pickRange) && entry.pickRange.length === 2
+            ? [Number(entry.pickRange[0]), Number(entry.pickRange[1])]
+            : [index + 1, index + 1];
+        return {
+            _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
+            type: textResultType,
+            text: entry.stepText ?? `Ritual step ${index + 1}`,
+            img: "icons/svg/d20-grey.svg",
+            weight: range[1] - range[0] + 1,
+            range,
+            drawn: false,
+            flags: {
+                [SOURCE_FLAG_SCOPE]: {
+                    ritualStepEntry: foundry.utils.deepClone(entry)
+                }
             }
-        }
-    }));
+        };
+    });
 
     return {
         _id: normalized._id,
@@ -783,118 +488,9 @@ function buildPactRollTableDoc(pact, folderId, folderHint = null) {
     };
 }
 
-function buildSupernaturalMarkProps(mark) {
-    const sources = Array.isArray(mark.markSource) ? mark.markSource : (mark.markSource ? [mark.markSource] : []);
-    const isBlessing = (mark.markNature ?? "") === "Blessing";
-    const isCurse = (mark.markNature ?? "") === "Curse";
-    const isMixed = (mark.markNature ?? "") === "Mixed";
-    return {
-        Description: mark.description ?? "",
-        MarkNature: mark.markNature ?? "Blessing",
-        Blessing: isBlessing,
-        Curse: isCurse,
-        Mixed: isMixed,
-        MarkScope: mark.markScope ?? "Minor",
-        Major: (mark.markScope ?? "Minor") === "Major",
-        Minor: (mark.markScope ?? "Minor") === "Minor",
-        MarkSource: sources.join(", "),
-        Bloodline: sources.includes("Bloodline"),
-        Faith: sources.includes("Faith"),
-        Pagan: sources.includes("Pagan"),
-        Ritual: sources.includes("Ritual"),
-        Zone: sources.includes("Zone"),
-        Mark: sources.includes("Mark"),
-        Pact: sources.includes("Pact"),
-        Visibility: mark.visibility ?? "Hidden",
-        Hidden: (mark.visibility ?? "Hidden") === "Hidden",
-        Visible: (mark.visibility ?? "Hidden") === "Visible",
-        VisibleTell: (mark.visibility ?? "Hidden") === "VisibleTell",
-        SocialStanding: mark.socialStanding ?? "Suspect",
-        Potency: mark.potency ?? "Manifest",
-        TriggerType: mark.triggerType ?? "Passive",
-        TriggerCondition: mark.triggerCondition ?? "",
-        TriggerResponse: mark.triggerResponse ?? "",
-        BearerNotes: mark.bearerNotes ?? "",
-        RemovalConditions: mark.removalConditions ?? "",
-        TransmissionNotes: mark.transmissionNotes ?? "",
-        SocialConsequences: mark.socialConsequences ?? "",
-        MarkEffects: Array.isArray(mark.markEffects) ? foundry.utils.deepClone(mark.markEffects) : [],
-        GrantedSpells: Array.isArray(mark.grantedSpells) ? foundry.utils.deepClone(mark.grantedSpells) : []
-    };
-}
-
-function buildPactProps(pact) {
-    return {
-        Description: pact.description ?? "",
-        PactType: pact.pactType ?? "Other",
-        Patron: pact.patron ?? "",
-        BoonText: pact.boonText ?? "",
-        PriceText: pact.priceText ?? "",
-        ObligationText: pact.obligationText ?? "",
-        Tension: pact.tension ?? "",
-        DormantState: pact.dormantState ?? "",
-        ActiveState: pact.activeState ?? "",
-        StrainedState: pact.strainedState ?? "",
-        BrokenState: pact.brokenState ?? "",
-        FulfilledState: pact.fulfilledState ?? "",
-        CurrentStatus: pact.currentStatus ?? "Dormant",
-        Dormant: pact.currentStatus === "Dormant",
-        Active: pact.currentStatus === "Active",
-        Strained: pact.currentStatus === "Strained",
-        Broken: pact.currentStatus === "Broken",
-        Fulfilled: pact.currentStatus === "Fulfilled",
-        BreakText: pact.breakText ?? "",
-        FulfillmentText: pact.fulfillmentText ?? "",
-        ActiveObligations: pact.activeObligations ?? "",
-        ObligationLog: pact.obligationLog ?? "",
-        EventLog: pact.eventLog ?? "",
-        BoonEffects: Array.isArray(pact.boonEffects) ? foundry.utils.deepClone(pact.boonEffects) : [],
-        PriceEffects: Array.isArray(pact.priceEffects) ? foundry.utils.deepClone(pact.priceEffects) : [],
-        StrainEffects: Array.isArray(pact.strainEffects) ? foundry.utils.deepClone(pact.strainEffects) : [],
-        BrokenEffects: Array.isArray(pact.brokenEffects) ? foundry.utils.deepClone(pact.brokenEffects) : []
-    };
-}
-
 // Mirrors the disease mapping in scripts/build/build-packs.mjs so seeded world
 // diseases match the compendium docs. Select fields store the sanitized option
 // key (no spaces/punctuation); text fields store as-is.
-function buildDiseaseProps(d) {
-    const k = (v) => String(v ?? "").replace(/[^A-Za-z0-9]/g, "");
-    return {
-        Description: d.description ?? "",
-        DiseaseCause: k(d.cause ?? "Humour"),
-        AssociatedHumour: k(d.associatedHumour ?? "None"),
-        ContagionStat: k(d.contagionStat ?? "Stamina"),
-        ContagionDifficulty: d.contagionDifficulty ?? "3d6",
-        ImmunityRule: k(d.immunityRule ?? "None"),
-        ResistanceRule: k(d.resistanceRule ?? "None"),
-        ResistanceValue: d.resistanceValue ?? "",
-        Phases: Array.isArray(d.phases) ? d.phases.map((p) => ({
-            Phase: k(p.phase),
-            Duration: p.duration ?? "",
-            Condition: k(p.condition ?? "None"),
-            Effect: p.effect ?? ""
-        })) : [],
-        CureBoard: Array.isArray(d.cureBoard) ? d.cureBoard.map((c) => ({
-            Phase: k(c.phase),
-            Role: k(c.role),
-            Action: c.action ?? "",
-            Skill: k(c.skill),
-            Difficulty: c.difficulty ?? "",
-            Icon: c.icon ?? "",
-            Tooltip: c.tooltip ?? ""
-        })) : [],
-        ResolutionText: d.resolutionText ?? "",
-        Prevention: d.prevention ?? "",
-        Diagnosis: d.diagnosis ?? "",
-        Cure: d.cure ?? "",
-        ConvalescenceNotes: d.convalescence ?? "",
-        CurrentPhase: k(d.currentPhase ?? "Incubation"),
-        PhaseDaysElapsed: Number(d.phaseDaysElapsed ?? 0),
-        CureBoxesFilled: d.cureBoxesFilled ?? ""
-    };
-}
-
 function buildBoostRollTableDoc(table, folderId, folderHint = null) {
     const normalized = normalizeSourceEntry(table, "boostRollTable", "RollTable");
     const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
@@ -937,165 +533,6 @@ function buildBoostRollTableDoc(table, folderId, folderHint = null) {
         },
         ownership: { default: 0 }
     };
-}
-
-function inferManeuverEffectFamily(maneuver) {
-    const tags = new Set(maneuver.tags ?? []);
-    if (maneuver.name === "Overwatch") return "prepared-effect";
-    if (maneuver.name === "Suppressing Fire") return "battlefield-effect";
-    if (tags.has("persistent")) return "prepared-effect";
-    if (tags.has("safe-attack")) return "safe-attack";
-    if (tags.has("movement")) return "movement";
-    if (tags.has("control")) return "control";
-    if (tags.has("condition")) return "condition";
-    if (tags.has("utility")) return "utility";
-    return tags.has("attack-modifier") ? "attack-modifier" : "utility";
-}
-
-function inferManeuverPersistentEffectType(maneuver) {
-    if (maneuver.name === "Aim") return "aimed";
-    if (maneuver.name === "Brace" || maneuver.name === "Brace Firearm") return "braced";
-    if (maneuver.name === "Overwatch") return "overwatch";
-    if (maneuver.name === "Lock") return "locked";
-    if (maneuver.name === "Choke") return "choking-hold";
-    return "";
-}
-
-function inferManeuverBattlefieldEffectType(maneuver) {
-    if (maneuver.name === "Suppressing Fire") return "suppressing-fire";
-    return "";
-}
-
-function inferManeuverTargetType(maneuver) {
-    const effectData = maneuver.effectData ?? {};
-    if (effectData.area) return "area";
-    if (effectData.target === "visible-ally") return "ally";
-    if (effectData.target === "self") return "self";
-    if (effectData.target && String(effectData.target).includes("ally")) return "ally";
-    if (maneuver.tags?.includes("support")) return "ally";
-    return "enemy";
-}
-
-function inferManeuverRollType(maneuver) {
-    if (maneuver.triggerType === "move-declared" || maneuver.tags?.includes("movement")) return "movement";
-    if (maneuver.tags?.includes("defense") || maneuver.triggerType === "damage-taken") return "defense";
-    if (maneuver.name === "Grapple Break") return "escape";
-    return "attack";
-}
-
-function buildManeuverProps(maneuver) {
-    const requirements = maneuver.requirements ?? {};
-    const usageLimit = maneuver.usageLimit?.maxUses ?? 1;
-    const effectFamily = inferManeuverEffectFamily(maneuver);
-    const persistentEffectType = inferManeuverPersistentEffectType(maneuver);
-    const battlefieldEffectType = inferManeuverBattlefieldEffectType(maneuver);
-    const requiredTagParts = [];
-    if (Array.isArray(requirements.requiredWeaponTraits) && requirements.requiredWeaponTraits.length > 0) {
-        requiredTagParts.push(...requirements.requiredWeaponTraits);
-    }
-    if (Array.isArray(requirements.requiredWeaponGroups) && requirements.requiredWeaponGroups.length > 0) {
-        requiredTagParts.push(...requirements.requiredWeaponGroups);
-    }
-    if (Array.isArray(requirements.requiredWeaponTags) && requirements.requiredWeaponTags.length > 0) {
-        requiredTagParts.push(...requirements.requiredWeaponTags);
-    } else if (requirements.requiredWeaponTags) {
-        requiredTagParts.push(requirements.requiredWeaponTags);
-    }
-    const requiredWeaponTags = requiredTagParts.join(", ");
-    const excludedWeaponTags = Array.isArray(requirements.excludedWeaponTags)
-        ? requirements.excludedWeaponTags.join(", ")
-        : (requirements.excludedWeaponTags ?? "");
-
-    return {
-        SkillRequirement: requirements.skill ?? "",
-        RequirementText: requirements.text ?? "",
-        TargetRequirement: requirements.target ?? "",
-        RequiredWeaponTags: requiredWeaponTags,
-        ExcludedWeaponTags: excludedWeaponTags,
-        UsageLimit: usageLimit,
-        EffectFamily: effectFamily,
-        CreatesPersistentEffect: Boolean(persistentEffectType),
-        PersistentEffectType: persistentEffectType,
-        CreatesBattlefieldEffect: Boolean(battlefieldEffectType),
-        BattlefieldEffectType: battlefieldEffectType,
-        EffectData: JSON.stringify(maneuver.effectData ?? {}, null, 2),
-        Automated: Boolean(maneuver.automated),
-        HandlerId: maneuver.handlerId ?? "",
-        Description: maneuver.description ?? "",
-        Usage: maneuver.type ?? "pre",
-        Trigger: maneuver.triggerType ?? "attack-declared",
-        CostType: maneuver.CostType ?? "null",
-        CostAmount: maneuver.CostAmount ?? 0,
-        TargetType: inferManeuverTargetType(maneuver),
-        RollType: inferManeuverRollType(maneuver)
-    };
-}
-
-function buildChangeSetProps(changeSet) {
-    const allowedTypes = new Set(normalizeTypeList(changeSet.appliesTo ?? changeSet.forTypes));
-    const props = {
-        Notes: changeSet.notes ?? "",
-        Description: changeSet.description ?? "",
-        Group: changeSet.group ?? changeSet.system?.props?.Group ?? "",
-        ForTypeAny: changeSet.forTypeAny ?? allowedTypes.size === 0,
-        RequirementsDisplayer: changeSet.requirementsDisplayer ?? changeSet.system?.props?.RequirementsDisplayer ?? {},
-        ChangeDisplayer: changeSet.changeDisplayer ?? changeSet.system?.props?.ChangeDisplayer ?? {}
-    };
-
-    for (const actorType of ACTOR_TYPES) {
-        props[`ForType_${actorType}`] = allowedTypes.has(actorType) || changeSet[`ForType_${actorType}`] === true;
-    }
-
-    return mergeDefinedProps(props, changeSet.props ?? changeSet.system?.props);
-}
-
-function buildChangeProps(change) {
-    const props = {
-        Kind: change.kind ?? change.system?.props?.Kind ?? "",
-        Notes: change.notes ?? "",
-        StatTarget: change.statTarget ?? "",
-        StatOp: change.statOp ?? "Add",
-        StatValue: change.statValue ?? 0,
-        PrimaryStatTarget: change.primaryStatTarget ?? "",
-        PrimaryStatOp: change.primaryStatOp ?? "Step",
-        PrimaryStatSteps: change.primaryStatSteps ?? 0,
-        PrimaryStatSetDice: change.primaryStatSetDice ?? 1,
-        PrimaryStatSetMod: change.primaryStatSetMod ?? 0,
-        SkillRef: change.skillRef ?? [],
-        SkillDelta: change.skillDelta ?? 0,
-        TextTarget: change.textTarget ?? "",
-        TextOp: change.textOp ?? "Append",
-        TextValue: change.textValue ?? "",
-        ItemGrantMode: change.itemGrantMode ?? "Direct",
-        ItemGrantRef: change.itemGrantRef ?? [],
-        ItemGrantRollTable: change.itemGrantRollTable ?? "",
-        TagName: change.tagName ?? "",
-        TraitName: change.traitName ?? "",
-        TraitDescription: change.traitDescription ?? "",
-        DurationValue: change.durationValue ?? 0,
-        DurationUnit: change.durationUnit ?? "Permanent"
-    };
-
-    return mergeDefinedProps(props, change.props ?? change.system?.props);
-}
-
-function buildRequirementProps(requirement) {
-    const props = {
-        PredicateType: requirement.predicateType ?? requirement.system?.props?.PredicateType ?? "",
-        Negate: requirement.negate ?? false,
-        Notes: requirement.notes ?? "",
-        GroupTarget: requirement.groupTarget ?? "",
-        TagName: requirement.tagName ?? "",
-        StatTarget: requirement.statTarget ?? "",
-        StatThreshold: requirement.statThreshold ?? 0,
-        PrimaryStatRequirementTarget: requirement.primaryStatRequirementTarget ?? "",
-        PrimaryStatRequirementDice: requirement.primaryStatRequirementDice ?? 1,
-        PrimaryStatRequirementMod: requirement.primaryStatRequirementMod ?? 0,
-        RequirementSkillRef: requirement.requirementSkillRef ?? [],
-        SkillMinLevel: requirement.skillMinLevel ?? 0
-    };
-
-    return mergeDefinedProps(props, requirement.props ?? requirement.system?.props);
 }
 
 function makeItemDoc(source, template, img, propsBuilder, folderId, folderHint = null) {

@@ -1,32 +1,10 @@
 import { isManualSpellItem } from "./spell-manual-support.js";
-import { findTable, getTableById } from "./content-registry.js";
+import { resolveTableByNameOrId } from "./content-registry.js";
 import { applyFailureEffect } from "./failure-effect-service.js";
 import { applyConditionDiceModifier } from "./condition-registry.js";
-
-const MODULE_ID = "1547core";
-const SOURCE_FLAG_SCOPE = "1547Core";
-const SPELL_TEMPLATE_ID = "2kiWw3Cv5Zk1lZxn";
-
-function readSourceData(doc) {
-    return doc?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? doc?.flags?.[MODULE_ID]?.sourceData ?? doc ?? {};
-}
-
-function getSpellProps(spell) {
-    return spell?.system?.props ?? readSourceData(spell) ?? {};
-}
-
-function isSpellItem(item) {
-    return item?.system?.template === SPELL_TEMPLATE_ID;
-}
-
-function escapeHtml(value) {
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-}
+import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
+import { readSourceData, getProps as getSpellProps, isSpellItem, escapeHtml, slugify } from "../lib/foundry-utils.mjs";
+import { emitDomainEvent, DOMAIN_EVENTS } from "./domain-events.js";
 
 function getDefaultSourceTokenForActor(actor) {
     if (!actor) return null;
@@ -66,14 +44,6 @@ function normalizeStaticStep(step, index) {
         difficulty: Number.parseInt(String(step?.Difficulty ?? "").trim(), 10) || 0,
         stepNotes: String(step?.StepNotes ?? "").trim()
     };
-}
-
-function slugify(value) {
-    return String(value ?? "")
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
 }
 
 function skillNameToPropKey(skillName) {
@@ -207,20 +177,11 @@ async function postCastingSummaryToChat(spell, sourceToken, evaluation, outcome,
     });
 }
 
-async function resolveFailureTable(tableRef) {
-    const ref = String(tableRef ?? "").trim();
-    if (!ref) return null;
-    return getTableById(ref)
-        ?? findTable((table) => table.flags?.[SOURCE_FLAG_SCOPE]?.sourceKey === ref)
-        ?? findTable((table) => table.name === ref)
-        ?? await fromUuid(ref).catch(() => null);
-}
-
 async function rollSpellFailure(spell) {
     const props = getSpellProps(spell);
     const failureProfile = String(props.FailureProfile ?? "Minor").trim() || "Minor";
     const failureTableRef = String(props.FailureTable ?? `SpellFailure_${failureProfile}`).trim();
-    const table = await resolveFailureTable(failureTableRef);
+    const table = await resolveTableByNameOrId(failureTableRef);
     if (!table) {
         return {
             ok: false,
@@ -290,6 +251,7 @@ export async function effectuateSpellOutcome(spell, { outcome, apply = false, an
     if (outcome === "failure") {
         const failure = await rollSpellFailure(spell);
         await postRitualOutcomeCard(spell, token, false, failure.text, { announce });
+        await emitDomainEvent(DOMAIN_EVENTS.SPELL_FAILED, { spell, failure, sourceToken: token });
         return { outcome: "failure", failure };
     }
 
@@ -305,6 +267,7 @@ export async function effectuateSpellOutcome(spell, { outcome, apply = false, an
         }
     }
     await postRitualOutcomeCard(spell, token, true, detail, { announce });
+    await emitDomainEvent(DOMAIN_EVENTS.SPELL_SUCCEEDED, { spell, applied, sourceToken: token });
     return { outcome: "success", applied };
 }
 
@@ -370,17 +333,8 @@ async function rollManualContest({
     };
 }
 
-async function resolveSupportTable(tableRef) {
-    const ref = String(tableRef ?? "").trim();
-    if (!ref) return null;
-    return getTableById(ref)
-        ?? findTable((table) => table.flags?.[SOURCE_FLAG_SCOPE]?.sourceKey === ref)
-        ?? findTable((table) => table.name === ref)
-        ?? await fromUuid(ref).catch(() => null);
-}
-
 async function rollSupportTable(tableRef) {
-    const table = await resolveSupportTable(tableRef);
+    const table = await resolveTableByNameOrId(tableRef);
     if (!table) {
         return {
             ok: false,
@@ -685,6 +639,7 @@ export async function castSpellItem(spell, options = {}) {
     if (!evaluation.passed) {
         const failure = await rollSpellFailure(spell);
         await postCastingSummaryToChat(spell, sourceToken, evaluation, "Failure", failure.text);
+        await emitDomainEvent(DOMAIN_EVENTS.SPELL_FAILED, { spell, failure, sourceToken });
         return {
             ok: false,
             outcome: "failure",
@@ -697,6 +652,7 @@ export async function castSpellItem(spell, options = {}) {
     if (isManualSpellItem(spell)) {
         const manualResolution = await resolveManualSpell(spell, sourceToken, options);
         await postCastingSummaryToChat(spell, sourceToken, evaluation, "Success", manualResolution.detailText ?? "");
+        await emitDomainEvent(DOMAIN_EVENTS.SPELL_SUCCEEDED, { spell, sourceToken, manualResolution });
         return {
             ok: manualResolution.ok,
             outcome: "success",
@@ -718,6 +674,7 @@ export async function castSpellItem(spell, options = {}) {
         targetItem: options.targetItem
     });
     await postCastingSummaryToChat(spell, sourceToken, evaluation, "Success");
+    await emitDomainEvent(DOMAIN_EVENTS.SPELL_SUCCEEDED, { spell, sourceToken, resolution });
     return {
         ok: resolution.ok,
         outcome: "success",

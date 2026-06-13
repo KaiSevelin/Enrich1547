@@ -15,13 +15,10 @@
 
 import { promptAddDrive } from "../chargen/drive-prompts.js";
 import { applyCondition, CONDITIONS } from "./condition-registry.js";
+import { MODULE_ID } from "../lib/constants.mjs";
+import { escapeHtml } from "../lib/foundry-utils.mjs";
 
-const MODULE_ID = "1547core";
 const MARK_PACK = "1547core.supernatural-marks";
-
-function escapeHtml(s) {
-    return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-}
 
 async function appendBiography(actor, html) {
     const existing = String(actor.system?.props?.Biography ?? "");

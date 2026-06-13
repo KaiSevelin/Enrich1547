@@ -1,9 +1,6 @@
-import { findTable, getTableById, getItemById } from "./content-registry.js";
-
-const MODULE_ID = "1547core";
-const SOURCE_FLAG_SCOPE = "1547Core";
-const SPELL_TEMPLATE_ID = "2kiWw3Cv5Zk1lZxn";
-const RITUAL_TEMPLATE_ID = "Qv6pN2Lm8R4tY1Ks";
+import { getItemById, resolveTableByNameOrId } from "./content-registry.js";
+import { MODULE_ID, SOURCE_FLAG_SCOPE, RITUAL_TEMPLATE_ID } from "../lib/constants.mjs";
+import { readSourceData, isSpellItem, getProps as getSpellProps } from "../lib/foundry-utils.mjs";
 
 // Maps a spell's casting school to the skill rolled for the final cast.
 const SCHOOL_SKILL = {
@@ -54,20 +51,8 @@ function buildFinalCastingStep(spell, props) {
     };
 }
 
-function readSourceData(doc) {
-    return doc?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? doc?.flags?.[MODULE_ID]?.sourceData ?? doc ?? {};
-}
-
-function isSpellItem(item) {
-    return item?.system?.template === SPELL_TEMPLATE_ID;
-}
-
 function isActorOwnedItem(item) {
     return item?.parent?.documentName === "Actor";
-}
-
-function getSpellProps(spell) {
-    return spell?.system?.props ?? readSourceData(spell) ?? {};
 }
 
 export function parseRandomStepRollFormula(formula) {
@@ -224,15 +209,6 @@ function pickDistinctEntries(entries, count, pickFormula) {
     return picked;
 }
 
-async function resolveRollTableByNameOrId(tableRef) {
-    const ref = String(tableRef ?? "").trim();
-    if (!ref) return null;
-    return getTableById(ref)
-        ?? findTable((table) => table.flags?.[SOURCE_FLAG_SCOPE]?.sourceKey === ref)
-        ?? findTable((table) => table.name === ref)
-        ?? await fromUuid(ref).catch(() => null);
-}
-
 export async function generateRitualStepsFromSpell(spell) {
     if (!isSpellItem(spell)) {
         throw new Error("generateRitualStepsFromSpell requires a spell item.");
@@ -258,7 +234,7 @@ export async function generateRitualStepsFromSpell(spell) {
     let rolledSteps = [];
     let drawCount = 0;
     if (tableRef && drawFormula) {
-        const drawTable = await resolveRollTableByNameOrId(tableRef);
+        const drawTable = await resolveTableByNameOrId(tableRef);
         if (!drawTable) {
             throw new Error(`Could not resolve ritual step roll table '${tableRef}'.`);
         }

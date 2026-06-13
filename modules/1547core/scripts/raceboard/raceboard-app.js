@@ -3,9 +3,10 @@ import {
   ALARM_MAX_LEVEL, defaultAlarm, buildAlarmContext,
   VISIBILITY_HIDDEN, VISIBILITY_ALL, VISIBILITY_MAX, VISIBILITY_DEFAULT,
   normalizeVisibility, buildVisibilityOptions, buildHeaderCells,
-  RESOLUTION_SUCCESS, RESOLUTION_FAILURE, buildResolutionContext
+  RESOLUTION_SUCCESS, RESOLUTION_FAILURE, buildResolutionContext, defaultBoardState
 } from "./raceboard-data.js";
 import { announceWinner } from "./winner-splash.js";
+import { emitDomainEvent, DOMAIN_EVENTS } from "../services/domain-events.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -31,15 +32,7 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     this._readOnly = !!options.readOnly;
     this._state = options.state ?? null;
     if (!this._uuid && !this._state) {
-      this._state = {
-        rows: RaceBoardData.defaultRows(),
-        announcedWinners: [],
-        visibility: VISIBILITY_DEFAULT,
-        columns: [],
-        alarm: defaultAlarm(),
-        resolution: { state: 0 },
-        resolver: null
-      };
+      this._state = defaultBoardState();
     }
   }
 
@@ -244,11 +237,13 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     await this._updateData(d => {
       d.alarm = { ...defaultAlarm(), ...(d.alarm ?? {}), enabled: true };
     });
+    this._emitAlarmChanged();
   }
 
   async _onAlarmRemove() {
     if (!this.canEdit) return;
     await this._updateData(d => { d.alarm = defaultAlarm(); });
+    this._emitAlarmChanged();
   }
 
   /**
@@ -291,6 +286,19 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       a.level = Math.min(ALARM_MAX_LEVEL, (a.level ?? 0) + 1);
       d.alarm = a;
     });
+    this._emitAlarmChanged();
+  }
+
+  /**
+   * Announce a GM-driven alarm change so future systems can react (escalations,
+   * spawns, …). The alarm is never automated — this is a producer with no
+   * listener today.
+   */
+  _emitAlarmChanged() {
+    const a = this.data.alarm ?? defaultAlarm();
+    void emitDomainEvent(DOMAIN_EVENTS.BOARD_ALARM_CHANGED, {
+      app: this, uuid: this._uuid ?? null, enabled: !!a.enabled, level: a.level ?? 0
+    });
   }
 
   /** Right-click lowers the alarm one stage. */
@@ -302,6 +310,7 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       a.level = Math.max(0, (a.level ?? 0) - 1);
       d.alarm = a;
     });
+    this._emitAlarmChanged();
   }
 
   /**

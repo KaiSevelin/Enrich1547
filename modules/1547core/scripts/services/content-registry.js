@@ -21,6 +21,8 @@
  * refreshes the registry.
  */
 
+import { SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
+
 const MODULE_ID = "1547core";
 
 const PACK_IDS = {
@@ -218,6 +220,20 @@ export function findActor(predicate) {
 export function findTable(predicate) {
     for (const doc of state.tables.values()) if (predicate(doc)) return doc;
     return globalThis.game?.tables?.find?.(predicate) ?? null;
+}
+
+/**
+ * Resolve a RollTable from a ref that may be a source key, a document id, a
+ * name, or a full uuid. Shared by ritual-generation (step tables) and
+ * spell-casting (failure / support tables).
+ */
+export async function resolveTableByNameOrId(tableRef) {
+    const ref = String(tableRef ?? "").trim();
+    if (!ref) return null;
+    return getTableById(ref)
+        ?? findTable((table) => table.flags?.[SOURCE_FLAG_SCOPE]?.sourceKey === ref)
+        ?? findTable((table) => table.name === ref)
+        ?? await fromUuid(ref).catch(() => null);
 }
 
 export function findChangeSetsByGroup(group, typeFilter = null) {

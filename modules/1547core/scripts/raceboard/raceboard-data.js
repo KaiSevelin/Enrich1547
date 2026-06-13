@@ -51,6 +51,23 @@ export function defaultAlarm() {
   return { enabled: false, level: 0 };
 }
 
+/**
+ * The canonical empty board state shape (ephemeral default). Single source of
+ * truth for the field set so adding a field doesn't mean editing it in the app
+ * constructor, the data getter, and _onSave separately.
+ */
+export function defaultBoardState() {
+  return {
+    rows: RaceBoardData.defaultRows(),
+    announcedWinners: [],
+    visibility: VISIBILITY_DEFAULT,
+    columns: [],
+    alarm: defaultAlarm(),
+    resolution: { state: 0 },
+    resolver: null
+  };
+}
+
 // Ordinal words for the default column header tooltips (1-based).
 export const COLUMN_ORDINALS = [
   "First", "Second", "Third", "Fourth", "Fifth",

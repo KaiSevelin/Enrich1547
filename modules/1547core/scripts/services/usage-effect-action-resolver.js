@@ -1,11 +1,8 @@
 import { buildAdvanceStatUpdateFromProps } from "./primary-stats.js";
 import { isManualSpellItem } from "./spell-manual-support.js";
 import { getItemById } from "./content-registry.js";
-
-const MODULE_ID = "1547core";
-const SOURCE_FLAG_SCOPE = "1547Core";
-const USAGE_EFFECT_TEMPLATE_ID = "mwPqEYUoOfzXpyT9";
-const UNEQUIPPABLE_TEMPLATE_ID = "woHyeHPKKdo4JDJd";
+import { MODULE_ID, SOURCE_FLAG_SCOPE, USAGE_EFFECT_TEMPLATE_ID, UNEQUIPPABLE_TEMPLATE_ID } from "../lib/constants.mjs";
+import { readSourceData, getProps as getCarrierProps, escapeHtml, slugify } from "../lib/foundry-utils.mjs";
 const SUPPORTED_CARRIER_TEMPLATE_IDS = new Set([
     "2kiWw3Cv5Zk1lZxn", // Spell
     "w9ky0ZTDvXDs5Ce7", // Supernatural Mark
@@ -30,14 +27,6 @@ const STAT_KEY_MAP = {
     Charisma: { dice: "Stats_CharismaDice", mod: "Stats_CharismaMod" },
     Power: { dice: "Stats_PowerDice", mod: "Stats_PowerMod" },
 };
-
-function readSourceData(doc) {
-    return doc?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? doc?.flags?.[MODULE_ID]?.sourceData ?? doc ?? {};
-}
-
-function getCarrierProps(item) {
-    return item?.system?.props ?? readSourceData(item) ?? {};
-}
 
 function deepClone(value) {
     if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
@@ -65,23 +54,6 @@ function normalizeTokenDocument(tokenLike) {
     if (tokenLike.documentName === "Token") return tokenLike;
     if (tokenLike.document?.documentName === "Token") return tokenLike.document;
     return null;
-}
-
-function slugify(value) {
-    return String(value ?? "")
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
-}
-
-function escapeHtml(value) {
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
 }
 
 function isSupportedCarrierItem(item) {

@@ -12,12 +12,10 @@
  */
 
 import { generateRitualStepsFromSpell, createRitualFromSpell } from "./ritual-generation-service.js";
+import { emitDomainEvent, DOMAIN_EVENTS } from "./domain-events.js";
 
-const MODULE_ID = "1547core";
-const SPELL_TEMPLATE_ID = "2kiWw3Cv5Zk1lZxn";
-const RITUAL_TEMPLATE_ID = "Qv6pN2Lm8R4tY1Ks";
-const SPELL_PACK = "1547core.spells";
-const SOURCE_FLAG_SCOPE = "1547Core";
+import { MODULE_ID, SOURCE_FLAG_SCOPE, SPELL_TEMPLATE_ID, RITUAL_TEMPLATE_ID, SPELL_PACK } from "../lib/constants.mjs";
+import { isSpellItem } from "../lib/foundry-utils.mjs";
 
 // Specific free FontAwesome solid icon per ritual step type. Unknown types fall
 // back to GENERIC_STEP_ICON. Mirror any additions in the data migration too.
@@ -55,10 +53,6 @@ const GENERIC_STEP_ICON = "fa-wand-magic-sparkles";
 // General difficulty names by opposing-d6 count. Ritual steps express difficulty
 // as a bare count ("2") or dice ("2d6"); both resolve here.
 const GENERAL_DIFFICULTY = { 1: "trivial", 2: "easy", 3: "average", 4: "hard", 5: "rough" };
-
-function isSpellItem(item) {
-    return item?.system?.template === SPELL_TEMPLATE_ID;
-}
 
 function stepIcon(stepType) {
     return STEP_TYPE_ICON[String(stepType ?? "").trim()] ?? GENERIC_STEP_ICON;
@@ -223,6 +217,9 @@ async function ritualResolver({ outcome, resolver, options = {} }) {
         announce: options.announce !== false,
         sourceToken
     });
+    // Announce the resolution so any domain can react. Producer stays ignorant
+    // of listeners (none today). Alarm is GM-manual and intentionally not driven.
+    await emitDomainEvent(DOMAIN_EVENTS.RITUAL_RESOLVED, { outcome, spell, resolver, result });
     ui.notifications?.info(`1547 Core: ritual resolved as ${outcome === "failure" ? "failure" : "success"}.`);
     return result;
 }
@@ -349,9 +346,17 @@ function registerRitualContextMenu() {
 export function registerRitualExecutionService() {
     registerRitualContextMenu();
 
-    // RaceBoard.registerResolver is only attached at `ready` (refreshRaceboardApi),
-    // which runs before this ready hook, so the global is available here.
-    Hooks.once("ready", () => globalThis.RaceBoard?.registerResolver?.("ritual", ritualResolver));
+    // RaceBoard.registerResolver is attached at `ready` (refreshRaceboardApi),
+    // which runs before this ready hook. Fail loudly if that ever changes, so
+    // ritual board resolution doesn't silently stop working.
+    Hooks.once("ready", () => {
+        const rb = globalThis.RaceBoard;
+        if (typeof rb?.registerResolver === "function") {
+            rb.registerResolver("ritual", ritualResolver);
+        } else {
+            console.warn(`${MODULE_ID} | RaceBoard.registerResolver unavailable at ready — ritual board success/failure resolution is disabled.`);
+        }
+    });
 
     const moduleApi = game.modules.get(MODULE_ID);
     if (moduleApi) {

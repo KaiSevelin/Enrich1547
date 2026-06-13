@@ -83,6 +83,15 @@ function partition(probs, n) {
     return groups;
 }
 
+/**
+ * Recompute each ritual step table's Xd6 `pickFormula` + per-entry `pickRange`
+ * from the current entries. Idempotent — run it whenever ritual steps change.
+ * @param {object} [opts]
+ * @param {boolean} [opts.write]  persist the result back to the JSON file.
+ * @param {boolean} [opts.quiet]  suppress the per-table report.
+ * @returns {object[]} the annotated tables.
+ */
+export function annotateRitualStepTables({ write = false, quiet = false } = {}) {
 const tables = JSON.parse(fs.readFileSync(FILE, "utf8"));
 for (const table of tables) {
     const n = table.entries.length;
@@ -92,8 +101,10 @@ for (const table of tables) {
     delete table.pickWeight;
     for (const e of table.entries) { delete e.pickWeight; delete e.pickRange; }
 
-    const ranked = [...table.entries].map((e, i) => ({ e, i, s: rarityScore(e) }))
-        .sort((a, b) => (a.s - b.s) || (a.i - b.i)).map((o) => o.e);
+    // Tie-break on the stable entry id (NOT array position) so the result is
+    // idempotent — re-running on already-arranged entries yields the same order.
+    const ranked = [...table.entries].map((e) => ({ e, s: rarityScore(e) }))
+        .sort((a, b) => (a.s - b.s) || String(a.e.id).localeCompare(String(b.e.id))).map((o) => o.e);
     const arranged = tentArrange(ranked);
     const groups = partition(probs, n);
 
@@ -110,19 +121,28 @@ for (const table of tables) {
     table.pickFormula = `${x}d6`;
     table.entries = arranged;
 
-    const centreIdx = Math.round((n - 1) / 2);
-    console.log(`\n=== ${table.name}  (N=${n}, pick=${x}d6, totals ${x}..${6 * x}) ===`);
-    console.log(`  centre  #${centreIdx} [${arranged[centreIdx].pickRange.join("-")}]  ${arranged[centreIdx].stepText.slice(0, 44)}`);
-    console.log(`  L-tail  #0  [${arranged[0].pickRange.join("-")}]  ${arranged[0].stepText.slice(0, 44)}`);
-    console.log(`  R-tail  #${n - 1} [${arranged[n - 1].pickRange.join("-")}]  ${arranged[n - 1].stepText.slice(0, 44)}`);
-    console.log(`  most likely: ${(maxP * 100).toFixed(2)}%  (${maxTxt.slice(0, 40)})`);
-    console.log(`  least likely: ${(minP * 100).toFixed(2)}%  (${minTxt.slice(0, 40)})`);
-    console.log(`  spread: ${(maxP / minP).toFixed(1)}x   (uniform would be ${(100 / n).toFixed(2)}%/entry)`);
+    if (!quiet) {
+        const centreIdx = Math.round((n - 1) / 2);
+        console.log(`\n=== ${table.name}  (N=${n}, pick=${x}d6, totals ${x}..${6 * x}) ===`);
+        console.log(`  centre  #${centreIdx} [${arranged[centreIdx].pickRange.join("-")}]  ${arranged[centreIdx].stepText.slice(0, 44)}`);
+        console.log(`  L-tail  #0  [${arranged[0].pickRange.join("-")}]  ${arranged[0].stepText.slice(0, 44)}`);
+        console.log(`  R-tail  #${n - 1} [${arranged[n - 1].pickRange.join("-")}]  ${arranged[n - 1].stepText.slice(0, 44)}`);
+        console.log(`  most likely: ${(maxP * 100).toFixed(2)}%  (${maxTxt.slice(0, 40)})`);
+        console.log(`  least likely: ${(minP * 100).toFixed(2)}%  (${minTxt.slice(0, 40)})`);
+        console.log(`  spread: ${(maxP / minP).toFixed(1)}x   (uniform would be ${(100 / n).toFixed(2)}%/entry)`);
+    }
 }
 
-if (process.argv.includes("--write")) {
-    fs.writeFileSync(FILE, JSON.stringify(tables, null, 2) + "\n");
-    console.log("\nWROTE", FILE);
-} else {
-    console.log("\n(dry run — pass --write to persist)");
+    if (write) {
+        fs.writeFileSync(FILE, JSON.stringify(tables, null, 2) + "\n");
+        if (!quiet) console.log("\nWROTE", FILE);
+    } else if (!quiet) {
+        console.log("\n(dry run — pass --write to persist)");
+    }
+    return tables;
+}
+
+// CLI: `node scripts/build/reorder-ritual-tables.mjs [--write]`
+if (process.argv[1] && process.argv[1].replace(/\\/g, "/").endsWith("scripts/build/reorder-ritual-tables.mjs")) {
+    annotateRitualStepTables({ write: process.argv.includes("--write"), quiet: false });
 }
