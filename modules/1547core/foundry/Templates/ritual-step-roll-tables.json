@@ -3,7 +3,7 @@
     "id": "RitualSteps_Easy",
     "name": "Ritual Steps Easy",
     "complexity": "Easy",
-    "drawFormula": "1d2",
+    "drawFormula": "1d2+1",
     "drawMode": "distinct",
     "entries": [
       {
@@ -156,7 +156,7 @@
     "id": "RitualSteps_Medium",
     "name": "Ritual Steps Medium",
     "complexity": "Medium",
-    "drawFormula": "1d3",
+    "drawFormula": "1d3+1",
     "drawMode": "distinct",
     "entries": [
       {
@@ -345,7 +345,7 @@
     "id": "RitualSteps_Hard",
     "name": "Ritual Steps Hard",
     "complexity": "Hard",
-    "drawFormula": "1d6",
+    "drawFormula": "1d6+1",
     "drawMode": "distinct",
     "entries": [
       {

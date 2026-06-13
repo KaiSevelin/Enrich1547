@@ -81,15 +81,23 @@ function humanizeStepType(stepType) {
 
 // One race-board column header per step. Authored Icon/Tooltip win; otherwise
 // derive a step-type icon and a "Step text (difficulty)" tooltip.
+// Build a concrete, multi-line tooltip for a ritual step: what it is, the roll
+// (skill/stat + difficulty) or that it's a condition, and any component needed.
 function ritualColumn(step) {
     const icon = String(step.icon ?? "").trim() || stepIcon(step.stepType);
-    let tooltip = String(step.tooltip ?? "").trim();
-    if (!tooltip) {
-        const text = String(step.stepText ?? "").trim() || humanizeStepType(step.stepType) || "Step";
-        const diff = difficultyName(step.difficulty);
-        tooltip = diff ? `${text} (${diff})` : text;
-    }
-    return { icon, tooltip };
+    const text = String(step.stepText ?? step.tooltip ?? "").trim()
+        || humanizeStepType(step.stepType) || "Ritual step";
+    const lines = [text];
+
+    const skill = String(step.skillCheck ?? "").trim();
+    const diff = difficultyName(step.difficulty);
+    const item = String(step.requiredItem ?? "").trim();
+    if (skill) lines.push(`Roll: ${skill}${diff ? ` (${diff})` : ""}`);
+    else if (item && !diff) lines.push("Provide the component (no roll)");
+    else if (diff) lines.push(`Difficulty: ${diff}`);
+    if (item) lines.push(`Component: ${item}`);
+
+    return { icon, tooltip: lines.join("\n") };
 }
 
 async function resolveSpell(spellOrName) {
@@ -154,7 +162,7 @@ async function openRitualBoardFromRitual(ritualOrUuid) {
         // Fallback to the displayed RitualStepsTable rows.
         const rows = ritual.system?.props?.RitualStepsTable;
         steps = Array.isArray(rows) ? rows.map((r) => ({
-            stepType: r.StepType, stepText: r.StepText, difficulty: r.Difficulty, icon: r.Icon, tooltip: r.Tooltip
+            stepType: r.StepType, stepText: r.StepText, skillCheck: r.SkillCheck, difficulty: r.Difficulty, icon: r.Icon, tooltip: r.Tooltip
         })) : [];
     }
     if (!steps.length) {

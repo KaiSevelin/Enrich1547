@@ -23,11 +23,13 @@ function getSpellProps(spell) {
 
 export function parseRandomStepRollFormula(formula) {
     const text = String(formula ?? "").trim();
-    const match = /^(\d+)d(\d+)$/i.exec(text);
+    // Accept "NdM" plus an optional flat modifier, e.g. "1d3+1" or "1d3 - 1".
+    const match = /^(\d+)\s*d\s*(\d+)\s*([+-]\s*\d+)?$/i.exec(text);
     if (!match) return null;
     return {
         count: Number.parseInt(match[1], 10),
-        faces: Number.parseInt(match[2], 10)
+        faces: Number.parseInt(match[2], 10),
+        mod: match[3] ? Number.parseInt(match[3].replace(/\s+/g, ""), 10) : 0
     };
 }
 
@@ -38,7 +40,8 @@ function rollFormulaCount(formulaText) {
     for (let index = 0; index < parsed.count; index += 1) {
         total += Math.floor(Math.random() * parsed.faces) + 1;
     }
-    return total;
+    total += parsed.mod ?? 0;
+    return Math.max(0, total);
 }
 
 function normalizeStaticStep(step, index) {

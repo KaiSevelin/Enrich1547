@@ -89,7 +89,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000002",
@@ -146,7 +146,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000003",
@@ -278,7 +278,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000004",
@@ -426,7 +426,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000005",
@@ -505,7 +505,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000006",
@@ -584,7 +584,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000007",
@@ -732,7 +732,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000008",
@@ -789,7 +789,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000009",
@@ -846,7 +846,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000010",
@@ -1000,7 +1000,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000011",
@@ -1126,7 +1126,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000012",
@@ -1286,7 +1286,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000013",
@@ -1412,7 +1412,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000014",
@@ -1538,7 +1538,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000015",
@@ -1670,7 +1670,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000016",
@@ -1796,7 +1796,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000017",
@@ -1922,7 +1922,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000018",
@@ -2076,7 +2076,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000019",
@@ -2236,7 +2236,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000020",
@@ -2362,7 +2362,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000021",
@@ -2522,7 +2522,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000022",
@@ -2579,7 +2579,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000023",
@@ -2705,7 +2705,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000024",
@@ -2831,7 +2831,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000025",
@@ -2923,7 +2923,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000026",
@@ -3077,7 +3077,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000027",
@@ -3209,7 +3209,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000028",
@@ -3266,7 +3266,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000029",
@@ -3364,7 +3364,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000030",
@@ -3490,7 +3490,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000031",
@@ -3547,7 +3547,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000032",
@@ -3673,7 +3673,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000033",
@@ -3765,7 +3765,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000034",
@@ -3891,7 +3891,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000035",
@@ -4017,7 +4017,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000036",
@@ -4165,7 +4165,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000037",
@@ -4257,7 +4257,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000038",
@@ -4389,7 +4389,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000039",
@@ -4487,7 +4487,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000040",
@@ -4619,7 +4619,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000041",
@@ -4751,7 +4751,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000042",
@@ -4808,7 +4808,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000043",
@@ -4887,7 +4887,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000044",
@@ -4944,7 +4944,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000045",
@@ -5036,7 +5036,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000046",
@@ -5162,7 +5162,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000047",
@@ -5288,7 +5288,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000048",
@@ -5414,7 +5414,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000049",
@@ -5540,7 +5540,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000050",
@@ -5688,7 +5688,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000051",
@@ -5820,7 +5820,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000052",
@@ -5968,7 +5968,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000053",
@@ -6060,7 +6060,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000054",
@@ -6208,7 +6208,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000055",
@@ -6265,7 +6265,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000056",
@@ -6357,7 +6357,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000057",
@@ -6449,7 +6449,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000058",
@@ -6575,7 +6575,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000059",
@@ -6707,7 +6707,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000060",
@@ -6764,7 +6764,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000061",
@@ -6856,7 +6856,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000062",
@@ -6982,7 +6982,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000063",
@@ -7108,7 +7108,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000064",
@@ -7234,7 +7234,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000065",
@@ -7291,7 +7291,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000066",
@@ -7354,7 +7354,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000067",
@@ -7446,7 +7446,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000068",
@@ -7572,7 +7572,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000069",
@@ -7704,7 +7704,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000070",
@@ -7761,7 +7761,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000071",
@@ -7909,7 +7909,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000072",
@@ -8079,7 +8079,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000073",
@@ -8227,7 +8227,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000074",
@@ -8341,7 +8341,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000075",
@@ -8461,7 +8461,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000076",
@@ -8581,7 +8581,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000077",
@@ -8673,7 +8673,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000078",
@@ -8821,7 +8821,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000079",
@@ -8900,7 +8900,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000080",
@@ -9026,7 +9026,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000081",
@@ -9254,7 +9254,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000082",
@@ -9368,7 +9368,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000083",
@@ -9516,7 +9516,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000084",
@@ -9670,7 +9670,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000085",
@@ -9796,7 +9796,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000086",
@@ -9888,7 +9888,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000087",
@@ -10002,7 +10002,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000088",
@@ -10128,7 +10128,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000089",
@@ -10254,7 +10254,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000090",
@@ -10368,7 +10368,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000091",
@@ -10460,7 +10460,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000092",
@@ -10586,7 +10586,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000093",
@@ -10712,7 +10712,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000094",
@@ -10872,7 +10872,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000095",
@@ -10998,7 +10998,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000096",
@@ -11090,7 +11090,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000097",
@@ -11182,7 +11182,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000098",
@@ -11314,7 +11314,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000099",
@@ -11440,7 +11440,7 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     },
     {
         "_id": "Sp00000000000100",
@@ -11497,7 +11497,7 @@
             }
         ],
         "complexity": "Medium",
-        "randomStepRollFormula": "1d3"
+        "randomStepRollFormula": "1d3+1"
     },
     {
         "_id": "Sp00000000000101",
@@ -11589,7 +11589,7 @@
             }
         ],
         "complexity": "Hard",
-        "randomStepRollFormula": "1d6"
+        "randomStepRollFormula": "1d6+1"
     },
     {
         "_id": "Sp00000000000102",
@@ -11715,6 +11715,6 @@
             }
         ],
         "complexity": "Easy",
-        "randomStepRollFormula": "1d2"
+        "randomStepRollFormula": "1d2+1"
     }
 ]
