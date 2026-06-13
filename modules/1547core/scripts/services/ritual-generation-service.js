@@ -29,8 +29,9 @@ function buildFinalCastingStep(spell, props) {
     const options = (reqs ?? []).map((r) => {
         const skill = SCHOOL_SKILL[String(r?.School ?? "").trim()] ?? String(r?.School ?? "").trim();
         if (!skill) return null;
-        const level = (r?.Level !== undefined && r?.Level !== null && r?.Level !== "") ? ` (${r.Level})` : "";
-        return `${skill}${level}`;
+        const lvl = r?.Level;
+        if (lvl !== undefined && lvl !== null && lvl !== "") return `${skill} (${lvl}) (${lvl}d6)`;
+        return skill;
     }).filter(Boolean);
     return {
         id: "final-cast",

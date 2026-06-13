@@ -90,7 +90,7 @@ function ritualColumn(step) {
     const lines = [text];
 
     const skill = String(step.skillCheck ?? "").trim();
-    const diff = difficultyName(step.difficulty);
+    const diff = String(step.difficulty ?? "").trim(); // raw dice pool, e.g. "2d6"
     const item = String(step.requiredItem ?? "").trim();
     if (skill) lines.push(`Roll: ${skill}${diff ? ` (${diff})` : ""}`);
     else if (item && !diff) lines.push("Provide the component (no roll)");
