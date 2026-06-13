@@ -33,6 +33,32 @@ const PAGE_TYPE = "1547core.race";
 // v13 under 1547core; migrated to PAGE_TYPE on ready.
 const LEGACY_PAGE_TYPE = "raceboard.race";
 
+// Domain resolvers keyed by a board's `resolver.kind` ("ritual", "disease", …).
+// A consumer registers one via RaceBoard.registerResolver and the board's
+// resolve controls invoke it. Module-scoped so it survives the RaceBoard object
+// being (re)built in refreshRaceboardApi.
+const _resolvers = new Map();
+
+/** Register a domain resolver for a board kind. handler({outcome, resolver, options, app}). */
+function registerResolver(kind, handler) {
+    if (kind && typeof handler === "function") _resolvers.set(kind, handler);
+}
+
+/**
+ * Resolve a board's process as success/failure. Looks up the handler for the
+ * board's `resolver.kind` and invokes it. The app already set the banner state;
+ * this performs the domain side-effects (chat card, failure roll, apply).
+ */
+async function resolveBoard({ outcome, resolver, options = {}, app = null } = {}) {
+    const kind = resolver?.kind;
+    const handler = kind ? _resolvers.get(kind) : null;
+    if (!handler) {
+        ui.notifications?.warn(`1547 Core: no race-board resolver registered for '${kind ?? "?"}'.`);
+        return null;
+    }
+    return await handler({ outcome, resolver, options, app });
+}
+
 function registerSocket() {
     game.socket.on(`module.${LEGACY_NAMESPACE}`, (msg) => {
         if (!msg || typeof msg !== "object") return;
@@ -205,7 +231,11 @@ export function refreshRaceboardApi() {
         // e.g. { icon: "fa-user-doctor", tooltip: "Diagnose (easy)" }. Missing
         // entries fall back to numbered defaults (fa-1 "First", …). The header
         // shows as many columns as the widest track has boxes.
-        openState: (state, { show = false } = {}) => openRaceBoardApp({ state, show })
+        openState: (state, { show = false } = {}) => openRaceBoardApp({ state, show }),
+        // Register a domain resolver for a board kind, and resolve a board.
+        // A resolver is `({ outcome, resolver, options, app }) => Promise`.
+        registerResolver,
+        resolve: resolveBoard
     };
 
     // Safety net: if the Journal sidebar already rendered before our hooks

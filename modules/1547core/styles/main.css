@@ -3122,6 +3122,46 @@ a.enricher-1547::before {
   background: #36a85f;
 }
 
+.rb-btn-success {
+  color: #2e7d32;
+}
+.rb-btn-success:hover:not([disabled]) {
+  background: rgba(46, 125, 50, 0.12);
+}
+
+/* Resolution banner (success / failure outcome of the board's process). */
+.rb-resolution {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.4rem 0;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.rb-resolution.is-success {
+  color: #2e7d32;
+  background: rgba(46, 125, 50, 0.12);
+  border-color: rgba(46, 125, 50, 0.4);
+}
+.rb-resolution.is-failure {
+  color: #b3261e;
+  background: rgba(179, 38, 30, 0.12);
+  border-color: rgba(179, 38, 30, 0.4);
+}
+.rb-resolution .rb-resolution-label { flex: 1; }
+
+/* Resolve controls in the footer. */
+.rb-resolve {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.rb-resolve-label { opacity: 0.8; margin-right: 0.15rem; }
+.rb-resolve-dialog { display: flex; flex-direction: column; gap: 0.4rem; }
+.rb-resolve-opt { display: flex; align-items: center; gap: 0.4rem; }
+
 .rb-footer {
   display: flex;
   justify-content: space-between;

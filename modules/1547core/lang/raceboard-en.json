@@ -48,5 +48,18 @@
   "RACEBOARD.HeaderIconLabel": "Icon (FontAwesome class, e.g. fa-flask):",
   "RACEBOARD.HeaderTooltipLabel": "Tooltip:",
   "RACEBOARD.HeaderTooltipPlaceholder": "What this column means",
-  "RACEBOARD.HeaderEditHint": "Leave both blank to restore the numbered default."
+  "RACEBOARD.HeaderEditHint": "Leave both blank to restore the numbered default.",
+  "RACEBOARD.ResolveLabel": "Resolve:",
+  "RACEBOARD.ResolveSuccess": "Success",
+  "RACEBOARD.ResolveFailure": "Failure",
+  "RACEBOARD.ResolveSuccessTitle": "Resolve this board as a success",
+  "RACEBOARD.ResolveFailureTitle": "Resolve this board as a failure — rolls the failure table",
+  "RACEBOARD.ResolveClearTitle": "Clear the outcome and re-enable the resolve controls",
+  "RACEBOARD.ResolveDialogSuccess": "Resolve — Success",
+  "RACEBOARD.ResolveDialogFailure": "Resolve — Failure",
+  "RACEBOARD.ResolveConfirm": "Resolve",
+  "RACEBOARD.AnnounceToPlayers": "Announce to players (chat card)",
+  "RACEBOARD.ApplyEffects": "Apply effects to the selected token",
+  "RACEBOARD.ResolvedSuccess": "Succeeded",
+  "RACEBOARD.ResolvedFailure": "Failed"
 }

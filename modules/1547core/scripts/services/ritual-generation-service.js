@@ -172,12 +172,54 @@ function extractConstraintList(steps, key) {
         .filter((value, index, arr) => arr.indexOf(value) === index);
 }
 
-function pickDistinctEntries(entries, count) {
-    const pool = Array.isArray(entries) ? [...entries] : [];
+function rollDicePoolSum(parsed) {
+    let total = 0;
+    for (let index = 0; index < parsed.count; index += 1) {
+        total += Math.floor(Math.random() * parsed.faces) + 1;
+    }
+    return total + (parsed.mod ?? 0);
+}
+
+function entryForRoll(pool, sum) {
+    return pool.find((entry) => sum >= entry.pickRange[0] && sum <= entry.pickRange[1]) ?? null;
+}
+
+// Big d6-pool draw: roll the table's Xd6 sum (pickFormula) and read the entry
+// whose `pickRange` band contains it, so common steps on the heavy central
+// rolls come up often and rare steps on the tails seldom. Mirrors the compiled
+// RollTable exactly. Draws are distinct (a duplicate roll is re-rolled).
+function pickDistinctEntries(entries, count, pickFormula) {
+    const all = Array.isArray(entries) ? entries : [];
+    const pool = all.filter((entry) => Array.isArray(entry?.pickRange) && entry.pickRange.length === 2);
+    const parsed = parseRandomStepRollFormula(pickFormula);
+    const limit = Math.min(count, pool.length || all.length);
+
+    // Fallback to a uniform draw if the table has no Xd6 ranges/formula.
+    if (!parsed || !pool.length) {
+        const rest = [...all];
+        const picked = [];
+        while (rest.length > 0 && picked.length < limit) {
+            picked.push(rest.splice(Math.floor(Math.random() * rest.length), 1)[0]);
+        }
+        return picked;
+    }
+
     const picked = [];
-    while (pool.length > 0 && picked.length < count) {
-        const pickIndex = Math.floor(Math.random() * pool.length);
-        picked.push(pool.splice(pickIndex, 1)[0]);
+    const used = new Set();
+    let guard = 0;
+    while (picked.length < limit && guard < 10000) {
+        guard += 1;
+        const entry = entryForRoll(pool, rollDicePoolSum(parsed));
+        if (!entry || used.has(entry)) continue;
+        used.add(entry);
+        picked.push(entry);
+    }
+    // Pathological exhaustion: top up with any remaining entries.
+    if (picked.length < limit) {
+        for (const entry of pool) {
+            if (picked.length >= limit) break;
+            if (!used.has(entry)) { used.add(entry); picked.push(entry); }
+        }
     }
     return picked;
 }
@@ -220,11 +262,11 @@ export async function generateRitualStepsFromSpell(spell) {
         if (!drawTable) {
             throw new Error(`Could not resolve ritual step roll table '${tableRef}'.`);
         }
-        const sourceEntries = Array.isArray(drawTable.flags?.[SOURCE_FLAG_SCOPE]?.sourceData?.entries)
-            ? drawTable.flags[SOURCE_FLAG_SCOPE].sourceData.entries
-            : [];
+        const tableSource = drawTable.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? {};
+        const sourceEntries = Array.isArray(tableSource.entries) ? tableSource.entries : [];
+        const pickFormula = String(tableSource.pickFormula ?? "").trim();
         drawCount = rollFormulaCount(drawFormula);
-        rolledSteps = pickDistinctEntries(sourceEntries, drawCount).map(normalizeRandomStep);
+        rolledSteps = pickDistinctEntries(sourceEntries, drawCount, pickFormula).map(normalizeRandomStep);
         rolledSteps = dedupeExclusiveSteps(rolledSteps);
     }
 

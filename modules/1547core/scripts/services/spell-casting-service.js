@@ -252,6 +252,62 @@ async function rollSpellFailure(spell) {
     };
 }
 
+function readSpellSuccessDescription(spell) {
+    const sd = spell?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? spell?.flags?.[MODULE_ID]?.sourceData ?? {};
+    const effects = Array.isArray(sd?.successEffects) ? sd.successEffects : [];
+    const notes = effects
+        .map((e) => String(e?.PayloadNotes ?? e?.Description ?? "").trim())
+        .filter(Boolean);
+    return notes.length ? notes.join(" • ") : "The working takes effect as described in the spell.";
+}
+
+async function postRitualOutcomeCard(spell, sourceToken, isSuccess, detailText, { announce = true } = {}) {
+    const speaker = ChatMessage.getSpeaker({ actor: sourceToken?.actor ?? spell.parent ?? null, token: sourceToken ?? null });
+    const icon = isSuccess ? "fa-circle-check" : "fa-circle-xmark";
+    const color = isSuccess ? "#2e7d32" : "#b3261e";
+    const heading = isSuccess ? "Ritual Succeeded" : "Ritual Failed";
+    const detail = String(detailText ?? "").trim();
+    const content = `<div class="rb-outcome-card">
+      <h3 style="margin:0 0 .25rem;color:${color};"><i class="fa-solid ${icon}"></i> ${spell.name} — ${heading}</h3>
+      ${detail ? `<p style="margin:.15rem 0;">${detail}</p>` : ""}
+    </div>`;
+    const data = { speaker, flavor: `${spell.name} — Ritual ${isSuccess ? "Success" : "Failure"}`, content };
+    if (!announce) data.whisper = ChatMessage.getWhisperRecipients("GM").map((u) => u.id);
+    await ChatMessage.create(data);
+}
+
+/**
+ * Force a ritual's terminal outcome from a completed race board. The board IS
+ * the requirement-satisfaction, so casting requirements are NOT re-evaluated.
+ *  - failure: roll the spell's failure table (3d6) and apply its failure effect.
+ *  - success: optionally apply the spell's usage effects to the selected token.
+ * Posts a chat card (whispered to the GM when `announce` is false).
+ */
+export async function effectuateSpellOutcome(spell, { outcome, apply = false, announce = true, sourceToken = null } = {}) {
+    if (!isSpellItem(spell)) throw new Error("effectuateSpellOutcome requires a spell item.");
+    const token = resolveSourceTokenForSpell(spell, sourceToken);
+
+    if (outcome === "failure") {
+        const failure = await rollSpellFailure(spell);
+        await postRitualOutcomeCard(spell, token, false, failure.text, { announce });
+        return { outcome: "failure", failure };
+    }
+
+    let applied = null;
+    let detail = readSpellSuccessDescription(spell);
+    if (apply) {
+        const moduleApi = game.modules.get(MODULE_ID)?.api ?? {};
+        if (token?.actor && typeof moduleApi.resolveUsageEffectsFromCarrier === "function") {
+            applied = await moduleApi.resolveUsageEffectsFromCarrier(spell, { sourceToken: token });
+            detail = `Effects applied to ${token.actor.name}. ${detail}`;
+        } else {
+            detail = `No source token selected — effects not applied. ${detail}`;
+        }
+    }
+    await postRitualOutcomeCard(spell, token, true, detail, { announce });
+    return { outcome: "success", applied };
+}
+
 function getPrimaryStatFormula(actor, statLabel, bonusDice = 0) {
     const props = actor?.system?.props ?? {};
     const safeLabel = String(statLabel ?? "").trim();
@@ -708,4 +764,5 @@ export function registerSpellCastingService() {
     }
     moduleApi.api = moduleApi.api ?? {};
     moduleApi.api.castSpellItem = castSpellItem;
+    moduleApi.api.effectuateSpellOutcome = effectuateSpellOutcome;
 }

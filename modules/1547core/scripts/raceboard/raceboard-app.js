@@ -2,7 +2,8 @@ import {
   RaceBoardData, MIN_TRACKS, MAX_TRACKS, MIN_BOXES, DEFAULT_BOXES,
   ALARM_MAX_LEVEL, defaultAlarm, buildAlarmContext,
   VISIBILITY_HIDDEN, VISIBILITY_ALL, VISIBILITY_MAX, VISIBILITY_DEFAULT,
-  normalizeVisibility, buildVisibilityOptions, buildHeaderCells
+  normalizeVisibility, buildVisibilityOptions, buildHeaderCells,
+  RESOLUTION_SUCCESS, RESOLUTION_FAILURE, buildResolutionContext
 } from "./raceboard-data.js";
 import { announceWinner } from "./winner-splash.js";
 
@@ -35,7 +36,9 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
         announcedWinners: [],
         visibility: VISIBILITY_DEFAULT,
         columns: [],
-        alarm: defaultAlarm()
+        alarm: defaultAlarm(),
+        resolution: { state: 0 },
+        resolver: null
       };
     }
   }
@@ -64,7 +67,10 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       "alarm-remove": function(event, target) { return this._onAlarmRemove(event, target); },
       "alarm-up": function(event, target) { return this._onAlarmUp(event, target); },
       "set-visibility": function(event, target) { return this._onSetVisibility(event, target); },
-      "edit-header": function(event, target) { return this._onEditHeader(event, target); }
+      "edit-header": function(event, target) { return this._onEditHeader(event, target); },
+      "resolve-success": function() { return this._onResolve("success"); },
+      "resolve-failure": function() { return this._onResolve("failure"); },
+      "resolve-clear": function() { return this._onResolveClear(); }
     }
   };
 
@@ -83,7 +89,9 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       announcedWinners: doc.system.announcedWinners ?? [],
       visibility: doc.system.visibility ?? VISIBILITY_DEFAULT,
       columns: doc.system.columns ?? [],
-      alarm: doc.system.alarm ?? defaultAlarm()
+      alarm: doc.system.alarm ?? defaultAlarm(),
+      resolution: doc.system.resolution ?? { state: 0 },
+      resolver: doc.system.resolver ?? null
     };
     return this._state;
   }
@@ -121,9 +129,13 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const alarm = buildAlarmContext(data.alarm, { showExtras, canControl: this.canEdit });
     const maxBoxes = data.rows.reduce((m, r) => Math.max(m, r.total ?? 0), 0);
     const headerCells = buildHeaderCells(data.columns, maxBoxes);
+    const resolution = buildResolutionContext(data.resolution, {
+      canResolve: this.canEdit && !!data.resolver
+    });
     return {
       rows,
       alarm,
+      resolution,
       header: { show: headerCells.length > 0, cells: headerCells },
       visibility,
       visibilityOptions: buildVisibilityOptions(visibility),
@@ -148,7 +160,9 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
         "system.announcedWinners": data.announcedWinners,
         "system.visibility": normalizeVisibility(data.visibility),
         "system.columns": data.columns ?? [],
-        "system.alarm": data.alarm ?? defaultAlarm()
+        "system.alarm": data.alarm ?? defaultAlarm(),
+        "system.resolution": data.resolution ?? { state: 0 },
+        "system.resolver": data.resolver ?? null
       });
     }
     this._checkForWinners();
@@ -331,6 +345,50 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     });
   }
 
+  /**
+   * Resolve the board's process as success/failure. Sets the resolution state
+   * (which broadcasts a banner to players), then hands off to the registered
+   * domain resolver (e.g. the ritual resolver rolls the failure table / applies
+   * the spell). A small dialog gathers the per-resolve toggles.
+   */
+  async _onResolve(outcome) {
+    if (!this.canEdit) return;
+    const resolver = this.data.resolver;
+    if (!resolver) return;
+    const isSuccess = outcome === "success";
+    const applyRow = isSuccess
+      ? `<label class="rb-resolve-opt"><input type="checkbox" name="apply" /> ${game.i18n.localize("RACEBOARD.ApplyEffects")}</label>`
+      : "";
+    const result = await DialogV2.prompt({
+      window: { title: game.i18n.localize(isSuccess ? "RACEBOARD.ResolveDialogSuccess" : "RACEBOARD.ResolveDialogFailure") },
+      content: `<div class="rb-resolve-dialog">
+        <label class="rb-resolve-opt"><input type="checkbox" name="announce" checked /> ${game.i18n.localize("RACEBOARD.AnnounceToPlayers")}</label>
+        ${applyRow}
+      </div>`,
+      ok: {
+        label: game.i18n.localize("RACEBOARD.ResolveConfirm"),
+        callback: (event, button) => ({
+          announce: !!button.form.elements.announce?.checked,
+          apply: isSuccess ? !!button.form.elements.apply?.checked : false
+        })
+      }
+    });
+    if (!result) return;
+    await this._updateData(d => { d.resolution = { state: isSuccess ? RESOLUTION_SUCCESS : RESOLUTION_FAILURE }; });
+    try {
+      await globalThis.RaceBoard?.resolve?.({ outcome, resolver, options: result, app: this });
+    } catch (err) {
+      console.error("1547core | raceboard resolve failed", err);
+      ui.notifications?.error(`1547 Core: resolution failed. ${err.message}`);
+    }
+  }
+
+  /** Clear a resolution, re-enabling the resolve controls. */
+  async _onResolveClear() {
+    if (!this.canEdit) return;
+    await this._updateData(d => { d.resolution = { state: 0 }; });
+  }
+
   async _onRowAddBox(event, target) {
     if (!this.canEdit) return;
     const rowIdx = Number(target.dataset.row);
@@ -470,7 +528,9 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
         announcedWinners: this._state.announcedWinners,
         visibility: normalizeVisibility(this._state.visibility),
         columns: this._state.columns ?? [],
-        alarm: this._state.alarm ?? defaultAlarm()
+        alarm: this._state.alarm ?? defaultAlarm(),
+        resolution: this._state.resolution ?? { state: 0 },
+        resolver: this._state.resolver ?? null
       }
     }]);
 

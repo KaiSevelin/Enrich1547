@@ -102,6 +102,37 @@ export function buildAlarmContext(alarm, { showExtras, canControl }) {
   };
 }
 
+// Board resolution outcome. 0 = unresolved, 1 = success, 2 = failure. Domain
+// meaning (what success/failure *does*) is supplied by a registered resolver
+// keyed off the board's `resolver.kind` — see raceboard-service.
+export const RESOLUTION_NONE = 0;
+export const RESOLUTION_SUCCESS = 1;
+export const RESOLUTION_FAILURE = 2;
+
+export const RESOLUTION_STAGES = {
+  [RESOLUTION_SUCCESS]: { icon: "fa-circle-check", labelKey: "RACEBOARD.ResolvedSuccess", cssClass: "is-success" },
+  [RESOLUTION_FAILURE]: { icon: "fa-circle-xmark", labelKey: "RACEBOARD.ResolvedFailure", cssClass: "is-failure" }
+};
+
+/**
+ * Build the render context for the resolution banner / controls. `canResolve`
+ * is true for a GM on a board that carries a resolver (so the resolve buttons
+ * show). The banner itself renders for everyone once a state is set.
+ */
+export function buildResolutionContext(resolution, { canResolve } = {}) {
+  const state = Number(resolution?.state ?? 0) || 0;
+  const stage = RESOLUTION_STAGES[state] ?? null;
+  return {
+    state,
+    resolved: !!stage,
+    show: !!stage,
+    icon: stage?.icon ?? "",
+    label: stage ? game.i18n.localize(stage.labelKey) : "",
+    cssClass: stage?.cssClass ?? "",
+    canResolve: !!canResolve
+  };
+}
+
 export class RaceBoardData extends TypeDataModel {
   static defineSchema() {
     return {
@@ -144,7 +175,15 @@ export class RaceBoardData extends TypeDataModel {
       alarm: new fields.SchemaField({
         enabled: new fields.BooleanField({ initial: false }),
         level: new fields.NumberField({ required: true, integer: true, min: 0, initial: 0 })
-      })
+      }),
+      // Terminal outcome of the board's process (ritual cast, disease cure, …).
+      // state: 0 none / 1 success / 2 failure. See RESOLUTION_* constants.
+      resolution: new fields.SchemaField({
+        state: new fields.NumberField({ required: true, integer: true, min: 0, max: 2, initial: 0 })
+      }),
+      // Free-form domain hookup, e.g. { kind: "ritual", spellName, spellUuid }.
+      // A resolver registered for `kind` handles success/failure when resolved.
+      resolver: new fields.ObjectField({ required: false, nullable: true, initial: null })
     };
   }
 

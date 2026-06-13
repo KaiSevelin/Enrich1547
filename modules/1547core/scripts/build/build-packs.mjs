@@ -1305,22 +1305,33 @@ function buildBoostRollTableDoc(table) {
 function buildRitualStepRollTableDoc(table) {
     const normalized = normalizeSourceEntry(table, "ritualStepRollTable", "RollTable");
     const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
-    const formula = `1d${Math.max(entries.length, 1)}`;
-    const results = entries.map((entry, index) => ({
-        _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
-        type: TEXT_RESULT_TYPE,
-        text: entry.stepText ?? `Ritual step ${index + 1}`,
-        img: "icons/svg/d20-grey.svg",
-        weight: 1,
-        range: [index + 1, index + 1],
-        drawn: false,
-        flags: { [SOURCE_FLAG_SCOPE]: { ritualStepEntry: deepClone(entry) } }
-    }));
+    // Big d6-pool pick: roll the table's Xd6 sum and read the matching band.
+    // Entries are tent-ordered by rarity (common steps on the heavy central
+    // totals, rare steps on the wide low-probability tails). Each entry's
+    // `pickRange` is authored in the table JSON (single source of truth shared
+    // with ritual generation's weighted draw).
+    const formula = String(normalized.pickFormula ?? "").trim() || `1d${Math.max(entries.length, 1)}`;
+    const results = entries.map((entry, index) => {
+        const range = Array.isArray(entry.pickRange) && entry.pickRange.length === 2
+            ? [Number(entry.pickRange[0]), Number(entry.pickRange[1])]
+            : [index + 1, index + 1];
+        return {
+            _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
+            type: TEXT_RESULT_TYPE,
+            text: entry.stepText ?? `Ritual step ${index + 1}`,
+            img: "icons/svg/d20-grey.svg",
+            weight: range[1] - range[0] + 1,
+            range,
+            drawn: false,
+            flags: { [SOURCE_FLAG_SCOPE]: { ritualStepEntry: deepClone(entry) } }
+        };
+    });
     const desc = [
         `<p><strong>Complexity:</strong> ${normalized.complexity ?? "Medium"}</p>`,
         normalized.drawFormula ? `<p><strong>Random ritual step draws:</strong> ${normalized.drawFormula}</p>` : "",
+        `<p><strong>Step pick roll:</strong> ${formula}</p>`,
         `<p><strong>Available entries:</strong> ${entries.length}</p>`,
-        "<p>This table is rolled to add variable ritual requirements after a spell's static ritual steps have been applied.</p>"
+        "<p>Roll the step-pick formula and read the matching band; common steps sit on the heavy central rolls, rare steps on the tails.</p>"
     ].filter(Boolean).join("");
     return rollTableDoc({
         _id: normalized._id, name: normalized.name, description: desc, results, formula,

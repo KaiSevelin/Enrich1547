@@ -139,7 +139,9 @@ async function openRitualBoard(spellOrName, options = {}) {
     const state = {
         rows: [{ label, filled: 0, total: steps.length }],
         announcedWinners: [],
-        columns
+        columns,
+        resolver: { kind: "ritual", spellName: spell.name, spellUuid: spell.uuid },
+        resolution: { state: 0 }
     };
     globalThis.RaceBoard?.openState?.(state, { show: true });
     return { spell, steps, total: steps.length, columns };
@@ -170,13 +172,59 @@ async function openRitualBoardFromRitual(ritualOrUuid) {
         return null;
     }
     const columns = steps.map(ritualColumn);
+    const flags = ritual.flags?.[SOURCE_FLAG_SCOPE] ?? {};
     const state = {
         rows: [{ label: ritual.name, filled: 0, total: steps.length }],
         announcedWinners: [],
-        columns
+        columns,
+        resolver: {
+            kind: "ritual",
+            spellName: flags.generatedFromSpellName ?? ritual.name,
+            spellId: flags.generatedFromSpellId ?? null
+        },
+        resolution: { state: 0 }
     };
     globalThis.RaceBoard?.openState?.(state, { show: true });
     return { ritual, steps, total: steps.length };
+}
+
+/* -------------------------------------------------- */
+/*  Board resolution (success / failure)              */
+/*  Registered as the "ritual" RaceBoard resolver.     */
+/* -------------------------------------------------- */
+
+async function resolveSpellForResolver(resolver) {
+    if (resolver?.spellUuid) {
+        const d = await fromUuid(resolver.spellUuid).catch(() => null);
+        if (isSpellItem(d)) return d;
+    }
+    if (resolver?.spellId) {
+        const w = game.items?.get(resolver.spellId);
+        if (isSpellItem(w)) return w;
+    }
+    return await resolveSpell(resolver?.spellName);
+}
+
+async function ritualResolver({ outcome, resolver, options = {} }) {
+    const spell = await resolveSpellForResolver(resolver);
+    if (!spell) {
+        ui.notifications?.warn("1547 Core: couldn't resolve the spell for this ritual board.");
+        return null;
+    }
+    const api = game.modules.get(MODULE_ID)?.api ?? {};
+    if (typeof api.effectuateSpellOutcome !== "function") {
+        ui.notifications?.warn("1547 Core: spell outcome API is unavailable.");
+        return null;
+    }
+    const sourceToken = canvas?.tokens?.controlled?.[0] ?? null;
+    const result = await api.effectuateSpellOutcome(spell, {
+        outcome,
+        apply: !!options.apply,
+        announce: options.announce !== false,
+        sourceToken
+    });
+    ui.notifications?.info(`1547 Core: ritual resolved as ${outcome === "failure" ? "failure" : "success"}.`);
+    return result;
 }
 
 /* -------------------------------------------------- */
@@ -300,6 +348,10 @@ function registerRitualContextMenu() {
 
 export function registerRitualExecutionService() {
     registerRitualContextMenu();
+
+    // RaceBoard.registerResolver is only attached at `ready` (refreshRaceboardApi),
+    // which runs before this ready hook, so the global is available here.
+    Hooks.once("ready", () => globalThis.RaceBoard?.registerResolver?.("ritual", ritualResolver));
 
     const moduleApi = game.modules.get(MODULE_ID);
     if (moduleApi) {

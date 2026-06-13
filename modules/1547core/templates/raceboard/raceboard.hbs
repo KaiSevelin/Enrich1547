@@ -20,6 +20,19 @@
   {{/if}}
 </header>
 
+{{#if resolution.show}}
+  <div class="rb-resolution {{resolution.cssClass}}">
+    <i class="fa-solid {{resolution.icon}}"></i>
+    <span class="rb-resolution-label">{{resolution.label}}</span>
+    {{#if resolution.canResolve}}
+      <button type="button" class="rb-btn rb-btn-icon" data-action="resolve-clear"
+              title="{{localize "RACEBOARD.ResolveClearTitle"}}">
+        <i class="fa-solid fa-rotate-left"></i>
+      </button>
+    {{/if}}
+  </div>
+{{/if}}
+
 {{#if alarm.show}}
   <div class="rb-alarm" data-alarm-level="{{alarm.level}}">
     <span class="rb-alarm-icon"
@@ -122,6 +135,20 @@
         </button>
       {{/each}}
     </div>
+
+    {{#if resolution.canResolve}}{{#unless resolution.resolved}}
+      <div class="rb-resolve">
+        <span class="rb-resolve-label">{{localize "RACEBOARD.ResolveLabel"}}</span>
+        <button type="button" class="rb-btn rb-btn-success" data-action="resolve-success"
+                title="{{localize "RACEBOARD.ResolveSuccessTitle"}}">
+          <i class="fa-solid fa-circle-check"></i> {{localize "RACEBOARD.ResolveSuccess"}}
+        </button>
+        <button type="button" class="rb-btn rb-btn-danger" data-action="resolve-failure"
+                title="{{localize "RACEBOARD.ResolveFailureTitle"}}">
+          <i class="fa-solid fa-circle-xmark"></i> {{localize "RACEBOARD.ResolveFailure"}}
+        </button>
+      </div>
+    {{/unless}}{{/if}}
 
     <div class="rb-footer-right">
       {{#if isEphemeral}}
