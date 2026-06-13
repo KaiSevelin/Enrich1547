@@ -1,4 +1,4 @@
-import { EventBus } from "./event-bus.js";
+import { sharedEventBus } from "./event-bus.js";
 
 export const COMBAT_EVENTS = {
     TURN_STARTED: "combat:turn-started",
@@ -14,7 +14,10 @@ export const COMBAT_EVENTS = {
     ACTION_COMMITTED: "combat:action-committed",
 };
 
-export const combatEventBus = new EventBus();
+// Shares the single app-wide bus (see event-bus.js) so combat events can drive
+// cross-domain reactions and vice versa. The combatEventBus name + the helpers
+// below are kept as a back-compat facade — no combat call sites change.
+export const combatEventBus = sharedEventBus;
 
 export function onCombatEvent(type, handler, options = {}) {
     return combatEventBus.on(type, handler, options);

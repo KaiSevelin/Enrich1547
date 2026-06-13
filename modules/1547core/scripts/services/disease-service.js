@@ -307,7 +307,18 @@ async function openTreatmentBoard(actorOrToken, afflictionOrId) {
         rows: [{ label, filled: 0, total: boxes.length }],
         announcedWinners: [],
         // Label each box with the treatment step it represents (icon + tooltip).
-        columns: boxes.map(cureColumn)
+        columns: boxes.map(cureColumn),
+        // Resolve controls: Success cures (removes) the affliction, Failure
+        // announces that it persists. Handled by the "disease" resolver below.
+        resolver: {
+            kind: "disease",
+            afflictionUuid: affliction.uuid,
+            afflictionName: affliction.name,
+            actorUuid: actor?.uuid ?? null,
+            phase,
+            applyLabel: "Remove the cured affliction from the patient"
+        },
+        resolution: { state: 0 }
     };
     globalThis.RaceBoard?.openState?.(state, { show: true });
 
@@ -321,6 +332,53 @@ async function openTreatmentBoard(actorOrToken, afflictionOrId) {
         `<ol>${rowHtml}</ol>`
     );
     return { boxes, total: boxes.length };
+}
+
+/* ---------------------------------------- */
+/*  Treatment-board resolution (cure / fail) */
+/* ---------------------------------------- */
+
+async function postTreatmentOutcome(actor, diseaseName, isCured, detail, announce) {
+    const speaker = ChatMessage.getSpeaker({ actor: actor ?? null });
+    const icon = isCured ? "fa-heart-pulse" : "fa-circle-xmark";
+    const color = isCured ? "#2e7d32" : "#b3261e";
+    const heading = isCured ? "Cured" : "Treatment Failed";
+    const content = `<div class="rb-outcome-card">`
+        + `<h3 style="margin:0 0 .25rem;color:${color};"><i class="fa-solid ${icon}"></i> ${escapeHtml(diseaseName)} — ${heading}</h3>`
+        + (detail ? `<p style="margin:.15rem 0;">${escapeHtml(detail)}</p>` : "")
+        + `</div>`;
+    const data = { speaker, flavor: `Disease — ${diseaseName} (${heading})`, content };
+    if (!announce) data.whisper = ChatMessage.getWhisperRecipients("GM").map((u) => u.id);
+    await ChatMessage.create(data);
+}
+
+// RaceBoard "disease" resolver: invoked when the GM resolves a treatment board.
+//   success → optionally remove (cure) the affliction, post a card, emit disease:cured
+//   failure → announce the affliction persists
+async function diseaseResolver({ outcome, resolver, options = {} }) {
+    const affliction = resolver?.afflictionUuid ? await fromUuid(resolver.afflictionUuid).catch(() => null) : null;
+    const actor = affliction?.parent
+        ?? (resolver?.actorUuid ? await fromUuid(resolver.actorUuid).catch(() => null) : null);
+    const name = resolver?.afflictionName ?? affliction?.name ?? "the affliction";
+    const announce = options.announce !== false;
+
+    if (outcome === "failure") {
+        await postTreatmentOutcome(actor, name, false, "The treatment fails — the affliction persists.", announce);
+        return { outcome: "failure" };
+    }
+
+    let detail = "The patient recovers.";
+    if (options.apply) {
+        if (affliction) {
+            await affliction.delete();
+            detail = `${name} is cured and cleared from ${actor?.name ?? "the patient"}.`;
+        } else {
+            detail = "Could not find the affliction to remove — clear it manually.";
+        }
+    }
+    await postTreatmentOutcome(actor, name, true, detail, announce);
+    await emitDomainEvent(DOMAIN_EVENTS.DISEASE_CURED, { actor, diseaseName: name, affliction: affliction ?? null });
+    return { outcome: "success" };
 }
 
 /* ---------------------------------------- */
@@ -355,6 +413,16 @@ function addTreatmentHeaderButton(app, buttons) {
 export function registerDiseaseService() {
     Hooks.on("getItemSheetHeaderButtons", (app, buttons) => {
         addTreatmentHeaderButton(app, buttons);
+    });
+
+    // Register the treatment-board resolver once RaceBoard's API is up (ready).
+    Hooks.once("ready", () => {
+        const rb = globalThis.RaceBoard;
+        if (typeof rb?.registerResolver === "function") {
+            rb.registerResolver("disease", diseaseResolver);
+        } else {
+            console.warn(`${MODULE_ID} | RaceBoard.registerResolver unavailable at ready — disease cure resolution is disabled.`);
+        }
     });
 
     const api = { rollContraction, contractDisease, advanceDiseasePhase, openTreatmentBoard, resolveDisease };

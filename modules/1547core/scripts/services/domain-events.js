@@ -4,7 +4,7 @@
 // subscribe. IN-PROCESS / per-client: use this to wire reactions within a
 // client, NOT to sync other clients (that's the race-board socket's job).
 
-import { EventBus } from "./event-bus.js";
+import { sharedEventBus } from "./event-bus.js";
 
 export const DOMAIN_EVENTS = {
     SPELL_SUCCEEDED: "spell:succeeded",
@@ -12,12 +12,13 @@ export const DOMAIN_EVENTS = {
     RITUAL_RESOLVED: "ritual:resolved",
     DISEASE_CONTRACTED: "disease:contracted",
     DISEASE_ADVANCED: "disease:advanced",
+    DISEASE_CURED: "disease:cured",
     // GM-driven (alarm is never automated); emitted for future consumers — no
     // listener today.
     BOARD_ALARM_CHANGED: "board:alarm-changed",
 };
 
-export const domainEventBus = new EventBus();
+export const domainEventBus = sharedEventBus;
 
 export function onDomainEvent(type, handler, options = {}) {
     return domainEventBus.on(type, handler, options);

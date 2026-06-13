@@ -365,8 +365,9 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const resolver = this.data.resolver;
     if (!resolver) return;
     const isSuccess = outcome === "success";
+    const applyLabel = resolver.applyLabel ?? game.i18n.localize("RACEBOARD.ApplyEffects");
     const applyRow = isSuccess
-      ? `<label class="rb-resolve-opt"><input type="checkbox" name="apply" /> ${game.i18n.localize("RACEBOARD.ApplyEffects")}</label>`
+      ? `<label class="rb-resolve-opt"><input type="checkbox" name="apply" /> ${foundry.utils.escapeHTML(applyLabel)}</label>`
       : "";
     const result = await DialogV2.prompt({
       window: { title: game.i18n.localize(isSuccess ? "RACEBOARD.ResolveDialogSuccess" : "RACEBOARD.ResolveDialogFailure") },

@@ -13,6 +13,22 @@ export function deepClone(value) {
     return JSON.parse(JSON.stringify(value));
 }
 
+// Recursive object merge (source wins; arrays/primitives overwrite, nested
+// plain objects merge). Node-safe — used in the build where foundry.utils
+// isn't available, and shared so seeding merges identically.
+export function mergeDeep(target, source) {
+    const out = { ...(target ?? {}) };
+    for (const [key, value] of Object.entries(source ?? {})) {
+        if (value && typeof value === "object" && !Array.isArray(value)
+            && out[key] && typeof out[key] === "object" && !Array.isArray(out[key])) {
+            out[key] = mergeDeep(out[key], value);
+        } else {
+            out[key] = deepClone(value);
+        }
+    }
+    return out;
+}
+
 export function isValidFoundryId(value) {
     return VALID_FOUNDRY_ID.test(String(value ?? ""));
 }

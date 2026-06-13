@@ -103,3 +103,9 @@ export class EventBus {
         this.listeners.delete(String(type).trim());
     }
 }
+
+// The single app-wide bus instance. Both the combat events facade
+// (combatEventBus) and the domain events facade (domainEventBus) point at this,
+// so events from any domain ("combat:*", "spell:*", "disease:*", …) share one
+// bus and can drive cross-domain reactions. In-process / per-client.
+export const sharedEventBus = new EventBus();

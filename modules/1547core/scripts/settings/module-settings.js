@@ -1,6 +1,8 @@
 
-import { deepClone, ACTOR_TYPES, isValidFoundryId, deriveFoundryIdFromText, normalizeTraitKey, normalizeTypeList, normalizeSourceEntry, mergeDefinedProps, cloneTemplateSystem } from "../lib/build-helpers.mjs";
+import { deepClone, ACTOR_TYPES, isValidFoundryId, deriveFoundryIdFromText, normalizeTraitKey, normalizeTypeList, normalizeSourceEntry, mergeDefinedProps } from "../lib/build-helpers.mjs";
 import { buildAmmoProps, buildArmorProps, buildChangeProps, buildChangeSetProps, buildDiseaseProps, buildMonsterMagicProps, buildPactProps, buildRequirementProps, buildSpellProps, buildSupernaturalMarkProps, buildWeaponModifierProps, buildWeaponProps, buildManeuverProps } from "../lib/prop-builders.mjs";
+import { buildBoostResults, ritualStepFormula, ritualStepDescription, buildRitualStepResults, buildBellCurveResults, buildPactResults } from "../lib/rolltable-results.mjs";
+import { csbItemBody, mergeActorParts } from "../lib/doc-builders.mjs";
 ﻿import { buildOnHitEffectItemDoc } from "../services/weapon-modifier-attachment-service.js";
 
 const MODULE_ID = "1547core";
@@ -251,18 +253,6 @@ function buildWorldMonsterMagicEffectDocs(monsterMagicSources, monsterMagicDocs,
     return out;
 }
 
-function buildRitualStepRollTableDescription(table) {
-    const complexity = table.complexity ?? "Medium";
-    const drawFormula = table.drawFormula ?? "";
-    const count = Array.isArray(table.entries) ? table.entries.length : 0;
-    return [
-        `<p><strong>Complexity:</strong> ${complexity}</p>`,
-        drawFormula ? `<p><strong>Random ritual step draws:</strong> ${drawFormula}</p>` : "",
-        `<p><strong>Available entries:</strong> ${count}</p>`,
-        "<p>This table is rolled to add variable ritual requirements after a spell's static ritual steps have been applied.</p>"
-    ].filter(Boolean).join("");
-}
-
 function buildSpellFailureRollTableDescription(table) {
     const severity = table.severity ?? "Minor";
     const count = Array.isArray(table.entries) ? table.entries.length : 0;
@@ -285,37 +275,15 @@ function buildSpellSupportRollTableDescription(table) {
 
 function buildRitualStepRollTableDoc(table, folderId, folderHint = null) {
     const normalized = normalizeSourceEntry(table, "ritualStepRollTable", "RollTable");
-    const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
-    // Big d6-pool pick: roll the table's Xd6 sum and read the matching band.
-    // Mirrors build-packs so seeded and compiled tables are identical. Entry
-    // pickRange/pickFormula are authored in the table JSON (single source).
-    const tableFormula = String(normalized.pickFormula ?? "").trim() || `1d${Math.max(entries.length, 1)}`;
-    const textResultType = globalThis.CONST?.TABLE_RESULT_TYPES?.TEXT ?? 0;
-
-    const results = entries.map((entry, index) => {
-        const range = Array.isArray(entry.pickRange) && entry.pickRange.length === 2
-            ? [Number(entry.pickRange[0]), Number(entry.pickRange[1])]
-            : [index + 1, index + 1];
-        return {
-            _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
-            type: textResultType,
-            text: entry.stepText ?? `Ritual step ${index + 1}`,
-            img: "icons/svg/d20-grey.svg",
-            weight: range[1] - range[0] + 1,
-            range,
-            drawn: false,
-            flags: {
-                [SOURCE_FLAG_SCOPE]: {
-                    ritualStepEntry: foundry.utils.deepClone(entry)
-                }
-            }
-        };
-    });
+    // Shared with build-packs (single source of truth) so seeded and compiled
+    // ritual tables — formula, results, and description — are identical.
+    const tableFormula = ritualStepFormula(normalized);
+    const results = buildRitualStepResults(normalized);
 
     return {
         _id: normalized._id,
         name: normalized.name,
-        description: buildRitualStepRollTableDescription(normalized),
+        description: ritualStepDescription(normalized, tableFormula),
         results,
         formula: tableFormula,
         replacement: false,
@@ -337,34 +305,8 @@ function buildRitualStepRollTableDoc(table, folderId, folderHint = null) {
 
 function buildSpellFailureRollTableDoc(table, folderId, folderHint = null) {
     const normalized = normalizeSourceEntry(table, "spellFailureRollTable", "RollTable");
-    const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
-    // 3d6 bell-curve: 16 outcomes (3-18), distributed equally across entries.
-    // For N entries, each gets ceil(16/N) values (last may overflow; clamped below).
     const tableFormula = "3d6";
-    const textResultType = globalThis.CONST?.TABLE_RESULT_TYPES?.TEXT ?? 0;
-    const total = Math.max(entries.length, 1);
-    const rangeWidth = Math.max(1, Math.floor(16 / total));
-
-    const results = entries.map((entry, index) => {
-        let min = 3 + index * rangeWidth;
-        let max = (index === entries.length - 1) ? 18 : (min + rangeWidth - 1);
-        if (min > 18) min = 18;
-        if (max > 18) max = 18;
-        return {
-            _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
-            type: textResultType,
-            text: entry.resultText ?? `Failure result ${index + 1}`,
-            img: "icons/svg/skull.svg",
-            weight: 1,
-            range: [min, max],
-            drawn: false,
-            flags: {
-                [SOURCE_FLAG_SCOPE]: {
-                    spellFailureEntry: foundry.utils.deepClone(entry)
-                }
-            }
-        };
-    });
+    const results = buildBellCurveResults(normalized, { entryKey: "spellFailureEntry", defaultText: "Failure result", img: "icons/svg/skull.svg" });
 
     return {
         _id: normalized._id,
@@ -389,33 +331,8 @@ function buildSpellFailureRollTableDoc(table, folderId, folderHint = null) {
 
 function buildSpellSupportRollTableDoc(table, folderId, folderHint = null) {
     const normalized = normalizeSourceEntry(table, "spellSupportRollTable", "RollTable");
-    const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
-    // 3d6 bell-curve: 16 outcomes (3-18), distributed equally across entries.
     const tableFormula = "3d6";
-    const textResultType = globalThis.CONST?.TABLE_RESULT_TYPES?.TEXT ?? 0;
-    const total = Math.max(entries.length, 1);
-    const rangeWidth = Math.max(1, Math.floor(16 / total));
-
-    const results = entries.map((entry, index) => {
-        let min = 3 + index * rangeWidth;
-        let max = (index === entries.length - 1) ? 18 : (min + rangeWidth - 1);
-        if (min > 18) min = 18;
-        if (max > 18) max = 18;
-        return {
-            _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
-            type: textResultType,
-            text: entry.resultText ?? `Support result ${index + 1}`,
-            img: "icons/magic/holy/angel-winged-humanoid-blue.webp",
-            weight: 1,
-            range: [min, max],
-            drawn: false,
-            flags: {
-                [SOURCE_FLAG_SCOPE]: {
-                    spellSupportEntry: foundry.utils.deepClone(entry)
-                }
-            }
-        };
-    });
+    const results = buildBellCurveResults(normalized, { entryKey: "spellSupportEntry", defaultText: "Support result", img: "icons/magic/holy/angel-winged-humanoid-blue.webp" });
 
     return {
         _id: normalized._id,
@@ -439,32 +356,9 @@ function buildSpellSupportRollTableDoc(table, folderId, folderHint = null) {
 }
 
 function buildPactRollTableDoc(pact, folderId, folderHint = null) {
-    const entries = Array.isArray(pact.rollTable) ? pact.rollTable : [];
-    if (!entries.length) return null;
-    const formula = String(pact.rollTableFormula ?? `1d${entries.length}`);
-    const formulaMatch = formula.match(/^(\d+)d\d+/i);
-    const startValue = formulaMatch ? Number(formulaMatch[1]) : 1;
-    const textResultType = globalThis.CONST?.TABLE_RESULT_TYPES?.TEXT ?? 0;
-    const tableId = deriveFoundryIdFromText(`${pact._id}:rolltable`);
-    const tableName = `${pact.name} — ${pact.rollTableTitle ?? "Table"}`;
-
-    const results = entries.map((entry, index) => {
-        const rollValue = startValue + index;
-        return {
-            _id: deriveFoundryIdFromText(`${tableId}:${rollValue}:result`),
-            type: textResultType,
-            text: String(entry),
-            img: "icons/svg/d20-grey.svg",
-            weight: 1,
-            range: [rollValue, rollValue],
-            drawn: false,
-            flags: {
-                [SOURCE_FLAG_SCOPE]: {
-                    pactRollEntry: { index, rollValue, text: String(entry) }
-                }
-            }
-        };
-    });
+    const built = buildPactResults(pact);
+    if (!built) return null;
+    const { tableId, tableName, formula, results } = built;
 
     return {
         _id: tableId,
@@ -493,26 +387,7 @@ function buildPactRollTableDoc(pact, folderId, folderHint = null) {
 // key (no spaces/punctuation); text fields store as-is.
 function buildBoostRollTableDoc(table, folderId, folderHint = null) {
     const normalized = normalizeSourceEntry(table, "boostRollTable", "RollTable");
-    const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
-    // Treat entry.roll as the d-result range (3d6 → roll in 3..18). Use entry.roll for both min and max.
-    const documentResultType = globalThis.CONST?.TABLE_RESULT_TYPES?.DOCUMENT ?? 1;
-
-    const results = entries.map((entry, index) => ({
-        _id: deriveFoundryIdFromText(`${normalized._id}:${entry.roll ?? index}:result`),
-        type: documentResultType,
-        documentCollection: "Item",
-        documentId: entry.boostId,
-        text: entry.label ?? `Boost ${index + 1}`,
-        img: "icons/svg/upgrade.svg",
-        weight: 1,
-        range: [entry.roll ?? (index + 1), entry.roll ?? (index + 1)],
-        drawn: false,
-        flags: {
-            [SOURCE_FLAG_SCOPE]: {
-                boostEntry: foundry.utils.deepClone(entry)
-            }
-        }
-    }));
+    const results = buildBoostResults(normalized);
 
     return {
         _id: normalized._id,
@@ -536,6 +411,7 @@ function buildBoostRollTableDoc(table, folderId, folderHint = null) {
 }
 
 function makeItemDoc(source, template, img, propsBuilder, folderId, folderHint = null) {
+    const { system, flags } = csbItemBody(template, source, propsBuilder, folderHint);
     return {
         _id: source._id,
         name: source.name,
@@ -552,41 +428,19 @@ function makeItemDoc(source, template, img, propsBuilder, folderId, folderHint =
         // system.props by the per-kind propsBuilder.
         type: "equippableItem",
         img,
-        system: {
-            ...cloneTemplateSystem(template),
-            props: propsBuilder(source)
-        },
+        system,
         effects: [],
         folder: folderId ?? null,
-        flags: {
-            "custom-system-builder": {
-                version: template.flags?.["custom-system-builder"]?.version ?? "5.2.0"
-            },
-            [SOURCE_FLAG_SCOPE]: {
-                folderHint: folderHint ?? source.folder ?? null,
-                sourceData: source
-            }
-        },
+        flags,
         items: [],
         ownership: { default: 0 }
     };
 }
 
 function makeActorDoc(source, folderId, folderHint = null, actorTemplate = null) {
-    const mergedSystem = actorTemplate?.system
-        ? foundry.utils.mergeObject(
-            foundry.utils.deepClone(actorTemplate.system),
-            foundry.utils.deepClone(source.system ?? {}),
-            { inplace: false, recursive: true }
-        )
-        : foundry.utils.deepClone(source.system ?? {});
-    const mergedPrototypeToken = actorTemplate?.prototypeToken
-        ? foundry.utils.mergeObject(
-            foundry.utils.deepClone(actorTemplate.prototypeToken ?? {}),
-            foundry.utils.deepClone(source.prototypeToken ?? {}),
-            { inplace: false, recursive: true }
-        )
-        : foundry.utils.deepClone(source.prototypeToken ?? {});
+    // Shared with build-packs (mergeDeep) so seeded actors merge identically to
+    // the compiled ones.
+    const { system: mergedSystem, prototypeToken: mergedPrototypeToken } = mergeActorParts(source, actorTemplate);
 
     return {
         _id: source._id,

@@ -22,8 +22,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { compilePack } from "@foundryvtt/foundryvtt-cli";
 import { annotateRitualStepTables } from "./reorder-ritual-tables.mjs";
-import { deepClone, ACTOR_TYPES, isValidFoundryId, deriveFoundryIdFromText, normalizeTraitKey, normalizeTypeList, normalizeSourceEntry, mergeDefinedProps, cloneTemplateSystem } from "../lib/build-helpers.mjs";
+import { deepClone, ACTOR_TYPES, isValidFoundryId, deriveFoundryIdFromText, normalizeTraitKey, normalizeTypeList, normalizeSourceEntry, mergeDefinedProps } from "../lib/build-helpers.mjs";
 import { buildAmmoProps, buildArmorProps, buildChangeProps, buildChangeSetProps, buildDiseaseProps, buildMonsterMagicProps, buildPactProps, buildRequirementProps, buildSpellProps, buildSupernaturalMarkProps, buildWeaponModifierProps, buildWeaponProps, buildManeuverProps } from "../lib/prop-builders.mjs";
+import { buildBoostResults, ritualStepFormula, ritualStepDescription, buildRitualStepResults, buildBellCurveResults, buildPactResults } from "../lib/rolltable-results.mjs";
+import { csbItemBody, mergeActorParts } from "../lib/doc-builders.mjs";
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -74,28 +76,18 @@ function prepareDir(dir) {
 
 
 function makeItemDoc(source, template, img, propsBuilder, folderHint) {
+    const { system, flags } = csbItemBody(template, source, propsBuilder, folderHint);
     return {
         _id: source._id,
         _key: `!items!${source._id}`,
         name: source.name,
         type: "equippableItem",
         img,
-        system: {
-            ...cloneTemplateSystem(template),
-            props: propsBuilder(source)
-        },
+        system,
         effects: [],
         folder: null,
         sort: 0,
-        flags: {
-            "custom-system-builder": {
-                version: template.flags?.["custom-system-builder"]?.version ?? "5.2.0"
-            },
-            [SOURCE_FLAG_SCOPE]: {
-                folderHint: folderHint ?? source.folder ?? null,
-                sourceData: source
-            }
-        },
+        flags,
         ownership: { default: 0 }
     };
 }
@@ -826,19 +818,7 @@ function rollTableDoc({ _id, name, description, results, formula, replacement = 
 
 function buildBoostRollTableDoc(table) {
     const normalized = normalizeSourceEntry(table, "boostRollTable", "RollTable");
-    const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
-    const results = entries.map((entry, index) => ({
-        _id: deriveFoundryIdFromText(`${normalized._id}:${entry.roll ?? index}:result`),
-        type: DOCUMENT_RESULT_TYPE,
-        documentCollection: "Item",
-        documentId: entry.boostId,
-        text: entry.label ?? `Boost ${index + 1}`,
-        img: "icons/svg/upgrade.svg",
-        weight: 1,
-        range: [entry.roll ?? (index + 1), entry.roll ?? (index + 1)],
-        drawn: false,
-        flags: { [SOURCE_FLAG_SCOPE]: { boostEntry: deepClone(entry) } }
-    }));
+    const results = buildBoostResults(normalized);
     return rollTableDoc({
         _id: normalized._id,
         name: normalized.name,
@@ -858,35 +838,9 @@ function buildBoostRollTableDoc(table) {
 
 function buildRitualStepRollTableDoc(table) {
     const normalized = normalizeSourceEntry(table, "ritualStepRollTable", "RollTable");
-    const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
-    // Big d6-pool pick: roll the table's Xd6 sum and read the matching band.
-    // Entries are tent-ordered by rarity (common steps on the heavy central
-    // totals, rare steps on the wide low-probability tails). Each entry's
-    // `pickRange` is authored in the table JSON (single source of truth shared
-    // with ritual generation's weighted draw).
-    const formula = String(normalized.pickFormula ?? "").trim() || `1d${Math.max(entries.length, 1)}`;
-    const results = entries.map((entry, index) => {
-        const range = Array.isArray(entry.pickRange) && entry.pickRange.length === 2
-            ? [Number(entry.pickRange[0]), Number(entry.pickRange[1])]
-            : [index + 1, index + 1];
-        return {
-            _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
-            type: TEXT_RESULT_TYPE,
-            text: entry.stepText ?? `Ritual step ${index + 1}`,
-            img: "icons/svg/d20-grey.svg",
-            weight: range[1] - range[0] + 1,
-            range,
-            drawn: false,
-            flags: { [SOURCE_FLAG_SCOPE]: { ritualStepEntry: deepClone(entry) } }
-        };
-    });
-    const desc = [
-        `<p><strong>Complexity:</strong> ${normalized.complexity ?? "Medium"}</p>`,
-        normalized.drawFormula ? `<p><strong>Random ritual step draws:</strong> ${normalized.drawFormula}</p>` : "",
-        `<p><strong>Step pick roll:</strong> ${formula}</p>`,
-        `<p><strong>Available entries:</strong> ${entries.length}</p>`,
-        "<p>Roll the step-pick formula and read the matching band; common steps sit on the heavy central rolls, rare steps on the tails.</p>"
-    ].filter(Boolean).join("");
+    const formula = ritualStepFormula(normalized);
+    const results = buildRitualStepResults(normalized);
+    const desc = ritualStepDescription(normalized, formula);
     return rollTableDoc({
         _id: normalized._id, name: normalized.name, description: desc, results, formula,
         replacement: false,
@@ -894,32 +848,9 @@ function buildRitualStepRollTableDoc(table) {
     });
 }
 
-function buildBellCurveTextTableDoc(table, kind, entryKey, defaultText, img) {
-    const normalized = normalizeSourceEntry(table, kind, "RollTable");
-    const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
-    const total = Math.max(entries.length, 1);
-    const rangeWidth = Math.max(1, Math.floor(16 / total));
-    const results = entries.map((entry, index) => {
-        let min = 3 + index * rangeWidth;
-        let max = (index === entries.length - 1) ? 18 : (min + rangeWidth - 1);
-        if (min > 18) min = 18;
-        if (max > 18) max = 18;
-        return {
-            _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
-            type: TEXT_RESULT_TYPE,
-            text: entry.resultText ?? `${defaultText} ${index + 1}`,
-            img,
-            weight: 1,
-            range: [min, max],
-            drawn: false,
-            flags: { [SOURCE_FLAG_SCOPE]: { [entryKey]: deepClone(entry) } }
-        };
-    });
-    return { normalized, results };
-}
-
 function buildSpellFailureRollTableDoc(table) {
-    const { normalized, results } = buildBellCurveTextTableDoc(table, "spellFailureRollTable", "spellFailureEntry", "Failure result", "icons/svg/skull.svg");
+    const normalized = normalizeSourceEntry(table, "spellFailureRollTable", "RollTable");
+    const results = buildBellCurveResults(normalized, { entryKey: "spellFailureEntry", defaultText: "Failure result", img: "icons/svg/skull.svg" });
     const desc = [
         `<p><strong>Severity:</strong> ${normalized.severity ?? "Minor"}</p>`,
         `<p><strong>Available entries:</strong> ${(normalized.entries ?? []).length}</p>`,
@@ -932,7 +863,8 @@ function buildSpellFailureRollTableDoc(table) {
 }
 
 function buildSpellSupportRollTableDoc(table) {
-    const { normalized, results } = buildBellCurveTextTableDoc(table, "spellSupportRollTable", "spellSupportEntry", "Support result", "icons/magic/holy/angel-winged-humanoid-blue.webp");
+    const normalized = normalizeSourceEntry(table, "spellSupportRollTable", "RollTable");
+    const results = buildBellCurveResults(normalized, { entryKey: "spellSupportEntry", defaultText: "Support result", img: "icons/magic/holy/angel-winged-humanoid-blue.webp" });
     const desc = [
         `<p><strong>Family:</strong> ${String(normalized.family ?? "General").trim() || "General"}</p>`,
         `<p><strong>Available entries:</strong> ${(normalized.entries ?? []).length}</p>`,
@@ -945,26 +877,9 @@ function buildSpellSupportRollTableDoc(table) {
 }
 
 function buildPactRollTableDoc(pact) {
-    const entries = Array.isArray(pact.rollTable) ? pact.rollTable : [];
-    if (!entries.length) return null;
-    const formula = String(pact.rollTableFormula ?? `1d${entries.length}`);
-    const formulaMatch = formula.match(/^(\d+)d\d+/i);
-    const startValue = formulaMatch ? Number(formulaMatch[1]) : 1;
-    const tableId = deriveFoundryIdFromText(`${pact._id}:rolltable`);
-    const tableName = `${pact.name} — ${pact.rollTableTitle ?? "Table"}`;
-    const results = entries.map((entry, index) => {
-        const rollValue = startValue + index;
-        return {
-            _id: deriveFoundryIdFromText(`${tableId}:${rollValue}:result`),
-            type: TEXT_RESULT_TYPE,
-            text: String(entry),
-            img: "icons/svg/d20-grey.svg",
-            weight: 1,
-            range: [rollValue, rollValue],
-            drawn: false,
-            flags: { [SOURCE_FLAG_SCOPE]: { pactRollEntry: { index, rollValue, text: String(entry) } } }
-        };
-    });
+    const built = buildPactResults(pact);
+    if (!built) return null;
+    const { tableId, tableName, formula, results } = built;
     return rollTableDoc({
         _id: tableId, name: tableName,
         description: `${pact.rollTableTitle ?? "Roll table"} for ${pact.name}. Roll ${formula}.`,
@@ -1035,26 +950,8 @@ async function buildChangeSetsPack() {
 
 // --- Monsters ------------------------------------------------------------
 
-function mergeDeep(target, source) {
-    const out = { ...(target ?? {}) };
-    for (const [key, value] of Object.entries(source ?? {})) {
-        if (value && typeof value === "object" && !Array.isArray(value)
-            && out[key] && typeof out[key] === "object" && !Array.isArray(out[key])) {
-            out[key] = mergeDeep(out[key], value);
-        } else {
-            out[key] = deepClone(value);
-        }
-    }
-    return out;
-}
-
 function makeActorDoc(source, actorTemplate) {
-    const mergedSystem = actorTemplate?.system
-        ? mergeDeep(deepClone(actorTemplate.system), source.system ?? {})
-        : deepClone(source.system ?? {});
-    const mergedPrototypeToken = actorTemplate?.prototypeToken
-        ? mergeDeep(deepClone(actorTemplate.prototypeToken ?? {}), source.prototypeToken ?? {})
-        : deepClone(source.prototypeToken ?? {});
+    const { system: mergedSystem, prototypeToken: mergedPrototypeToken } = mergeActorParts(source, actorTemplate);
     return {
         _id: source._id,
         _key: `!actors!${source._id}`,
