@@ -5,6 +5,54 @@ const SOURCE_FLAG_SCOPE = "1547Core";
 const SPELL_TEMPLATE_ID = "2kiWw3Cv5Zk1lZxn";
 const RITUAL_TEMPLATE_ID = "Qv6pN2Lm8R4tY1Ks";
 
+// Maps a spell's casting school to the skill rolled for the final cast.
+const SCHOOL_SKILL = {
+    Alchemy: "Learning Expertise Alchemy",
+    Astrology: "Learning Expertise Astrology",
+    Divination: "Pagan Expertise Divination",
+    Grimoire: "Learning Expertise Occult",
+    Knot: "Pagan Expertise Knot",
+    Necromancy: "Pagan Expertise Necromancy",
+    Religion: "Learning Expertise Religion",
+    Wards: "Pagan Expertise Warding"
+};
+
+// The final box on every ritual: the actual casting, rolled against the spell's
+// school requirements. Satisfiable by ANY one listed school at its level
+// (e.g. Blood Border → "Necromancy (2) or Warding (1)").
+function buildFinalCastingStep(spell, props) {
+    let reqs = Array.isArray(props.SchoolRequirementsTable) ? props.SchoolRequirementsTable : null;
+    if (!reqs || !reqs.length) {
+        const sd = spell?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? spell?.flags?.[MODULE_ID]?.sourceData;
+        if (Array.isArray(sd?.schoolRequirements)) reqs = sd.schoolRequirements;
+    }
+    const options = (reqs ?? []).map((r) => {
+        const skill = SCHOOL_SKILL[String(r?.School ?? "").trim()] ?? String(r?.School ?? "").trim();
+        if (!skill) return null;
+        const level = (r?.Level !== undefined && r?.Level !== null && r?.Level !== "") ? ` (${r.Level})` : "";
+        return `${skill}${level}`;
+    }).filter(Boolean);
+    return {
+        id: "final-cast",
+        sourceKind: "final",
+        stepScope: "Mandatory",
+        stepType: "FinalCasting",
+        stepText: "Complete the working — the final casting.",
+        skillCheck: options.join(" or "),
+        difficulty: "",
+        requiredItem: "",
+        timingConstraint: "",
+        contactRestriction: "",
+        dangerTag: "",
+        repeatable: false,
+        failureConsequence: "",
+        stepNotes: "",
+        icon: "fa-hat-wizard",
+        tooltip: "",
+        required: true
+    };
+}
+
 function readSourceData(doc) {
     return doc?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? doc?.flags?.[MODULE_ID]?.sourceData ?? doc ?? {};
 }
@@ -172,7 +220,8 @@ export async function generateRitualStepsFromSpell(spell) {
         // reference only; the ritual's steps and race board use the random draw.
         staticSteps,
         rolledSteps,
-        allSteps: [...rolledSteps]
+        // Random draws first, then the final casting roll as the last box.
+        allSteps: [...rolledSteps, buildFinalCastingStep(spell, props)]
     };
 }
 
