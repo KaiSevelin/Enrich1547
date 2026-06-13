@@ -164,9 +164,12 @@ export async function generateRitualStepsFromSpell(spell) {
         tableRef,
         drawFormula,
         drawCount,
+        // Static steps are the spell's school-casting requirements — a
+        // prerequisite to attempt the rite, not a board step. Returned for
+        // reference only; the ritual's steps and race board use the random draw.
         staticSteps,
         rolledSteps,
-        allSteps: [...staticSteps, ...rolledSteps]
+        allSteps: [...rolledSteps]
     };
 }
 
