@@ -81,6 +81,21 @@ export function parseRandomStepRollFormula(formula) {
     };
 }
 
+// Step types where two requirements would contradict (you can't time a rite to
+// both the new and full moon, or perform it in two places). Keep only the first
+// of each in a single ritual.
+const EXCLUSIVE_STEP_TYPES = new Set(["Environment", "ExactTiming"]);
+function dedupeExclusiveSteps(steps) {
+    const seen = new Set();
+    return steps.filter((step) => {
+        const type = step?.stepType;
+        if (!EXCLUSIVE_STEP_TYPES.has(type)) return true;
+        if (seen.has(type)) return false;
+        seen.add(type);
+        return true;
+    });
+}
+
 function rollFormulaCount(formulaText) {
     const parsed = parseRandomStepRollFormula(formulaText);
     if (!parsed) return 0;
@@ -209,6 +224,7 @@ export async function generateRitualStepsFromSpell(spell) {
             : [];
         drawCount = rollFormulaCount(drawFormula);
         rolledSteps = pickDistinctEntries(sourceEntries, drawCount).map(normalizeRandomStep);
+        rolledSteps = dedupeExclusiveSteps(rolledSteps);
     }
 
     return {
