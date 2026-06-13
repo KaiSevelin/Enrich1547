@@ -155,7 +155,7 @@
         "stepScope": "Optional",
         "stepType": "Environment",
         "traditionTag": "General",
-        "stepText": "Perform the rite in a bog or marsh.",
+        "stepText": "Perform the rite in a bog.",
         "skillCheck": "",
         "difficulty": "",
         "requiredItem": "",
@@ -166,7 +166,7 @@
         "failureConsequence": "Performed elsewhere, the place lends no power.",
         "stepNotes": "",
         "icon": "fa-mountain-sun",
-        "tooltip": "Perform the rite in a bog or marsh."
+        "tooltip": "Perform the rite in a bog."
       },
       {
         "id": "RSE14",
@@ -227,7 +227,7 @@
         "stepScope": "Optional",
         "stepType": "Environment",
         "traditionTag": "General",
-        "stepText": "Perform the rite at a hearth or fireside.",
+        "stepText": "Perform the rite at a hearth/fireside.",
         "skillCheck": "",
         "difficulty": "",
         "requiredItem": "",
@@ -238,14 +238,14 @@
         "failureConsequence": "Performed elsewhere, the place lends no power.",
         "stepNotes": "",
         "icon": "fa-mountain-sun",
-        "tooltip": "Perform the rite at a hearth or fireside."
+        "tooltip": "Perform the rite at a hearth/fireside."
       },
       {
         "id": "RSE18",
         "stepScope": "Optional",
         "stepType": "Environment",
         "traditionTag": "General",
-        "stepText": "Perform the rite on a threshold or in a doorway.",
+        "stepText": "Perform the rite on a threshold/doorway.",
         "skillCheck": "",
         "difficulty": "",
         "requiredItem": "",
@@ -256,7 +256,7 @@
         "failureConsequence": "Performed elsewhere, the place lends no power.",
         "stepNotes": "",
         "icon": "fa-mountain-sun",
-        "tooltip": "Perform the rite on a threshold or in a doorway."
+        "tooltip": "Perform the rite on a threshold/doorway."
       },
       {
         "id": "RSE19",
@@ -335,10 +335,10 @@
         "stepScope": "Optional",
         "stepType": "Material",
         "traditionTag": "General",
-        "stepText": "Carve a token from bone or antler to carry the working.",
+        "stepText": "Carve a bone token to carry the working.",
         "skillCheck": "",
         "difficulty": "",
-        "requiredItem": "A piece of bone or antler",
+        "requiredItem": "A piece of bone",
         "timingConstraint": "",
         "contactRestriction": "",
         "dangerTag": "",
@@ -346,7 +346,7 @@
         "failureConsequence": "The component is unsuitable and must be obtained again.",
         "stepNotes": "",
         "icon": "fa-cube",
-        "tooltip": "Carve a token from bone or antler to carry the working."
+        "tooltip": "Carve a bone token to carry the working."
       },
       {
         "id": "RSE24",
@@ -389,7 +389,7 @@
         "stepScope": "Optional",
         "stepType": "Material",
         "traditionTag": "General",
-        "stepText": "Mould a small poppet from river clay.",
+        "stepText": "Mould a small doll from river clay.",
         "skillCheck": "",
         "difficulty": "",
         "requiredItem": "A handful of river clay",
@@ -400,7 +400,7 @@
         "failureConsequence": "The component is unsuitable and must be obtained again.",
         "stepNotes": "",
         "icon": "fa-cube",
-        "tooltip": "Mould a small poppet from river clay."
+        "tooltip": "Mould a small doll from river clay."
       },
       {
         "id": "RSE27",
@@ -421,29 +421,11 @@
         "tooltip": "Smooth and mark a river stone as the focus."
       },
       {
-        "id": "RSE28",
-        "stepScope": "Optional",
-        "stepType": "Material",
-        "traditionTag": "General",
-        "stepText": "Bind a witch's ladder of knotted cord and feathers.",
-        "skillCheck": "",
-        "difficulty": "",
-        "requiredItem": "Cord and a few feathers",
-        "timingConstraint": "",
-        "contactRestriction": "",
-        "dangerTag": "",
-        "repeatable": false,
-        "failureConsequence": "The component is unsuitable and must be obtained again.",
-        "stepNotes": "",
-        "icon": "fa-cube",
-        "tooltip": "Bind a witch's ladder of knotted cord and feathers."
-      },
-      {
         "id": "RSE29",
         "stepScope": "Optional",
         "stepType": "Environment",
         "traditionTag": "General",
-        "stepText": "Perform the rite beside running water — a river, ford, or stream.",
+        "stepText": "Perform the rite beside a river/stream/ford.",
         "skillCheck": "",
         "difficulty": "",
         "requiredItem": "",
@@ -454,14 +436,14 @@
         "failureConsequence": "Performed elsewhere, the place lends no power.",
         "stepNotes": "",
         "icon": "fa-mountain-sun",
-        "tooltip": "Perform the rite beside running water — a river, ford, or stream."
+        "tooltip": "Perform the rite beside a river/stream/ford."
       },
       {
         "id": "RSE30",
         "stepScope": "Optional",
         "stepType": "Environment",
         "traditionTag": "General",
-        "stepText": "Perform the rite at a holy well or spring.",
+        "stepText": "Perform the rite at a natural spring.",
         "skillCheck": "",
         "difficulty": "",
         "requiredItem": "",
@@ -472,14 +454,14 @@
         "failureConsequence": "Performed elsewhere, the place lends no power.",
         "stepNotes": "",
         "icon": "fa-mountain-sun",
-        "tooltip": "Perform the rite at a holy well or spring."
+        "tooltip": "Perform the rite at a natural spring."
       },
       {
         "id": "RSE31",
         "stepScope": "Optional",
         "stepType": "Environment",
         "traditionTag": "General",
-        "stepText": "Perform the rite at a standing stone or old barrow.",
+        "stepText": "Perform the rite at a barrow.",
         "skillCheck": "",
         "difficulty": "",
         "requiredItem": "",
@@ -490,14 +472,14 @@
         "failureConsequence": "Performed elsewhere, the place lends no power.",
         "stepNotes": "",
         "icon": "fa-mountain-sun",
-        "tooltip": "Perform the rite at a standing stone or old barrow."
+        "tooltip": "Perform the rite at a barrow."
       },
       {
         "id": "RSE32",
         "stepScope": "Optional",
         "stepType": "Environment",
         "traditionTag": "General",
-        "stepText": "Perform the rite in a cave or hollow in the earth.",
+        "stepText": "Perform the rite in a cave/hollow.",
         "skillCheck": "",
         "difficulty": "",
         "requiredItem": "",
@@ -508,14 +490,14 @@
         "failureConsequence": "Performed elsewhere, the place lends no power.",
         "stepNotes": "",
         "icon": "fa-mountain-sun",
-        "tooltip": "Perform the rite in a cave or hollow in the earth."
+        "tooltip": "Perform the rite in a cave/hollow."
       },
       {
         "id": "RSE33",
         "stepScope": "Optional",
         "stepType": "Environment",
         "traditionTag": "General",
-        "stepText": "Perform the rite at a gallows or place of execution.",
+        "stepText": "Perform the rite at a gallows/gibbet.",
         "skillCheck": "",
         "difficulty": "",
         "requiredItem": "",
@@ -526,14 +508,14 @@
         "failureConsequence": "Performed elsewhere, the place lends no power.",
         "stepNotes": "",
         "icon": "fa-mountain-sun",
-        "tooltip": "Perform the rite at a gallows or place of execution."
+        "tooltip": "Perform the rite at a gallows/gibbet."
       },
       {
         "id": "RSE34",
         "stepScope": "Optional",
         "stepType": "Environment",
         "traditionTag": "General",
-        "stepText": "Perform the rite within a church or churchyard.",
+        "stepText": "Perform the rite in a churchyard.",
         "skillCheck": "",
         "difficulty": "",
         "requiredItem": "",
@@ -544,14 +526,14 @@
         "failureConsequence": "Performed elsewhere, the place lends no power.",
         "stepNotes": "",
         "icon": "fa-mountain-sun",
-        "tooltip": "Perform the rite within a church or churchyard."
+        "tooltip": "Perform the rite in a churchyard."
       },
       {
         "id": "RSE35",
         "stepScope": "Optional",
         "stepType": "Environment",
         "traditionTag": "General",
-        "stepText": "Perform the rite at a mill or millpond.",
+        "stepText": "Perform the rite at a mill.",
         "skillCheck": "",
         "difficulty": "",
         "requiredItem": "",
@@ -562,7 +544,7 @@
         "failureConsequence": "Performed elsewhere, the place lends no power.",
         "stepNotes": "",
         "icon": "fa-mountain-sun",
-        "tooltip": "Perform the rite at a mill or millpond."
+        "tooltip": "Perform the rite at a mill."
       },
       {
         "id": "RSE36",
@@ -659,7 +641,7 @@
         "stepScope": "Optional",
         "stepType": "ExactTiming",
         "traditionTag": "Astrology",
-        "stepText": "Time the rite to dusk or twilight.",
+        "stepText": "Time the rite to twilight.",
         "skillCheck": "",
         "difficulty": "",
         "requiredItem": "",
@@ -670,7 +652,7 @@
         "failureConsequence": "The rite must wait for the next such time.",
         "stepNotes": "",
         "icon": "fa-clock",
-        "tooltip": "Time the rite to dusk or twilight."
+        "tooltip": "Time the rite to twilight."
       },
       {
         "id": "RSE42",
@@ -689,6 +671,78 @@
         "stepNotes": "",
         "icon": "fa-clock",
         "tooltip": "Time the rite to cockcrow."
+      },
+      {
+        "id": "RSE43",
+        "stepScope": "Optional",
+        "stepType": "Material",
+        "traditionTag": "General",
+        "stepText": "Anoint the focus with a body fluid — blood/spittle/sweat.",
+        "skillCheck": "",
+        "difficulty": "",
+        "requiredItem": "The caster's blood, spittle, or sweat",
+        "timingConstraint": "",
+        "contactRestriction": "",
+        "dangerTag": "",
+        "repeatable": false,
+        "failureConsequence": "The component is unsuitable and must be obtained again.",
+        "stepNotes": "",
+        "icon": "fa-cube",
+        "tooltip": "Anoint the focus with a body fluid — blood/spittle/sweat."
+      },
+      {
+        "id": "RSE44",
+        "stepScope": "Optional",
+        "stepType": "Environment",
+        "traditionTag": "General",
+        "stepText": "Perform the rite in a marsh.",
+        "skillCheck": "",
+        "difficulty": "",
+        "requiredItem": "",
+        "timingConstraint": "",
+        "contactRestriction": "",
+        "dangerTag": "",
+        "repeatable": false,
+        "failureConsequence": "Performed elsewhere, the place lends no power.",
+        "stepNotes": "",
+        "icon": "fa-mountain-sun",
+        "tooltip": "Perform the rite in a marsh."
+      },
+      {
+        "id": "RSE45",
+        "stepScope": "Optional",
+        "stepType": "Environment",
+        "traditionTag": "General",
+        "stepText": "Perform the rite on a battlefield.",
+        "skillCheck": "",
+        "difficulty": "",
+        "requiredItem": "",
+        "timingConstraint": "",
+        "contactRestriction": "",
+        "dangerTag": "",
+        "repeatable": false,
+        "failureConsequence": "Performed elsewhere, the place lends no power.",
+        "stepNotes": "",
+        "icon": "fa-mountain-sun",
+        "tooltip": "Perform the rite on a battlefield."
+      },
+      {
+        "id": "RSE46",
+        "stepScope": "Optional",
+        "stepType": "Environment",
+        "traditionTag": "General",
+        "stepText": "Perform the rite in a forest glen.",
+        "skillCheck": "",
+        "difficulty": "",
+        "requiredItem": "",
+        "timingConstraint": "",
+        "contactRestriction": "",
+        "dangerTag": "",
+        "repeatable": false,
+        "failureConsequence": "Performed elsewhere, the place lends no power.",
+        "stepNotes": "",
+        "icon": "fa-mountain-sun",
+        "tooltip": "Perform the rite in a forest glen."
       }
     ]
   },
@@ -920,10 +974,10 @@
         "stepScope": "Optional",
         "stepType": "Material",
         "traditionTag": "General",
-        "stepText": "Obtain the subject's true name or signature.",
+        "stepText": "Obtain the subject's signature as a sympathetic link.",
         "skillCheck": "",
         "difficulty": "",
-        "requiredItem": "The subject's true name or signature in writing",
+        "requiredItem": "The subject's signature in writing",
         "timingConstraint": "",
         "contactRestriction": "",
         "dangerTag": "",
@@ -931,7 +985,7 @@
         "failureConsequence": "The component is unsuitable and must be obtained again.",
         "stepNotes": "",
         "icon": "fa-cube",
-        "tooltip": "Obtain the subject's true name or signature."
+        "tooltip": "Obtain the subject's signature as a sympathetic link."
       },
       {
         "id": "RSM17",
@@ -1307,7 +1361,7 @@
         "stepScope": "Optional",
         "stepType": "ExactTiming",
         "traditionTag": "Astrology",
-        "stepText": "Time the rite to All Hallows' Eve, when the veil thins.",
+        "stepText": "Time the rite to the spring solstice.",
         "skillCheck": "",
         "difficulty": "",
         "requiredItem": "",
@@ -1318,14 +1372,14 @@
         "failureConsequence": "The rite must wait for the next such time.",
         "stepNotes": "",
         "icon": "fa-clock",
-        "tooltip": "Time the rite to All Hallows' Eve, when the veil thins."
+        "tooltip": "Time the rite to the spring solstice."
       },
       {
         "id": "RSH20",
         "stepScope": "Optional",
         "stepType": "ExactTiming",
         "traditionTag": "Astrology",
-        "stepText": "Time the rite to Walpurgis Night.",
+        "stepText": "Time the rite to the autumn solstice.",
         "skillCheck": "",
         "difficulty": "",
         "requiredItem": "",
@@ -1336,7 +1390,7 @@
         "failureConsequence": "The rite must wait for the next such time.",
         "stepNotes": "",
         "icon": "fa-clock",
-        "tooltip": "Time the rite to Walpurgis Night."
+        "tooltip": "Time the rite to the autumn solstice."
       }
     ]
   }
