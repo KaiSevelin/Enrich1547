@@ -130,9 +130,19 @@ export async function generateRitualStepsFromSpell(spell) {
     }
 
     const props = getSpellProps(spell);
-    const staticSteps = Array.isArray(props.StaticRitualSteps)
-        ? props.StaticRitualSteps.map(normalizeStaticStep)
-        : [];
+    // Static steps are authored in props.StaticRitualSteps, but the spell sheet
+    // declares that key as an itemContainer, so CSB empties it at runtime. The
+    // raw authored array survives in the 1547Core sourceData flag, so fall back
+    // to it — otherwise rituals would lose their static (school-requirement) steps.
+    let staticData = (Array.isArray(props.StaticRitualSteps) && props.StaticRitualSteps.length)
+        ? props.StaticRitualSteps
+        : null;
+    if (!staticData) {
+        const sd = spell?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData
+            ?? spell?.flags?.[MODULE_ID]?.sourceData;
+        if (Array.isArray(sd?.staticRitualSteps)) staticData = sd.staticRitualSteps;
+    }
+    const staticSteps = (staticData ?? []).map(normalizeStaticStep);
     const tableRef = String(props.RitualStepTable ?? "").trim();
     const drawFormula = String(props.RandomStepRollFormula ?? "").trim();
 
