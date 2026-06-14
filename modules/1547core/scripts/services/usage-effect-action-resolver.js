@@ -702,6 +702,12 @@ export async function resolveUsageEffectsFromCarrier(item, options = {}) {
         ? options.effects.map(normalizeEffectProps)
         : collectUsageEffectsFromCarrier(item);
     if (!effects.length) {
+        // Callers that resolve effects opportunistically (e.g. a ritual whose
+        // spell has only a descriptive success) pass allowEmpty to get an empty
+        // result instead of a hard error. Direct user invocation still throws.
+        if (options.allowEmpty) {
+            return { ok: false, sourceTokenId: null, targetsResolved: [], empty: true };
+        }
         throw new Error(`${item.name} has no usage effects to resolve.`);
     }
 

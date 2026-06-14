@@ -251,8 +251,10 @@ export async function effectuateSpellOutcome(spell, { outcome, apply = false, an
     if (apply) {
         const moduleApi = game.modules.get(MODULE_ID)?.api ?? {};
         if (token?.actor && typeof moduleApi.resolveUsageEffectsFromCarrier === "function") {
-            applied = await moduleApi.resolveUsageEffectsFromCarrier(spell, { sourceToken: token });
-            detail = `Effects applied to ${token.actor.name}. ${detail}`;
+            applied = await moduleApi.resolveUsageEffectsFromCarrier(spell, { sourceToken: token, allowEmpty: true });
+            // A spell with only a descriptive success carries no usage effects —
+            // keep the description, don't claim effects were applied.
+            if (!applied?.empty) detail = `Effects applied to ${token.actor.name}. ${detail}`;
         } else {
             detail = `No source token selected — effects not applied. ${detail}`;
         }
