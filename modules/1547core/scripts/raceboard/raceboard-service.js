@@ -250,4 +250,8 @@ export function refreshRaceboardApi() {
         coreModule.api = coreModule.api ?? {};
         coreModule.api.raceboard = globalThis.RaceBoard;
     }
+
+    // Announce that the RaceBoard API is built so domain services (e.g. the
+    // ritual resolver) can register against it without racing our async load.
+    Hooks.callAll("1547coreRaceboardReady", globalThis.RaceBoard);
 }

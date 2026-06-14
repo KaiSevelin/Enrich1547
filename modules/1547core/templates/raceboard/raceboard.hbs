@@ -139,22 +139,22 @@
     {{#if resolution.canResolve}}{{#unless resolution.resolved}}
       <div class="rb-resolve">
         <span class="rb-resolve-label">{{localize "RACEBOARD.ResolveLabel"}}</span>
-        <button type="button" class="rb-btn rb-btn-success" data-action="resolve-success"
+        <button type="button" class="rb-btn rb-btn-icon rb-btn-success" data-action="resolve-success"
                 title="{{localize "RACEBOARD.ResolveSuccessTitle"}}">
-          <i class="fa-solid fa-circle-check"></i> {{localize "RACEBOARD.ResolveSuccess"}}
+          <i class="fa-solid fa-circle-check"></i>
         </button>
-        <button type="button" class="rb-btn rb-btn-danger" data-action="resolve-failure"
+        <button type="button" class="rb-btn rb-btn-icon rb-btn-failure" data-action="resolve-failure"
                 title="{{localize "RACEBOARD.ResolveFailureTitle"}}">
-          <i class="fa-solid fa-circle-xmark"></i> {{localize "RACEBOARD.ResolveFailure"}}
+          <i class="fa-solid fa-hand"></i>
         </button>
       </div>
     {{/unless}}{{/if}}
 
     <div class="rb-footer-right">
       {{#if isEphemeral}}
-        <button type="button" class="rb-btn rb-btn-primary" data-action="save"
+        <button type="button" class="rb-btn rb-btn-icon rb-btn-primary" data-action="save"
                 title="{{localize "RACEBOARD.SaveButtonTitle"}}">
-          <i class="fa-solid fa-floppy-disk"></i> {{localize "RACEBOARD.SaveLabel"}}
+          <i class="fa-solid fa-floppy-disk"></i>
         </button>
       {{/if}}
     </div>

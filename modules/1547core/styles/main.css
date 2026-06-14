@@ -3122,11 +3122,26 @@ a.enricher-1547::before {
   background: #36a85f;
 }
 
-.rb-btn-success {
-  color: #2e7d32;
+.rb-btn-success,
+.raceboard-app .rb-btn-success {
+  background: #2e7d32;
+  color: #fff;
+  border-color: #1c5524;
 }
-.rb-btn-success:hover:not([disabled]) {
-  background: rgba(46, 125, 50, 0.12);
+.rb-btn-success:hover:not([disabled]),
+.raceboard-app .rb-btn-success:hover:not([disabled]) {
+  background: #379a3e;
+}
+
+.rb-btn-failure,
+.raceboard-app .rb-btn-failure {
+  background: #b3261e;
+  color: #fff;
+  border-color: #7f1a15;
+}
+.rb-btn-failure:hover:not([disabled]),
+.raceboard-app .rb-btn-failure:hover:not([disabled]) {
+  background: #d12f25;
 }
 
 /* Resolution banner (success / failure outcome of the board's process). */

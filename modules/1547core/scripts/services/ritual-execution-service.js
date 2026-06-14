@@ -346,17 +346,21 @@ function registerRitualContextMenu() {
 export function registerRitualExecutionService() {
     registerRitualContextMenu();
 
-    // RaceBoard.registerResolver is attached at `ready` (refreshRaceboardApi),
-    // which runs before this ready hook. Fail loudly if that ever changes, so
-    // ritual board resolution doesn't silently stop working.
-    Hooks.once("ready", () => {
+    // Register the ritual resolver with the race board. RaceBoard is built in
+    // refreshRaceboardApi at `ready`, but that runs as an async dynamic import
+    // and can land after this service's own `ready` fires — so don't gate on a
+    // plain ready hook (it would race and silently skip registration). Register
+    // now if RaceBoard is already up, otherwise wait for the one-shot
+    // `1547coreRaceboardReady` signal it emits once built.
+    const tryRegisterRitualResolver = () => {
         const rb = globalThis.RaceBoard;
-        if (typeof rb?.registerResolver === "function") {
-            rb.registerResolver("ritual", ritualResolver);
-        } else {
-            console.warn(`${MODULE_ID} | RaceBoard.registerResolver unavailable at ready — ritual board success/failure resolution is disabled.`);
-        }
-    });
+        if (typeof rb?.registerResolver !== "function") return false;
+        rb.registerResolver("ritual", ritualResolver);
+        return true;
+    };
+    if (!tryRegisterRitualResolver()) {
+        Hooks.once("1547coreRaceboardReady", tryRegisterRitualResolver);
+    }
 
     const moduleApi = game.modules.get(MODULE_ID);
     if (moduleApi) {
