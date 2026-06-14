@@ -2289,12 +2289,13 @@
     ],
     "enabled": false,
     "requirements": {
+      "skill": "Combat Ranged 1 or Combat Thrown 1",
       "text": "An arc-capable weapon (a bow, sling, or thrown weapon, never a firearm) with overhead clearance for the arc; the GM may forbid it indoors or under cover",
       "requiredWeaponGroups": [
         "RangedWeapon",
         "ThrownWeapon"
       ]
     },
-    "description": "A lobbed, indirect shot that arcs over anything in the way to fall on the target. It is declared before an attack is resolved. In play, it adds 1 disadvantage, ignores intervening obstacles (no cover interception), and cannot exploit an exposed back (no rear bonus). It requires an arc-capable weapon (a bow, sling, or thrown weapon, never a firearm) and overhead clearance for the arc; the GM may forbid it indoors or under cover."
+    "description": "A lobbed, indirect shot that arcs over anything in the way to fall on the target. It is declared before an attack is resolved. In play, it adds 1 disadvantage, ignores intervening obstacles (no cover interception), and cannot exploit an exposed back (no rear bonus). It requires Combat Ranged 1 or Combat Thrown 1, and an arc-capable weapon (a bow, sling, or thrown weapon, never a firearm) with overhead clearance for the arc; the GM may forbid it indoors or under cover."
   }
 ]

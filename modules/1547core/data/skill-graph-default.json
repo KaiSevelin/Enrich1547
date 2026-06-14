@@ -762,6 +762,26 @@
       }
     ]
   },
+  "Item.ArcdShotMnvr0001": {
+    "name": "Arced Shot",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.Y0SfW0f3l5E5JHd5",
+            "minLevel": 1
+          },
+          {
+            "nodeId": "Item.fLIefMop44DdTwzl",
+            "minLevel": 1
+          }
+        ]
+      }
+    ]
+  },
   "Item.H1aCK1J68Y0LAL9P": {
     "name": "Suppressing Fire",
     "type": "equippableItem",
