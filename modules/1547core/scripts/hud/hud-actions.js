@@ -1,6 +1,6 @@
 ﻿import { buildDefenderPool, toFoundryFormula } from "../combat/pool-builder.mjs";
 import { conditionCombatDisadvantage } from "../services/condition-registry.js";
-import { autoFaceAttacker, getAttackPositioning, positioningNote } from "../combat/facing.mjs";
+import { autoFaceAttacker, getAttackPositioning, positioningNote, positionalAdvantageToApply } from "../combat/facing.mjs";
 
 function consumePersistentEffectIfPresent(actor, effectType, deps = {}) {
     const { MODULE_ID, game } = deps;
@@ -232,11 +232,20 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
     const targetActor = context.primaryTarget?.actor ?? null;
     const distanceSquares = refreshedAttackState.distanceSquares ?? getChebyshevDistanceSquares(context.token, context.primaryTarget);
 
-    // Facing & positioning (spec): turn the attacker to face the target, and
-    // detect a rear/surprise shot. The +1 is surfaced as a suggestion in the
-    // attack card — never auto-applied to the pool.
+    // Facing & positioning (spec): turn the attacker to face the target, then
+    // detect a rear/surprise shot. The +1 is APPLIED only where it cannot be
+    // react-faced (surprise / Hidden attacker); a faceable rear shot stays a
+    // suggestion (pending the Face reaction).
     await autoFaceAttacker(context.token, context.primaryTarget);
-    const positionNote = positioningNote(getAttackPositioning(context.token, context.primaryTarget, distanceSquares));
+    const positioning = getAttackPositioning(context.token, context.primaryTarget, distanceSquares);
+    const appliedPositionAdvantage = positionalAdvantageToApply(positioning);
+    const positionNote = positioningNote(positioning, appliedPositionAdvantage > 0);
+    const finalAttackFormula = appliedPositionAdvantage > 0
+        ? (buildFoundryAttackRollFormula(
+            currentWeapon?.activeAttackProfileData,
+            { ...effectiveWeaponRollContext, advantageDice: (Number(effectiveWeaponRollContext.advantageDice) || 0) + appliedPositionAdvantage }
+        ) || attackFormula)
+        : attackFormula;
 
     try {
         const result = await declareAttack({
@@ -263,7 +272,7 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
         const attackRollSummary = await rollFormulaToChatAndSummarize({
             Roll,
             speaker,
-            formula: attackFormula,
+            formula: finalAttackFormula,
             flavor: `${descriptor.label}<br>Target: ${escapeHtml(targetActor?.name ?? "Target")}${positionNote ? `<br><em>${escapeHtml(positionNote)}</em>` : ""}`,
             game,
         });

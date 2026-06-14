@@ -62,11 +62,30 @@ export async function autoFaceAttacker(attackerToken, defenderToken) {
     } catch (_err) { /* non-fatal */ }
 }
 
-// A short, human note for the attack card when a positional bonus is available
-// (suggestion only — the +1 is not added to the pool here).
-export function positioningNote(pos) {
+// The positional advantage to AUTO-APPLY to the attack pool. Only where it
+// cannot be react-faced — a surprise (target not yet in combat) or a Hidden
+// attacker. A faceable rear shot stays a suggestion until the Face reaction
+// exists, so the +1 never lands without its counter (no positioning treadmill).
+export function positionalAdvantageToApply(pos) {
+    if (!pos) return 0;
+    if (pos.surprise) return pos.advantage;
+    if (pos.rear && !pos.faceable) return pos.advantage;
+    return 0;
+}
+
+// A short, human note for the attack card. `applied` distinguishes an applied
+// +1 (un-faceable) from a mere suggestion (faceable rear).
+export function positioningNote(pos, applied = false) {
     if (!pos) return "";
-    if (pos.surprise) return "Surprise attack — +1 advantage available (target is not yet in the fight).";
-    if (pos.rear) return `Rear shot — +1 advantage available${pos.faceable ? "" : " (target cannot turn to face)"}.`;
+    if (pos.surprise) {
+        return applied
+            ? "Surprise attack — +1 advantage applied (target is not yet in the fight)."
+            : "Surprise attack — +1 advantage available.";
+    }
+    if (pos.rear) {
+        return applied
+            ? "Rear shot — +1 advantage applied (target cannot turn to face)."
+            : "Rear shot — +1 advantage available (target may turn to face).";
+    }
     return "";
 }

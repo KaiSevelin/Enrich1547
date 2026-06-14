@@ -79,4 +79,17 @@ assert.deepEqual(
     { surprise: false, rear: false, advantage: 0, faceable: false }
 );
 
+// positionalAdvantageToApply — auto-apply only where it can't be react-faced.
+console.log("facing.positionalAdvantageToApply — applies only when un-faceable...");
+const f = await import("../combat/facing.mjs");
+// Surprise → applies.
+assert.equal(f.positionalAdvantageToApply({ surprise: true, rear: true, advantage: 1, faceable: false }), 1);
+// Rear + Hidden (not faceable) → applies.
+assert.equal(f.positionalAdvantageToApply({ surprise: false, rear: true, advantage: 1, faceable: false }), 1);
+// Rear + faceable → suggestion only, does NOT apply.
+assert.equal(f.positionalAdvantageToApply({ surprise: false, rear: true, advantage: 1, faceable: true }), 0);
+// No rear → nothing.
+assert.equal(f.positionalAdvantageToApply({ surprise: false, rear: false, advantage: 0, faceable: false }), 0);
+assert.equal(f.positionalAdvantageToApply(null), 0);
+
 console.log("positioning.test.mjs — all assertions passed.");
