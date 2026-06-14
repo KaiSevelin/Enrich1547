@@ -77,6 +77,26 @@ melee** — without a to-hit-penalty abstraction or a wall-geometry nightmare.
 ally takes a **full damage roll with no defense**. That is the entire point: shooting past
 your own line is a genuine, punishing risk, not a free play. The deterrent is meant to bite.
 
+## Arced shots bypass the lane (the `indirect` flag)
+
+A **lobbed / arced** shot climbs over intervening obstacles and drops onto the target — the
+way to shoot over your own front line, a low wall, or a melee — so it **skips interception
+entirely**. This is **not** a separate firing mode: it is the **`indirect: true`** flag on a
+maneuver's `effectData` (the **Arced Shot** maneuver, and Volley Fire). When an attack carries
+`indirect`:
+
+- **No interception** — the lane (rules 1–5) is not traced; intervening obstacles are ignored.
+- **No rear +1** — a shot falling from above doesn't care which way the target faces, so it
+  forfeits the facing rear bonus (see [`facing-and-positioning-spec-v1.md`](facing-and-positioning-spec-v1.md)).
+- **+1 disadvantage** — lobbing is imprecise; that is the price for the safety (`addDisadvantage: 1`).
+- **Arc-capable, non-firearm weapons only** — bows, slings, thrown (`RangedWeapon` /
+  `ThrownWeapon` groups; firearms fire flat and cannot arc).
+- **Overhead cover is a GM call** — Foundry's grid has no height, so "is there a roof/canopy
+  above the path?" is a GM flag, not derived. Indoors / under cover, no arc.
+
+So the shooter's choice is real: a **direct** shot plays the positional game (interception
+risk, rear-+1 reward); an **arced** shot opts out of both for a flat accuracy cost.
+
 ## Why this works
 
 - **"Don't shoot into melee" is emergent.** An enemy toe-to-toe with your ally puts the ally

@@ -2262,5 +2262,39 @@
       "text": "Wings broad enough to drive air with force."
     },
     "description": "A heavy wing-driven strike that knocks a target back or down under forceful air and impact. It is declared before an attack is resolved. In play, it pushes the target 2 squares if the attack deals damage, and applies prone if the attack deals damage. It requires Wings broad enough to drive air with force. At the cost of one Dexterity point."
+  },
+  {
+    "_id": "ArcdShotMnvr0001",
+    "id": "ArcdShotMnvr0001",
+    "name": "Arced Shot",
+    "uuid": "Item.ArcdShotMnvr0001",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "attack-declared",
+    "CostType": "",
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "addDisadvantage": 1,
+      "indirect": true
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "ranged",
+      "indirect"
+    ],
+    "enabled": false,
+    "requirements": {
+      "text": "An arc-capable weapon (a bow, sling, or thrown weapon, never a firearm) with overhead clearance for the arc; the GM may forbid it indoors or under cover",
+      "requiredWeaponGroups": [
+        "RangedWeapon",
+        "ThrownWeapon"
+      ]
+    },
+    "description": "A lobbed, indirect shot that arcs over anything in the way to fall on the target. It is declared before an attack is resolved. In play, it adds 1 disadvantage, ignores intervening obstacles (no cover interception), and cannot exploit an exposed back (no rear bonus). It requires an arc-capable weapon (a bow, sling, or thrown weapon, never a firearm) and overhead clearance for the arc; the GM may forbid it indoors or under cover."
   }
 ]

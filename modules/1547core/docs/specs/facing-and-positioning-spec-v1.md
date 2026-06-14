@@ -197,6 +197,9 @@ Suggested insertion points:
   polearm claims it from two tiles back, a ranged weapon from anywhere in its range band that
   falls in the rear cone. A rear shot still needs line of sight (Foundry enforces it). Any
   range penalty and the rear +1 simply net out in the pool.
+- **Arced / indirect shots get no rear +1.** A lobbed shot (the `indirect` maneuver flag —
+  Arced Shot, Volley Fire; see [`cover-spec-v1.md`](cover-spec-v1.md)) falls from above and
+  ignores facing entirely: it claims no rear bonus (and is exempt from lane interception).
 - **Flanks are neutral.** Only the rear cone gives +1. The pure side tiles give nothing —
   being merely beside the target is not enough; you must get behind.
 - **Large / multi-tile tokens.** The vulnerability arc is the row behind the **back edge**:
