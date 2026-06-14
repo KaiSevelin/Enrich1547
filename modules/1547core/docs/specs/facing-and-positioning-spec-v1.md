@@ -24,6 +24,8 @@ stealth or surprise subsystem.
   target **not yet in the encounter** — the opening strike — not a tracked state. See
   [`foundry-side-initiative-encounter-spec-v1.md`](foundry-side-initiative-encounter-spec-v1.md).
 - **The Hidden lever** reuses Foundry's built-in token `hidden` flag — no new data.
+- **Visualization & automation** — the rear-cone marker and rear +1 are surfaced via the
+  ranged-shot overlay; see [`ranged-shot-visualization-spec-v1.md`](ranged-shot-visualization-spec-v1.md).
 
 ---
 

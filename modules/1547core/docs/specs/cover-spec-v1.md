@@ -22,6 +22,8 @@ adds essentially no persistent data, and stays GM-assisted.
 - **Foundry walls / LoS** — full, solid cover is **not** in this spec: a wall that blocks
   line of sight already means *no shot* (Foundry enforces it). Interception is only for
   things you can partly see past.
+- **Visualization & automation** — how the lane, obstacles, odds, and the fire flow are shown
+  and rolled is [`ranged-shot-visualization-spec-v1.md`](ranged-shot-visualization-spec-v1.md).
 
 ---
 
