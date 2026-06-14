@@ -240,5 +240,5 @@ Suggested insertion points:
 - Any stealth, perception, awareness, or surprise-round tracking.
 - Automatic, enforced application of the +1 (kept GM-assisted by design).
 - Cover modifiers, and line-of-sight beyond what Foundry already enforces — cover is its own
-  design (see future work / a separate spec).
+  design; see [`cover-spec-v1.md`](cover-spec-v1.md) (ranged obstacle interception).
 - Per-creature variable cone widths (all combatants use the same cone shape for now).
