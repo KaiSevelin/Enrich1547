@@ -206,9 +206,17 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
             "set-visibility": function (event, target) { return this._onSetVisibility(Number(target.dataset.level)); },
             "grant-drive": function () { return this._onGrant(false); },
             "grant-mood": function () { return this._onGrant(true); },
-            "reset": function () { return this._onReset(); }
+            "reset": function () { return this._onReset(); },
+            "toggle-collapse": function () { return this._onToggleCollapse(); }
         }
     };
+
+    // Collapse/expand to just the title strip via a root class (no re-render, so
+    // it survives exchanges/syncs; the icon swaps in CSS).
+    _onToggleCollapse() {
+        this._collapsed = !this._collapsed;
+        this.element?.classList.toggle("is-collapsed", this._collapsed);
+    }
 
     static PARTS = {
         body: { template: "modules/1547core/templates/social/social-battle.hbs" }

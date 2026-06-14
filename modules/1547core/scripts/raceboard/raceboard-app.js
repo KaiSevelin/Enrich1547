@@ -63,9 +63,17 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       "edit-header": function(event, target) { return this._onEditHeader(event, target); },
       "resolve-success": function() { return this._onResolve("success"); },
       "resolve-failure": function() { return this._onResolve("failure"); },
-      "resolve-clear": function() { return this._onResolveClear(); }
+      "resolve-clear": function() { return this._onResolveClear(); },
+      "toggle-collapse": function() { return this._onToggleCollapse(); }
     }
   };
+
+  // Collapse/expand the board to just its header, via a class on the root. No
+  // re-render so it survives state updates; the icon swaps in CSS.
+  _onToggleCollapse() {
+    this._collapsed = !this._collapsed;
+    this.element?.classList.toggle("is-collapsed", this._collapsed);
+  }
 
   static PARTS = {
     body: { template: "modules/1547core/templates/raceboard/raceboard.hbs" }

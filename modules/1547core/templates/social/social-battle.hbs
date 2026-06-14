@@ -1,4 +1,9 @@
 <div class="sb-wrap">
+  <div class="sb-titlebar">
+    <button type="button" class="sb-btn sb-collapse" data-action="toggle-collapse" title="Collapse / expand">
+      <i class="fa-solid fa-window-minimize sb-ic-min"></i><i class="fa-solid fa-window-maximize sb-ic-max"></i>
+    </button>
+  </div>
   {{#if alarm.show}}
     <div class="rb-alarm" data-alarm-level="{{alarm.level}}">
       <span class="rb-alarm-icon" {{#if alarm.canControl}}data-action="alarm-up" title="Left-click raise · right-click lower"{{/if}}>
