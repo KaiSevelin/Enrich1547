@@ -1,5 +1,5 @@
-import { MODULE_ID } from "lib/constants.mjs";
-﻿import { register1547ModuleSettings } from "./settings/module-settings.js";
+import { MODULE_ID } from "./lib/constants.mjs";
+import { register1547ModuleSettings } from "./settings/module-settings.js";
 
 
 function runModuleStep(label, fn) {
