@@ -1,0 +1,52 @@
+<div class="sb-wrap">
+  <div class="sb-sides">
+    {{#each sides}}
+      <div class="sb-side{{#if this.isLoser}} is-loser{{/if}}{{#if this.isWinner}} is-winner{{/if}}">
+        <div class="sb-side-head">
+          <span class="sb-side-name">{{this.name}}</span>
+          <span class="sb-side-stat" title="Battle stat">{{this.stat}}</span>
+        </div>
+        <div class="sb-pips" title="{{this.taken}} of {{this.total}} marks">
+          {{#each this.pips}}
+            <span class="sb-pip{{#if this}} is-filled{{/if}}"></span>
+          {{/each}}
+        </div>
+        <div class="sb-marks">{{this.taken}} / {{this.total}}</div>
+      </div>
+    {{/each}}
+  </div>
+
+  {{#if over}}
+    <div class="sb-outcome">
+      <span class="sb-outcome-label"><i class="fa-solid fa-gavel"></i> {{loser.name}} loses</span>
+      <div class="sb-outcome-actions">
+        <button type="button" class="sb-btn" data-action="grant-drive"
+                title="Grant a Drive to {{loser.name}} (chargen Drives model)">
+          <i class="fa-solid fa-fire-flame-curved"></i>
+        </button>
+        <button type="button" class="sb-btn" data-action="grant-mood"
+                title="Grant a Mood to {{loser.name}} (cleared on rest)">
+          <i class="fa-solid fa-cloud"></i>
+        </button>
+      </div>
+    </div>
+  {{else}}
+    <div class="sb-controls">
+      <button type="button" class="sb-btn sb-exchange" data-action="exchange" title="Roll an exchange">
+        <i class="fa-solid fa-dice"></i>
+      </button>
+    </div>
+  {{/if}}
+
+  {{#if log.length}}
+    <div class="sb-log">
+      {{#each log}}<div class="sb-log-line">{{this}}</div>{{/each}}
+    </div>
+  {{/if}}
+
+  <div class="sb-footer">
+    <button type="button" class="sb-btn" data-action="reset" title="Reset marks and log">
+      <i class="fa-solid fa-rotate-left"></i>
+    </button>
+  </div>
+</div>

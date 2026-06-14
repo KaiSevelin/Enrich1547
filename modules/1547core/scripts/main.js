@@ -161,6 +161,11 @@ Hooks.once("init", () => {
         () => import("./raceboard/raceboard-service.js"),
         (module) => module.registerRaceboardService()
     );
+    void runImportedModuleStep(
+        "registerSocialBattleService",
+        () => import("./social/social-battle.js"),
+        (module) => module.registerSocialBattleService()
+    );
 });
 
 Hooks.once("ready", () => {
