@@ -11,6 +11,7 @@ Current documents:
 - `combat-resolution-loop-spec-v1.md`
 - `combat-spec-v2.md`
 - `combat-state-machine-v1.md`
+- `facing-and-positioning-spec-v1.md`
 - `content-module-architecture-spec-v1.md`
 - `core-service-contract-spec-v1.md`
 - `damage-type-catalog-spec-v1.md`
