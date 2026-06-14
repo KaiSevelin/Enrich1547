@@ -32,6 +32,14 @@ const PHASE_BEFORE_CRISIS = new Set(["Incubation", "Symptoms", "Onset"]);
 /* ---------------------------------------- */
 
 function props(doc) { return doc?.system?.props ?? {}; }
+// CSB dynamicTable props (Phases, CureBoard) seed as arrays but are reshaped
+// into a row-keyed object ({0:{…},1:{…}}) once the item is live on an actor.
+// Normalize either form to an array of row objects.
+function tableRows(value) {
+    if (Array.isArray(value)) return value.filter((r) => r && typeof r === "object");
+    if (value && typeof value === "object") return Object.values(value).filter((r) => r && typeof r === "object");
+    return [];
+}
 function statDice(actor, stat) { return Number(props(actor)[`Stats_${stat}Dice`] ?? 0); }
 function statMod(actor, stat) { return Number(props(actor)[`Stats_${stat}Mod`] ?? 0); }
 function faithDice(actor) { return statDice(actor, "Faith"); }
@@ -188,8 +196,8 @@ async function contractDisease(actorOrToken, diseaseOrName) {
 /*  Phase tracking                          */
 /* ---------------------------------------- */
 
-function phaseList(affliction) { return (props(affliction).Phases ?? []).map((x) => x.Phase); }
-function phaseEntry(affliction, phase) { return (props(affliction).Phases ?? []).find((x) => x.Phase === phase) ?? null; }
+function phaseList(affliction) { return tableRows(props(affliction).Phases).map((x) => x.Phase); }
+function phaseEntry(affliction, phase) { return tableRows(props(affliction).Phases).find((x) => x.Phase === phase) ?? null; }
 
 async function advanceDiseasePhase(affliction) {
     if (!affliction) return null;
@@ -276,7 +284,7 @@ function cureColumn(box) {
 }
 
 function cureRowsForPhase(affliction, phase) {
-    const rows = props(affliction).CureBoard ?? [];
+    const rows = tableRows(props(affliction).CureBoard);
     return rows.filter((r) => {
         if (r.Phase === phase) return true;
         if (r.Phase === "All") return true;
