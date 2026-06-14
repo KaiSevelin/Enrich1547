@@ -2694,10 +2694,10 @@ a.enricher-1547::before {
   --rb-text: #f6f1e1;
   --rb-text-dim: rgba(246, 241, 225, 0.75);
   --rb-text-shadow: 0 0 4px rgba(0,0,0,0.85), 0 0 2px rgba(0,0,0,0.85);
-  --rb-row-bg: rgba(20, 20, 28, 0.45);
-  --rb-row-bg-won: rgba(38, 110, 64, 0.55);
-  --rb-btn-bg: rgba(20, 20, 28, 0.5);
-  --rb-btn-bg-hover: rgba(40, 40, 55, 0.7);
+  --rb-row-bg: rgba(20, 20, 28, 0.65);
+  --rb-row-bg-won: rgba(38, 110, 64, 0.72);
+  --rb-btn-bg: rgba(20, 20, 28, 0.68);
+  --rb-btn-bg-hover: rgba(40, 40, 55, 0.82);
   --rb-border: rgba(246, 241, 225, 0.25);
 }
 
