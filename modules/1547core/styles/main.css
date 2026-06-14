@@ -3361,6 +3361,12 @@ a.enricher-1547::before {
 .sb-side-name {
   font-weight: 600;
 }
+.sb-active-sel {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
 .sb-side-stat {
   font-size: 0.78rem;
   opacity: 0.7;

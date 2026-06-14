@@ -17,7 +17,13 @@
     {{#each sides}}
       <div class="sb-side{{#if this.isLoser}} is-loser{{/if}}{{#if this.isWinner}} is-winner{{/if}}">
         <div class="sb-side-head">
-          <span class="sb-side-name" title="{{this.drivesTooltip}}">{{this.name}}</span>
+          {{#if this.canPickActive}}
+            <select class="sb-active-sel" name="active-{{this.key}}" title="{{this.drivesTooltip}}">
+              {{#each this.participants}}<option value="{{this.idx}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>{{/each}}
+            </select>
+          {{else}}
+            <span class="sb-side-name" title="{{this.drivesTooltip}}">{{this.activeName}}</span>
+          {{/if}}
           <span class="sb-side-stat" title="Battle stat (sets marks)">{{this.stat}}</span>
         </div>
 
@@ -46,7 +52,7 @@
             </div>
 
             <div class="sb-secrets">
-              <label class="sb-secret" title="Use a secret this exchange (+1 die)"><input type="checkbox" name="secret-{{this.key}}" {{#if this.secret}}checked{{/if}}><i class="fa-solid fa-key"></i> Secret</label>
+              <label class="sb-secret" title="Use a secret this exchange (+1 die)"><input type="checkbox" name="secret-{{this.key}}" {{#if this.secret}}checked{{/if}}><i class="fa-solid fa-key"></i> Use secret</label>
             </div>
           </div>
         {{/if}}

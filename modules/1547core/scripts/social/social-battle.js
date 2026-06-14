@@ -52,7 +52,12 @@ function escapeHtml(value) {
 function actorProps(actor) { return actor?.system?.props ?? {}; }
 function statDice(actor, stat) { return Number(actorProps(actor)[`Stats_${stat}Dice`] ?? 0) || 0; }
 function statMod(actor, stat) { return Number(actorProps(actor)[`Stats_${stat}Mod`] ?? 0) || 0; }
-function actorOf(side) { return side?.actorUuid ? fromUuidSync(side.actorUuid) : null; }
+function activeParticipant(side) { return side?.participants?.[side?.activeIdx ?? 0] ?? null; }
+function activeName(side) { return activeParticipant(side)?.name ?? "?"; }
+function actorOf(side) {
+    const uuid = activeParticipant(side)?.actorUuid;
+    return uuid ? fromUuidSync(uuid) : null;
+}
 
 function numProp(props, key) {
     const v = props?.[key];
@@ -157,18 +162,18 @@ function grantMood(actor) {
     });
 }
 
-async function postExchangeCard(battle, pa, pb, ra, rb, line) {
+async function postExchangeCard(battle, an, bn, pa, pb, ra, rb, line) {
     const [A, B] = battle.sides;
-    const loser = battle.over ? battle.sides.find((s) => s.key === battle.loserKey) : null;
+    const loserName = battle.over ? activeName(battle.sides.find((s) => s.key === battle.loserKey)) : "";
     const tag = (p) => `${p.secrets ? ` +${p.secrets} secret` : ""}${p.adv ? ` ${p.adv > 0 ? "+" : ""}${p.adv} adv` : ""}`;
     const content = `
     <div class="sb-card">
       <h3 style="margin:.1rem 0;">Social Battle — Exchange</h3>
-      <p style="margin:.1rem 0;">${escapeHtml(A.name)} <em>(${escapeHtml(pa.label)}${escapeHtml(tag(pa))})</em>: <strong>${ra.total}</strong> <span style="opacity:.65">[${escapeHtml(ra.formula)}]</span></p>
-      <p style="margin:.1rem 0;">${escapeHtml(B.name)} <em>(${escapeHtml(pb.label)}${escapeHtml(tag(pb))})</em>: <strong>${rb.total}</strong> <span style="opacity:.65">[${escapeHtml(rb.formula)}]</span></p>
+      <p style="margin:.1rem 0;">${escapeHtml(an)} <em>(${escapeHtml(pa.label)}${escapeHtml(tag(pa))})</em>: <strong>${ra.total}</strong> <span style="opacity:.65">[${escapeHtml(ra.formula)}]</span></p>
+      <p style="margin:.1rem 0;">${escapeHtml(bn)} <em>(${escapeHtml(pb.label)}${escapeHtml(tag(pb))})</em>: <strong>${rb.total}</strong> <span style="opacity:.65">[${escapeHtml(rb.formula)}]</span></p>
       <p style="margin:.25rem 0 .1rem;">${escapeHtml(line)}</p>
-      <p style="margin:.1rem 0;opacity:.8;">${escapeHtml(A.name)} ${A.filled}/${A.total} &middot; ${escapeHtml(B.name)} ${B.filled}/${B.total}</p>
-      ${loser ? `<p style="margin:.25rem 0 0;color:#b3261e;"><strong>${escapeHtml(loser.name)} loses the battle.</strong></p>` : ""}
+      <p style="margin:.1rem 0;opacity:.8;">${escapeHtml(an)} ${A.filled}/${A.total} &middot; ${escapeHtml(bn)} ${B.filled}/${B.total}</p>
+      ${loserName ? `<p style="margin:.25rem 0 0;color:#b3261e;"><strong>${escapeHtml(loserName)} loses the battle.</strong></p>` : ""}
     </div>`;
     await ChatMessage.create({ speaker: { alias: "Social Battle" }, content });
 }
@@ -217,6 +222,8 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
         const root = this.element;
         if (!root || !this.canEdit) return;
         for (const s of this._battle.sides) {
+            const active = root.querySelector(`select[name="active-${s.key}"]`);
+            if (active) s.activeIdx = Number(active.value) || 0;
             const mode = root.querySelector(`input[name="mode-${s.key}"]:checked`)?.value;
             if (mode) s.mode = mode;
             const stat = root.querySelector(`select[name="stat-${s.key}"]`)?.value;
@@ -238,7 +245,9 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
             const events = s.events || [];
             return {
                 key: s.key,
-                name: s.name,
+                activeName: activeName(s),
+                canPickActive: canEdit && (s.participants?.length ?? 0) > 1,
+                participants: (s.participants ?? []).map((p, i) => ({ name: p.name, idx: i, selected: i === s.activeIdx })),
                 stat: s.stat,
                 drivesTooltip: canEdit ? drivesTooltip(actor) : "",
                 filled: s.filled,
@@ -263,7 +272,7 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
             sides,
             canEdit,
             over: b.over,
-            loser: b.over ? b.sides.find((x) => x.key === b.loserKey) : null,
+            loser: b.over ? { name: activeName(b.sides.find((x) => x.key === b.loserKey)) } : null,
             log: b.log.slice(-8).reverse(),
             alarm: buildAlarmContext(b.alarm, { showExtras, canControl: canEdit }),
             visibilityOptions: canEdit ? buildVisibilityOptions(b.visibility) : []
@@ -360,6 +369,8 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
         this._captureForm();
 
         const [A, B] = b.sides;
+        const an = activeName(A);
+        const bn = activeName(B);
         const pa = sidePool(A);
         const pb = sidePool(B);
         const ra = await rollPool(pa.dice, pa.mod);
@@ -373,17 +384,20 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
             const m = marksFromExchange(ra.total, rb.total);
             crit = m === 2;
             B.filled = Math.min(B.total, B.filled + m);
-            line = `${A.name} wins ${ra.total} vs ${rb.total} → ${B.name} takes ${m} mark${m > 1 ? "s (critical)" : ""}.`;
+            line = `${an} wins ${ra.total} vs ${rb.total} → ${bn} takes ${m} mark${m > 1 ? "s (critical)" : ""}.`;
         } else {
             const m = marksFromExchange(rb.total, ra.total);
             crit = m === 2;
             A.filled = Math.min(A.total, A.filled + m);
-            line = `${B.name} wins ${rb.total} vs ${ra.total} → ${A.name} takes ${m} mark${m > 1 ? "s (critical)" : ""}.`;
+            line = `${bn} wins ${rb.total} vs ${ra.total} → ${an} takes ${m} mark${m > 1 ? "s (critical)" : ""}.`;
         }
         b.log.push(line);
         this._recomputeOutcome();
 
-        await postExchangeCard(b, pa, pb, ra, rb, line);
+        await postExchangeCard(b, an, bn, pa, pb, ra, rb, line);
+        // Reset each side's controls so advantage/secret/stat choice don't carry
+        // over to the next exchange (secrets are spent).
+        b.sides.forEach(resetSideControls);
         await this._sync();
         if (crit) this._flashCrit();
     }
@@ -426,6 +440,16 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
         }
         const alarmIcon = this.element.querySelector('.rb-alarm-icon[data-action="alarm-up"]');
         alarmIcon?.addEventListener("contextmenu", (ev) => { ev.preventDefault(); void this._onAlarm("down"); });
+        // Switching the acting individual re-renders so the stat/skill dropdowns
+        // reflect the newly-active actor.
+        for (const sel of this.element.querySelectorAll('select[name^="active-"]')) {
+            sel.addEventListener("change", () => {
+                this._captureForm();
+                const side = this._battle.sides.find((s) => s.key === sel.name.slice("active-".length));
+                if (side) { side.activeIdx = Number(sel.value) || 0; side.selSkill = ""; side.mode = "stat"; }
+                void this._sync();
+            });
+        }
     }
 
     async _onClose(options) {
@@ -443,25 +467,38 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
 /*  Launch + registration                   */
 /* ---------------------------------------- */
 
-function buildSide(key, tok, battleStat) {
-    const actor = tok?.actor;
-    if (!actor) return null;
-    const dice = statDice(actor, battleStat);
+function buildSide(key, toks, battleStat) {
+    const participants = toks
+        .filter((t) => t?.actor)
+        .map((t) => ({ name: t.name, actorUuid: t.actor.uuid }));
+    if (!participants.length) return null;
+    const active = fromUuidSync(participants[0].actorUuid);
+    const dice = statDice(active, battleStat);
     return {
         key,
-        name: tok.name,
-        actorUuid: actor.uuid,
+        participants,
+        activeIdx: 0,               // the acting individual (their stats/skills roll)
         stat: battleStat,           // battle stat: sets the initial mark count
         filled: 0,
         total: Math.max(MIN_MARKS, 2 + dice),
         events: [],
-        // Per-exchange control state (inline form).
+        // Per-exchange control state (inline form); reset to these after each roll.
         mode: "stat",
         selStat: battleStat,
         selSkill: "",
         advantage: 0,
         secret: false
     };
+}
+
+// Reset a side's per-exchange controls to defaults (run after each roll, so the
+// advantage, secret and stat/skill choice don't carry over and secrets are spent).
+function resetSideControls(side) {
+    side.mode = "stat";
+    side.selStat = side.stat;
+    side.selSkill = "";
+    side.advantage = 0;
+    side.secret = false;
 }
 
 // No setup dialog: Side A is the controlled token, Side B the targeted token
@@ -474,14 +511,19 @@ export async function startSocialBattle() {
         ui.notifications?.warn("1547 Core: place at least two tokens with actors on the scene to start a social battle.");
         return;
     }
-    const controlled = canvas.tokens.controlled.find((t) => t.actor) ?? null;
-    const targeted = [...(game.user?.targets ?? [])].find((t) => t.actor) ?? null;
-    const aTok = controlled ?? tokens[0];
-    const bTok = targeted ?? tokens.find((t) => t !== aTok) ?? tokens[1];
+    // Side A = every controlled token; Side B = every targeted token. Fall back
+    // to the first two distinct tokens when nothing is selected/targeted. B is
+    // de-duped against A so a token can't end up on both sides.
+    const controlled = canvas.tokens.controlled.filter((t) => t.actor);
+    const targeted = [...(game.user?.targets ?? [])].filter((t) => t.actor);
+    const aToks = controlled.length ? controlled : [tokens[0]];
+    let bToks = (targeted.length ? targeted : [tokens.find((t) => !aToks.includes(t))])
+        .filter((t) => t && !aToks.includes(t));
+    if (!bToks.length) bToks = [tokens.find((t) => !aToks.includes(t))].filter(Boolean);
 
-    const sides = [buildSide("a", aTok, "Charisma"), buildSide("b", bTok, "Stamina")];
+    const sides = [buildSide("a", aToks, "Charisma"), buildSide("b", bToks, "Stamina")];
     if (!sides[0] || !sides[1]) {
-        ui.notifications?.warn("1547 Core: both sides need a token with an actor.");
+        ui.notifications?.warn("1547 Core: both sides need at least one token with an actor.");
         return;
     }
     const battle = {
