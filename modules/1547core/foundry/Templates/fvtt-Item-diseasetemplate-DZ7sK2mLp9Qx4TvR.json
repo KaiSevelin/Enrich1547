@@ -371,7 +371,7 @@
               "value": "Treat",
               "prefix": "",
               "suffix": "",
-              "rollMessage": "%{\n  await game.modules.get('1547core').api.disease.openTreatmentBoard(item.parent, item);\n  return 0;\n}%",
+              "rollMessage": "%{\nconst uuid = \"${item.uuid}$\";\nconst aff = await fromUuid(uuid);\nawait game.modules.get('1547core').api.disease.openTreatmentBoard(aff?.parent ?? null, aff);\nreturn 0;\n}%",
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
