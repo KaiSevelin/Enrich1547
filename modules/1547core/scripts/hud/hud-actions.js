@@ -239,7 +239,7 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
     await autoFaceAttacker(context.token, context.primaryTarget);
     const positioning = getAttackPositioning(context.token, context.primaryTarget, distanceSquares);
     const appliedPositionAdvantage = positionalAdvantageToApply(positioning);
-    const positionNote = positioningNote(positioning, appliedPositionAdvantage > 0);
+    const positionNote = positioningNote(positioning);
     const finalAttackFormula = appliedPositionAdvantage > 0
         ? (buildFoundryAttackRollFormula(
             currentWeapon?.activeAttackProfileData,
@@ -255,7 +255,8 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
             weapon: weaponItem ?? currentWeapon,
             profileId: currentWeapon?.activeAttackProfileId ?? null,
             selectedPreManeuvers: currentSummary.selectedPreManeuvers ?? [],
-            distanceSquares
+            distanceSquares,
+            positionAdvantage: positioning
         });
         if (result?.cancelled) {
             clearActorManeuverSelections(context.actor?.id);

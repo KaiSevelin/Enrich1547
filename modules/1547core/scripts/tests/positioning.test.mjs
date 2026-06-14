@@ -79,17 +79,25 @@ assert.deepEqual(
     { surprise: false, rear: false, advantage: 0, faceable: false }
 );
 
-// positionalAdvantageToApply — auto-apply only where it can't be react-faced.
-console.log("facing.positionalAdvantageToApply — applies only when un-faceable...");
+// positionalAdvantageToApply — the +1 is applied up-front in all cases; a
+// faceable rear is cancelled when the defender takes the Face reaction.
+console.log("facing.positionalAdvantageToApply — applies the advantage up-front...");
 const f = await import("../combat/facing.mjs");
-// Surprise → applies.
 assert.equal(f.positionalAdvantageToApply({ surprise: true, rear: true, advantage: 1, faceable: false }), 1);
-// Rear + Hidden (not faceable) → applies.
 assert.equal(f.positionalAdvantageToApply({ surprise: false, rear: true, advantage: 1, faceable: false }), 1);
-// Rear + faceable → suggestion only, does NOT apply.
-assert.equal(f.positionalAdvantageToApply({ surprise: false, rear: true, advantage: 1, faceable: true }), 0);
-// No rear → nothing.
+assert.equal(f.positionalAdvantageToApply({ surprise: false, rear: true, advantage: 1, faceable: true }), 1);
 assert.equal(f.positionalAdvantageToApply({ surprise: false, rear: false, advantage: 0, faceable: false }), 0);
 assert.equal(f.positionalAdvantageToApply(null), 0);
+
+// buildFaceReactionCandidate — shaped like a reaction candidate, carries the
+// facingFace effect, and targets the attacker.
+console.log("facing.buildFaceReactionCandidate...");
+const faceCand = f.buildFaceReactionCandidate({ id: "def1" }, { id: "att1" });
+assert.equal(faceCand.type, "reaction");
+assert.equal(faceCand.effectData.facingFace, true);
+assert.equal(faceCand.id, "face:def1");
+assert.equal(faceCand.actor.id, "def1");
+assert.equal(faceCand.target.id, "att1");
+assert.equal(f.buildFaceReactionCandidate(null), null);
 
 console.log("positioning.test.mjs — all assertions passed.");

@@ -20,6 +20,7 @@ import {
     buildAttackReactionCandidates as buildAttackReactionCandidatesPure,
     buildThreatReactionCandidates as buildThreatReactionCandidatesPure,
 } from "../combat/reaction-candidates.mjs";
+import { buildFaceReactionCandidate } from "../combat/facing.mjs";
 import {
     declareAttackPhased,
     declareMovementPhased,
@@ -229,7 +230,7 @@ function buildAttackReactionCandidates({
     if (!defender) return [];
     const reactionWeapon = getActorReactionWeapon(defender);
     const reactionProfile = resolveSelectedWeaponProfile(reactionWeapon, {});
-    return buildAttackReactionCandidatesPure({
+    const candidates = buildAttackReactionCandidatesPure({
         attacker,
         defender,
         pendingWeapon,
@@ -238,6 +239,13 @@ function buildAttackReactionCandidates({
         reactionProfile,
         context,
     });
+    // Offer "Face attacker" when the incoming shot is a faceable rear hit
+    // (facing spec rule 3). positionAdvantage is threaded from the HUD.
+    if (context?.positionAdvantage?.faceable) {
+        const face = buildFaceReactionCandidate(defender, attacker);
+        if (face) return [face, ...candidates];
+    }
+    return candidates;
 }
 
 

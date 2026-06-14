@@ -9,6 +9,7 @@
  * auto-applied to the attack pool; that stays a GM/player choice.
  */
 import { tokenDescriptor, facingToward, computePositionalAdvantage } from "../lib/positioning.mjs";
+import { onCombatEvent, COMBAT_EVENTS } from "../services/combat-events.js";
 
 // Square-gridded scenes only — the tile geometry is meaningless on a gridless or
 // hex scene, so facing quietly does nothing there (the spec degrades to a GM call).
@@ -62,30 +63,73 @@ export async function autoFaceAttacker(attackerToken, defenderToken) {
     } catch (_err) { /* non-fatal */ }
 }
 
-// The positional advantage to AUTO-APPLY to the attack pool. Only where it
-// cannot be react-faced — a surprise (target not yet in combat) or a Hidden
-// attacker. A faceable rear shot stays a suggestion until the Face reaction
-// exists, so the +1 never lands without its counter (no positioning treadmill).
+// The positional advantage applied to the attack pool. Applied up-front in all
+// cases; a faceable rear shot is cancelled when the defender takes the Face
+// reaction (which cancels the attacker's pending roll before it lands).
 export function positionalAdvantageToApply(pos) {
-    if (!pos) return 0;
-    if (pos.surprise) return pos.advantage;
-    if (pos.rear && !pos.faceable) return pos.advantage;
-    return 0;
+    return Number(pos?.advantage) || 0;
 }
 
-// A short, human note for the attack card. `applied` distinguishes an applied
-// +1 (un-faceable) from a mere suggestion (faceable rear).
-export function positioningNote(pos, applied = false) {
+// A short, human note for the attack card.
+export function positioningNote(pos) {
     if (!pos) return "";
-    if (pos.surprise) {
-        return applied
-            ? "Surprise attack — +1 advantage applied (target is not yet in the fight)."
-            : "Surprise attack — +1 advantage available.";
-    }
+    if (pos.surprise) return "Surprise attack — +1 advantage applied (target is not yet in the fight).";
     if (pos.rear) {
-        return applied
-            ? "Rear shot — +1 advantage applied (target cannot turn to face)."
-            : "Rear shot — +1 advantage available (target may turn to face).";
+        return pos.faceable
+            ? "Rear shot — +1 advantage applied (target may Face to cancel it)."
+            : "Rear shot — +1 advantage applied (target cannot turn to face).";
     }
     return "";
+}
+
+/* ---------------------------------------- */
+/*  The Face reaction (rule 3)              */
+/* ---------------------------------------- */
+
+// A synthetic reaction candidate offered to a defender struck from a faceable
+// rear position. Selecting it (in the reaction window) cancels the attacker's
+// pending roll — dropping the rear +1 — and turns the defender to face. Shaped
+// to match the engine's other reaction candidates (cf. the overwatch candidate).
+export function buildFaceReactionCandidate(defenderActor, attackerActor) {
+    if (!defenderActor) return null;
+    return {
+        id: `face:${defenderActor.id ?? defenderActor.uuid ?? "defender"}`,
+        name: "Face Attacker",
+        type: "reaction",
+        usage: "Facing",
+        triggerType: "attack-declared",
+        sourceManeuverName: "Face Attacker",
+        actor: defenderActor,
+        target: attackerActor ?? null,
+        weapon: null,
+        profile: null,
+        effectData: { facingFace: true },
+        reasons: [],
+        legal: true,
+        CostType: null,
+        CostAmount: 0,
+    };
+}
+
+function activeToken(actor) {
+    const toks = actor?.getActiveTokens?.(true) ?? actor?.getActiveTokens?.() ?? [];
+    return toks?.[0] ?? null;
+}
+
+// React to a resolved Face reaction by rotating the defender to face the
+// attacker. Additive listener — never throws into the resolution flow.
+export function registerFacingService() {
+    onCombatEvent(COMBAT_EVENTS.REACTION_RESOLVED, async (event) => {
+        try {
+            const reaction = event?.payload?.reaction;
+            if (!reaction?.effectData?.facingFace || !isSquareGridded()) return null;
+            const defToken = activeToken(reaction.actor);
+            const attToken = activeToken(reaction.target);
+            if (!defToken || !attToken) return null;
+            const { rotation } = facingToward(tokenDescriptor(defToken), tokenDescriptor(attToken));
+            const doc = defToken.document ?? defToken;
+            if (Number(doc.rotation) !== rotation) await doc.update({ rotation }, { facingAutoFace: true });
+        } catch (_err) { /* non-fatal */ }
+        return null;
+    });
 }

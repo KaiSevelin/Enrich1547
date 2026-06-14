@@ -42,6 +42,11 @@ Hooks.once("init", () => {
         (module) => module.registerCombatResolverService()
     );
     void runImportedModuleStep(
+        "registerFacingService",
+        () => import("./combat/facing.mjs"),
+        (module) => module.registerFacingService()
+    );
+    void runImportedModuleStep(
         "registerBoostService",
         () => import("./services/boost-service.js"),
         (module) => module.registerBoostService()
