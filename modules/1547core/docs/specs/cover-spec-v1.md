@@ -45,37 +45,37 @@ melee** — without a to-hit-penalty abstraction or a wall-geometry nightmare.
    the shot's line crosses, **ordered nearest-the-shooter first**. The shooter and the
    intended target are never obstacles to themselves.
 
-2. **Each obstacle has a block value** — its d6 threshold, by size/solidity:
+2. **Each obstacle has a block value** — its d6 threshold, **strictly by size / solidity**:
 
    | Obstacle | Block value (d6 ≤) | Chance |
    | --- | --- | --- |
    | Light / small (small creature, fencepost) | 1 | 1-in-6 |
    | Medium (a person, a barrel) | 2 | 2-in-6 |
    | Heavy / large (large creature, a cart) | 3 | 3-in-6 |
+   | Huge / near-total (colossus, portcullis, arrow-slit) | 4 | 4-in-6 |
 
-   **(Open call — block-value table.)** Defaults above; tune the buckets/thresholds to taste.
-   Creature block value is driven by **token size**; inanimate obstacles carry a GM-set value
-   (see Data model).
+   Block value depends **only** on the obstacle's size/solidity — never on the shooter's skill
+   (skill belongs to the future "thread the needle" option). Creature block value is driven by
+   **token size**; inanimate obstacles carry a GM-set value (see Data model).
 
 3. **Roll each obstacle in order; first catch wins.** Roll a d6 for each obstacle from
    nearest to farthest. The **first** roll **≤ its block value intercepts** — the projectile
    strikes that obstacle and **stops** (no further obstacles, and it never reaches the
    intended target). If no obstacle intercepts, the shot reaches the target.
 
-4. **Redirect resolution.** When an obstacle intercepts, the shot is now an attack **against
-   that obstacle**: a creature **defends normally** (its own defense/armor applies); an
-   inanimate object simply **absorbs** the shot (no defense; no durability tracked in v1).
-   **(Open call — resolve vs. obstacle.)** Default: re-resolve the attack against the
-   obstacle so defense/armor still matter. Alternative: the obstacle is simply **hit**
-   (auto), skipping its defense.
+4. **Redirect resolution — the obstacle is simply hit.** When an obstacle intercepts, it is
+   **hit outright** and takes a **full damage roll** from the weapon. There is **no defense
+   roll** — in this system all defense lives in the defense roll, and a stray, unaimed hit on
+   a bystander grants none — and **no mitigation**: the screen was not braced for it. An
+   inanimate object likewise just takes the full damage (no durability tracked in v1).
 
 5. **Pass-through → normal resolution.** If the shot clears every obstacle, resolve the
    attack against the intended target as usual — including any **rear +1** from the facing
    spec.
 
-**Friendly fire is real.** If the intercepting obstacle is an ally, that ally takes the hit
-and damage normally. That is the entire point — it is what makes shooting past your own line
-a genuine risk, not a free play. **(Confirm the table wants this lethality.)**
+**Friendly fire is real — and unmitigated.** If the intercepting obstacle is an ally, that
+ally takes a **full damage roll with no defense**. That is the entire point: shooting past
+your own line is a genuine, punishing risk, not a free play. The deterrent is meant to bite.
 
 ## Why this works
 
@@ -108,8 +108,8 @@ No per-attack persistent state: the interception is rolled and resolved in the m
   gather ordered obstacles, and — on the shooter's confirmation to fire — roll each obstacle's
   d6 nearest-first, stopping at the first catch. Surface the obstacles and rolls in the HUD so
   the shooter sees the risk *before* committing ("2 in the lane: cart 3/6, ally 2/6").
-- **GM/player choice:** whether to take the shot at all; the GM-set block value for inanimate
-  obstacles; the redirect resolution per the open call. The engine never *forces* the shot.
+- **GM/player choice:** whether to take the shot at all, and the GM-set block value for
+  inanimate obstacles. The engine never *forces* the shot.
 
 Suggested insertion points:
 
@@ -119,7 +119,8 @@ Suggested insertion points:
   exclude shooter/target, order by distance, attach block values (token size, or object flag).
 - **Interception roll** — in the attack lifecycle (`scripts/combat/attack-lifecycle.mjs`),
   after target selection and before target resolution: roll nearest-first, stop at first
-  catch, and either redirect the attack to that obstacle or pass through.
+  catch. On a catch, deal a **full damage roll to that obstacle with no defense roll**;
+  otherwise pass through to the target.
 - **HUD surface** — show the lane obstacles and their odds in the attack panel
   (`hud-render.js`), and report the interception result in the roll output.
 
@@ -149,8 +150,8 @@ Suggested insertion points:
    the ranged attack panel. No rolling, no enforcement — pure "you'd be shooting through X."
 2. **Interception roll.** Roll nearest-first with early-stop; report which (if any) intercepts.
    Still informational if you want — the GM applies the result.
-3. **Redirect resolution.** Wire the intercept to actually re-target the attack at the
-   obstacle (per the open call), including friendly-fire damage.
+3. **Redirect resolution.** On a catch, apply a **full damage roll to the obstacle (no
+   defense roll)** — including friendly-fire damage.
 4. **(Optional, later)** Destructible object cover (block value + HP), and a "thread the
    needle" shooter option (accept disadvantage to lower interception odds).
 
