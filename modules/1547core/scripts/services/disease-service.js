@@ -414,15 +414,21 @@ export function registerDiseaseService() {
         addTreatmentHeaderButton(app, buttons);
     });
 
-    // Register the treatment-board resolver once RaceBoard's API is up (ready).
-    Hooks.once("ready", () => {
+    // Register the treatment-board resolver with the race board. RaceBoard is
+    // built in refreshRaceboardApi at `ready`, but that runs as an async dynamic
+    // import and can land after this service's own `ready` — so don't gate on a
+    // plain ready hook (it would race and silently skip registration). Register
+    // now if RaceBoard is already up, otherwise wait for the one-shot
+    // `1547coreRaceboardReady` signal it emits once built.
+    const tryRegisterDiseaseResolver = () => {
         const rb = globalThis.RaceBoard;
-        if (typeof rb?.registerResolver === "function") {
-            rb.registerResolver("disease", diseaseResolver);
-        } else {
-            console.warn(`${MODULE_ID} | RaceBoard.registerResolver unavailable at ready — disease cure resolution is disabled.`);
-        }
-    });
+        if (typeof rb?.registerResolver !== "function") return false;
+        rb.registerResolver("disease", diseaseResolver);
+        return true;
+    };
+    if (!tryRegisterDiseaseResolver()) {
+        Hooks.once("1547coreRaceboardReady", tryRegisterDiseaseResolver);
+    }
 
     const api = { rollContraction, contractDisease, advanceDiseasePhase, openTreatmentBoard, resolveDisease };
     const coreModule = game.modules.get(MODULE_ID);

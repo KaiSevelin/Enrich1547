@@ -352,6 +352,31 @@
               "label": "Filled Cure Boxes:",
               "defaultValue": "",
               "style": "sheet"
+            },
+            {
+              "key": "OpenTreatmentBoardButton",
+              "colSpan": 1,
+              "rowSpan": 1,
+              "cssClass": "",
+              "role": 1,
+              "editRole": 3,
+              "permission": 0,
+              "tooltip": "Open the cure race board for this affliction's current phase.",
+              "visibilityFormula": "",
+              "editableFormula": "",
+              "escapeHTML": false,
+              "type": "label",
+              "size": "full-size",
+              "icon": "",
+              "value": "Treat",
+              "prefix": "",
+              "suffix": "",
+              "rollMessage": "%{\n  await game.modules.get('1547core').api.disease.openTreatmentBoard(item.parent, item);\n  return 0;\n}%",
+              "altRollMessage": "",
+              "rollMessageToChat": false,
+              "altRollMessageToChat": false,
+              "style": "label",
+              "align": "center"
             }
           ]
         }
