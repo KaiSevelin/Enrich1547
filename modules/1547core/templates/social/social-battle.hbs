@@ -3,15 +3,46 @@
     {{#each sides}}
       <div class="sb-side{{#if this.isLoser}} is-loser{{/if}}{{#if this.isWinner}} is-winner{{/if}}">
         <div class="sb-side-head">
-          <span class="sb-side-name">{{this.name}}</span>
-          <span class="sb-side-stat" title="Battle stat">{{this.stat}}</span>
+          <span class="sb-side-name" title="{{this.drivesTooltip}}">{{this.name}}</span>
+          <span class="sb-side-stat" title="Battle stat (sets marks)">{{this.stat}}</span>
         </div>
+
+        <div class="sb-side-controls">
+          <div class="sb-modes">
+            <div class="sb-mode-row">
+              <label class="sb-mode-pick" title="Roll a stat"><input type="radio" name="mode-{{this.key}}" value="stat" {{#if this.isStat}}checked{{/if}}></label>
+              <select name="stat-{{this.key}}" class="sb-sel" title="Stat to roll">
+                {{#each this.statOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.value}}</option>{{/each}}
+              </select>
+            </div>
+            <div class="sb-mode-row">
+              <label class="sb-mode-pick" title="Roll a skill"><input type="radio" name="mode-{{this.key}}" value="skill" {{#if this.isSkill}}checked{{/if}}></label>
+              <select name="skill-{{this.key}}" class="sb-sel" title="Skill to roll">
+                <option value="">— skill —</option>
+                {{#each this.skillOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>{{/each}}
+              </select>
+            </div>
+          </div>
+
+          <div class="sb-adv" title="Advantage / disadvantage dice">
+            {{#each this.advOptions}}
+              <label class="sb-adv-opt"><input type="radio" name="adv-{{../key}}" value="{{this.value}}" {{#if this.checked}}checked{{/if}}><span>{{this.label}}</span></label>
+            {{/each}}
+          </div>
+
+          <div class="sb-secrets">
+            <label class="sb-secret" title="Use a secret this exchange (+1 die)"><input type="checkbox" name="secret-{{this.key}}" {{#if this.secret}}checked{{/if}}><i class="fa-solid fa-key"></i> Secret</label>
+          </div>
+        </div>
+
         <div class="sb-pips" title="{{this.taken}} of {{this.total}} marks">
-          {{#each this.pips}}
-            <span class="sb-pip{{#if this}} is-filled{{/if}}"></span>
-          {{/each}}
+          {{#each this.pips}}<span class="sb-pip{{#if this}} is-filled{{/if}}"></span>{{/each}}
         </div>
-        <div class="sb-marks">{{this.taken}} / {{this.total}}</div>
+        <div class="sb-marks">
+          <button type="button" class="sb-mini" data-action="mark-remove" data-side="{{this.key}}" title="Remove a mark box"><i class="fa-solid fa-minus"></i></button>
+          <span class="sb-marks-count">{{this.taken}} / {{this.total}}</span>
+          <button type="button" class="sb-mini" data-action="mark-add" data-side="{{this.key}}" title="Add a mark box"><i class="fa-solid fa-plus"></i></button>
+        </div>
       </div>
     {{/each}}
   </div>
