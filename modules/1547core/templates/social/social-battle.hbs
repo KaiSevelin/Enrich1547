@@ -1,4 +1,18 @@
 <div class="sb-wrap">
+  {{#if alarm.show}}
+    <div class="rb-alarm" data-alarm-level="{{alarm.level}}">
+      <span class="rb-alarm-icon" {{#if alarm.canControl}}data-action="alarm-up" title="Left-click raise · right-click lower"{{/if}}>
+        <i class="fa-solid {{alarm.icon}}"></i>
+      </span>
+      <span class="rb-alarm-label">{{alarm.label}}</span>
+      {{#if alarm.canControl}}
+        <div class="rb-alarm-controls">
+          <button type="button" class="sb-mini" data-action="alarm-remove" title="Remove the alarm"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
+
   <div class="sb-sides">
     {{#each sides}}
       <div class="sb-side{{#if this.isLoser}} is-loser{{/if}}{{#if this.isWinner}} is-winner{{/if}}">
@@ -7,41 +21,49 @@
           <span class="sb-side-stat" title="Battle stat (sets marks)">{{this.stat}}</span>
         </div>
 
-        <div class="sb-side-controls">
-          <div class="sb-modes">
-            <div class="sb-mode-row">
-              <label class="sb-mode-pick" title="Roll a stat"><input type="radio" name="mode-{{this.key}}" value="stat" {{#if this.isStat}}checked{{/if}}></label>
-              <select name="stat-{{this.key}}" class="sb-sel" title="Stat to roll">
-                {{#each this.statOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.value}}</option>{{/each}}
-              </select>
+        {{#if ../canEdit}}
+          <div class="sb-side-controls">
+            <div class="sb-modes">
+              <div class="sb-mode-row">
+                <label class="sb-mode-pick" title="Roll a stat"><input type="radio" name="mode-{{this.key}}" value="stat" {{#if this.isStat}}checked{{/if}}></label>
+                <select name="stat-{{this.key}}" class="sb-sel" title="Stat to roll">
+                  {{#each this.statOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.value}}</option>{{/each}}
+                </select>
+              </div>
+              <div class="sb-mode-row">
+                <label class="sb-mode-pick" title="Roll a skill"><input type="radio" name="mode-{{this.key}}" value="skill" {{#if this.isSkill}}checked{{/if}}></label>
+                <select name="skill-{{this.key}}" class="sb-sel" title="Skill to roll">
+                  <option value="">— skill —</option>
+                  {{#each this.skillOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>{{/each}}
+                </select>
+              </div>
             </div>
-            <div class="sb-mode-row">
-              <label class="sb-mode-pick" title="Roll a skill"><input type="radio" name="mode-{{this.key}}" value="skill" {{#if this.isSkill}}checked{{/if}}></label>
-              <select name="skill-{{this.key}}" class="sb-sel" title="Skill to roll">
-                <option value="">— skill —</option>
-                {{#each this.skillOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>{{/each}}
-              </select>
+
+            <div class="sb-adv" title="Advantage / disadvantage dice">
+              {{#each this.advOptions}}
+                <label class="sb-adv-opt"><input type="radio" name="adv-{{../key}}" value="{{this.value}}" {{#if this.checked}}checked{{/if}}><span>{{this.label}}</span></label>
+              {{/each}}
+            </div>
+
+            <div class="sb-secrets">
+              <label class="sb-secret" title="Use a secret this exchange (+1 die)"><input type="checkbox" name="secret-{{this.key}}" {{#if this.secret}}checked{{/if}}><i class="fa-solid fa-key"></i> Secret</label>
             </div>
           </div>
+        {{/if}}
 
-          <div class="sb-adv" title="Advantage / disadvantage dice">
-            {{#each this.advOptions}}
-              <label class="sb-adv-opt"><input type="radio" name="adv-{{../key}}" value="{{this.value}}" {{#if this.checked}}checked{{/if}}><span>{{this.label}}</span></label>
-            {{/each}}
-          </div>
-
-          <div class="sb-secrets">
-            <label class="sb-secret" title="Use a secret this exchange (+1 die)"><input type="checkbox" name="secret-{{this.key}}" {{#if this.secret}}checked{{/if}}><i class="fa-solid fa-key"></i> Secret</label>
-          </div>
+        <div class="rb-boxes sb-boxes">
+          {{#each this.boxes}}
+            <span class="rb-box{{#if this.checked}} is-checked{{/if}}{{#if this.reached}} is-reached{{/if}}" data-event-state="{{this.eventState}}"
+                  {{#if ../../canEdit}}data-action="mark-tick" data-side="{{../key}}" data-box="{{this.idx}}" title="Left-click tick · right-click event colour"{{/if}}>
+              <i class="fa-{{#if this.checked}}solid{{else}}regular{{/if}} fa-square{{#if this.checked}}-check{{/if}}"></i>
+            </span>
+          {{/each}}
         </div>
 
-        <div class="sb-pips" title="{{this.taken}} of {{this.total}} marks">
-          {{#each this.pips}}<span class="sb-pip{{#if this}} is-filled{{/if}}"></span>{{/each}}
-        </div>
         <div class="sb-marks">
-          <button type="button" class="sb-mini" data-action="mark-remove" data-side="{{this.key}}" title="Remove a mark box"><i class="fa-solid fa-minus"></i></button>
-          <span class="sb-marks-count">{{this.taken}} / {{this.total}}</span>
-          <button type="button" class="sb-mini" data-action="mark-add" data-side="{{this.key}}" title="Add a mark box"><i class="fa-solid fa-plus"></i></button>
+          {{#if ../canEdit}}<button type="button" class="sb-mini" data-action="mark-remove" data-side="{{this.key}}" title="Remove a mark box"><i class="fa-solid fa-minus"></i></button>{{/if}}
+          <span class="sb-marks-count">{{this.filled}} / {{this.total}}</span>
+          {{#if ../canEdit}}<button type="button" class="sb-mini" data-action="mark-add" data-side="{{this.key}}" title="Add a mark box"><i class="fa-solid fa-plus"></i></button>{{/if}}
         </div>
       </div>
     {{/each}}
@@ -50,23 +72,19 @@
   {{#if over}}
     <div class="sb-outcome">
       <span class="sb-outcome-label"><i class="fa-solid fa-gavel"></i> {{loser.name}} loses</span>
-      <div class="sb-outcome-actions">
-        <button type="button" class="sb-btn" data-action="grant-drive"
-                title="Grant a Drive to {{loser.name}} (chargen Drives model)">
-          <i class="fa-solid fa-fire-flame-curved"></i>
-        </button>
-        <button type="button" class="sb-btn" data-action="grant-mood"
-                title="Grant a Mood to {{loser.name}} (cleared on rest)">
-          <i class="fa-solid fa-cloud"></i>
-        </button>
-      </div>
+      {{#if canEdit}}
+        <div class="sb-outcome-actions">
+          <button type="button" class="sb-btn" data-action="grant-drive" title="Grant a Drive to {{loser.name}} (chargen Drives model)"><i class="fa-solid fa-fire-flame-curved"></i></button>
+          <button type="button" class="sb-btn" data-action="grant-mood" title="Grant a Mood to {{loser.name}} (cleared on rest)"><i class="fa-solid fa-cloud"></i></button>
+        </div>
+      {{/if}}
     </div>
   {{else}}
-    <div class="sb-controls">
-      <button type="button" class="sb-btn sb-exchange" data-action="exchange" title="Roll an exchange">
-        <i class="fa-solid fa-dice"></i>
-      </button>
-    </div>
+    {{#if canEdit}}
+      <div class="sb-controls">
+        <button type="button" class="sb-btn sb-exchange" data-action="exchange" title="Roll an exchange"><i class="fa-solid fa-dice"></i></button>
+      </div>
+    {{/if}}
   {{/if}}
 
   {{#if log.length}}
@@ -75,9 +93,19 @@
     </div>
   {{/if}}
 
-  <div class="sb-footer">
-    <button type="button" class="sb-btn" data-action="reset" title="Reset marks and log">
-      <i class="fa-solid fa-rotate-left"></i>
-    </button>
-  </div>
+  {{#if canEdit}}
+    <div class="sb-footer">
+      {{#unless alarm.enabled}}
+        <button type="button" class="sb-btn" data-action="alarm-add" title="Add an alarm meter"><i class="fa-solid fa-bell"></i></button>
+      {{/unless}}
+      <div class="rb-reveal sb-reveal" role="radiogroup" aria-label="Reveal to players">
+        {{#each visibilityOptions}}
+          <button type="button" role="radio" aria-checked="{{this.active}}" class="sb-btn sb-reveal-btn{{#if this.active}} is-active{{/if}}" data-action="set-visibility" data-level="{{this.level}}" title="{{localize this.titleKey}}">
+            <i class="fa-solid {{this.icon}}"></i>
+          </button>
+        {{/each}}
+      </div>
+      <button type="button" class="sb-btn" data-action="reset" title="Reset marks and log"><i class="fa-solid fa-rotate-left"></i></button>
+    </div>
+  {{/if}}
 </div>

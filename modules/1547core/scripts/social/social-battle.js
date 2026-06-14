@@ -1,43 +1,46 @@
 /**
  * Social Battle (Lean MVP).
  *
- * A structured debate resolved as an opposed-roll contest. Each side has a
- * pool of "marks" (2 + battle-stat dice + situational); each exchange both
- * sides roll (a stat OR a skill, Nd6 + Mod) and the loser of the comparison
- * takes a mark — two on a "critical" (rolling more than double the opponent),
- * none on a tie. When a side's marks fill, that side loses and the GM may apply
- * a consequence.
+ * A structured debate resolved as an opposed-roll contest. Each side has a row
+ * of mark boxes (2 + battle-stat dice + situational); each exchange both sides
+ * roll (a stat OR a skill, Nd6 + Mod, floored at 1d6) and the loser of the
+ * comparison takes a mark — two on a "critical" (rolling more than double the
+ * opponent), none on a tie. When a side's boxes fill, that side loses and the
+ * GM may apply a consequence.
  *
- * All exchange controls live inline in the window (no popup): per side a
- * stat/skill toggle with two dropdowns, an advantage radio (-2..+2), and a
- * stack of "use secret" checkboxes (each ticked secret = +1 advantage die).
+ * The mark boxes borrow the race board's look and behaviour: square boxes,
+ * left-click to tick, right-click to cycle an event-step colour (red/amber),
+ * per-side +/- to add/remove boxes, plus a board-level alarm meter and a
+ * reveal-to-players control (socket-mirrored, read-only, for the players).
  *
- * Reuses the game's own pieces:
- *   - stats read straight off the actor (Stats_<Name>Dice / _Mod),
- *   - skills roll as base-stat dice + the skill's level dice-shift (mirrors the
- *     actor HUD's skill maths),
- *   - a lost battle grants a Drive (or Mood) via the SAME chargen model
- *     (system.props.Drives, "[Category] text" lines) — see chargen/drive-prompts.
+ * Reuses the game's own pieces: stats off the actor (Stats_<Name>Dice / _Mod);
+ * skills roll as base-stat dice + the skill's level dice-shift (mirrors the HUD);
+ * a lost battle grants a Drive/Mood via the chargen model (system.props.Drives).
  *
  * Launch: a GM-only Scene Controls tool (token group). See Social Battle Light.
  */
 
-import { MODULE_ID } from "../lib/constants.mjs";
+import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 import { promptAddDrive } from "../chargen/drive-prompts.js";
+import {
+    buildAlarmContext, defaultAlarm, ALARM_MAX_LEVEL,
+    buildVisibilityOptions, normalizeVisibility, VISIBILITY_HIDDEN, VISIBILITY_ALL
+} from "../raceboard/raceboard-data.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-// The seven stats, matching the actor's Stats_<Name>Dice / _Mod props.
 const STATS = ["Strength", "Dexterity", "Stamina", "Intelligence", "Faith", "Charisma", "Power"];
-// CSB template id for skill items (the SkillDisplayer filter).
 const SKILL_TEMPLATE_ID = "BbwVnEJobtCR5oOf";
-// Advantage/disadvantage steps offered per side.
 const ADV_STEPS = [-2, -1, 0, 1, 2];
 const MIN_MARKS = 1;
 const MAX_MARKS = 24;
+const EVENT_STATE_COUNT = 3;       // none → red(1) → amber(2) → none
 
 const DRIVE_PROP = "system.props.Drives";
 const SOCIAL_DRIVE_CATEGORY = "Social Battle";
+
+// Read-only player mirrors, keyed by battle id, kept in sync over the socket.
+const sbMirrors = new Map();
 
 /* ---------------------------------------- */
 /*  Small helpers                           */
@@ -57,8 +60,6 @@ function numProp(props, key) {
     const n = Number(v);
     return Number.isNaN(n) ? null : n;
 }
-// Mirrors the actor HUD's getSkillDiceShift: explicit DiceShift, else the
-// shift for the skill's CurrentLevel.
 function skillDiceShift(props) {
     const explicit = numProp(props, "DiceShift");
     if (explicit !== null) return explicit;
@@ -75,9 +76,6 @@ function drivesTooltip(actor) {
     const lines = String(actorProps(actor).Drives ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
     return lines.length ? `Drives:\n${lines.join("\n")}` : "No drives.";
 }
-
-// Marks the loser of an exchange takes: 0 on a tie, 2 when the winner rolled
-// more than double the loser (a critical), else 1.
 function marksFromExchange(winnerTotal, loserTotal) {
     if (winnerTotal <= loserTotal) return 0;
     return winnerTotal > 2 * loserTotal ? 2 : 1;
@@ -87,16 +85,17 @@ function marksFromExchange(winnerTotal, loserTotal) {
 /*  Rolling                                 */
 /* ---------------------------------------- */
 
+// The lowest possible roll is 1d6 with no modifier — a 0-or-negative pool
+// (untrained, heavy disadvantage) still rolls a single die, never a flat 0.
 async function rollPool(dice, mod) {
     const d = Math.max(0, Number(dice) || 0);
     const m = Number(mod) || 0;
-    const formula = d > 0 ? (m ? `${d}d6 + ${m}` : `${d}d6`) : String(m || 0);
+    const formula = d >= 1 ? (m ? `${d}d6 + ${m}` : `${d}d6`) : "1d6";
     const roll = await new Roll(formula).evaluate();
     if (game.dice3d?.showForRoll) { try { await game.dice3d.showForRoll(roll, game.user, true); } catch { /* non-fatal */ } }
     return { roll, total: Number(roll.total) || 0, formula };
 }
 
-// Resolve a side's chosen action into a concrete dice pool for this exchange.
 function sidePool(side) {
     const actor = actorOf(side);
     const secrets = side.secret ? 1 : 0;
@@ -108,7 +107,9 @@ function sidePool(side) {
     if (side.mode === "skill" && side.selSkill) {
         const skill = actor?.items?.get(side.selSkill);
         const sp = skill?.system?.props ?? {};
-        baseStat = String(sp.Group ?? "").trim() || side.selStat || side.stat;
+        const sd = skill?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? skill?.flags?.[MODULE_ID]?.sourceData ?? {};
+        // A skill's base stat is its linked Stat (mirrors the HUD), NOT its Group.
+        baseStat = String(sp.Stat ?? sd.linkedStat ?? sp.LinkedStat ?? "").trim() || side.selStat || side.stat;
         diceShift = skillDiceShift(sp);
         label = skill?.name ? `${skill.name} (${baseStat})` : baseStat;
     } else {
@@ -118,15 +119,13 @@ function sidePool(side) {
 
     const dice = statDice(actor, baseStat) + diceShift + adv + secrets;
     const mod = statMod(actor, baseStat);
-    return { actor, baseStat, label, dice: Math.max(0, dice), mod, secrets, adv };
+    return { actor, baseStat, label, dice, mod, secrets, adv };
 }
 
 /* ---------------------------------------- */
 /*  Outcome dialogs (mood) + chat           */
 /* ---------------------------------------- */
 
-// Mood = a Drive cleared on rest. Stored as a "[Mood] text" line in the same
-// Drives prop, so it shares the chargen model and display.
 function grantMood(actor) {
     return new Promise((resolve) => {
         let settled = false;
@@ -168,7 +167,7 @@ async function postExchangeCard(battle, pa, pb, ra, rb, line) {
       <p style="margin:.1rem 0;">${escapeHtml(A.name)} <em>(${escapeHtml(pa.label)}${escapeHtml(tag(pa))})</em>: <strong>${ra.total}</strong> <span style="opacity:.65">[${escapeHtml(ra.formula)}]</span></p>
       <p style="margin:.1rem 0;">${escapeHtml(B.name)} <em>(${escapeHtml(pb.label)}${escapeHtml(tag(pb))})</em>: <strong>${rb.total}</strong> <span style="opacity:.65">[${escapeHtml(rb.formula)}]</span></p>
       <p style="margin:.25rem 0 .1rem;">${escapeHtml(line)}</p>
-      <p style="margin:.1rem 0;opacity:.8;">${escapeHtml(A.name)} ${A.taken}/${A.total} &middot; ${escapeHtml(B.name)} ${B.taken}/${B.total}</p>
+      <p style="margin:.1rem 0;opacity:.8;">${escapeHtml(A.name)} ${A.filled}/${A.total} &middot; ${escapeHtml(B.name)} ${B.filled}/${B.total}</p>
       ${loser ? `<p style="margin:.25rem 0 0;color:#b3261e;"><strong>${escapeHtml(loser.name)} loses the battle.</strong></p>` : ""}
     </div>`;
     await ChatMessage.create({ speaker: { alias: "Social Battle" }, content });
@@ -182,6 +181,7 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
     constructor(options = {}) {
         super(options);
         this._battle = options.battle;
+        this._readOnly = !!options.readOnly;
     }
 
     static DEFAULT_OPTIONS = {
@@ -189,11 +189,16 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
         classes: ["social-battle-app"],
         tag: "section",
         window: { title: "Social Battle", icon: "fa-solid fa-comments", resizable: true },
-        position: { width: 620, height: "auto" },
+        position: { width: 640, height: "auto" },
         actions: {
             "exchange": function () { return this._onExchange(); },
+            "mark-tick": function (event, target) { return this._onTick(target.dataset.side, Number(target.dataset.box)); },
             "mark-add": function (event, target) { return this._onMark(target.dataset.side, 1); },
             "mark-remove": function (event, target) { return this._onMark(target.dataset.side, -1); },
+            "alarm-add": function () { return this._onAlarm("add"); },
+            "alarm-remove": function () { return this._onAlarm("remove"); },
+            "alarm-up": function () { return this._onAlarm("up"); },
+            "set-visibility": function (event, target) { return this._onSetVisibility(Number(target.dataset.level)); },
             "grant-drive": function () { return this._onGrant(false); },
             "grant-mood": function () { return this._onGrant(true); },
             "reset": function () { return this._onReset(); }
@@ -204,10 +209,13 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
         body: { template: "modules/1547core/templates/social/social-battle.hbs" }
     };
 
+    get canEdit() { return !this._readOnly && !!game.user?.isGM; }
+    get showExtras() { return this.canEdit || normalizeVisibility(this._battle?.visibility) === VISIBILITY_ALL; }
+
     // Read the inline controls back into battle state so they survive re-render.
     _captureForm() {
         const root = this.element;
-        if (!root) return;
+        if (!root || !this.canEdit) return;
         for (const s of this._battle.sides) {
             const mode = root.querySelector(`input[name="mode-${s.key}"]:checked`)?.value;
             if (mode) s.mode = mode;
@@ -223,50 +231,127 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     async _prepareContext() {
         const b = this._battle;
+        const canEdit = this.canEdit;
+        const showExtras = this.showExtras;
         const sides = b.sides.map((s) => {
-            const actor = actorOf(s);
+            const actor = canEdit ? actorOf(s) : null;
+            const events = s.events || [];
             return {
                 key: s.key,
                 name: s.name,
                 stat: s.stat,
-                drivesTooltip: drivesTooltip(actor),
-                taken: s.taken,
+                drivesTooltip: canEdit ? drivesTooltip(actor) : "",
+                filled: s.filled,
                 total: s.total,
-                pips: Array.from({ length: s.total }, (_, i) => i < s.taken),
+                boxes: Array.from({ length: s.total }, (_, i) => ({
+                    idx: i,
+                    checked: i < s.filled,
+                    reached: i < s.filled,
+                    eventState: showExtras ? (events.find((e) => e.index === i)?.state ?? 0) : 0
+                })),
                 isLoser: b.over && b.loserKey === s.key,
                 isWinner: b.over && b.loserKey && b.loserKey !== s.key,
                 isStat: s.mode !== "skill",
                 isSkill: s.mode === "skill",
                 statOptions: STATS.map((st) => ({ value: st, selected: st === s.selStat })),
-                skillOptions: actorSkills(actor).map((sk) => ({ value: sk.id, name: sk.name, selected: sk.id === s.selSkill })),
+                skillOptions: canEdit ? actorSkills(actor).map((sk) => ({ value: sk.id, name: sk.name, selected: sk.id === s.selSkill })) : [],
                 advOptions: ADV_STEPS.map((v) => ({ value: v, label: v > 0 ? `+${v}` : String(v), checked: v === (Number(s.advantage) || 0) })),
                 secret: !!s.secret
             };
         });
         return {
             sides,
+            canEdit,
             over: b.over,
             loser: b.over ? b.sides.find((x) => x.key === b.loserKey) : null,
-            log: b.log.slice(-8).reverse()
+            log: b.log.slice(-8).reverse(),
+            alarm: buildAlarmContext(b.alarm, { showExtras, canControl: canEdit }),
+            visibilityOptions: canEdit ? buildVisibilityOptions(b.visibility) : []
         };
     }
 
-    // Adjust a side's mark boxes mid-battle, mirroring the race board's per-row
-    // box +/-. Recomputes the win/loss state so adding boxes can revive a side
-    // and removing them can end the battle.
-    async _onMark(key, delta) {
-        this._captureForm();
+    /* ----- mutation + sync ----- */
+
+    // Re-render locally and, if this board is revealed, push the new state to the
+    // players' read-only mirrors.
+    async _sync() {
+        await this.render();
+        if (this._readOnly || !game.user?.isGM) return;
+        if (normalizeVisibility(this._battle.visibility) === VISIBILITY_HIDDEN) return;
+        game.socket.emit(`module.${MODULE_ID}`, { type: "sb-update", id: this._battle.id, state: this._battle });
+    }
+
+    _recomputeOutcome() {
         const b = this._battle;
-        const side = b.sides.find((s) => s.key === key);
-        if (!side) return;
-        side.total = Math.max(MIN_MARKS, Math.min(MAX_MARKS, side.total + delta));
-        side.taken = Math.min(side.taken, side.total);
         b.over = false;
         b.loserKey = null;
         for (const s of b.sides) {
-            if (s.taken >= s.total) { b.over = true; b.loserKey = s.key; }
+            if (s.filled >= s.total) { b.over = true; b.loserKey = s.key; }
         }
-        this.render();
+    }
+
+    async _onTick(key, boxIdx) {
+        if (!this.canEdit || !Number.isInteger(boxIdx)) return;
+        const side = this._battle.sides.find((s) => s.key === key);
+        if (!side) return;
+        if (boxIdx < side.filled) side.filled = Math.max(0, side.filled - 1);
+        else side.filled = Math.min(side.total, side.filled + 1);
+        this._recomputeOutcome();
+        await this._sync();
+    }
+
+    // Right-click a box: cycle its event-step marker (none → red → amber → none).
+    async _onMarkEvent(key, boxIdx) {
+        if (!this.canEdit || !Number.isInteger(boxIdx)) return;
+        const side = this._battle.sides.find((s) => s.key === key);
+        if (!side) return;
+        const events = (side.events ?? []).filter((e) => e.index !== boxIdx);
+        const current = (side.events ?? []).find((e) => e.index === boxIdx)?.state ?? 0;
+        const next = (current + 1) % EVENT_STATE_COUNT;
+        if (next > 0) events.push({ index: boxIdx, state: next });
+        events.sort((a, b) => a.index - b.index);
+        side.events = events;
+        await this._sync();
+    }
+
+    async _onMark(key, delta) {
+        if (!this.canEdit) return;
+        this._captureForm();
+        const side = this._battle.sides.find((s) => s.key === key);
+        if (!side) return;
+        side.total = Math.max(MIN_MARKS, Math.min(MAX_MARKS, side.total + delta));
+        side.filled = Math.min(side.filled, side.total);
+        side.events = (side.events ?? []).filter((e) => e.index < side.total);
+        this._recomputeOutcome();
+        await this._sync();
+    }
+
+    async _onAlarm(op) {
+        if (!this.canEdit) return;
+        const b = this._battle;
+        const a = b.alarm ?? defaultAlarm();
+        if (op === "add") b.alarm = { ...a, enabled: true };
+        else if (op === "remove") b.alarm = defaultAlarm();
+        else if (op === "up") b.alarm = { ...a, level: Math.min(ALARM_MAX_LEVEL, (a.level ?? 0) + 1) };
+        else if (op === "down") b.alarm = { ...a, level: Math.max(0, (a.level ?? 0) - 1) };
+        await this._sync();
+    }
+
+    async _onSetVisibility(level) {
+        if (!this.canEdit) return;
+        const next = normalizeVisibility(level);
+        const prev = normalizeVisibility(this._battle.visibility);
+        if (next === prev) return;
+        this._battle.visibility = next;
+        if (next === VISIBILITY_HIDDEN) {
+            game.socket.emit(`module.${MODULE_ID}`, { type: "sb-hide", id: this._battle.id });
+            await this.render();
+        } else if (prev === VISIBILITY_HIDDEN) {
+            game.socket.emit(`module.${MODULE_ID}`, { type: "sb-show", id: this._battle.id, state: this._battle });
+            await this.render();
+        } else {
+            await this._sync(); // level 1 ↔ 2: refresh the existing mirrors
+        }
     }
 
     async _onExchange() {
@@ -287,22 +372,19 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
         } else if (ra.total > rb.total) {
             const m = marksFromExchange(ra.total, rb.total);
             crit = m === 2;
-            B.taken = Math.min(B.total, B.taken + m);
+            B.filled = Math.min(B.total, B.filled + m);
             line = `${A.name} wins ${ra.total} vs ${rb.total} → ${B.name} takes ${m} mark${m > 1 ? "s (critical)" : ""}.`;
         } else {
             const m = marksFromExchange(rb.total, ra.total);
             crit = m === 2;
-            A.taken = Math.min(A.total, A.taken + m);
+            A.filled = Math.min(A.total, A.filled + m);
             line = `${B.name} wins ${rb.total} vs ${ra.total} → ${A.name} takes ${m} mark${m > 1 ? "s (critical)" : ""}.`;
         }
         b.log.push(line);
-
-        for (const s of b.sides) {
-            if (s.taken >= s.total) { b.over = true; b.loserKey = s.key; }
-        }
+        this._recomputeOutcome();
 
         await postExchangeCard(b, pa, pb, ra, rb, line);
-        await this.render();
+        await this._sync();
         if (crit) this._flashCrit();
     }
 
@@ -310,7 +392,6 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
         const el = this.element;
         if (!el) return;
         el.classList.remove("sb-crit-flash");
-        // Reflow so re-adding the class restarts the animation.
         void el.offsetWidth;
         el.classList.add("sb-crit-flash");
         setTimeout(() => el.classList.remove("sb-crit-flash"), 850);
@@ -318,7 +399,7 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     async _onGrant(mood) {
         const b = this._battle;
-        if (!b.over) return;
+        if (!b.over || !this.canEdit) return;
         const loser = b.sides.find((s) => s.key === b.loserKey);
         const actor = actorOf(loser);
         if (!actor) { ui.notifications?.warn("1547 Core: couldn't resolve the losing actor to apply the outcome."); return; }
@@ -327,13 +408,34 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     async _onReset() {
+        if (!this.canEdit) return;
         this._captureForm();
         const b = this._battle;
-        for (const s of b.sides) s.taken = 0;
+        for (const s of b.sides) { s.filled = 0; s.events = []; }
         b.over = false;
         b.loserKey = null;
         b.log = [];
-        this.render();
+        await this._sync();
+    }
+
+    async _onRender(context, options) {
+        await super._onRender?.(context, options);
+        if (!this.canEdit) return;
+        for (const box of this.element.querySelectorAll('.rb-box[data-action="mark-tick"]')) {
+            box.addEventListener("contextmenu", (ev) => { ev.preventDefault(); void this._onMarkEvent(box.dataset.side, Number(box.dataset.box)); });
+        }
+        const alarmIcon = this.element.querySelector('.rb-alarm-icon[data-action="alarm-up"]');
+        alarmIcon?.addEventListener("contextmenu", (ev) => { ev.preventDefault(); void this._onAlarm("down"); });
+    }
+
+    async _onClose(options) {
+        await super._onClose?.(options);
+        if (this._readOnly) {
+            sbMirrors.delete(this._battle?.id);
+        } else if (game.user?.isGM && normalizeVisibility(this._battle?.visibility) !== VISIBILITY_HIDDEN) {
+            // Closing a revealed board hides the players' mirrors too.
+            game.socket.emit(`module.${MODULE_ID}`, { type: "sb-hide", id: this._battle.id });
+        }
     }
 }
 
@@ -341,73 +443,31 @@ export class SocialBattleApp extends HandlebarsApplicationMixin(ApplicationV2) {
 /*  Launch + registration                   */
 /* ---------------------------------------- */
 
-function statOptions(selected) {
-    return STATS.map((s) => `<option value="${s}" ${s === selected ? "selected" : ""}>${s}</option>`).join("");
-}
-function tokenOptions(tokens, selectedId) {
-    return tokens.map((t) => `<option value="${t.id}" ${t.id === selectedId ? "selected" : ""}>${escapeHtml(t.name)}</option>`).join("");
-}
-
-// Setup: choose the two combatants, each side's battle stat, and situational marks.
-function promptSetup(tokens, aTok, bTok) {
-    return new Promise((resolve) => {
-        let settled = false;
-        const finish = (v) => { if (!settled) { settled = true; resolve(v); } };
-        new Dialog({
-            title: "Start Social Battle",
-            content: `
-        <div class="sb-setup">
-          <p class="sb-hint">Each side's marks = 2 + the chosen battle stat's dice (+ any situational marks the GM grants).</p>
-          <div class="sb-setup-side">
-            <h3>Side A</h3>
-            <label>Combatant <select name="aTok">${tokenOptions(tokens, aTok?.id)}</select></label>
-            <label>Battle stat <select name="aStat">${statOptions("Charisma")}</select></label>
-            <label>Situational marks <input type="number" name="aSit" value="0" min="0" max="3" step="1"></label>
-          </div>
-          <div class="sb-setup-side">
-            <h3>Side B</h3>
-            <label>Combatant <select name="bTok">${tokenOptions(tokens, bTok?.id)}</select></label>
-            <label>Battle stat <select name="bStat">${statOptions("Stamina")}</select></label>
-            <label>Situational marks <input type="number" name="bSit" value="0" min="0" max="3" step="1"></label>
-          </div>
-        </div>`,
-            buttons: {
-                start: {
-                    label: "Begin",
-                    callback: (html) => finish({
-                        a: { tokenId: html.find("[name=aTok]").val(), stat: html.find("[name=aStat]").val(), situational: Number(html.find("[name=aSit]").val()) || 0 },
-                        b: { tokenId: html.find("[name=bTok]").val(), stat: html.find("[name=bStat]").val(), situational: Number(html.find("[name=bSit]").val()) || 0 }
-                    })
-                },
-                cancel: { label: "Cancel", callback: () => finish(null) }
-            },
-            default: "start",
-            close: () => finish(null)
-        }, { width: 520, classes: ["social-battle-dialog"] }).render(true);
-    });
-}
-
-function buildSide(key, sel) {
-    const tok = canvas?.tokens?.get(sel.tokenId);
+function buildSide(key, tok, battleStat) {
     const actor = tok?.actor;
     if (!actor) return null;
-    const dice = statDice(actor, sel.stat);
+    const dice = statDice(actor, battleStat);
     return {
         key,
         name: tok.name,
         actorUuid: actor.uuid,
-        stat: sel.stat,                 // battle stat: sets marks
-        total: 2 + dice + (Number(sel.situational) || 0),
-        taken: 0,
+        stat: battleStat,           // battle stat: sets the initial mark count
+        filled: 0,
+        total: Math.max(MIN_MARKS, 2 + dice),
+        events: [],
         // Per-exchange control state (inline form).
         mode: "stat",
-        selStat: sel.stat,
+        selStat: battleStat,
         selSkill: "",
         advantage: 0,
-        secret: false      // single "use secret" toggle (+1 die when ticked)
+        secret: false
     };
 }
 
+// No setup dialog: Side A is the controlled token, Side B the targeted token
+// (falling back to the first two tokens on the scene). Battle stats default to
+// Charisma vs Stamina; the GM tunes marks with the per-side +/- and rolls any
+// stat/skill per exchange.
 export async function startSocialBattle() {
     const tokens = (canvas?.tokens?.placeables ?? []).filter((t) => t.actor);
     if (tokens.length < 2) {
@@ -419,15 +479,21 @@ export async function startSocialBattle() {
     const aTok = controlled ?? tokens[0];
     const bTok = targeted ?? tokens.find((t) => t !== aTok) ?? tokens[1];
 
-    const params = await promptSetup(tokens, aTok, bTok);
-    if (!params) return;
-
-    const sides = [buildSide("a", params.a), buildSide("b", params.b)];
+    const sides = [buildSide("a", aTok, "Charisma"), buildSide("b", bTok, "Stamina")];
     if (!sides[0] || !sides[1]) {
         ui.notifications?.warn("1547 Core: both sides need a token with an actor.");
         return;
     }
-    new SocialBattleApp({ battle: { sides, log: [], over: false, loserKey: null } }).render(true);
+    const battle = {
+        id: foundry.utils.randomID(),
+        sides,
+        log: [],
+        over: false,
+        loserKey: null,
+        alarm: defaultAlarm(),
+        visibility: VISIBILITY_HIDDEN
+    };
+    new SocialBattleApp({ battle }).render(true);
 }
 
 // Strip "[Mood] …" lines from an actor's Drives. No rest system exists yet to
@@ -442,7 +508,32 @@ export async function clearMoods(actorOrToken) {
     return lines.length - kept.length;
 }
 
+// Players receive the GM's reveal/update/hide messages and mirror the board
+// read-only. GM clients ignore their own broadcasts.
+function registerSocialBattleSocket() {
+    game.socket.on(`module.${MODULE_ID}`, (msg) => {
+        if (!msg || typeof msg !== "object" || game.user?.isGM) return;
+        if (msg.type === "sb-show") {
+            let app = sbMirrors.get(msg.id);
+            if (!app) {
+                app = new SocialBattleApp({ battle: msg.state, readOnly: true });
+                sbMirrors.set(msg.id, app);
+            } else {
+                app._battle = msg.state;
+            }
+            app.render(true);
+        } else if (msg.type === "sb-update") {
+            const app = sbMirrors.get(msg.id);
+            if (app) { app._battle = msg.state; app.render(); }
+        } else if (msg.type === "sb-hide") {
+            sbMirrors.get(msg.id)?.close();
+        }
+    });
+}
+
 export function registerSocialBattleService() {
+    registerSocialBattleSocket();
+
     Hooks.on("getSceneControlButtons", (controls) => {
         if (!game.user?.isGM) return;
         const toolDef = {
