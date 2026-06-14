@@ -1,5 +1,6 @@
 ﻿import { buildDefenderPool, toFoundryFormula } from "../combat/pool-builder.mjs";
 import { conditionCombatDisadvantage } from "../services/condition-registry.js";
+import { autoFaceAttacker, getAttackPositioning, positioningNote } from "../combat/facing.mjs";
 
 function consumePersistentEffectIfPresent(actor, effectType, deps = {}) {
     const { MODULE_ID, game } = deps;
@@ -230,6 +231,13 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
 
     const targetActor = context.primaryTarget?.actor ?? null;
     const distanceSquares = refreshedAttackState.distanceSquares ?? getChebyshevDistanceSquares(context.token, context.primaryTarget);
+
+    // Facing & positioning (spec): turn the attacker to face the target, and
+    // detect a rear/surprise shot. The +1 is surfaced as a suggestion in the
+    // attack card — never auto-applied to the pool.
+    await autoFaceAttacker(context.token, context.primaryTarget);
+    const positionNote = positioningNote(getAttackPositioning(context.token, context.primaryTarget, distanceSquares));
+
     try {
         const result = await declareAttack({
             actor: context.actor,
@@ -256,7 +264,7 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
             Roll,
             speaker,
             formula: attackFormula,
-            flavor: `${descriptor.label}<br>Target: ${escapeHtml(targetActor?.name ?? "Target")}`,
+            flavor: `${descriptor.label}<br>Target: ${escapeHtml(targetActor?.name ?? "Target")}${positionNote ? `<br><em>${escapeHtml(positionNote)}</em>` : ""}`,
             game,
         });
         if (!attackRollSummary) {
