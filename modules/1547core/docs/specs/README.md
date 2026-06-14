@@ -13,6 +13,7 @@ Current documents:
 - `combat-state-machine-v1.md`
 - `cover-spec-v1.md`
 - `facing-and-positioning-spec-v1.md`
+- `facing-implementation-spec-v1.md`
 - `ranged-shot-visualization-spec-v1.md`
 - `content-module-architecture-spec-v1.md`
 - `core-service-contract-spec-v1.md`

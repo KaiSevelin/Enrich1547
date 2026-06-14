@@ -223,6 +223,10 @@ Suggested insertion points:
   reaction on A, B's +1 lands. Turning to meet one foe can expose you to another — the
   positional tension is the point.
 
+> **Build status:** Phases 1–3 are implemented and released (0.3.72). The remaining Face
+> reaction and off-turn lock have a detailed execution plan in
+> [`facing-implementation-spec-v1.md`](facing-implementation-spec-v1.md).
+
 ## Implementation phases
 
 1. **Detection + suggestion (read-only).** Flag opening strikes on targets not yet in
