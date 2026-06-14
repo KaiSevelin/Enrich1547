@@ -88,7 +88,10 @@ maneuver's `effectData` (the **Arced Shot** maneuver, and Volley Fire). When an 
 - **No interception** — the lane (rules 1–5) is not traced; intervening obstacles are ignored.
 - **No rear +1** — a shot falling from above doesn't care which way the target faces, so it
   forfeits the facing rear bonus (see [`facing-and-positioning-spec-v1.md`](facing-and-positioning-spec-v1.md)).
-- **+1 disadvantage** — lobbing is imprecise; that is the price for the safety (`addDisadvantage: 1`).
+- **A risk die** — an indirect lob is a gamble, not merely a weaker shot: `addRiskDice: 1`
+  adds a Risk die (which can **fumble** — the arc goes awry — or come up a **crit**). This is
+  the cost that keeps arcing from being the free escape from interception, and it limits
+  *frequency* (you won't casually arc every round) rather than just making the shot miss.
 - **Arc-capable, non-firearm weapons only** — bows, slings, thrown (`RangedWeapon` /
   `ThrownWeapon` groups; firearms fire flat and cannot arc).
 - **Overhead cover is a GM call** — Foundry's grid has no height, so "is there a roof/canopy
