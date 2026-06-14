@@ -10,14 +10,6 @@
             }
         },
         {
-            "label": "Surveyor's eye",
-            "gain": {
-                "type": "skill",
-                "targetKey": "Item.Bta0YOZtc2Z7jjT3",
-                "fallback": true
-            }
-        },
-        {
             "label": "Compass",
             "gain": {
                 "type": "item",

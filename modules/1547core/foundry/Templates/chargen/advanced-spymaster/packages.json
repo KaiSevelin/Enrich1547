@@ -23,14 +23,6 @@
                 "type": "item",
                 "tableUuid": "RollTable.tTWw80p9Bk6KoCko"
             }
-        },
-        {
-            "label": "Cipher they could not break",
-            "gain": {
-                "type": "skill",
-                "targetKey": "Item.CUiBkYMSGbFRUVoK",
-                "fallback": true
-            }
         }
     ]
 }

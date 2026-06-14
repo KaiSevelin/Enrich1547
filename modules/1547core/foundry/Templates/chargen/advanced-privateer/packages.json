@@ -23,14 +23,6 @@
                 "type": "item",
                 "tableUuid": "RollTable.02C8vUNaIquqBEig"
             }
-        },
-        {
-            "label": "Pursuit through bad weather",
-            "gain": {
-                "type": "skill",
-                "targetKey": "Item.Bta0YOZtc2Z7jjT3",
-                "fallback": true
-            }
         }
     ]
 }

@@ -23,14 +23,6 @@
                 "type": "item",
                 "tableUuid": "RollTable.rTFMoilY2MVJcsiE"
             }
-        },
-        {
-            "label": "Public inquiry",
-            "gain": {
-                "type": "skill",
-                "targetKey": "Item.CUiBkYMSGbFRUVoK",
-                "fallback": true
-            }
         }
     ]
 }

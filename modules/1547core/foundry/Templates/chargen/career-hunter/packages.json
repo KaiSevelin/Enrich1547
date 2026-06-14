@@ -10,26 +10,10 @@
             }
         },
         {
-            "label": "Trail sense",
-            "gain": {
-                "type": "skill",
-                "targetKey": "Item.HnJ6EllrZl41RPLQ",
-                "fallback": true
-            }
-        },
-        {
             "label": "Outdoor kit",
             "gain": {
                 "type": "item",
                 "tableUuid": "RollTable.GMW7FKtzQpNC8SZq"
-            }
-        },
-        {
-            "label": "Hunter's eye",
-            "gain": {
-                "type": "skill",
-                "targetKey": "Item.Bta0YOZtc2Z7jjT3",
-                "fallback": true
             }
         }
     ]

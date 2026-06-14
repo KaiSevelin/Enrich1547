@@ -23,14 +23,6 @@
                 "type": "item",
                 "tableUuid": "RollTable.YPAgLzZ6GaqIATp4"
             }
-        },
-        {
-            "label": "Supply judgment",
-            "gain": {
-                "type": "skill",
-                "targetKey": "Item.CUiBkYMSGbFRUVoK",
-                "fallback": true
-            }
         }
     ]
 }

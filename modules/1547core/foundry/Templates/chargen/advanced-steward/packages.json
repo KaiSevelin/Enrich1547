@@ -10,14 +10,6 @@
             }
         },
         {
-            "label": "Household oversight",
-            "gain": {
-                "type": "skill",
-                "targetKey": "Item.CUiBkYMSGbFRUVoK",
-                "fallback": true
-            }
-        },
-        {
             "label": "Keys and stores",
             "gain": {
                 "type": "item",

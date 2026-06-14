@@ -23,14 +23,6 @@
                 "type": "item",
                 "tableUuid": "RollTable.02C8vUNaIquqBEig"
             }
-        },
-        {
-            "label": "Cove swimmer",
-            "gain": {
-                "type": "skill",
-                "targetKey": "Item.qj5otlLucXNqnJkj",
-                "fallback": true
-            }
         }
     ]
 }

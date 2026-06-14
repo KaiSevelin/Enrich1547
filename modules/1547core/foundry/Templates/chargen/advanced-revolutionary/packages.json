@@ -23,14 +23,6 @@
                 "type": "item",
                 "tableUuid": "RollTable.tTWw80p9Bk6KoCko"
             }
-        },
-        {
-            "label": "Safe houses and routes",
-            "gain": {
-                "type": "skill",
-                "targetKey": "Item.Bta0YOZtc2Z7jjT3",
-                "fallback": true
-            }
         }
     ]
 }

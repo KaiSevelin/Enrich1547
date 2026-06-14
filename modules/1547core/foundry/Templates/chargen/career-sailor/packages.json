@@ -10,14 +10,6 @@
             }
         },
         {
-            "label": "Coastal sense",
-            "gain": {
-                "type": "skill",
-                "targetKey": "Item.Bta0YOZtc2Z7jjT3",
-                "fallback": true
-            }
-        },
-        {
             "label": "Seafarer's goods",
             "gain": {
                 "type": "item",

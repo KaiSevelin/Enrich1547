@@ -25,10 +25,10 @@
             }
         },
         {
-            "label": "Veteran's eye",
+            "label": "Arcing volleys",
             "gain": {
-                "type": "skill",
-                "targetKey": "Item.Bta0YOZtc2Z7jjT3",
+                "type": "maneuver",
+                "targetKey": "Item.ArcdShotMnvr0001",
                 "fallback": true
             }
         }

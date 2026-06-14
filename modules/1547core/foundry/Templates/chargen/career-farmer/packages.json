@@ -10,14 +10,6 @@
             }
         },
         {
-            "label": "Seasoned labor",
-            "gain": {
-                "type": "skill",
-                "targetKey": "Item.HnJ6EllrZl41RPLQ",
-                "fallback": true
-            }
-        },
-        {
             "label": "Rural goods",
             "gain": {
                 "type": "item",
