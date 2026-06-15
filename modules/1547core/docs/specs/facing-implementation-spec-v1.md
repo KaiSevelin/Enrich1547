@@ -99,6 +99,10 @@ Keep applying the +1 up front; author a real **"Face Attacker"** reaction maneuv
 path, plus the defender rotation. More moving parts (a new modifier, identifying the +1
 component, a data maneuver, legality gating) — use only if a list-visible maneuver is desired.
 
+> **Player-side prompts:** the Face reaction is offered today, but combat events run on a
+> local bus, so the window appears on the *acting* (GM) client, not the defender's. Routing it
+> to the defender's own browser is [`cross-client-reaction-spec-v1.md`](cross-client-reaction-spec-v1.md).
+
 ### Open decisions
 - **Synthetic candidate vs data maneuver** for Face (recommend synthetic).
 - **Reaction cost** — confirm Face consumes the same one reaction as a normal defense (spec

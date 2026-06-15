@@ -12,6 +12,7 @@ Current documents:
 - `combat-spec-v2.md`
 - `combat-state-machine-v1.md`
 - `cover-spec-v1.md`
+- `cross-client-reaction-spec-v1.md`
 - `facing-and-positioning-spec-v1.md`
 - `facing-implementation-spec-v1.md`
 - `ranged-shot-visualization-spec-v1.md`
