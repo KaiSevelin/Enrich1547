@@ -179,6 +179,18 @@ function onRemoteResponse(msg) {
     try { entry.onResolve?.(msg.candidateId ?? null); } catch { /* noop */ }
 }
 
+// Acting side: the window was resolved locally (e.g. the GM picked on their own
+// mirrored copy). Tear down the responder's copy and clear the indicator. Safe
+// to call unconditionally — a no-op once the entry is gone (remote already won).
+export function closeRelayedWindow(windowId) {
+    const entry = pendingWindows.get(windowId);
+    if (!entry) return;
+    pendingWindows.delete(windowId);
+    if (entry.timer) clearTimeout(entry.timer);
+    clearWaitingIndicator(entry);
+    broadcastClose(windowId);
+}
+
 export function bindRemoteWindowRelay() {
     if (relayBound || !game?.socket) return;
     relayBound = true;

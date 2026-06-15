@@ -8,6 +8,7 @@ import {
     bindRemoteWindowRelay,
     registerRemoteWindowPresenter,
     relayRemoteWindow,
+    closeRelayedWindow,
     presentCandidateDialog,
     escapeRelayHtml,
 } from "./remote-window-relay.js";
@@ -184,22 +185,25 @@ async function handleReactionTrigger(sourceEvent, trigger) {
         windowId, reactorActor, selectionController, candidates, trigger, timeoutMs,
     });
 
-    if (!relayed) {
-        const windowEvent = await emitCombatEvent(
-            COMBAT_EVENTS.REACTION_WINDOW_OPENED,
-            reactionWindow
-        );
-        const immediateSelection = resolveSelectedReaction(reactionWindow, windowEvent);
-        if (immediateSelection) {
-            selectionController.selectReaction(immediateSelection);
-        }
+    // Always open the window on the acting client too, so the GM sees every
+    // reaction dialog — even when it is also relayed to the defending player.
+    // The single-settle controller makes it first-response-wins (GM or player).
+    const windowEvent = await emitCombatEvent(
+        COMBAT_EVENTS.REACTION_WINDOW_OPENED,
+        reactionWindow
+    );
+    const immediateSelection = resolveSelectedReaction(reactionWindow, windowEvent);
+    if (immediateSelection) {
+        selectionController.selectReaction(immediateSelection);
     }
 
     const selectedReaction = await waitForReactionSelection({
         reactionWindow,
         selectionController,
     });
-    // The generic relay owns its own pending-window cleanup (response/timeout).
+    // If the acting client resolved first, close the responder's relayed copy
+    // and clear the waiting indicator (no-op if the responder already answered).
+    if (relayed) closeRelayedWindow(windowId);
 
     if (!selectedReaction) return null;
 
