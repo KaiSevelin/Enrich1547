@@ -7,6 +7,31 @@
     "body": {
       "contents": [
         {
+          "key": "CastRitualButton",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "cssClass": "",
+          "role": 1,
+          "editRole": 3,
+          "permission": 0,
+          "tooltip": "Open the ritual board to perform this ritual.",
+          "visibilityFormula": "",
+          "editableFormula": "",
+          "escapeHTML": false,
+          "type": "label",
+          "size": "full-size",
+          "icon": "",
+          "value": "<i class=\"fa-solid fa-hat-wizard\"></i> Cast",
+          "prefix": "",
+          "suffix": "",
+          "rollMessage": "%{\nconst uuid = \"${item.uuid}$\";\nawait game.modules.get('1547core').api.openRitualBoardFromRitual(uuid);\nreturn 0;\n}%",
+          "altRollMessage": "",
+          "rollMessageToChat": false,
+          "altRollMessageToChat": false,
+          "style": "label",
+          "align": "center"
+        },
+        {
           "key": "RitualStepsTable",
           "type": "dynamicTable",
           "contents": [],
