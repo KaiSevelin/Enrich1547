@@ -171,7 +171,15 @@ async function handleReactionTrigger(sourceEvent, trigger) {
     // when a player attacks an NPC). Falls back to the local prompt when we own
     // the reactor or no remote responder is online.
     const windowId = foundry.utils.randomID();
-    const reactorActor = candidates.find((c) => c?.actor)?.actor ?? reactionWindow.actor ?? null;
+    // The reactor is whoever may react: for an attack that's the *defender*
+    // (reactionWindow.actor is the attacker here), for a threat zone it's the
+    // zone owner. Most legal-maneuver candidates carry no `.actor`, so without
+    // this trigger-aware fallback the relay would target the attacker and the
+    // defending player would never get the prompt.
+    const reactorActor = candidates.find((c) => c?.actor)?.actor
+        ?? (trigger === "attack" ? reactionWindow.target : reactionWindow.actor)
+        ?? reactionWindow.actor
+        ?? null;
     const relayed = relayReactionWindow({
         windowId, reactorActor, selectionController, candidates, trigger, timeoutMs,
     });
