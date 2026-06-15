@@ -120,11 +120,18 @@ candidate objects in `pendingWindows[windowId]` and maps the returned id back.
 
 ## Implementation phases
 
-1. **Transport + fallback.** `pendingWindows`, the socket request/response, responder
-   resolution, and the acting-side suppress-local-when-remote. Responder side can start as a
-   minimal `DialogV2` listing candidate names. Verifiable with GM + one player.
-2. **Reuse the HUD reaction window** on the responder for consistent UX; add the
-   "waiting for…" indicator on the acting client.
+1. **Transport + fallback.** ✅ *Done* (`reaction-service.js`). `pendingRemoteWindows`, the
+   socket request/response (`reaction-request` / `reaction-response` on `module.1547core`),
+   responder resolution, and the acting-side suppress-local-when-remote. Responder started as a
+   minimal `Dialog` listing candidate names. Verifiable with GM + one player.
+2. **Reuse the HUD reaction window.** ✅ *Done* (`reaction-service.js`
+   `presentRemoteReactionViaHud`). The responder reconstructs a `reactionWindow` and emits
+   `REACTION_WINDOW_OPENED` locally so the existing HUD prompt renders; its `selectReaction` /
+   `passReaction` route the choice id back over the socket. The reactor's token is `control()`ed
+   first so the HUD has something to render against; falls back to the Phase-1 dialog when the
+   reactor has no token on the active scene. The acting client now shows a **persistent**
+   "waiting for <player>…" notification (removed on response/timeout) instead of a transient
+   toast. *Needs a two-client live test (see Test plan).*
 3. **Polish.** Countdown to the deadline on the responder; multi-owner first-wins close;
    `userConnected` re-send.
 

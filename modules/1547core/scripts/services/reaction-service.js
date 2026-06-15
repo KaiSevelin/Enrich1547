@@ -27,6 +27,26 @@ function escapeReactionHtml(value) {
     return String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
+// Acting side: a persistent "waiting for <player>…" notification, removed when
+// the response arrives or the window times out. Falls back to a transient toast
+// if this Foundry build can't remove notifications by id.
+function showWaitingIndicator(entry, responders) {
+    if (!entry) return;
+    const text = `Waiting for ${responders.map((u) => u.name).join(", ")} to react…`;
+    try {
+        const id = ui.notifications?.info?.(text, { permanent: true });
+        entry.notificationId = (typeof ui.notifications?.remove === "function") ? id : null;
+    } catch {
+        entry.notificationId = null;
+    }
+}
+
+function clearWaitingIndicator(entry) {
+    if (!entry || entry.notificationId == null) return;
+    try { ui.notifications?.remove?.(entry.notificationId); } catch { /* noop */ }
+    entry.notificationId = null;
+}
+
 function bindReactionSocket() {
     if (reactionSocketBound || !game?.socket) return;
     reactionSocketBound = true;
@@ -62,7 +82,8 @@ function serializeReactionCandidates(candidates) {
 function relayReactionWindow({ windowId, reactorActor, selectionController, candidates, trigger, timeoutMs }) {
     const responders = pickReactionResponders(reactorActor);
     if (!responders.length) return false;
-    pendingRemoteWindows.set(windowId, { selectionController });
+    const entry = { selectionController, notificationId: null };
+    pendingRemoteWindows.set(windowId, entry);
     game.socket.emit(SOCKET_CHANNEL, {
         type: REQUEST_TYPE,
         windowId,
@@ -73,7 +94,7 @@ function relayReactionWindow({ windowId, reactorActor, selectionController, cand
         timeoutMs,
         candidates: serializeReactionCandidates(candidates),
     });
-    ui.notifications?.info?.(`Waiting for ${responders.map((u) => u.name).join(", ")} to react…`);
+    showWaitingIndicator(entry, responders);
     return true;
 }
 
@@ -83,6 +104,7 @@ function onRemoteReactionResponse(msg) {
     const entry = pendingRemoteWindows.get(msg.windowId);
     if (!entry) return;
     pendingRemoteWindows.delete(msg.windowId);
+    clearWaitingIndicator(entry);
     if (msg.candidateId) entry.selectionController.selectReaction(msg.candidateId);
     else entry.selectionController.passReaction();
 }
@@ -90,12 +112,61 @@ function onRemoteReactionResponse(msg) {
 // Responder side: we were asked to react — prompt, then send the choice back.
 async function onRemoteReactionRequest(msg) {
     if (!Array.isArray(msg.toUserIds) || !msg.toUserIds.includes(game.user.id)) return;
-    const candidateId = await promptRemoteReaction(msg);
+    const candidateId = await presentRemoteReaction(msg);
     game.socket.emit(SOCKET_CHANNEL, { type: RESPONSE_TYPE, windowId: msg.windowId, candidateId: candidateId ?? null });
 }
 
-// Responder side: a minimal prompt (Phase 1) — one button per candidate plus
-// Pass, auto-passing on the window deadline. Resolves to a candidate id or null.
+// Responder side: render the prompt. Prefer the in-HUD reaction window (Phase 2)
+// for a consistent UX; fall back to the standalone dialog when the reactor has
+// no token on the active scene (so the HUD has nothing to render against).
+function presentRemoteReaction(msg) {
+    const cands = Array.isArray(msg.candidates) ? msg.candidates : [];
+    if (!cands.length) return Promise.resolve(null);
+    const actor = msg.forActorId ? game.actors?.get(msg.forActorId) : null;
+    const token = actor?.getActiveTokens?.(true)?.[0] ?? actor?.getActiveTokens?.()?.[0] ?? null;
+    if (token) return presentRemoteReactionViaHud(msg, actor, token, cands);
+    return promptRemoteReaction(msg);
+}
+
+// Responder side: reconstruct a reactionWindow object and feed it through the
+// existing HUD reaction UI by emitting REACTION_WINDOW_OPENED locally. The HUD's
+// Commit/Pass bindings call selectReaction/passReaction (and self-clear the
+// window); the window auto-expires on its deadline (getActiveReactionWindow).
+function presentRemoteReactionViaHud(msg, actor, token, cands) {
+    return new Promise((resolve) => {
+        let settled = false;
+        const finish = (v) => { if (!settled) { settled = true; resolve(v); } };
+        const timeoutMs = Math.max(0, Number(msg.timeoutMs) || 0);
+        const reactionWindow = {
+            trigger: msg.trigger,
+            actor: { name: msg.reactorName ?? actor?.name ?? "Combatant" },
+            target: null,
+            candidates: cands.map((c) => ({
+                id: c.id,
+                name: c.name ?? "Reaction",
+                usage: c.usage ?? "",
+                type: "reaction",
+                legal: true,
+            })),
+            timeoutMs,
+            expiresAt: Date.now() + timeoutMs,
+            selectReaction: (selection) => {
+                const id = (selection && typeof selection === "object")
+                    ? (selection.id ?? selection.uuid ?? null)
+                    : selection;
+                finish(id ?? null);
+            },
+            passReaction: () => finish(null),
+        };
+        // Focus the reactor's token so the HUD renders for it, then open the window.
+        try { token.control?.({ releaseOthers: true }); } catch { /* noop */ }
+        void emitCombatEvent(COMBAT_EVENTS.REACTION_WINDOW_OPENED, reactionWindow);
+        if (timeoutMs > 0) setTimeout(() => finish(null), timeoutMs);
+    });
+}
+
+// Responder side: a minimal standalone prompt (Phase 1 fallback) — one button
+// per candidate plus Pass, auto-passing on the deadline. Resolves to an id|null.
 function promptRemoteReaction(msg) {
     const cands = Array.isArray(msg.candidates) ? msg.candidates : [];
     if (!cands.length) return Promise.resolve(null);
@@ -199,7 +270,11 @@ async function handleReactionTrigger(sourceEvent, trigger) {
         reactionWindow,
         selectionController,
     });
-    pendingRemoteWindows.delete(windowId);
+    const leftover = pendingRemoteWindows.get(windowId);
+    if (leftover) {
+        clearWaitingIndicator(leftover);
+        pendingRemoteWindows.delete(windowId);
+    }
 
     if (!selectedReaction) return null;
 
