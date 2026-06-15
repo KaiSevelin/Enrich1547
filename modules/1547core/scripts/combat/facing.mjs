@@ -11,14 +11,14 @@
 import { tokenDescriptor, facingToward, computePositionalAdvantage } from "../lib/positioning.mjs";
 import { onCombatEvent, COMBAT_EVENTS } from "../services/combat-events.js";
 
-// Square-gridded scenes only — the tile geometry is meaningless on a gridless or
-// hex scene, so facing quietly does nothing there (the spec degrades to a GM call).
+// Tile geometry needs a grid. Only a truly *gridless* scene can't do facing —
+// everything else (square; and, lacking a better tile model, hex) is treated as
+// usable so facing isn't silently disabled on a normal map.
 function isSquareGridded() {
     const g = globalThis.canvas?.grid;
-    const T = globalThis.CONST?.GRID_TYPES;
     if (!g) return false;
-    if (T) return g.type === T.SQUARE;
-    return g.type === 1; // SQUARE === 1 in Foundry's grid-type enum
+    const gridless = globalThis.CONST?.GRID_TYPES?.GRIDLESS ?? 0;
+    return g.type !== gridless;
 }
 
 // True if the token (or its actor) is a combatant in the active encounter.

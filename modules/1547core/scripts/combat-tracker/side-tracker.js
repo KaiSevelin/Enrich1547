@@ -169,6 +169,10 @@ export function buildCombatSideState(combat, orderedCombatants) {
 }
 
 export async function persistCombatSideState(combat) {
+    // Combat-state flags are GM-authoritative. These run from document hooks that
+    // fire on every client, so non-GMs must not attempt the write (Foundry denies
+    // it; the flag changes propagate to players via the GM's update).
+    if (!game.user?.isGM) return;
     const orderedCombatants = getOrderedCombatants(combat);
     const sideState = buildCombatSideState(combat, orderedCombatants);
     await combat.setFlag(MODULE_ID, "sideOrder", sideState.sideOrder);
@@ -323,7 +327,7 @@ export function register1547CombatTrackerSideGroups() {
         void persistCombatSideState(combat);
     });
     Hooks.on("createCombatant", (combatant) => {
-        void combatant.setFlag(MODULE_ID, "sideId", resolveCombatantSideId(combatant));
+        if (game.user?.isGM) void combatant.setFlag(MODULE_ID, "sideId", resolveCombatantSideId(combatant));
         if (combatant.combat) void persistCombatSideState(combatant.combat);
     });
     Hooks.on("deleteCombatant", (combatant) => {
