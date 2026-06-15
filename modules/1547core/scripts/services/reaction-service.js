@@ -9,7 +9,122 @@ const DEFAULT_REACTION_WINDOW_SECONDS = 10;
 
 let reactionServiceDisposers = [];
 
+/* ------------------------------------------------------------------ */
+/*  Cross-client reaction relay (cross-client-reaction-spec-v1)       */
+/*  Combat events run on a local bus, so a reaction prompt would only  */
+/*  appear on the acting client. This relays the prompt to the         */
+/*  reactor's owner over the socket and routes their choice back. The  */
+/*  acting client stays the authority (timeout, resolution, writes).   */
+/* ------------------------------------------------------------------ */
+
+const SOCKET_CHANNEL = `module.${MODULE_ID}`;
+const REQUEST_TYPE = "reaction-request";
+const RESPONSE_TYPE = "reaction-response";
+const pendingRemoteWindows = new Map(); // windowId -> { selectionController }
+let reactionSocketBound = false;
+
+function escapeReactionHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function bindReactionSocket() {
+    if (reactionSocketBound || !game?.socket) return;
+    reactionSocketBound = true;
+    game.socket.on(SOCKET_CHANNEL, (msg) => {
+        if (!msg || typeof msg !== "object") return;
+        if (msg.type === REQUEST_TYPE) void onRemoteReactionRequest(msg);
+        else if (msg.type === RESPONSE_TYPE) onRemoteReactionResponse(msg);
+    });
+}
+
+// Active users (other than us) who should decide the reaction: a controlling
+// player if any owns the reactor, else the GM when we (a player) can't decide.
+function pickReactionResponders(reactorActor) {
+    if (!reactorActor?.testUserPermission) return [];
+    const others = Array.from(game.users ?? []).filter((u) => u.active && u.id !== game.user.id);
+    const players = others.filter((u) => !u.isGM && reactorActor.testUserPermission(u, "OWNER"));
+    if (players.length) return players;
+    if (!reactorActor.testUserPermission(game.user, "OWNER")) {
+        const gms = others.filter((u) => u.isGM);
+        if (gms.length) return gms;
+    }
+    return [];
+}
+
+function serializeReactionCandidates(candidates) {
+    return (candidates ?? [])
+        .filter((c) => c && c.legal !== false && c.id)
+        .map((c) => ({ id: c.id, name: c.name ?? "Reaction", usage: c.usage ?? "" }));
+}
+
+// Acting side: hand the window to a remote responder. Returns true if relayed
+// (the caller then skips the local prompt); the choice returns over the socket.
+function relayReactionWindow({ windowId, reactorActor, selectionController, candidates, trigger, timeoutMs }) {
+    const responders = pickReactionResponders(reactorActor);
+    if (!responders.length) return false;
+    pendingRemoteWindows.set(windowId, { selectionController });
+    game.socket.emit(SOCKET_CHANNEL, {
+        type: REQUEST_TYPE,
+        windowId,
+        toUserIds: responders.map((u) => u.id),
+        forActorId: reactorActor?.id ?? null,
+        reactorName: reactorActor?.name ?? "A combatant",
+        trigger,
+        timeoutMs,
+        candidates: serializeReactionCandidates(candidates),
+    });
+    ui.notifications?.info?.(`Waiting for ${responders.map((u) => u.name).join(", ")} to react…`);
+    return true;
+}
+
+// Acting side: a remote responder answered. selectReaction accepts the candidate
+// id and normalises it back to the real candidate; an unknown/absent id passes.
+function onRemoteReactionResponse(msg) {
+    const entry = pendingRemoteWindows.get(msg.windowId);
+    if (!entry) return;
+    pendingRemoteWindows.delete(msg.windowId);
+    if (msg.candidateId) entry.selectionController.selectReaction(msg.candidateId);
+    else entry.selectionController.passReaction();
+}
+
+// Responder side: we were asked to react — prompt, then send the choice back.
+async function onRemoteReactionRequest(msg) {
+    if (!Array.isArray(msg.toUserIds) || !msg.toUserIds.includes(game.user.id)) return;
+    const candidateId = await promptRemoteReaction(msg);
+    game.socket.emit(SOCKET_CHANNEL, { type: RESPONSE_TYPE, windowId: msg.windowId, candidateId: candidateId ?? null });
+}
+
+// Responder side: a minimal prompt (Phase 1) — one button per candidate plus
+// Pass, auto-passing on the window deadline. Resolves to a candidate id or null.
+function promptRemoteReaction(msg) {
+    const cands = Array.isArray(msg.candidates) ? msg.candidates : [];
+    if (!cands.length) return Promise.resolve(null);
+    return new Promise((resolve) => {
+        let settled = false;
+        const finish = (v) => { if (!settled) { settled = true; resolve(v); } };
+        const buttons = {};
+        cands.forEach((c, i) => {
+            buttons[`react-${i}`] = {
+                label: `${c.name}${c.usage ? ` (${c.usage})` : ""}`,
+                callback: () => finish(c.id),
+            };
+        });
+        buttons.pass = { label: "Pass", callback: () => finish(null) };
+        const dlg = new Dialog({
+            title: "Reaction",
+            content: `<p><strong>${escapeReactionHtml(msg.reactorName)}</strong> may react to an incoming attack.</p>`,
+            buttons,
+            default: "pass",
+            close: () => finish(null),
+        }, { classes: ["reaction-window-dialog"] });
+        dlg.render(true);
+        const timeoutMs = Math.max(0, Number(msg.timeoutMs) || 0);
+        if (timeoutMs > 0) setTimeout(() => { try { dlg.close(); } catch { /* noop */ } finish(null); }, timeoutMs);
+    });
+}
+
 export function registerReactionService({ priority = 100 } = {}) {
+    bindReactionSocket();
     if (reactionServiceDisposers.length) return;
 
     reactionServiceDisposers = [
@@ -60,19 +175,31 @@ async function handleReactionTrigger(sourceEvent, trigger) {
         metadata: sourceEvent.payload,
     };
 
-    const windowEvent = await emitCombatEvent(
-        COMBAT_EVENTS.REACTION_WINDOW_OPENED,
-        reactionWindow
-    );
-    const immediateSelection = resolveSelectedReaction(reactionWindow, windowEvent);
-    if (immediateSelection) {
-        selectionController.selectReaction(immediateSelection);
+    // Relay the prompt to the reactor's owner (a controlling player, or the GM
+    // when a player attacks an NPC). Falls back to the local prompt when we own
+    // the reactor or no remote responder is online.
+    const windowId = foundry.utils.randomID();
+    const reactorActor = candidates.find((c) => c?.actor)?.actor ?? reactionWindow.actor ?? null;
+    const relayed = relayReactionWindow({
+        windowId, reactorActor, selectionController, candidates, trigger, timeoutMs,
+    });
+
+    if (!relayed) {
+        const windowEvent = await emitCombatEvent(
+            COMBAT_EVENTS.REACTION_WINDOW_OPENED,
+            reactionWindow
+        );
+        const immediateSelection = resolveSelectedReaction(reactionWindow, windowEvent);
+        if (immediateSelection) {
+            selectionController.selectReaction(immediateSelection);
+        }
     }
 
     const selectedReaction = await waitForReactionSelection({
         reactionWindow,
         selectionController,
     });
+    pendingRemoteWindows.delete(windowId);
 
     if (!selectedReaction) return null;
 
