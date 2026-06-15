@@ -1,6 +1,7 @@
 ﻿import { buildDefenderPool, toFoundryFormula } from "../combat/pool-builder.mjs";
 import { conditionCombatDisadvantage } from "../services/condition-registry.js";
 import { autoFaceAttacker, getAttackPositioning, positioningNote, positionalAdvantageToApply } from "../combat/facing.mjs";
+import { showDefenseSummary } from "../combat/defense-summary.js";
 
 function consumePersistentEffectIfPresent(actor, effectType, deps = {}) {
     const { MODULE_ID, game } = deps;
@@ -348,6 +349,9 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
             speaker,
             content: `<strong>Attack Result</strong><br>${escapeHtml(attackerName)} -> ${escapeHtml(defenderName)}<br>Damage: ${escapeHtml(String(resolvedAttack?.attackRoll?.damage ?? 0))}<br>Protection: ${escapeHtml(String(resolvedAttack?.defenseRoll?.protection ?? 0))}<br>Applied: ${escapeHtml(String(resolvedAttack?.damageApplied ?? 0))}<br>Critical: ${escapeHtml(String(resolvedAttack?.currentCriticalPoints ?? 0))}${hpText}${ridersText}`
         });
+
+        // Push a defense summary to the defender's own client (informational).
+        showDefenseSummary({ resolvedAttack, attacker: context.actor, defender: targetActor });
 
         await consumePersistentEffectIfPresent(context.actor, "aimed", deps);
         if (Object.keys(getPendingNextAttackDice?.(context.actor?.id) ?? {}).length > 0) {

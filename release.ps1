@@ -151,6 +151,14 @@ if ($NoGit) {
 }
 
 Push-Location $repoRoot
+# Lower ErrorActionPreference for the git block. Git emits harmless
+# warnings (e.g. "LF will be replaced by CRLF") to stderr, which
+# `$ErrorActionPreference = 'Stop'` would otherwise treat as terminating
+# errors — aborting the script before the commit step. Every git
+# invocation below already checks $LASTEXITCODE explicitly, so real
+# failures are still caught.
+$prevErrorPreference = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
 try {
     $moduleRel = 'modules/1547core'
     $zipRel    = '1547core.zip'
@@ -189,5 +197,6 @@ try {
     Write-Output "Pushed."
 }
 finally {
+    $ErrorActionPreference = $prevErrorPreference
     Pop-Location
 }

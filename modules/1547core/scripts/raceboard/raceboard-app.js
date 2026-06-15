@@ -10,7 +10,11 @@ import { emitDomainEvent, DOMAIN_EVENTS } from "../services/domain-events.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
-const MODULE_ID = "raceboard";
+// The raceboard keeps its own legacy socket channel ("module.raceboard"), NOT
+// the global module id ("1547core"). raceboard-service listens on the same
+// channel (LEGACY_NAMESPACE). Do not "fix" this to the module id — it would
+// break cross-client reveal. Named distinctly so it isn't mistaken for it.
+const RACEBOARD_CHANNEL = "raceboard";
 // Number of event-marker states a box cycles through on right-click, including
 // "none" (0). 3 = none → red (1) → amber (2) → none. Bump to add more colors.
 const EVENT_STATE_COUNT = 3;
@@ -190,7 +194,7 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   _broadcastEphemeral() {
     if (!this.isEphemeral || !game.user.isGM || this._readOnly) return;
-    game.socket.emit(`module.${MODULE_ID}`, {
+    game.socket.emit(`module.${RACEBOARD_CHANNEL}`, {
       type: "ephemeral-update",
       state: this._state
     });
@@ -275,15 +279,15 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
   _broadcastShow() {
     if (!game.user.isGM || this._readOnly) return;
     if (this.isEphemeral) {
-      game.socket.emit(`module.${MODULE_ID}`, { type: "show", state: this._state });
+      game.socket.emit(`module.${RACEBOARD_CHANNEL}`, { type: "show", state: this._state });
     } else {
-      game.socket.emit(`module.${MODULE_ID}`, { type: "show", uuid: this._uuid });
+      game.socket.emit(`module.${RACEBOARD_CHANNEL}`, { type: "show", uuid: this._uuid });
     }
   }
 
   _broadcastHide() {
     if (!game.user.isGM || this._readOnly) return;
-    game.socket.emit(`module.${MODULE_ID}`, { type: "hide", uuid: this.isEphemeral ? null : this._uuid });
+    game.socket.emit(`module.${RACEBOARD_CHANNEL}`, { type: "hide", uuid: this.isEphemeral ? null : this._uuid });
   }
 
   /** Left-click raises the alarm one stage. */
@@ -559,7 +563,7 @@ export class RaceBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     _openApps.set(this._uuid, this);
 
     // Tell players to re-open against the new uuid so they switch from ephemeral state to doc-backed.
-    game.socket.emit(`module.${MODULE_ID}`, { type: "saved", uuid: this._uuid });
+    game.socket.emit(`module.${RACEBOARD_CHANNEL}`, { type: "saved", uuid: this._uuid });
 
     ui.notifications.info(game.i18n.format("RACEBOARD.SavedAs", { name }));
     this.render();
@@ -626,9 +630,9 @@ export function openRaceBoardApp({ uuid = null, state = null, show = false, read
 
   if (show && game.user.isGM && !readOnly) {
     if (uuid) {
-      game.socket.emit(`module.${MODULE_ID}`, { type: "show", uuid });
+      game.socket.emit(`module.${RACEBOARD_CHANNEL}`, { type: "show", uuid });
     } else {
-      game.socket.emit(`module.${MODULE_ID}`, { type: "show", state: app._state });
+      game.socket.emit(`module.${RACEBOARD_CHANNEL}`, { type: "show", state: app._state });
     }
   }
   return app;

@@ -1,5 +1,15 @@
 # Cross-Client Reaction Layer Spec v1
 
+> **Update (generalised).** Phases 1–3 shipped for reactions, then the transport was
+> extracted into a **generic hub** — `scripts/services/remote-window-relay.js`
+> (`relayRemoteWindow` + a per-`kind` responder-presenter registry, with the waiting
+> indicator, first-wins close and `userConnected` re-send). Consumers now ride it:
+> `reaction-service.js` (reactions), `combat/post-maneuver-relay.js` (defender post-maneuver
+> windows), and `combat/defense-summary.js` (informational damage/defense window pushed to the
+> defender). A separate, socket-free **turn cue** (`combat/turn-cues.js`) nudges a player when
+> their side becomes active, off the propagated combat flag. All of these need a two-client
+> live test.
+
 **Status: Implementation plan.** The combat reaction flow currently runs entirely on the
 **acting client** (the attacker's / GM's browser), because combat events use a local
 in-memory bus. This spec adds a **socket transport** so the *reacting* player gets the

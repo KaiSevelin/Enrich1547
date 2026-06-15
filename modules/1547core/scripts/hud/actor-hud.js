@@ -1,5 +1,6 @@
 ﻿import { COMBAT_EVENTS, onCombatEvent } from "../services/combat-events.js";
 import { buildAttackPool, toFoundryFormula } from "../combat/pool-builder.mjs";
+import { relayPostManeuverWindow } from "../combat/post-maneuver-relay.js";
 import {
     HUD_STATE,
     getSelectedPreManeuverIds,
@@ -2113,7 +2114,11 @@ export function register1547ActorHud() {
         void renderHudForSelection();
         return null;
     });
-    onCombatEvent(COMBAT_EVENTS.DAMAGE_TAKEN_WINDOW_OPENED, () => null);
+    onCombatEvent(COMBAT_EVENTS.DAMAGE_TAKEN_WINDOW_OPENED, (event) => {
+        setHudDamageTakenWindow(event.payload ?? null);
+        void renderHudForSelection();
+        return null;
+    });
 
     Hooks.on("controlToken", () => void renderHudForSelection());
     Hooks.on("hoverToken", (token, hovered) => {
@@ -2125,6 +2130,9 @@ export function register1547ActorHud() {
     });
     onCombatEvent(COMBAT_EVENTS.POST_MANEUVER_WINDOW_OPENED, (event) => {
         clearHudDamageTakenWindow();
+        // If the window's actor is owned by a remote player (e.g. a defender on
+        // their own client), relay the choice there instead of queuing it here.
+        if (relayPostManeuverWindow(event.payload)) return null;
         queuePostManeuverWindow(event.payload);
         void renderHudForSelection();
         return null;

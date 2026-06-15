@@ -32,6 +32,21 @@ Hooks.once("init", () => {
         (module) => module.registerReactionService()
     );
     void runImportedModuleStep(
+        "registerPostManeuverRelay",
+        () => import("./combat/post-maneuver-relay.js"),
+        (module) => module.registerPostManeuverRelay()
+    );
+    void runImportedModuleStep(
+        "registerDefenseSummaryRelay",
+        () => import("./combat/defense-summary.js"),
+        (module) => module.registerDefenseSummaryRelay()
+    );
+    void runImportedModuleStep(
+        "registerTurnCues",
+        () => import("./combat/turn-cues.js"),
+        (module) => module.registerTurnCues()
+    );
+    void runImportedModuleStep(
         "registerManeuverLegalityService",
         () => import("./combat/maneuver-legality.mjs"),
         (module) => module.registerManeuverLegalityService()
