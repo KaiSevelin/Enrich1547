@@ -76,8 +76,8 @@ export function positioningNote(pos) {
     if (pos.surprise) return "Surprise attack — +1 advantage applied (target is not yet in the fight).";
     if (pos.rear) {
         return pos.faceable
-            ? "Rear shot — +1 advantage applied (target may Face to cancel it)."
-            : "Rear shot — +1 advantage applied (target cannot turn to face).";
+            ? "Rear attack — +1 advantage applied (target may Face to cancel it)."
+            : "Rear attack — +1 advantage applied (target cannot turn to face).";
     }
     return "";
 }

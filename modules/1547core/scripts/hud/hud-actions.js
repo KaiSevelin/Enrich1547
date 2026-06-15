@@ -80,7 +80,11 @@ async function waitForDice1547Totals(game, message, { timeoutMs = 5000, interval
 async function rollFormulaToChatAndSummarize({ Roll, speaker, formula, flavor, game }) {
     if (!formula) return null;
     const roll = await new Roll(formula).evaluate({ async: true });
-    const message = await roll.toMessage({ speaker, flavor });
+    // Force public so both clients see the dice (Dice So Nice animates for every
+    // user who can view the message). Otherwise the GM's chat roll-mode setting
+    // (e.g. "Private GM Roll") would hide combat rolls from the player.
+    const publicMode = globalThis.CONST?.DICE_ROLL_MODES?.PUBLIC ?? "publicroll";
+    const message = await roll.toMessage({ speaker, flavor }, { rollMode: publicMode });
     return waitForDice1547Totals(game, message);
 }
 async function consumeHudFullTurn(actor) {

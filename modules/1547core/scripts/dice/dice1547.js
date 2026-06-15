@@ -11,6 +11,11 @@ import {DiePenetration} from './penetration.js';
 import {DieRisk} from './risk.js';
 
 const MODULE_ID = "dice1547";
+// Roll-result flags must be stored under an *active* module scope. The standalone
+// "dice1547" module was consolidated into 1547core, so its id is no longer an
+// active flag scope — writing under it throws. Store under "1547core" instead;
+// reads fall back to the legacy scope for chat messages stamped before this.
+const FLAG_SCOPE = "1547core";
 
 function getDieType(dice) {
     if (dice instanceof DieArmor) return "armor";
@@ -163,7 +168,7 @@ export function register1547Dice() {
         coreModule.api = coreModule.api ?? {};
         coreModule.api.getRollResult = (messageOrId) => {
             const message = typeof messageOrId === "string" ? game.messages.get(messageOrId) : messageOrId;
-            return message?.getFlag(MODULE_ID, "rollResult") ?? null;
+            return message?.getFlag(FLAG_SCOPE, "rollResult") ?? message?.getFlag(MODULE_ID, "rollResult") ?? null;
         };
     }
 }
@@ -445,7 +450,11 @@ Hooks.on('diceSoNiceRollComplete', async (chatMessageID) => {
                 dice: diceResults
             });
 
-            await message.setFlag(MODULE_ID, "rollResult", resultPayload);
+            try {
+                await message.setFlag(FLAG_SCOPE, "rollResult", resultPayload);
+            } catch (err) {
+                console.warn("1547core | could not store dice roll result flag", err);
+            }
             Hooks.callAll(`${MODULE_ID}RollResult`, resultPayload, message);
 
             ChatMessage.create({
