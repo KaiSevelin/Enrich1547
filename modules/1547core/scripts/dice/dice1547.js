@@ -168,7 +168,9 @@ export function register1547Dice() {
         coreModule.api = coreModule.api ?? {};
         coreModule.api.getRollResult = (messageOrId) => {
             const message = typeof messageOrId === "string" ? game.messages.get(messageOrId) : messageOrId;
-            return message?.getFlag(FLAG_SCOPE, "rollResult") ?? message?.getFlag(MODULE_ID, "rollResult") ?? null;
+            // Read only the active scope — getFlag on the inactive legacy
+            // "dice1547" scope logs a "scope not valid" warning on every poll.
+            return message?.getFlag(FLAG_SCOPE, "rollResult") ?? null;
         };
     }
 }
@@ -466,7 +468,10 @@ Hooks.on('diceSoNiceRollComplete', async (chatMessageID) => {
     }
 });
 
-Hooks.once('diceSoNiceReady', (dice3d) => {
+let diceSoNicePresetsApplied = false;
+function applyDiceSoNicePresets(dice3d) {
+    if (diceSoNicePresetsApplied || !dice3d) return;
+    diceSoNicePresetsApplied = true;
     const system = new DiceSystem("dice1547", "dice1547", "dice1547", "default");
     dice3d.addSystem(system);
     dice3d.addDicePreset({
@@ -669,4 +674,13 @@ Hooks.once('diceSoNiceReady', (dice3d) => {
       ],
       system:"dice1547"
     });
-});
+}
+
+// Register the dice geometry when Dice So Nice signals readiness, AND apply
+// immediately if it is already ready — this module is imported dynamically, so
+// the import can resolve *after* diceSoNiceReady has fired (notably on a
+// player's client), which previously left the custom dice with no geometry
+// (DiceBox.getVectors → "reading 'shape' of null"). The applied-flag keeps it
+// idempotent if both paths run.
+Hooks.once('diceSoNiceReady', (dice3d) => applyDiceSoNicePresets(dice3d));
+if (globalThis.game?.dice3d) applyDiceSoNicePresets(globalThis.game.dice3d);
