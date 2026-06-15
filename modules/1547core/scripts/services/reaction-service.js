@@ -20,8 +20,11 @@ let reactionServiceDisposers = [];
 const SOCKET_CHANNEL = `module.${MODULE_ID}`;
 const REQUEST_TYPE = "reaction-request";
 const RESPONSE_TYPE = "reaction-response";
-const pendingRemoteWindows = new Map(); // windowId -> { selectionController }
+const CLOSE_TYPE = "reaction-closed";
+const pendingRemoteWindows = new Map(); // acting side: windowId -> { selectionController, notificationId, request }
+const openRemoteResponses = new Map(); // responder side: windowId -> closeFn (multi-owner first-wins close)
 let reactionSocketBound = false;
+let reactionHooksBound = false;
 
 function escapeReactionHtml(value) {
     return String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -47,6 +50,21 @@ function clearWaitingIndicator(entry) {
     entry.notificationId = null;
 }
 
+// Acting side: once a window settles, tell the *other* responders to close their
+// prompt (multi-owner first-wins). The winner's own prompt is already gone.
+function broadcastReactionClose(windowId) {
+    try { game.socket?.emit(SOCKET_CHANNEL, { type: CLOSE_TYPE, windowId }); } catch { /* noop */ }
+}
+
+// Responder side: a sibling owner answered (or the window timed out on the acting
+// client) — tear down our still-open prompt for that window.
+function onRemoteReactionClose(windowId) {
+    const close = openRemoteResponses.get(windowId);
+    if (!close) return;
+    openRemoteResponses.delete(windowId);
+    try { close(); } catch { /* noop */ }
+}
+
 function bindReactionSocket() {
     if (reactionSocketBound || !game?.socket) return;
     reactionSocketBound = true;
@@ -54,6 +72,24 @@ function bindReactionSocket() {
         if (!msg || typeof msg !== "object") return;
         if (msg.type === REQUEST_TYPE) void onRemoteReactionRequest(msg);
         else if (msg.type === RESPONSE_TYPE) onRemoteReactionResponse(msg);
+        else if (msg.type === CLOSE_TYPE) onRemoteReactionClose(msg.windowId);
+    });
+    bindReactionHooks();
+}
+
+// Acting side: a responder who connects after the request was broadcast missed
+// it — re-send any pending window they're an intended responder for, to them only.
+function bindReactionHooks() {
+    if (reactionHooksBound) return;
+    reactionHooksBound = true;
+    Hooks.on("userConnected", (user, connected) => {
+        if (!connected || !user?.id || !pendingRemoteWindows.size) return;
+        for (const entry of pendingRemoteWindows.values()) {
+            const req = entry?.request;
+            if (req && Array.isArray(req.toUserIds) && req.toUserIds.includes(user.id)) {
+                try { game.socket?.emit(SOCKET_CHANNEL, { ...req, toUserIds: [user.id] }); } catch { /* noop */ }
+            }
+        }
     });
 }
 
@@ -82,9 +118,7 @@ function serializeReactionCandidates(candidates) {
 function relayReactionWindow({ windowId, reactorActor, selectionController, candidates, trigger, timeoutMs }) {
     const responders = pickReactionResponders(reactorActor);
     if (!responders.length) return false;
-    const entry = { selectionController, notificationId: null };
-    pendingRemoteWindows.set(windowId, entry);
-    game.socket.emit(SOCKET_CHANNEL, {
+    const request = {
         type: REQUEST_TYPE,
         windowId,
         toUserIds: responders.map((u) => u.id),
@@ -93,7 +127,10 @@ function relayReactionWindow({ windowId, reactorActor, selectionController, cand
         trigger,
         timeoutMs,
         candidates: serializeReactionCandidates(candidates),
-    });
+    };
+    const entry = { selectionController, notificationId: null, request };
+    pendingRemoteWindows.set(windowId, entry);
+    game.socket.emit(SOCKET_CHANNEL, request);
     showWaitingIndicator(entry, responders);
     return true;
 }
@@ -105,6 +142,7 @@ function onRemoteReactionResponse(msg) {
     if (!entry) return;
     pendingRemoteWindows.delete(msg.windowId);
     clearWaitingIndicator(entry);
+    broadcastReactionClose(msg.windowId);
     if (msg.candidateId) entry.selectionController.selectReaction(msg.candidateId);
     else entry.selectionController.passReaction();
 }
@@ -135,7 +173,7 @@ function presentRemoteReaction(msg) {
 function presentRemoteReactionViaHud(msg, actor, token, cands) {
     return new Promise((resolve) => {
         let settled = false;
-        const finish = (v) => { if (!settled) { settled = true; resolve(v); } };
+        let timer = null;
         const timeoutMs = Math.max(0, Number(msg.timeoutMs) || 0);
         const reactionWindow = {
             trigger: msg.trigger,
@@ -158,10 +196,20 @@ function presentRemoteReactionViaHud(msg, actor, token, cands) {
             },
             passReaction: () => finish(null),
         };
+        const finish = (v) => {
+            if (settled) return;
+            settled = true;
+            if (timer) clearTimeout(timer);
+            openRemoteResponses.delete(msg.windowId);
+            resolve(v);
+        };
+        // First-wins close from the acting client: expire the HUD window (the
+        // ticker clears it) and settle without sending a real choice.
+        openRemoteResponses.set(msg.windowId, () => { reactionWindow.expiresAt = 0; finish(null); });
         // Focus the reactor's token so the HUD renders for it, then open the window.
         try { token.control?.({ releaseOthers: true }); } catch { /* noop */ }
         void emitCombatEvent(COMBAT_EVENTS.REACTION_WINDOW_OPENED, reactionWindow);
-        if (timeoutMs > 0) setTimeout(() => finish(null), timeoutMs);
+        if (timeoutMs > 0) timer = setTimeout(() => finish(null), timeoutMs);
     });
 }
 
@@ -172,7 +220,18 @@ function promptRemoteReaction(msg) {
     if (!cands.length) return Promise.resolve(null);
     return new Promise((resolve) => {
         let settled = false;
-        const finish = (v) => { if (!settled) { settled = true; resolve(v); } };
+        let timer = null;
+        let countdown = null;
+        const timeoutMs = Math.max(0, Number(msg.timeoutMs) || 0);
+        const deadline = Date.now() + timeoutMs;
+        const finish = (v) => {
+            if (settled) return;
+            settled = true;
+            if (timer) clearTimeout(timer);
+            if (countdown) clearInterval(countdown);
+            openRemoteResponses.delete(msg.windowId);
+            resolve(v);
+        };
         const buttons = {};
         cands.forEach((c, i) => {
             buttons[`react-${i}`] = {
@@ -181,16 +240,28 @@ function promptRemoteReaction(msg) {
             };
         });
         buttons.pass = { label: "Pass", callback: () => finish(null) };
+        const countdownText = timeoutMs > 0
+            ? ` <span class="reaction-countdown">${Math.ceil(timeoutMs / 1000)}s</span>`
+            : "";
         const dlg = new Dialog({
             title: "Reaction",
-            content: `<p><strong>${escapeReactionHtml(msg.reactorName)}</strong> may react to an incoming attack.</p>`,
+            content: `<p><strong>${escapeReactionHtml(msg.reactorName)}</strong> may react to an incoming attack.${countdownText}</p>`,
             buttons,
             default: "pass",
             close: () => finish(null),
         }, { classes: ["reaction-window-dialog"] });
         dlg.render(true);
-        const timeoutMs = Math.max(0, Number(msg.timeoutMs) || 0);
-        if (timeoutMs > 0) setTimeout(() => { try { dlg.close(); } catch { /* noop */ } finish(null); }, timeoutMs);
+        // First-wins close from the acting client: shut the dialog and settle.
+        openRemoteResponses.set(msg.windowId, () => { try { dlg.close(); } catch { /* noop */ } finish(null); });
+        if (timeoutMs > 0) {
+            timer = setTimeout(() => { try { dlg.close(); } catch { /* noop */ } finish(null); }, timeoutMs);
+            countdown = setInterval(() => {
+                const remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+                const root = dlg.element?.[0] ?? dlg.element;
+                const span = root?.querySelector?.(".reaction-countdown");
+                if (span) span.textContent = `${remaining}s`;
+            }, 500);
+        }
     });
 }
 
@@ -274,6 +345,7 @@ async function handleReactionTrigger(sourceEvent, trigger) {
     if (leftover) {
         clearWaitingIndicator(leftover);
         pendingRemoteWindows.delete(windowId);
+        broadcastReactionClose(windowId);
     }
 
     if (!selectedReaction) return null;

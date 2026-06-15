@@ -132,8 +132,14 @@ candidate objects in `pendingWindows[windowId]` and maps the returned id back.
    reactor has no token on the active scene. The acting client now shows a **persistent**
    "waiting for <player>…" notification (removed on response/timeout) instead of a transient
    toast. *Needs a two-client live test (see Test plan).*
-3. **Polish.** Countdown to the deadline on the responder; multi-owner first-wins close;
-   `userConnected` re-send.
+3. **Polish.** ✅ *Done* (`reaction-service.js`). (a) **Countdown** — the HUD path already shows
+   it via `getReactionCountdownText`; the fallback dialog now renders a live `.reaction-countdown`
+   that ticks down to the deadline. (b) **Multi-owner first-wins close** — the acting client
+   `broadcastReactionClose(windowId)` on response *and* on timeout; responders track their open
+   prompt in `openRemoteResponses` and tear it down (expire the HUD window / close the dialog) on
+   `reaction-closed`. (c) **`userConnected` re-send** — the acting client stores each window's
+   request and, on a responder reconnecting, re-emits it to that user only. *Needs a two-client
+   live test.*
 
 ## Test plan (two clients)
 
