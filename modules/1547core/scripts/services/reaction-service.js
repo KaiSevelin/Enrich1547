@@ -185,16 +185,21 @@ async function handleReactionTrigger(sourceEvent, trigger) {
         windowId, reactorActor, selectionController, candidates, trigger, timeoutMs,
     });
 
-    // Always open the window on the acting client too, so the GM sees every
-    // reaction dialog — even when it is also relayed to the defending player.
-    // The single-settle controller makes it first-response-wins (GM or player).
-    const windowEvent = await emitCombatEvent(
-        COMBAT_EVENTS.REACTION_WINDOW_OPENED,
-        reactionWindow
-    );
-    const immediateSelection = resolveSelectedReaction(reactionWindow, windowEvent);
-    if (immediateSelection) {
-        selectionController.selectReaction(immediateSelection);
+    // Open the window on the acting client only when it is the authority for it:
+    //  - not relayed (we own the reactor) → the local prompt IS the prompt; or
+    //  - we are the GM → mirror it so the GM sees every reaction dialog, even one
+    //    also relayed to the defending player (GM attacks a player → both see it).
+    // A player attacking a GM-owned reactor must NOT see it locally — only the GM
+    // does, via the relay. First response wins via the single-settle controller.
+    if (!relayed || game.user?.isGM) {
+        const windowEvent = await emitCombatEvent(
+            COMBAT_EVENTS.REACTION_WINDOW_OPENED,
+            reactionWindow
+        );
+        const immediateSelection = resolveSelectedReaction(reactionWindow, windowEvent);
+        if (immediateSelection) {
+            selectionController.selectReaction(immediateSelection);
+        }
     }
 
     const selectedReaction = await waitForReactionSelection({
