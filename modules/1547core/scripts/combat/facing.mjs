@@ -49,8 +49,24 @@ export function getAttackPositioning(attackerToken, defenderToken, maxDist = 1) 
     });
 }
 
+// Rotate a token with the facingAutoFace tag, routing the write to the GM when
+// this client can't own it (e.g. a player's attack provokes a GM NPC's Face).
+// Falls back to a direct update if the combat patch API isn't available. The tag
+// lets the off-turn facing lock through.
+async function rotateTokenTagged(tokenDoc, rotation) {
+    const doc = tokenDoc?.document ?? tokenDoc;
+    if (!doc || Number(doc.rotation) === rotation) return;
+    const api = globalThis.game?.modules?.get?.("1547core")?.api?.combat;
+    try {
+        if (typeof api?.rotateTokenAuthoritative === "function") {
+            await api.rotateTokenAuthoritative(doc, rotation);
+        } else {
+            await doc.update({ rotation }, { facingAutoFace: true });
+        }
+    } catch (_err) { /* non-fatal */ }
+}
+
 // Rotate the attacker to face its target (the one auto-applied facing action).
-// The update is tagged so the future off-turn lock lets it through.
 export async function autoFaceAttacker(attackerToken, defenderToken) {
     const doc = attackerToken?.document ?? attackerToken;
     if (!doc || !defenderToken || !isSquareGridded()) return;
@@ -58,10 +74,7 @@ export async function autoFaceAttacker(attackerToken, defenderToken) {
     const defender = tokenDescriptor(defenderToken);
     if (!attacker || !defender) return;
     const { rotation } = facingToward(attacker, defender);
-    if (Number(doc.rotation) === rotation) return;
-    try {
-        await doc.update({ rotation }, { facingAutoFace: true });
-    } catch (_err) { /* non-fatal */ }
+    await rotateTokenTagged(doc, rotation);
 }
 
 // The positional advantage applied to the attack pool. Applied up-front in all
@@ -154,8 +167,7 @@ export function registerFacingService() {
             const attToken = activeToken(reaction.target);
             if (!defToken || !attToken) return null;
             const { rotation } = facingToward(tokenDescriptor(defToken), tokenDescriptor(attToken));
-            const doc = defToken.document ?? defToken;
-            if (Number(doc.rotation) !== rotation) await doc.update({ rotation }, { facingAutoFace: true });
+            await rotateTokenTagged(defToken.document ?? defToken, rotation);
         } catch (_err) { /* non-fatal */ }
         return null;
     });

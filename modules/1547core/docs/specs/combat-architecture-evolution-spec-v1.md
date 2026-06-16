@@ -187,10 +187,11 @@ state has one home (Move 3). The phased functions and the patch/event boundary a
   locally-writable vs. not; a player's patches to actors they don't own (e.g. attacking a GM NPC)
   are routed over `module.1547core` (`patch-apply`) to the **designated GM** (`isDesignatedPatchGM`,
   via `game.users.activeGM`) who applies them. GM-acting path unchanged (GM writes all locally).
-  Fire-and-forget (combat reads outcomes from rolls, not docs). *Needs a two-client live test:
-  player attacks a GM NPC → damage/status apply.* Remaining direct (non-patch) write:
-  `registerFacingService`'s token rotation on `REACTION_RESOLVED` is not yet routed (minor — only
-  bites when a player is the resolver and the reactor is a GM-owned token).
+  Fire-and-forget (combat reads outcomes from rolls, not docs). Now covers **every** combat write:
+  added `token.update` and `combatant.update` patch kinds, routed the facing rotations
+  (`rotateTokenAuthoritative`, used by `autoFaceAttacker` + the Face reaction) and the
+  `combatant.defeated` sync through the dispatcher. *Needs a two-client live test: player attacks a
+  GM NPC → damage/status/defeated apply, and a player-provoked NPC Face rotates the NPC.*
 - **Phase B — Window abstraction (Move 2).**
   - **B1 — ✅ already in place.** `remote-window-relay` (built during the reaction phases) *is* the
     canonical window primitive: reactions, post-maneuvers, and the defense summary all flow through

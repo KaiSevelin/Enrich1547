@@ -101,6 +101,7 @@ export function registerCombatResolverService() {
             resolveAttackOutcome,
             executeSafeCounterattack,
             markReactionUsed,
+            rotateTokenAuthoritative,
             spendLoadedAmmo,
             swapLoadedAmmo,
             commitFullTurnManeuver,
@@ -282,14 +283,30 @@ export async function resolveAttackOutcome(options = {}) {
     const isDead = result.hitPointUpdate?.isDead === true;
     const targetActor = result.pendingAttack?.target ?? null;
     if (targetActor?.id) {
-        const combatants = Array.from(game?.combat?.combatants ?? [])
-            .filter((c) => c?.actorId === targetActor.id);
-        for (const combatant of combatants) {
-            if (combatant?.update) await combatant.update({ defeated: isDead });
-        }
+        // Route through the dispatcher — the Combat doc is GM-only, so a player
+        // who killed an NPC can't write `defeated` directly (Move 1).
+        const patches = Array.from(game?.combat?.combatants ?? [])
+            .filter((c) => c?.actorId === targetActor.id && c?.id)
+            .map((c) => ({ kind: "combatant.update", combatantId: c.id, combatId: game.combat?.id ?? null, data: { defeated: isDead } }));
+        if (patches.length) await applyPatches(patches);
     }
 
     return result;
+}
+
+// Rotate a token through the patch dispatcher so a non-owner (e.g. a player whose
+// attack provoked a GM NPC's Face) routes the write to the GM. Tagged
+// `facingAutoFace` so the off-turn facing lock lets it through.
+async function rotateTokenAuthoritative(tokenDoc, rotation) {
+    const doc = tokenDoc?.document ?? tokenDoc;
+    if (!doc?.id) return;
+    await applyPatches([{
+        kind: "token.update",
+        tokenId: doc.id,
+        sceneId: doc.parent?.id ?? null,
+        data: { rotation: Number(rotation) || 0 },
+        options: { facingAutoFace: true },
+    }]);
 }
 
 function decoratePostManeuverWindow(window) {
@@ -432,6 +449,14 @@ function resolveActorById(actorId) {
     return tokenActor ?? game.actors?.get?.(actorId) ?? null;
 }
 
+function resolveTokenById(tokenId, sceneId) {
+    if (!tokenId) return null;
+    const scene = sceneId ? game.scenes?.get?.(sceneId) : (canvas?.scene ?? null);
+    return scene?.tokens?.get?.(tokenId)
+        ?? canvas?.tokens?.get?.(tokenId)?.document
+        ?? null;
+}
+
 async function applyPatch(patch) {
     if (!patch || !patch.kind) return;
     switch (patch.kind) {
@@ -465,6 +490,17 @@ async function applyPatch(patch) {
             if (actor) await setActorStatusEffect(actor, patch.keyword, patch.active);
             return;
         }
+        case "token.update": {
+            const token = resolveTokenById(patch.tokenId, patch.sceneId);
+            if (token?.update) await token.update(patch.data ?? {}, patch.options ?? {});
+            return;
+        }
+        case "combatant.update": {
+            const combat = patch.combatId ? game.combats?.get?.(patch.combatId) : game.combat;
+            const combatant = combat?.combatants?.get?.(patch.combatantId);
+            if (combatant?.update) await combatant.update(patch.data ?? {});
+            return;
+        }
         default:
             console.warn(`${MODULE_ID} | applyPatch: unknown patch kind "${patch.kind}"`);
     }
@@ -492,6 +528,11 @@ function isDesignatedPatchGM() {
 
 function canApplyPatchLocally(patch) {
     if (game.user?.isGM) return true;
+    if (patch?.kind === "combatant.update") return false; // the Combat doc is GM-only
+    if (patch?.kind === "token.update") {
+        const token = resolveTokenById(patch.tokenId, patch.sceneId);
+        return !!token?.actor?.isOwner;
+    }
     const actor = resolveActorById(patch?.actorId);
     return !!actor?.isOwner;
 }

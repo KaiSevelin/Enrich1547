@@ -420,12 +420,13 @@ acting client executes the chosen maneuver. Unspent crits are cleared when the w
 
 ## 12. Known gaps & fragilities (the live-test backlog)
 
-1. **Combat write routing — ✅ addressed (patch dispatcher).** `applyPatches` now routes any patch a
-   player can't apply (an actor they don't own) to the designated GM over `module.1547core`
-   (`patch-apply`); the GM-acting path is unchanged. So a **player attacking a GM NPC** applies
-   damage/status via the GM. *Needs a two-client live test.* Remaining direct write not yet routed:
-   `registerFacingService`'s token rotation on `REACTION_RESOLVED` (minor — only when a player is the
-   resolver and the reactor is GM-owned). See `combat-architecture-evolution-spec-v1.md` Move 1.
+1. **Combat write routing — ✅ done (patch dispatcher).** `applyPatches` routes any patch a player
+   can't apply to the designated GM over `module.1547core` (`patch-apply`); the GM-acting path is
+   unchanged. Covers **all** combat writes — `actor.update`/`setFlag`/`statusEffect`, plus
+   `token.update` (the facing rotations, via `rotateTokenAuthoritative`) and `combatant.update` (the
+   `defeated` sync). So a **player attacking a GM NPC** applies damage/status/defeated and a
+   player-provoked NPC Face rotates, all via the GM. *Needs a two-client live test.* See
+   `combat-architecture-evolution-spec-v1.md` Move 1.
 2. **Damage-taken safe-counterattack — ✅ built (needs two-client live test).** When the defender's
    defense reaction grants a free safe counterattack (`defenseModifiers.safeCounterattack`, e.g.
    `maneuvers.json:1172`), the acting client now offers it to the defender (relay, or local dialog)
