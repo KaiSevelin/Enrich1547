@@ -4,6 +4,7 @@ This folder contains design-reference specifications for the `1547Core` module.
 
 Current documents:
 
+- `battle-flow-spec-v1.md` — **the whole combat loop** (round/side model, attack lifecycle, maneuvers, reactions, dice, positioning, defense, damage, crits) + known gaps
 - `automation-architecture-spec-v1.md`
 - `change-carrier-examples-v1.md`
 - `change-carrier-schema-spec-v1.md`
