@@ -191,10 +191,25 @@ state has one home (Move 3). The phased functions and the patch/event boundary a
   player attacks a GM NPC → damage/status apply.* Remaining direct (non-patch) write:
   `registerFacingService`'s token rotation on `REACTION_RESOLVED` is not yet routed (minor — only
   bites when a player is the resolver and the reactor is a GM-owned token).
-- **Phase B — Window abstraction (Move 2).** (B1) Keep reactions as-is (already a consumer). (B2)
-  Migrate post-maneuvers from HUD-driven closures to an awaited `openCombatWindow`. (B3) Re-home the
-  damage-taken reaction as its own window kind, freeing `DAMAGE_TAKEN_WINDOW_OPENED`. Each sub-step is
-  independently testable.
+- **Phase B — Window abstraction (Move 2).**
+  - **B1 — ✅ already in place.** `remote-window-relay` (built during the reaction phases) *is* the
+    canonical window primitive: reactions, post-maneuvers, and the defense summary all flow through
+    `relayRemoteWindow` + `registerRemoteWindowPresenter`. The cross-client mechanism is unified; no
+    further collapse is needed there. (Treat `relayRemoteWindow` as the `openCombatWindow` this spec
+    named.)
+  - **B2 — deferred, recommend against.** Making post-maneuvers *awaited* (vs. today's async,
+    HUD-driven, relay-backed flow) blocks the lifecycle on a player's choice (deadlock risk) for **no
+    functional gain** — the async flow already works and is cross-client. The three windows having
+    different *local* control-flows is legitimate. Revisit only if a post-maneuver must mutate the
+    in-flight result before `ACTION_COMMITTED`.
+  - **B3 — a feature, not wiring.** `executeSafeCounterattackPhased` only **declares** the counter
+    (`declareAttackPhased`); it does **not** roll/resolve it (no attack+defense roll, no
+    `resolveAttackOutcome`). To make the damage-taken safe-counterattack real, build the
+    **counter-resolution loop** (roll → defense → resolve → card), then add the "Safe Counterattack"
+    action to the existing defense-summary/damage-taken window (`buildDamageTakenPrompt` already
+    renders the button when `commitSafeCounterattack` is provided). Untestable until the granting
+    maneuver (maneuvers.json:1172) can be exercised with two clients. **This is the real remaining
+    Phase B work.**
 - **Phase C — Activation state (Move 3).** Add the record + `resetActivationsForRound` on advance;
   wire reaction renewal; add the `preUpdateToken` facing lock. Independent of A/B except it writes via
   Move 1.
