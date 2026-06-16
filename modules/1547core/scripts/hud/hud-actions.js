@@ -265,13 +265,15 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
             return;
         }
 
-        // Recompute positioning now the reaction window has closed: if the
-        // defender took the Face reaction they have turned to meet the attack, so
-        // the rear +1 no longer applies. (Surprise / Hidden auto-apply earlier and
-        // never reach a faceable window.)
-        const finalPositioning = getAttackPositioning(context.token, context.primaryTarget, distanceSquares) ?? positioning;
-        const appliedPositionAdvantage = positionalAdvantageToApply(finalPositioning);
-        const positionNote = positioningNote(finalPositioning);
+        // If the defender took the Face reaction they turned to meet the attack,
+        // so the rear +1 is cancelled — drive this off the chosen reaction flag
+        // (deterministic) rather than re-reading rotation, which is timing/geometry
+        // fragile. Otherwise keep the positional advantage detected up front.
+        const facedThisAttack = result.reactionResolution?.reaction?.effectData?.facingFace === true;
+        const appliedPositionAdvantage = facedThisAttack ? 0 : positionalAdvantageToApply(positioning);
+        const positionNote = facedThisAttack
+            ? "Defender faced the attacker — rear advantage cancelled."
+            : positioningNote(positioning);
         const finalAttackFormula = appliedPositionAdvantage > 0
             ? (buildFoundryAttackRollFormula(
                 currentWeapon?.activeAttackProfileData,
