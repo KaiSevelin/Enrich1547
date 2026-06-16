@@ -3,8 +3,46 @@ import { conditionCombatDisadvantage } from "../services/condition-registry.js";
 import { autoFaceAttacker, getAttackPositioning, positioningNote, positionalAdvantageToApply } from "../combat/facing.mjs";
 import { showDefenseSummary } from "../combat/defense-summary.js";
 import { relayRemoteWindow, presentCandidateDialog, escapeRelayHtml } from "../services/remote-window-relay.js";
+import { laneObstacles, rollLaneInterception, describeLaneOdds } from "../combat/ranged-cover.js";
 
 const SAFE_COUNTERATTACK_WINDOW_MS = 15000;
+
+// Ranged cover (cover-spec): an intercepted shot hits the obstacle as a SAFE
+// attack — full damage roll, NO defense roll, no reaction, no crit/fumble — and
+// never reaches the target. Runs on the acting client; writes route via the GM.
+async function resolveInterception({ obstacle, shooter, weapon, profileId, attackFormula, deps }) {
+    const { MODULE_ID, game, ui, Roll, ChatMessage, escapeHtml } = deps;
+    const combatApi = game?.modules?.get?.(MODULE_ID)?.api?.combat;
+    const token = globalThis.canvas?.tokens?.get?.(obstacle.id);
+    const obstacleActor = token?.actor ?? null;
+    if (!obstacleActor || typeof combatApi?.buildPendingAttack !== "function" || typeof combatApi?.resolveAttackOutcome !== "function") return;
+
+    const pending = combatApi.buildPendingAttack({
+        actor: shooter,
+        target: obstacleActor,
+        weapon,
+        profileId,
+        forceSafeAttack: true,
+    });
+    const speaker = ChatMessage.getSpeaker({ actor: shooter });
+    let attackRoll = await rollFormulaToChatAndSummarize({
+        Roll, speaker, formula: attackFormula,
+        flavor: `Stray shot -> ${escapeHtml(obstacleActor.name ?? "Obstacle")}`,
+        game,
+    });
+    if (!attackRoll) return;
+    attackRoll = { ...attackRoll, crit: 0, fumble: 0 }; // safe attack: no crits/fumbles
+    const resolved = await combatApi.resolveAttackOutcome({
+        pendingAttack: pending,
+        attackRoll,
+        defenseRoll: { damage: 0, protection: 0, crit: 0, fumble: 0, multiplier: 1 }, // no defense
+    });
+    await ChatMessage.create({
+        speaker,
+        content: `<strong>Cover — shot intercepted</strong><br>Stray hit on ${escapeHtml(obstacleActor.name ?? "Obstacle")}<br>Damage: ${escapeHtml(String(attackRoll.damage ?? 0))}<br>Applied: ${escapeHtml(String(resolved?.damageApplied ?? 0))}`,
+    });
+    ui.notifications?.info?.(`Shot intercepted by ${obstacleActor.name ?? "an obstacle"}.`);
+}
 
 // Equipped armour → defense-pool summary (mirrors the inline block in the main
 // attack); used for both the original defender and a counterattack's target.
@@ -371,6 +409,30 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
     const targetActor = context.primaryTarget?.actor ?? null;
     const distanceSquares = refreshedAttackState.distanceSquares ?? getChebyshevDistanceSquares(context.token, context.primaryTarget);
 
+    // Ranged cover (cover-spec): trace the lane and roll obstacle interception
+    // BEFORE the target's reaction. A direct (non-arced) ranged shot caught by an
+    // obstacle hits THAT obstacle (safe attack, no defense/reaction/crit) and
+    // never reaches the target. Arced shots (effectData.indirect) skip the lane.
+    const isRanged = currentWeapon?.activeAttackType === "ranged";
+    const isIndirect = (currentSummary.selectedPreManeuvers ?? []).some((m) => m?.effectData?.indirect === true);
+    if (isRanged && !isIndirect && context.primaryTarget) {
+        const obstacles = laneObstacles(context.token, context.primaryTarget);
+        if (obstacles.length) ui.notifications?.info?.(`Firing through cover — ${describeLaneOdds(obstacles)}.`);
+        const caught = obstacles.length ? rollLaneInterception(obstacles) : null;
+        if (caught) {
+            await resolveInterception({
+                obstacle: caught.obstacle,
+                shooter: context.actor,
+                weapon: weaponItem ?? currentWeapon,
+                profileId: currentWeapon?.activeAttackProfileId ?? null,
+                attackFormula,
+                deps,
+            });
+            clearActorManeuverSelections(context.actor?.id);
+            return;
+        }
+    }
+
     // Facing & positioning (spec): turn the attacker to face the target, then
     // detect a rear/surprise shot. The advantage die is applied AFTER the
     // reaction window so the Face reaction (which turns the defender) can drop it.
@@ -398,11 +460,12 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
         // so the rear +1 is cancelled — drive this off the chosen reaction flag
         // (deterministic) rather than re-reading rotation, which is timing/geometry
         // fragile. Otherwise keep the positional advantage detected up front.
+        // An arced shot (indirect) drops from above and forfeits the rear +1.
         const facedThisAttack = result.reactionResolution?.reaction?.effectData?.facingFace === true;
-        const appliedPositionAdvantage = facedThisAttack ? 0 : positionalAdvantageToApply(positioning);
+        const appliedPositionAdvantage = (facedThisAttack || isIndirect) ? 0 : positionalAdvantageToApply(positioning);
         const positionNote = facedThisAttack
             ? "Defender faced the attacker — rear advantage cancelled."
-            : positioningNote(positioning);
+            : (isIndirect ? "Arced shot — rear advantage forfeited." : positioningNote(positioning));
         const finalAttackFormula = appliedPositionAdvantage > 0
             ? (buildFoundryAttackRollFormula(
                 currentWeapon?.activeAttackProfileData,

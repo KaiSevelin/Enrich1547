@@ -171,14 +171,25 @@ Suggested insertion points:
 
 ## Implementation phases
 
-1. **Lane trace + warning (read-only).** Compute and display the obstacles and their odds in
-   the ranged attack panel. No rolling, no enforcement — pure "you'd be shooting through X."
-2. **Interception roll.** Roll nearest-first with early-stop; report which (if any) intercepts.
-   Still informational if you want — the GM applies the result.
-3. **Redirect resolution.** On a catch, apply a **full damage roll to the obstacle (no
-   defense roll)** — including friendly-fire damage.
-4. **(Optional, later)** Destructible object cover (block value + HP), and a "thread the
-   needle" shooter option (accept disadvantage to lower interception odds).
+1. **Lane trace + warning (read-only). ✅** Pure geometry in `scripts/lib/lane.mjs`
+   (`laneTiles` supercover trace, `blockValueForSize`, `gatherObstacles`, `rollInterception`),
+   unit-tested in `scripts/tests/lane.test.mjs`. Live glue in `scripts/combat/ranged-cover.js`
+   (`laneObstacles`, `describeLaneOdds`). The shooter gets a "Firing through cover — cart 3/6,
+   ally 2/6" notice before the shot. *(A richer in-HUD panel is the
+   `ranged-shot-visualization-spec` — still future.)*
+2. **Interception roll. ✅** `rollLaneInterception` rolls a d6 per obstacle nearest-first with
+   early-stop; first `≤ block` catches.
+3. **Redirect resolution. ✅** On a catch, `resolveInterception` (in `hud-actions.js`, before the
+   target's reaction) deals a **safe attack** to the obstacle — full damage roll, **no defense
+   roll, no reaction, no crit/fumble** — and the shot never reaches the target (friendly fire
+   included). Writes route to the GM (Move 1). Block values come from token size (decision: tiny→1,
+   1×1→2, 2×2→3, 3×3+→4); **tokens only** in v1.
+   - **Arced Shot `indirect` ✅** — a maneuver with `effectData.indirect` skips the lane entirely
+     and forfeits the rear +1 (the Risk die already comes from the maneuver's `addRiskDice`). This
+     finally makes the Arced Shot maneuver functional.
+4. **(Optional, later)** Destructible object cover (block value + HP), GM-flagged inanimate
+   obstacles (drawings/tiles), and a "thread the needle" shooter option (accept disadvantage to
+   lower interception odds).
 
 ## Out of scope (v1)
 
