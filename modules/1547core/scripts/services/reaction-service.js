@@ -230,8 +230,17 @@ async function handleReactionTrigger(sourceEvent, trigger) {
 
     await emitCombatEvent(COMBAT_EVENTS.REACTION_RESOLVED, resolution);
 
-    sourceEvent.cancel("reaction-triggered");
-    sourceEvent.stopPropagation();
+    // A free safe attack / counterattack REPLACES the normal resolution
+    // (executeResolvedReactionPhased runs it), so cancel the declaration. A plain
+    // defense reaction (Desperate Defense, Evade, Face, …) only MODIFIES the
+    // incoming attack — let the declaration proceed so the attacker still rolls
+    // and resolveAttackOutcome applies the reaction's defense modifiers. Cancelling
+    // those would drop the whole attack (no attack/defense roll, no damage card).
+    const effect = selectedReaction?.effectData ?? {};
+    if (effect.createFreeSafeAttack || effect.createFreeSafeCounterattack) {
+        sourceEvent.cancel("reaction-triggered");
+        sourceEvent.stopPropagation();
+    }
 
     return resolution;
 }

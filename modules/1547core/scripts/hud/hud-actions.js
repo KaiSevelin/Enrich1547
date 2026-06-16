@@ -85,6 +85,11 @@ async function rollFormulaToChatAndSummarize({ Roll, speaker, formula, flavor, g
     // (e.g. "Private GM Roll") would hide combat rolls from the player.
     const publicMode = globalThis.CONST?.DICE_ROLL_MODES?.PUBLIC ?? "publicroll";
     const message = await roll.toMessage({ speaker, flavor }, { rollMode: publicMode });
+    // Read totals straight from the evaluated roll so resolution never hinges on
+    // Dice So Nice firing diceSoNiceRollComplete (which broke attack/defense rolls
+    // when the 3D animation didn't complete). Fall back to the DSN flag/hook.
+    const direct = game?.modules?.get?.("1547core")?.api?.computeRollTotals?.([roll]);
+    if (direct) return direct;
     return waitForDice1547Totals(game, message);
 }
 async function consumeHudFullTurn(actor) {
@@ -327,6 +332,9 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
             pendingAttack: result.pendingAttack,
             attackRoll: attackRollSummary,
             defenseRoll: defenseRollSummary,
+            // A defender's chosen defense reaction (Desperate Defense, Evade, …)
+            // no longer cancels the attack — apply its modifiers here.
+            defenseReaction: result.reactionResolution?.reaction ?? null,
         });
         const attackerName = context.actor?.name ?? "Attacker";
         const defenderName = targetActor?.name ?? "Target";

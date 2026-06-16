@@ -172,12 +172,17 @@ export function register1547Dice() {
             // "dice1547" scope logs a "scope not valid" warning on every poll.
             return message?.getFlag(FLAG_SCOPE, "rollResult") ?? null;
         };
+        // Totals straight from an evaluated Roll (or array), so callers don't
+        // depend on the Dice So Nice completion hook.
+        coreModule.api.computeRollTotals = (rolls) => computeDice1547Totals(Array.isArray(rolls) ? rolls : [rolls]);
     }
 }
 
-Hooks.on('diceSoNiceRollComplete', async (chatMessageID) => {
-    let message = game.messages.get(chatMessageID);
-    if(message.isAuthor){
+// Accumulate 1547 dice outcomes from evaluated Roll objects. Shared by the Dice
+// So Nice completion hook (flag + result card) and computeDice1547Totals, so
+// combat resolution can read totals at roll time without waiting on the 3D
+// animation hook to fire (which it may not, breaking the attack/defense rolls).
+function accumulateDice1547Totals(rolls) {
         let protection = 0;
         let damage = 0;
         let fumble = 0;
@@ -186,8 +191,8 @@ Hooks.on('diceSoNiceRollComplete', async (chatMessageID) => {
         let multiplyFail = 1;
         const diceResults = [];
         let dice1547Roll = false;
-        message.rolls.forEach(roll => {
-            roll.dice.forEach(dice => {
+        (rolls ?? []).forEach(roll => {
+            (roll?.dice ?? []).forEach(dice => {
                 const dieType = getDieType(dice);
                 if (!dieType) return;
 
@@ -440,32 +445,48 @@ Hooks.on('diceSoNiceRollComplete', async (chatMessageID) => {
                 }
             });
         });
-        
-        if(dice1547Roll){
-            const resultPayload = buildResultPayload(message, {
-                protection,
-                damage,
-                crit,
-                fumble,
-                multiply,
-                multiplyFail,
-                dice: diceResults
-            });
+        return { protection, damage, fumble, crit, multiply, multiplyFail, diceResults, dice1547Roll };
+}
 
-            try {
-                await message.setFlag(FLAG_SCOPE, "rollResult", resultPayload);
-            } catch (err) {
-                console.warn("1547core | could not store dice roll result flag", err);
-            }
-            Hooks.callAll(`${MODULE_ID}RollResult`, resultPayload, message);
+// Totals in getRollResult().totals shape, computed directly from evaluated rolls
+// (Dice So Nice independent). Returns null for a roll with no 1547 dice.
+export function computeDice1547Totals(rolls) {
+    const acc = accumulateDice1547Totals(rolls);
+    if (!acc.dice1547Roll) return null;
+    return {
+        protection: acc.protection,
+        damage: acc.damage,
+        crit: acc.crit,
+        fumble: acc.fumble,
+        multiplier: acc.multiply * acc.multiplyFail,
+    };
+}
 
-            ChatMessage.create({
-                content: `<b>Protection:</b> ${protection}<br><b>Damage:</b> ${damage}<br><b>Critical:</b> ${crit}<br><b>Fumble:</b> ${fumble}<br><b>Multiplier:</b> ${multiply * multiplyFail}<br>`,
-                author: message.author,
-                blind: message.blind
-            });
-        }
+Hooks.on('diceSoNiceRollComplete', async (chatMessageID) => {
+    const message = game.messages.get(chatMessageID);
+    if (!message?.isAuthor) return;
+    const acc = accumulateDice1547Totals(message.rolls);
+    if (!acc.dice1547Roll) return;
+    const resultPayload = buildResultPayload(message, {
+        protection: acc.protection,
+        damage: acc.damage,
+        crit: acc.crit,
+        fumble: acc.fumble,
+        multiplier: acc.multiply,
+        multiplyFail: acc.multiplyFail,
+        dice: acc.diceResults,
+    });
+    try {
+        await message.setFlag(FLAG_SCOPE, "rollResult", resultPayload);
+    } catch (err) {
+        console.warn("1547core | could not store dice roll result flag", err);
     }
+    Hooks.callAll(`${MODULE_ID}RollResult`, resultPayload, message);
+    ChatMessage.create({
+        content: `<b>Protection:</b> ${acc.protection}<br><b>Damage:</b> ${acc.damage}<br><b>Critical:</b> ${acc.crit}<br><b>Fumble:</b> ${acc.fumble}<br><b>Multiplier:</b> ${acc.multiply * acc.multiplyFail}<br>`,
+        author: message.author,
+        blind: message.blind
+    });
 });
 
 let diceSoNicePresetsApplied = false;

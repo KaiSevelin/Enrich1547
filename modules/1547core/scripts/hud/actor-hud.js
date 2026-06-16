@@ -2056,17 +2056,22 @@ async function announceSideReady(actor, token) {
         ? "<br>Current targets marked in Foundry: " + escapeHtml(targetCount)
         : "";
 
-    const nextState = await advanceCombatToNextSide(game.combat);
-    const nextName = nextState?.sideLabel || nextState?.combatant?.name || nextState?.combatant?.actor?.name || "next side";
-    const roundText = nextState?.wrapped ? "<br>Combat advances to a new round." : "";
-    const sideText = nextState
-        ? "<br><strong>Next active side:</strong> " + escapeHtml(nextName)
-        : "<br>No next side could be resolved.";
+    const nextName = nextPreview?.sideLabel || nextPreview?.combatant?.name || nextPreview?.combatant?.actor?.name || "next side";
+    const roundText = nextPreview?.wrapped ? "<br>Combat advances to a new round." : "";
+    const sideText = "<br><strong>Next active side:</strong> " + escapeHtml(nextName);
 
     await ChatMessage.create({
         speaker,
         content: "<strong>" + escapeHtml(callerName) + "</strong> calls <strong>Side Ready</strong> for " + escapeHtml(actorName) + "." + targetText + sideText + roundText
     });
+
+    // Advancing the combat writes to the Combat doc, which only the GM may do.
+    // The GM does it directly; a player asks the GM over the socket.
+    if (game.user?.isGM) {
+        await advanceCombatToNextSide(game.combat);
+    } else {
+        game.socket?.emit(`module.${MODULE_ID}`, { type: "side-advance-request", userId: game.user?.id });
+    }
 }
 
 function rerenderHudIfViewingActor(actorId) {
@@ -2094,8 +2099,22 @@ function releaseDeferredPostWindowsIntoHud() {
     return released;
 }
 
+// GM-side listener: a player asked to advance the side (they can't write the
+// Combat doc themselves). Only the GM acts on it.
+let sideAdvanceSocketBound = false;
+function bindSideAdvanceSocket() {
+    if (sideAdvanceSocketBound || !game?.socket) return;
+    sideAdvanceSocketBound = true;
+    game.socket.on(`module.${MODULE_ID}`, (msg) => {
+        if (msg?.type !== "side-advance-request" || !game.user?.isGM) return;
+        if (!game.combat?.started) return;
+        void advanceCombatToNextSide(game.combat);
+    });
+}
+
 export function register1547ActorHud() {
     ensureHudRoot().innerHTML = buildEmptyHtml("Waiting for selection");
+    bindSideAdvanceSocket();
 
     const moduleApi = game.modules.get(MODULE_ID);
     if (moduleApi) {
