@@ -55,3 +55,23 @@ export function rollLaneInterception(obstacles) {
 export function describeLaneOdds(obstacles) {
     return (obstacles ?? []).map((o) => `${o.name} ${o.blockValue}/6`).join(", ");
 }
+
+// True when a solid wall blocks the shot (Foundry sight collision). Defensive:
+// any uncertainty / unavailable API → NOT blocked (assisted, never wrongly forced).
+export function lineOfSightBlocked(shooterToken, targetToken) {
+    try {
+        const a = shooterToken?.center ?? null;
+        const b = targetToken?.center ?? null;
+        if (!a || !b) return false;
+        const backend = globalThis.CONFIG?.Canvas?.polygonBackends?.sight;
+        if (backend?.testCollision) {
+            return !!backend.testCollision(a, b, { type: "sight", mode: "any" });
+        }
+        const walls = globalThis.canvas?.walls;
+        if (typeof walls?.checkCollision === "function") {
+            const RayCls = globalThis.foundry?.canvas?.geometry?.Ray ?? globalThis.Ray;
+            if (RayCls) return !!walls.checkCollision(new RayCls(a, b), { type: "sight", mode: "any" });
+        }
+    } catch (_err) { /* fall through → not blocked */ }
+    return false;
+}

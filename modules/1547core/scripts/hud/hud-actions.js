@@ -3,7 +3,7 @@ import { conditionCombatDisadvantage } from "../services/condition-registry.js";
 import { autoFaceAttacker, getAttackPositioning, positioningNote, positionalAdvantageToApply } from "../combat/facing.mjs";
 import { showDefenseSummary } from "../combat/defense-summary.js";
 import { relayRemoteWindow, presentCandidateDialog, escapeRelayHtml } from "../services/remote-window-relay.js";
-import { laneObstacles, rollLaneInterception, describeLaneOdds } from "../combat/ranged-cover.js";
+import { laneObstacles, rollLaneInterception, describeLaneOdds, lineOfSightBlocked } from "../combat/ranged-cover.js";
 
 const SAFE_COUNTERATTACK_WINDOW_MS = 15000;
 
@@ -416,8 +416,21 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
     const isRanged = currentWeapon?.activeAttackType === "ranged";
     const isIndirect = (currentSummary.selectedPreManeuvers ?? []).some((m) => m?.effectData?.indirect === true);
     if (isRanged && !isIndirect && context.primaryTarget) {
-        const obstacles = laneObstacles(context.token, context.primaryTarget);
-        if (obstacles.length) ui.notifications?.info?.(`Firing through cover — ${describeLaneOdds(obstacles)}.`);
+        // Line of sight: a solid wall between shooter and target means no shot.
+        if (lineOfSightBlocked(context.token, context.primaryTarget)) {
+            ui.notifications?.warn?.("No line of sight to the target.");
+            clearActorManeuverSelections(context.actor?.id);
+            return;
+        }
+        let obstacles = laneObstacles(context.token, context.primaryTarget);
+        // Thread the needle: a maneuver that lowers interception odds by 1 (the
+        // disadvantage cost rides on the maneuver's addRiskDice / addDisadvantage).
+        const threadsNeedle = (currentSummary.selectedPreManeuvers ?? []).some((m) => m?.effectData?.threadNeedle === true);
+        if (threadsNeedle) obstacles = obstacles.map((o) => ({ ...o, blockValue: Math.max(0, o.blockValue - 1) }));
+        if (obstacles.length) {
+            const rangeLabel = refreshedAttackState?.label ? `${refreshedAttackState.label} · ` : "";
+            ui.notifications?.info?.(`Ranged shot — ${rangeLabel}cover: ${describeLaneOdds(obstacles)}${threadsNeedle ? " (threading)" : ""}.`);
+        }
         const caught = obstacles.length ? rollLaneInterception(obstacles) : null;
         if (caught) {
             await resolveInterception({

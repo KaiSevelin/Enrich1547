@@ -187,9 +187,14 @@ Suggested insertion points:
    - **Arced Shot `indirect` ✅** — a maneuver with `effectData.indirect` skips the lane entirely
      and forfeits the rear +1 (the Risk die already comes from the maneuver's `addRiskDice`). This
      finally makes the Arced Shot maneuver functional.
-4. **(Optional, later)** Destructible object cover (block value + HP), GM-flagged inanimate
-   obstacles (drawings/tiles), and a "thread the needle" shooter option (accept disadvantage to
-   lower interception odds).
+4. **Phase 4.**
+   - **Thread the needle ✅** — a maneuver with `effectData.threadNeedle` lowers every obstacle's
+     block value by 1 (so a 1/6 becomes 0/6 — bypassed); the disadvantage cost rides on the
+     maneuver's own `addRiskDice` / `addDisadvantage`. Forward-compatible: support is wired, a data
+     maneuver can opt in.
+   - **GM-flagged inanimate obstacles (drawings/tiles)** — *skipped by decision* (creature/token
+     obstacles only).
+   - **Destructible object cover (block value + HP)** — still future.
 
 ## Out of scope (v1)
 

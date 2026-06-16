@@ -140,16 +140,21 @@ The engine never auto-applies the +1 or auto-spends a reaction; it never *forces
 
 ## Implementation phases
 
-1. **Preview overlay + HUD readout (read-only).** Target a token with a ranged weapon → see
-   the lane (range-tinted), obstacles with odds + friend/foe tint, the rear marker, and LoS.
-   No rolling, no enforcement. Highest value, lowest risk; makes the whole positional system
-   legible. This is the recommended first slice.
-2. **Fire flow — interception + attack.** The Fire button rolls interception (nearest-first,
-   early-stop → redirect) and resolves the attack, wiring in the rear +1.
-3. **Arc toggle.** Direct/Arc switch that flips the overlay and routes through `indirect`
-   (skip interception, no rear +1, risk die) — the Arced Shot maneuver.
-4. **Animation.** Projectile + interception/fumble visuals (Sequencer/JB2A if present, else a
-   PIXI tracer).
+1. **Preview overlay + HUD readout (read-only).** *Partial.*
+   - **HUD readout ✅** — a pre-shot notice on firing: `Ranged shot — <range band> · cover:
+     cart 3/6, ally 2/6 (threading)`. (`hud-actions.js`, `describeLaneOdds`.)
+   - **LoS auto-block ✅** — `ranged-cover.js lineOfSightBlocked` (Foundry sight collision,
+     defensive); a shot with no line of sight is rejected.
+   - **Canvas overlay (the lane line / odds badges / rear marker on the map) — deferred.**
+     Untestable PIXI drawing; best done with Foundry open. Extends the existing
+     `renderThreatOverlay` PIXI layer.
+2. **Fire flow — interception + attack. ✅** Done in the cover spec (interception roll → redirect /
+   pass-through, rear +1 wired). See `cover-spec-v1.md`.
+3. **Arc toggle. ✅ (via the maneuver).** `indirect` is the Arced Shot maneuver's `effectData`
+   (skip interception, no rear +1, risk die) — already consumed. A dedicated Direct/Arc *button*
+   is optional sugar on top.
+4. **Animation. — deferred.** Projectile + interception visuals (Sequencer/JB2A if present, else a
+   PIXI tracer). Pure presentation; depends on optional modules; untestable headlessly.
 
 ## Out of scope (v1)
 
