@@ -243,19 +243,10 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
     const distanceSquares = refreshedAttackState.distanceSquares ?? getChebyshevDistanceSquares(context.token, context.primaryTarget);
 
     // Facing & positioning (spec): turn the attacker to face the target, then
-    // detect a rear/surprise shot. The +1 is APPLIED only where it cannot be
-    // react-faced (surprise / Hidden attacker); a faceable rear shot stays a
-    // suggestion (pending the Face reaction).
+    // detect a rear/surprise shot. The advantage die is applied AFTER the
+    // reaction window so the Face reaction (which turns the defender) can drop it.
     await autoFaceAttacker(context.token, context.primaryTarget);
     const positioning = getAttackPositioning(context.token, context.primaryTarget, distanceSquares);
-    const appliedPositionAdvantage = positionalAdvantageToApply(positioning);
-    const positionNote = positioningNote(positioning);
-    const finalAttackFormula = appliedPositionAdvantage > 0
-        ? (buildFoundryAttackRollFormula(
-            currentWeapon?.activeAttackProfileData,
-            { ...effectiveWeaponRollContext, advantageDice: (Number(effectiveWeaponRollContext.advantageDice) || 0) + appliedPositionAdvantage }
-        ) || attackFormula)
-        : attackFormula;
 
     try {
         const result = await declareAttack({
@@ -273,6 +264,20 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
             ui.notifications?.info?.("Attack declaration was cancelled by a reaction.");
             return;
         }
+
+        // Recompute positioning now the reaction window has closed: if the
+        // defender took the Face reaction they have turned to meet the attack, so
+        // the rear +1 no longer applies. (Surprise / Hidden auto-apply earlier and
+        // never reach a faceable window.)
+        const finalPositioning = getAttackPositioning(context.token, context.primaryTarget, distanceSquares) ?? positioning;
+        const appliedPositionAdvantage = positionalAdvantageToApply(finalPositioning);
+        const positionNote = positioningNote(finalPositioning);
+        const finalAttackFormula = appliedPositionAdvantage > 0
+            ? (buildFoundryAttackRollFormula(
+                currentWeapon?.activeAttackProfileData,
+                { ...effectiveWeaponRollContext, advantageDice: (Number(effectiveWeaponRollContext.advantageDice) || 0) + appliedPositionAdvantage }
+            ) || attackFormula)
+            : attackFormula;
 
         const resolveAttackOutcome = combatApi?.resolveAttackOutcome;
         if (typeof resolveAttackOutcome !== "function") {

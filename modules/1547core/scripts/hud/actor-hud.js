@@ -2108,7 +2108,17 @@ function bindSideAdvanceSocket() {
     game.socket.on(`module.${MODULE_ID}`, (msg) => {
         if (msg?.type !== "side-advance-request" || !game.user?.isGM) return;
         if (!game.combat?.started) return;
-        void advanceCombatToNextSide(game.combat);
+        void (async () => {
+            const who = game.users?.get(msg.userId)?.name || "A player";
+            try {
+                const next = await advanceCombatToNextSide(game.combat);
+                if (next) ui.notifications?.info?.(`${who} called Side Ready — now: ${next.sideLabel || "next side"}.`);
+                else ui.notifications?.warn?.(`${who} called Side Ready but no next side could be resolved.`);
+            } catch (err) {
+                ui.notifications?.error?.(`Could not advance the side for ${who}.`);
+                console.error("1547core | side-advance failed", err);
+            }
+        })();
     });
 }
 

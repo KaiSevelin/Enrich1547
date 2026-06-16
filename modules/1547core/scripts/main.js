@@ -215,6 +215,11 @@ Hooks.once("ready", () => {
         (module) => module.register1547ActorHud()
     );
     void runImportedModuleStep(
+        "registerPublicInitiative",
+        () => import("./combat/public-initiative.js"),
+        (module) => module.registerPublicInitiative()
+    );
+    void runImportedModuleStep(
         "registerTierDisplay",
         () => import("./services/tier-display-service.js"),
         (module) => module.registerTierDisplay()
