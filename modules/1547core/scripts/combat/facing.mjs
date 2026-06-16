@@ -10,6 +10,7 @@
  */
 import { tokenDescriptor, facingToward, computePositionalAdvantage } from "../lib/positioning.mjs";
 import { onCombatEvent, COMBAT_EVENTS } from "../services/combat-events.js";
+import { getActiveSideId, getOrderedCombatants, resolveCombatantSideId } from "../combat-tracker/side-tracker.js";
 
 // Tile geometry needs a grid. Only a truly *gridless* scene can't do facing —
 // everything else (square; and, lacking a better tile model, hex) is treated as
@@ -114,6 +115,32 @@ export function buildFaceReactionCandidate(defenderActor, attackerActor) {
 function activeToken(actor) {
     const toks = actor?.getActiveTokens?.(true) ?? actor?.getActiveTokens?.() ?? [];
     return toks?.[0] ?? null;
+}
+
+// Off-turn facing lock (facing spec rule 1 / Move 3): a token's rotation may
+// change only on its own side's activation. Vetoes a player's rotation of an
+// in-combat token when it isn't that token's side's turn. Bypasses: the GM, the
+// auto-face / Face-reaction updates (tagged `facingAutoFace`), tagged forced
+// updates, and any token not in the active combat. preUpdateToken fires only on
+// the client making the change, so the veto is local and never desyncs.
+export function registerFacingLock() {
+    globalThis.Hooks?.on?.("preUpdateToken", (tokenDoc, changes, options, userId) => {
+        try {
+            if (!("rotation" in (changes ?? {}))) return true;
+            const combat = globalThis.game?.combat;
+            if (!combat?.started) return true;
+            if (options?.facingAutoFace || options?.facingForced) return true;
+            if (globalThis.game?.users?.get?.(userId)?.isGM) return true;
+            const combatant = (combat.combatants ?? []).find?.((c) => c.tokenId === (tokenDoc?.id));
+            if (!combatant) return true; // not a combatant in this fight → free
+            const activeSideId = getActiveSideId(combat, getOrderedCombatants(combat));
+            if (resolveCombatantSideId(combatant) === activeSideId) return true; // your turn
+            globalThis.ui?.notifications?.info?.("Not your side's turn — you can't turn to face yet.");
+            return false;
+        } catch (_err) {
+            return true; // never block on an internal error
+        }
+    });
 }
 
 // React to a resolved Face reaction by rotating the defender to face the

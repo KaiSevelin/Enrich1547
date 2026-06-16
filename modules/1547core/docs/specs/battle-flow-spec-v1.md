@@ -91,10 +91,12 @@ legality as context (`fullTurnAvailable`, `attacksRemaining`, `movementBudgetRem
 > neither — so reactions are never "used up," and the attack/movement budgets are not auto-reset
 > (the GM manages them by hand between activations).
 >
-> **Design intent:** a reaction (e.g. **Face**) is available **once per round** and **renews each
-> new round**. That renewal is **not yet implemented** — there is no reaction counter to reset, so
-> today a reaction is simply always available when its trigger fires. (Whether a *specific* reaction
-> like Face is *offered* is a separate, geometric question — see §8.) See §12.
+> **Reaction economy (✅ implemented):** a reaction (e.g. **Face**) is available **once per round**
+> and **renews each new round** — `combat/activation-state.mjs` keys the spent state by
+> `${combatId}:${round}`, so it renews automatically when the round advances. `reaction-service`
+> withholds the window when the reactor has no reaction left and marks it spent on use (via the Move
+> 1 dispatcher). Whether a *specific* reaction like Face is *offered* is still a separate, geometric
+> question — see §8 — and facing changes are now locked off-turn (§12 #5). See §12 #3.
 
 ---
 
@@ -431,20 +433,20 @@ acting client executes the chosen maneuver. Unspent crits are cleared when the w
    original attacker's defense roll → `resolveAttackOutcome` → card. See `hud-actions.js`
    (`offerSafeCounterattack`/`runSafeCounterattack`), `combat/safe-counterattack.js`,
    `combat-architecture-evolution-spec-v1.md` B3.
-3. **Reaction renewal — intended, not implemented.** Reactions are not budget-gated, so nothing is
-   consumed or reset. Per design, a reaction (e.g. Face) should be available **once per round** and
-   renew each round (§3). **Fix:** track a per-actor reaction-used flag and clear it on round/side
-   advance. (Attack/movement economy stays **manual** for now, by GM ruling.) Note: a *specific*
-   reaction like Face is also gated by geometry (§8) — facing persists (gap #5), so "Face missing"
-   is often correct, separate from renewal.
+3. **Reaction renewal — ✅ implemented.** A reaction is now **once per round** and renews each round
+   (`combat/activation-state.mjs`, keyed `${combatId}:${round}`; gated + marked in `reaction-service`
+   via the Move 1 dispatcher). Attack/movement economy stays **manual** (by ruling). Note: a
+   *specific* reaction like Face is *also* gated by geometry (§8) and the off-turn facing lock (#5),
+   so "Face missing" can still be correct geometry even with a reaction available.
 4. **Reach measurement is center-to-center Chebyshev.** Correct for 1×1 tokens (diagonal = 1) but
    can misjudge **larger tokens** or off-grid placement (it ignores footprint edges). The recurring
    "diagonal out of reach" is most likely a token-size/placement case — switch reach to
    footprint-edge distance (min Chebyshev between attacker and defender tiles) to harden it.
-5. **Off-turn facing/movement lock — not implemented** (facing spec Part B). Token facing persists
-   across turns/rounds; a `preUpdateToken` veto allowing only `facingAutoFace`/forced updates off a
-   side's own activation would make facing a rule rather than a convention. This is *why* facing
-   carries over between rounds (relevant to #3).
+5. **Off-turn facing lock — ✅ implemented (rotation).** `facing.mjs registerFacingLock` is a
+   `preUpdateToken` veto: a player may not rotate an in-combat token off its side's activation
+   (bypasses: GM, `facingAutoFace`, `facingForced`, non-combatants). Facing is now a rule, not a
+   convention. *Movement* (x/y) is intentionally **not** locked yet — rotation only (movement is more
+   intrusive; enable on request).
 6. **Fully-defeated opposing side wraps** (§2). Side Ready loops back to the surviving side instead
    of ending combat. **Decide:** end combat, or surface "the opposing side is defeated."
 7. **Dice totals once depended on Dice So Nice.** Now read from the evaluated roll

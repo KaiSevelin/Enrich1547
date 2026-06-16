@@ -64,7 +64,7 @@ Hooks.once("init", () => {
     void runImportedModuleStep(
         "registerFacingService",
         () => import("./combat/facing.mjs"),
-        (module) => module.registerFacingService()
+        (module) => { module.registerFacingService(); module.registerFacingLock(); }
     );
     void runImportedModuleStep(
         "registerBoostService",

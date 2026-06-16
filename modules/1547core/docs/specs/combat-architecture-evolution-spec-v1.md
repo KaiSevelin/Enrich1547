@@ -212,9 +212,15 @@ state has one home (Move 3). The phased functions and the patch/event boundary a
     it — `maneuvers.json:1172`). Writes route to the GM via Move 1. Responder presenter:
     `combat/safe-counterattack.js`. *Verify live: the granting maneuver → defender is offered →
     accept → counter rolls and applies damage to the attacker.*
-- **Phase C — Activation state (Move 3).** Add the record + `resetActivationsForRound` on advance;
-  wire reaction renewal; add the `preUpdateToken` facing lock. Independent of A/B except it writes via
-  Move 1.
+- **Phase C — Activation state (Move 3). ✅ Shipped.** `combat/activation-state.mjs` holds the
+  round-scoped reaction economy: `isReactionAvailable(actor, combat)` /
+  `planMarkReactionUsed(actor, combat)`, keyed `${combatId}:${round}` so it **auto-renews each round**
+  (no reset pass) and never collides across fights. `reaction-service` gates the window on
+  availability and marks the reaction spent (via `combatApi.markReactionUsed`, applied through the
+  Move 1 dispatcher). `facing.mjs` adds `registerFacingLock` — a `preUpdateToken` veto that blocks a
+  player rotating an in-combat token off its side's activation (bypasses: GM, `facingAutoFace`,
+  `facingForced`, non-combatants). Attack/movement economy stays manual (by ruling); movement lock
+  left out (rotation only). *Needs a two-client live test.*
 
 Each phase is shippable on its own and leaves combat working.
 

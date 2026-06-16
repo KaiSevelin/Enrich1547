@@ -12,6 +12,7 @@ import {
     presentCandidateDialog,
     escapeRelayHtml,
 } from "./remote-window-relay.js";
+import { isReactionAvailable } from "../combat/activation-state.mjs";
 
 const DEFAULT_REACTION_WINDOW_SECONDS = 10;
 
@@ -181,6 +182,11 @@ async function handleReactionTrigger(sourceEvent, trigger) {
         ?? (trigger === "attack" ? reactionWindow.target : reactionWindow.actor)
         ?? reactionWindow.actor
         ?? null;
+
+    // Once-per-round reaction economy (Move 3): if the reactor already spent its
+    // reaction this round, offer nothing — it renews next round.
+    if (reactorActor && !isReactionAvailable(reactorActor, globalThis.game?.combat)) return null;
+
     const relayed = relayReactionWindow({
         windowId, reactorActor, selectionController, candidates, trigger, timeoutMs,
     });
@@ -211,6 +217,10 @@ async function handleReactionTrigger(sourceEvent, trigger) {
     if (relayed) closeRelayedWindow(windowId);
 
     if (!selectedReaction) return null;
+
+    // A reaction was actually taken — spend it for this round (Move 3).
+    const markReactionUsed = game.modules.get(MODULE_ID)?.api?.combat?.markReactionUsed;
+    if (typeof markReactionUsed === "function" && reactorActor) void markReactionUsed(reactorActor);
 
     if (selectedReaction?.generatedByPersistentEffect === "overwatch") {
         const consumePersistentEffect = game.modules.get(MODULE_ID)?.api?.combat?.consumePersistentEffect;

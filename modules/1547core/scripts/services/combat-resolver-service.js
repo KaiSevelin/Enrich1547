@@ -34,6 +34,7 @@ import {
     planCommitPostManeuver,
     planCommitFullTurnManeuver,
 } from "../combat/attack-lifecycle.mjs";
+import { planMarkReactionUsed } from "../combat/activation-state.mjs";
 
 // PENDING_ATTACK_KIND now lives in combat/attack-lifecycle.mjs and is re-imported above.
 const DEFAULT_UNARMED_WEAPON_SOURCE = {
@@ -99,6 +100,7 @@ export function registerCombatResolverService() {
             loadWeaponAmmo,
             resolveAttackOutcome,
             executeSafeCounterattack,
+            markReactionUsed,
             spendLoadedAmmo,
             swapLoadedAmmo,
             commitFullTurnManeuver,
@@ -529,6 +531,13 @@ async function spendActorManeuverCost(actor, maneuver) {
     const { patches, result } = planSpendActorManeuverCost(actor, maneuver);
     await applyPatches(patches);
     return result;
+}
+
+// Mark an actor's once-per-round reaction spent (combat-architecture Move 3).
+// Routed to the GM via the patch dispatcher when the caller can't write the actor.
+async function markReactionUsed(actor) {
+    const { patches } = planMarkReactionUsed(actor, game.combat);
+    if (patches.length) await applyPatches(patches);
 }
 
 async function appendCommittedManeuverState(actor, record) {
