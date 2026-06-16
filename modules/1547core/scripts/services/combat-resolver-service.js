@@ -80,6 +80,8 @@ export function registerCombatResolverService() {
     const module = game.modules.get(MODULE_ID);
     if (!module) return;
 
+    bindPatchSocket();
+
     if (!combatResolverDisposers.length) {
         combatResolverDisposers = [
             onCombatEvent(COMBAT_EVENTS.REACTION_RESOLVED, (event) => executeResolvedReaction(event.payload)),
@@ -466,8 +468,60 @@ async function applyPatch(patch) {
     }
 }
 
+/* ---- Patch authority (combat-architecture-evolution-spec, Move 1) -------- */
+// Combat resolution runs on whoever is acting (often the GM, but a player when
+// they attack). Writes must land on a client that can write the target. The GM
+// can write anything; a player can write only actors they own. Patches a player
+// can't apply are routed to the designated GM over the socket, who applies them.
+const PATCH_CHANNEL = `module.${MODULE_ID}`;
+const PATCH_APPLY_TYPE = "patch-apply";
+let patchSocketBound = false;
+
+// The single GM that applies routed patches (avoids double-apply with >1 GM).
+function isDesignatedPatchGM() {
+    if (!game.user?.isGM) return false;
+    const activeGM = game.users?.activeGM;
+    if (activeGM) return activeGM.id === game.user.id;
+    const gms = Array.from(game.users ?? [])
+        .filter((u) => u.active && u.isGM)
+        .sort((a, b) => String(a.id).localeCompare(String(b.id)));
+    return !gms.length || gms[0].id === game.user.id;
+}
+
+function canApplyPatchLocally(patch) {
+    if (game.user?.isGM) return true;
+    const actor = resolveActorById(patch?.actorId);
+    return !!actor?.isOwner;
+}
+
+function bindPatchSocket() {
+    if (patchSocketBound || !game?.socket) return;
+    patchSocketBound = true;
+    game.socket.on(PATCH_CHANNEL, (msg) => {
+        if (msg?.type !== PATCH_APPLY_TYPE || !isDesignatedPatchGM()) return;
+        void (async () => {
+            for (const patch of Array.isArray(msg.patches) ? msg.patches : []) {
+                try { await applyPatch(patch); }
+                catch (err) { console.error(`${MODULE_ID} | routed patch failed`, patch, err); }
+            }
+        })();
+    });
+}
+
 async function applyPatches(patches = []) {
-    for (const patch of patches) await applyPatch(patch);
+    const list = Array.isArray(patches) ? patches.filter(Boolean) : [];
+    const remote = [];
+    for (const patch of list) {
+        if (canApplyPatchLocally(patch)) await applyPatch(patch);
+        else remote.push(patch); // preserves per-actor order (one actor's patches stay together)
+    }
+    // A player can't write actors they don't own (e.g. attacking a GM NPC) — hand
+    // those patches to the GM. Fire-and-forget: combat reads outcomes from the
+    // rolls, not the written docs, so it needn't await the remote apply.
+    if (remote.length) {
+        try { game.socket?.emit(PATCH_CHANNEL, { type: PATCH_APPLY_TYPE, patches: remote }); }
+        catch (err) { console.error(`${MODULE_ID} | could not route patches to GM`, err); }
+    }
 }
 
 // Thin wrappers around the patch-returners in combat/maneuver-state.mjs.

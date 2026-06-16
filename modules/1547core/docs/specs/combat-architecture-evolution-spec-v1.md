@@ -183,9 +183,14 @@ state has one home (Move 3). The phased functions and the patch/event boundary a
 
 ## Migration path (incremental, keeps the phased/patch design)
 
-- **Phase A — Patch authority (Move 1).** Wrap `applyPatches`→`dispatchPatches` with GM routing +
-  one GM socket handler. *Backward compatible:* the GM-acting path is unchanged; only player-acting
-  writes change (today they fail). **Biggest single win, lowest risk** — ship first.
+- **Phase A — Patch authority (Move 1). ✅ Shipped.** `applyPatches` now splits each set into
+  locally-writable vs. not; a player's patches to actors they don't own (e.g. attacking a GM NPC)
+  are routed over `module.1547core` (`patch-apply`) to the **designated GM** (`isDesignatedPatchGM`,
+  via `game.users.activeGM`) who applies them. GM-acting path unchanged (GM writes all locally).
+  Fire-and-forget (combat reads outcomes from rolls, not docs). *Needs a two-client live test:
+  player attacks a GM NPC → damage/status apply.* Remaining direct (non-patch) write:
+  `registerFacingService`'s token rotation on `REACTION_RESOLVED` is not yet routed (minor — only
+  bites when a player is the resolver and the reactor is a GM-owned token).
 - **Phase B — Window abstraction (Move 2).** (B1) Keep reactions as-is (already a consumer). (B2)
   Migrate post-maneuvers from HUD-driven closures to an awaited `openCombatWindow`. (B3) Re-home the
   damage-taken reaction as its own window kind, freeing `DAMAGE_TAKEN_WINDOW_OPENED`. Each sub-step is

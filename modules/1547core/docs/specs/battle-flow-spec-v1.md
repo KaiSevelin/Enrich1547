@@ -418,12 +418,12 @@ acting client executes the chosen maneuver. Unspent crits are cleared when the w
 
 ## 12. Known gaps & fragilities (the live-test backlog)
 
-1. **Combat writes are not routed to the GM (priority).** `applyPatch` writes directly on the
-   resolving client (§7). The GM-as-attacker path works; a **player attacking a GM-owned actor**
-   silently fails to apply damage/status/rotation (the player can't write the unowned target). Only
-   side-advance is routed today. **Fix:** a patch-relay that forwards a resolving client's patch set
-   to a GM when it lacks permission for the target. Until then, treat combat as **GM-resolved** (the
-   GM is the acting client; the GM may control a player token to act for them — §5 step 6).
+1. **Combat write routing — ✅ addressed (patch dispatcher).** `applyPatches` now routes any patch a
+   player can't apply (an actor they don't own) to the designated GM over `module.1547core`
+   (`patch-apply`); the GM-acting path is unchanged. So a **player attacking a GM NPC** applies
+   damage/status via the GM. *Needs a two-client live test.* Remaining direct write not yet routed:
+   `registerFacingService`'s token rotation on `REACTION_RESOLVED` (minor — only when a player is the
+   resolver and the reactor is GM-owned). See `combat-architecture-evolution-spec-v1.md` Move 1.
 2. **Damage-taken reaction is machinery-only and its event is reused.** The free **safe
    counterattack** after taking damage (`executeSafeCounterattackPhased`, `damageTakenReaction`,
    `buildDamageTakenPrompt.commitSafeCounterattack`) is not wired into the main flow; the
