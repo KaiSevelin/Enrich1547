@@ -460,8 +460,11 @@ acting client executes the chosen maneuver. Unspent crits are cleared when the w
    of ending combat. **Decide:** end combat, or surface "the opposing side is defeated."
 7. **Dice totals once depended on Dice So Nice.** Now read from the evaluated roll
    (`computeRollTotals`) with the DSN hook as fallback — keep new combat math off the animation hook.
-8. **Multiplier flag path** writes `multiplier` via `buildResultPayload(multiplier × multiplyFail)`;
-   the direct `computeDice1547Totals` path is authoritative. Ensure both agree if the flag is read.
+8. **Multiplier — ✅ resolved.** Both the direct `computeDice1547Totals` path and the Dice So Nice
+   flag path now compute `multiply × multiplyFail`, so a bonus (e.g. ×2) and a **multiply-fail (×0)**
+   carry through identically. Rule: a **0 multiplier cancels ALL damage / protection / crit**
+   (`applyMultiplier` applies a finite 0; a missing/invalid multiplier means ×1). The readers
+   preserve a stored `0` (no `|| 1` coercion). Unit-tested in `combat-attack-lifecycle.test.mjs`.
 9. **Face does not roll a separate defense** — it cancels the rear +1 and turns the defender. If
    Face should *also* let a normal defense roll, thread it like the other defense reactions.
 10. **Multi-target & ammunition under-specified.** `declareAttack` accepts `targets[]` and consumes

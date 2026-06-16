@@ -155,7 +155,7 @@ function extractDice1547Totals(game, message) {
         protection: Number(result.totals.protection ?? 0) || 0,
         crit: Number(result.totals.crit ?? 0) || 0,
         fumble: Number(result.totals.fumble ?? 0) || 0,
-        multiplier: Number(result.totals.multiplier ?? 1) || 1,
+        multiplier: Number.isFinite(Number(result.totals.multiplier)) ? Number(result.totals.multiplier) : 1,
     };
 }
 
@@ -176,7 +176,7 @@ function waitForDice1547HookResult(message, { timeoutMs = 5000 } = {}) {
                 protection: Number(result.totals.protection ?? 0) || 0,
                 crit: Number(result.totals.crit ?? 0) || 0,
                 fumble: Number(result.totals.fumble ?? 0) || 0,
-                multiplier: Number(result.totals.multiplier ?? 1) || 1,
+                multiplier: Number.isFinite(Number(result.totals.multiplier)) ? Number(result.totals.multiplier) : 1,
             } : null);
         };
         hookId = globalThis.Hooks.on("dice1547RollResult", (result, hookMessage) => {

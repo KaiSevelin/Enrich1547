@@ -121,6 +121,20 @@ assert.deepStrictEqual(
 );
 console.log("  ✓ defaults missing fields, preserves multiplier");
 
+console.log("\nattack-lifecycle.applyMultiplier...");
+assert.deepStrictEqual(
+    al.applyMultiplier({ damage: 4, protection: 2, crit: 1, multiplier: 2 }),
+    { damage: 8, protection: 4, crit: 2, multiplier: 2 }
+);
+// A 0 multiplier (multiply-fail) cancels ALL damage and protection.
+assert.deepStrictEqual(
+    al.applyMultiplier({ damage: 5, protection: 3, crit: 2, multiplier: 0 }),
+    { damage: 0, protection: 0, crit: 0, multiplier: 0 }
+);
+// A missing / non-finite multiplier means "no multiplier" (×1).
+assert.strictEqual(al.applyMultiplier({ damage: 5 }).damage, 5);
+console.log("  ✓ scales by multiplier; 0 cancels everything; missing → ×1");
+
 // ────────────────────────────────────────── pending-attack tag ──
 
 console.log("\nattack-lifecycle.isPendingAttack / PENDING_ATTACK_KIND...");

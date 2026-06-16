@@ -203,14 +203,15 @@ export function normalizeRollSummary(roll) {
 }
 
 /**
- * Apply the roll's multiplier to damage / protection / crit. Returns
- * the input unchanged when multiplier is missing or non-positive.
- * (Note: differs from a naïve `damage *= multiplier` — protection and
- * crit also scale.)
+ * Apply the roll's multiplier to damage / protection / crit. A *finite*
+ * multiplier applies as-is — so 0 (a multiply-fail: a Multiplier/Risk die rolled
+ * a 1) ZEROES the result, and a bonus (>1) scales it up. A missing or non-finite
+ * multiplier means "no multiplier" (×1). (Protection and crit scale too, not just
+ * damage.)
  */
 export function applyMultiplier(roll) {
-    const multiplier = Number.isFinite(roll?.multiplier) && roll.multiplier > 0
-        ? roll.multiplier
+    const multiplier = Number.isFinite(roll?.multiplier)
+        ? Math.max(0, roll.multiplier)
         : 1;
     return {
         ...roll,
