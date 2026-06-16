@@ -202,14 +202,16 @@ state has one home (Move 3). The phased functions and the patch/event boundary a
     functional gain** — the async flow already works and is cross-client. The three windows having
     different *local* control-flows is legitimate. Revisit only if a post-maneuver must mutate the
     in-flight result before `ACTION_COMMITTED`.
-  - **B3 — a feature, not wiring.** `executeSafeCounterattackPhased` only **declares** the counter
-    (`declareAttackPhased`); it does **not** roll/resolve it (no attack+defense roll, no
-    `resolveAttackOutcome`). To make the damage-taken safe-counterattack real, build the
-    **counter-resolution loop** (roll → defense → resolve → card), then add the "Safe Counterattack"
-    action to the existing defense-summary/damage-taken window (`buildDamageTakenPrompt` already
-    renders the button when `commitSafeCounterattack` is provided). Untestable until the granting
-    maneuver (maneuvers.json:1172) can be exercised with two clients. **This is the real remaining
-    Phase B work.**
+  - **B3 — ✅ Shipped (needs two-client live test).** Built the counter-resolution loop.
+    `executeSafeCounterattackPhased` only *declares* the counter, so `hud-actions.js` now adds
+    `runSafeCounterattack` (declare → build the defender's weapon formula via `summarizeActor` →
+    attack roll → the original attacker's defense roll → `resolveAttackOutcome` → result card) and
+    `offerSafeCounterattack` (relays a "Safe Counterattack" choice to the defender's client, or a
+    local dialog for a GM-owned defender). It fires from `executeWeaponAttackAction` when
+    `resolvedAttack.defenseModifiers.safeCounterattack` (i.e. the defender's defense reaction granted
+    it — `maneuvers.json:1172`). Writes route to the GM via Move 1. Responder presenter:
+    `combat/safe-counterattack.js`. *Verify live: the granting maneuver → defender is offered →
+    accept → counter rolls and applies damage to the attacker.*
 - **Phase C — Activation state (Move 3).** Add the record + `resetActivationsForRound` on advance;
   wire reaction renewal; add the `preUpdateToken` facing lock. Independent of A/B except it writes via
   Move 1.

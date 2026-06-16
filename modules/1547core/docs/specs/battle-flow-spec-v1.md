@@ -424,15 +424,13 @@ acting client executes the chosen maneuver. Unspent crits are cleared when the w
    damage/status via the GM. *Needs a two-client live test.* Remaining direct write not yet routed:
    `registerFacingService`'s token rotation on `REACTION_RESOLVED` (minor — only when a player is the
    resolver and the reactor is GM-owned). See `combat-architecture-evolution-spec-v1.md` Move 1.
-2. **Damage-taken safe-counterattack is half-built (a feature, not wiring).**
-   `executeSafeCounterattackPhased` only **declares** the counter (`declareAttackPhased`) — it does
-   **not** roll or resolve it (no attack+defense roll, no `resolveAttackOutcome`, no damage). To make
-   it real, build the **counter-resolution loop**, then add the "Safe Counterattack" action to the
-   defender's existing damage/defense-summary window (`buildDamageTakenPrompt` already renders the
-   button when `commitSafeCounterattack` is supplied — the defense summary *is* that window). The
-   button is hidden today because the payload sets `safeCounterattack:false`. This is the real
-   remaining Phase B work (see `combat-architecture-evolution-spec-v1.md` B3); untestable until the
-   granting maneuver (`maneuvers.json:1172`) can be run on two clients.
+2. **Damage-taken safe-counterattack — ✅ built (needs two-client live test).** When the defender's
+   defense reaction grants a free safe counterattack (`defenseModifiers.safeCounterattack`, e.g.
+   `maneuvers.json:1172`), the acting client now offers it to the defender (relay, or local dialog)
+   and, on accept, resolves it fully — declare (`executeSafeCounterattack`) → attack roll → the
+   original attacker's defense roll → `resolveAttackOutcome` → card. See `hud-actions.js`
+   (`offerSafeCounterattack`/`runSafeCounterattack`), `combat/safe-counterattack.js`,
+   `combat-architecture-evolution-spec-v1.md` B3.
 3. **Reaction renewal — intended, not implemented.** Reactions are not budget-gated, so nothing is
    consumed or reset. Per design, a reaction (e.g. Face) should be available **once per round** and
    renew each round (§3). **Fix:** track a per-actor reaction-used flag and clear it on round/side

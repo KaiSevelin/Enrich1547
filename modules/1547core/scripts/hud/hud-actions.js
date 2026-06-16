@@ -2,6 +2,135 @@
 import { conditionCombatDisadvantage } from "../services/condition-registry.js";
 import { autoFaceAttacker, getAttackPositioning, positioningNote, positionalAdvantageToApply } from "../combat/facing.mjs";
 import { showDefenseSummary } from "../combat/defense-summary.js";
+import { relayRemoteWindow, presentCandidateDialog, escapeRelayHtml } from "../services/remote-window-relay.js";
+
+const SAFE_COUNTERATTACK_WINDOW_MS = 15000;
+
+// Equipped armour → defense-pool summary (mirrors the inline block in the main
+// attack); used for both the original defender and a counterattack's target.
+function buildDefenderArmorSummary(actor) {
+    return (actor?.items?.contents ?? actor?.items ?? [])
+        .map((item) => {
+            const props = item?.system?.props ?? {};
+            const sourceData = item?.flags?.["1547Core"]?.sourceData ?? item?.flags?.["1547core"]?.sourceData ?? {};
+            if (!(
+                props.Equipped === true
+                || Number(props.Equipped) === 1
+                || String(props.Equipped ?? "").trim().toLowerCase() === "true"
+                || sourceData?.equipped === true
+            )) return null;
+            const defenseDice = Array.isArray(sourceData?.defenseDice)
+                ? [...sourceData.defenseDice]
+                : String(props.Defense ?? "").split(",").map((entry) => entry.trim()).filter(Boolean);
+            return defenseDice.length ? { defenseDice, defense: defenseDice.join(", "), name: item.name } : null;
+        })
+        .filter(Boolean)[0] ?? {
+            defenseDice: buildDefenderPool(undefined),
+            defense: buildDefenderPool(undefined).join(", "),
+            name: "Unprotected",
+        };
+}
+
+async function rollDefenseSummaryForActor(actor, token, deps) {
+    const { Roll, ChatMessage, escapeHtml, game } = deps;
+    const formula = buildDefenseRollFormula(buildDefenderArmorSummary(actor), actor);
+    if (!formula) return null;
+    const speaker = ChatMessage.getSpeaker({ actor, token: token?.document });
+    return rollFormulaToChatAndSummarize({
+        Roll, speaker, formula,
+        flavor: `Defense Roll<br>Defender: ${escapeHtml(actor?.name ?? "Target")}`,
+        game,
+    });
+}
+
+// Resolve the defender's free safe counterattack as a full attack back at the
+// original attacker: declare → roll → the attacker's defense → resolve → card.
+// Runs on the acting client; writes route to the GM via the patch dispatcher.
+async function runSafeCounterattack({ originalPendingAttack, defenseReaction, context, deps }) {
+    const { MODULE_ID, game, ui, Roll, ChatMessage, escapeHtml, summarizeActor, buildFoundryAttackRollFormula } = deps;
+    const combatApi = game?.modules?.get?.(MODULE_ID)?.api?.combat;
+    if (typeof combatApi?.executeSafeCounterattack !== "function" || typeof combatApi?.resolveAttackOutcome !== "function") return;
+
+    let counter;
+    try {
+        counter = await combatApi.executeSafeCounterattack({ pendingAttack: originalPendingAttack, defenseReaction });
+    } catch (error) {
+        ui.notifications?.warn?.(error?.message || "Could not declare the safe counterattack.");
+        return;
+    }
+    if (!counter?.pendingAttack) return;
+    if (counter.cancelled) { ui.notifications?.info?.("Safe counterattack cancelled by a reaction."); return; }
+
+    // The counter-attacker is the original defender; its target is the original
+    // attacker — both tokens are the ones we already have in context.
+    const counterAttacker = context.primaryTarget?.actor ?? counter.pendingAttack.actor ?? null;
+    const counterAttackerToken = context.primaryTarget ?? null;
+    const counterTarget = context.actor ?? counter.pendingAttack.target ?? null;
+    const counterTargetToken = context.token ?? null;
+    if (!counterAttacker || !counterTarget) return;
+
+    // Build the attack formula from the defender's equipped weapon (same path the
+    // normal attack uses), falling back to the pending profile's dice.
+    const counterSummary = summarizeActor(counterAttacker, counterAttackerToken);
+    const counterWeapon = (counterSummary?.equippedWeapons ?? []).find((w) => Array.isArray(w?.activeAttackProfileData?.dice) && w.activeAttackProfileData.dice.length) ?? null;
+    const formula = (counterWeapon && buildFoundryAttackRollFormula(counterWeapon.activeAttackProfileData, {}))
+        || toFoundryFormula(Array.isArray(counter.pendingAttack.profile?.dice) ? counter.pendingAttack.profile.dice : []);
+    if (!formula) {
+        ui.notifications?.warn?.(`${counterAttacker.name ?? "Defender"} has no weapon dice for a safe counterattack.`);
+        return;
+    }
+
+    const speaker = ChatMessage.getSpeaker({ actor: counterAttacker, token: counterAttackerToken?.document });
+    const attackRollSummary = await rollFormulaToChatAndSummarize({
+        Roll, speaker, formula,
+        flavor: `Safe Counterattack<br>${escapeHtml(counterAttacker.name ?? "Defender")} -> ${escapeHtml(counterTarget.name ?? "Attacker")}`,
+        game,
+    });
+    if (!attackRollSummary) return;
+
+    const defenseRollSummary = await rollDefenseSummaryForActor(counterTarget, counterTargetToken, deps);
+    const resolved = await combatApi.resolveAttackOutcome({
+        pendingAttack: counter.pendingAttack,
+        attackRoll: attackRollSummary,
+        defenseRoll: defenseRollSummary,
+    });
+
+    const hpText = Number.isFinite(Number(resolved?.hitPointUpdate?.currentHitPoints))
+        ? `<br>HP: ${escapeHtml(String(resolved.hitPointUpdate.currentHitPoints))}`
+        : "";
+    await ChatMessage.create({
+        speaker,
+        content: `<strong>Safe Counterattack Result</strong><br>${escapeHtml(counterAttacker.name ?? "Defender")} -> ${escapeHtml(counterTarget.name ?? "Attacker")}<br>Damage: ${escapeHtml(String(resolved?.attackRoll?.damage ?? 0))}<br>Protection: ${escapeHtml(String(resolved?.defenseRoll?.protection ?? 0))}<br>Applied: ${escapeHtml(String(resolved?.damageApplied ?? 0))}${hpText}`,
+    });
+    ui.notifications?.info?.(`${counterAttacker.name ?? "Defender"} made a safe counterattack.`);
+}
+
+// Offer the safe counterattack to the defender (their client via the relay, or a
+// local dialog when the acting client owns them); run it on accept.
+async function offerSafeCounterattack({ originalPendingAttack, defenseReaction, context, deps }) {
+    const defender = context.primaryTarget?.actor ?? null;
+    if (!defender) return;
+    const run = () => runSafeCounterattack({ originalPendingAttack, defenseReaction, context, deps });
+    const candidates = [{ id: "counter", name: "Safe Counterattack" }];
+    const relayed = relayRemoteWindow({
+        kind: "safe-counterattack",
+        windowId: foundry.utils.randomID(),
+        responderActor: defender,
+        timeoutMs: SAFE_COUNTERATTACK_WINDOW_MS,
+        request: { defenderName: defender.name ?? "Defender", candidates },
+        onResolve: (id) => { if (id === "counter") void run(); },
+    });
+    if (!relayed) {
+        const { promise } = presentCandidateDialog({
+            title: "Safe Counterattack",
+            intro: `<strong>${escapeRelayHtml(defender.name ?? "Defender")}</strong> may make a free safe counterattack.`,
+            candidates: [{ id: "counter", label: "Safe Counterattack" }],
+            timeoutMs: SAFE_COUNTERATTACK_WINDOW_MS,
+            dialogClass: "safe-counterattack-dialog",
+        });
+        if (await promise === "counter") await run();
+    }
+}
 
 function consumePersistentEffectIfPresent(actor, effectType, deps = {}) {
     const { MODULE_ID, game } = deps;
@@ -371,6 +500,16 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
 
         // Push a defense summary to the defender's own client (informational).
         showDefenseSummary({ resolvedAttack, attacker: context.actor, defender: targetActor });
+
+        // If the defender's chosen defense reaction granted a free safe
+        // counterattack, offer it to them (their client) and resolve it fully.
+        if (resolvedAttack?.defenseModifiers?.safeCounterattack) {
+            await offerSafeCounterattack({
+                originalPendingAttack: result.pendingAttack,
+                defenseReaction: result.reactionResolution?.reaction ?? null,
+                context, deps,
+            });
+        }
 
         await consumePersistentEffectIfPresent(context.actor, "aimed", deps);
         if (Object.keys(getPendingNextAttackDice?.(context.actor?.id) ?? {}).length > 0) {
