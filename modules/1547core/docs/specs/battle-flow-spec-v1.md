@@ -86,10 +86,15 @@ legality as context (`fullTurnAvailable`, `attacksRemaining`, `movementBudgetRem
 - `attack-declared` pre-maneuvers require `attacksRemaining > 0` (when a finite budget is given).
 - `move-declared` maneuvers require `movementBudgetRemaining > 0` (when given).
 
-> **Reactions are NOT budget-gated today.** `passesActionEconomyGate` only checks attack/movement
-> budgets, and the reaction path passes neither — so reactions are never "used up" and there is no
-> per-turn reaction reset. (This is why a "new turn" does not restore a reaction: there is nothing
-> consumed to restore.) See §12.
+> **Action economy is MANUAL for now**, and **reactions are not budget-gated.**
+> `passesActionEconomyGate` checks only the attack/movement budgets, and the reaction path passes
+> neither — so reactions are never "used up," and the attack/movement budgets are not auto-reset
+> (the GM manages them by hand between activations).
+>
+> **Design intent:** a reaction (e.g. **Face**) is available **once per round** and **renews each
+> new round**. That renewal is **not yet implemented** — there is no reaction counter to reset, so
+> today a reaction is simply always available when its trigger fires. (Whether a *specific* reaction
+> like Face is *offered* is a separate, geometric question — see §8.) See §12.
 
 ---
 
@@ -155,13 +160,23 @@ client** (usually the GM). Sequence:
    (so both clients animate it), and reads totals **directly from the evaluated roll**
    (`computeRollTotals`), with the Dice So Nice flag/hook as fallback. (Reading totals only from the
    DSN completion hook used to break resolution — see §12.)
-6. **Defense roll** — the defender's armour pool (`buildDefenseRollFormula` → `buildDefenderPool`,
-   default three Evade dice) is rolled the same way. Always rolled on the non-replacing path.
+6. **Defense roll (automatic).** Once the reaction window resolves, the defender's armour pool
+   (`buildDefenseRollFormula` → `buildDefenderPool`, default three Evade dice) is **auto-rolled** —
+   the defender does **not** roll it by hand. It is rolled on the **acting (GM) client**, not the
+   defending player's. Always rolled on the non-replacing path. (The GM may possess/control a
+   player's token to act for them when needed.)
 7. **Resolve** — `resolveAttackOutcome({ pendingAttack, attackRoll, defenseRoll, defenseReaction })`
    → `resolveAttackOutcomePhased`: normalize rolls, apply multiplier, apply the chosen
    **defenseReaction** modifiers (`addArmorDice`, `reduceDamageTaken`), compute damage (§9), emit
    `DAMAGE_APPLIED`, build **post-maneuver windows** (§10), emit `ACTION_COMMITTED`.
-8. **Cards** — a public **Attack Result** chat card is posted; a **defense summary** window is
+8. **Damage-taken reaction — partial.** The engine has a *post-damage* reaction: a free **safe
+   counterattack** the defender may take after being hit (`executeSafeCounterattackPhased`;
+   `normalizeDefenseModifiers` reads `damageTakenReaction.effectData.createFreeSafeCounterattack`;
+   `buildDamageTakenPrompt` exposes `commitSafeCounterattack`). This is **machinery only today** —
+   the main attack flow does not open a damage-taken window to capture `currentDamageTakenReaction`,
+   and the `DAMAGE_TAKEN_WINDOW_OPENED` event is presently **reused** for the informational defense
+   summary (§7), not the safe-counterattack prompt. See §12.
+9. **Cards** — a public **Attack Result** chat card is posted; a **defense summary** window is
    pushed to the defender's client (`defense-summary.js`, §7).
 
 Phases 5–7 sit *after* the reaction window: the window opens between formula-build and roll, which
@@ -197,6 +212,12 @@ A reaction lets the **defender** (or a threatened actor) respond when something 
 > else is a *modifier* on an attack that still rolls and posts a card. (Cancelling those was the
 > bug behind "Evade voided the whole attack".)
 
+**Timing & one-per-window.** The defender reacts **before any dice are rolled** — the window opens
+at declaration, between formula-build and roll, so reactions are chosen *blind* to the attack
+result. A window grants **one** choice: picking **Face** (or any defense reaction) **is** the
+reaction for that attack and precludes a second one. After the choice resolves, the defense roll is
+**auto-rolled** (§5 step 6). Reactions are intended to renew **once per round** (§3, §12).
+
 ### Cross-client routing (§7 is the transport)
 
 Because the bus is local, the reaction prompt is **relayed** to the reactor's owner and mirrored
@@ -208,6 +229,34 @@ for the GM:
   the NPC's options).
 - Rule in code: the acting client opens the window locally when **it is not relaying** (it owns the
   reactor) **or it is the GM**.
+
+---
+
+## 6A. Movement, threat zones & overwatch
+
+Combat is not only attacks — moving through a threatened space can provoke reactions, and a
+full-turn **overwatch** stance lets an actor strike movers. This is the second resolution path,
+parallel to the attack lifecycle (§5).
+
+- **Declare movement** — `declareMovementPhased` builds a pending move, emits `MOVEMENT_STARTED`,
+  then for **each threatened square entered along the path** emits a `THREAT_ZONE_ENTERED` event
+  carrying a `reactor` (the zone owner, `resolveThreatReactionActor`) and threat-reaction candidates
+  (`buildThreatReactionCandidates` → `getLegalManeuvers` with `triggerType:"threat-zone-entered"`).
+  Each threat event resolves through the **same reaction machinery** as an attack (§6); resolutions
+  are collected on `reactionResolutions`.
+- **Overwatch** is a **full-turn persistent effect** (`createsPersistentEffect:"overwatch"`,
+  `persistent-effects.mjs`). While active, the actor gains a synthetic **overwatch reaction
+  candidate** (`buildOverwatchReactionCandidate`) — a free ranged/reach shot — offered on
+  `THREAT_ZONE_ENTERED` when a mover enters their zone (tagged
+  `generatedByPersistentEffect:"overwatch"`).
+- **Consumption** — taking the overwatch reaction consumes the effect
+  (`planConsumePersistentEffect(actor,"overwatch")`, run by `reaction-service` on selection). Also,
+  **declaring an attack against a target consumes that target's overwatch**
+  (`declareAttackPhased` plans `planConsumePersistentEffect(pendingAttack.target,"overwatch")`) —
+  being attacked spends a held overwatch.
+- **Cross-client** — threat/overwatch reaction prompts ride the same relay (§7): the prompt goes to
+  the reactor's owner; resolution and combat writes stay on the acting/authoritative client (§7,
+  §12).
 
 ---
 
@@ -225,12 +274,30 @@ The generic hub is `services/remote-window-relay.js`:
 
 Consumers: **reactions** (`reaction-service`, HUD reaction prompt with dialog fallback),
 **defender post-maneuver windows** (`post-maneuver-relay`, dialog; the acting client still runs
-`commitPostManeuver` so combat writes stay GM-authoritative), and the informational
-**defense-summary** window (`defense-summary`, pushed to the defender's HUD). The side-advance
-request (§2) rides the same channel.
+`commitPostManeuver`), and the informational **defense-summary** window (`defense-summary`, pushed
+to the defender's HUD). The side-advance request (§2) rides the same channel.
 
-**Authority** stays on the acting/GM client: it owns the timeout, the resolution, and all combat
-writes. Only the *prompt and the choice* are delegated.
+### Write authority — the actual model (and a gap)
+
+The intended model is **GM-authoritative**: combat resolution and all document writes happen on a
+client that can write the affected actors — in practice **the GM**. The relay delegates only the
+*prompt and the choice*; the acting client owns the timeout, the resolution, and the writes.
+
+**But this is only partly enforced.** The patch dispatcher (`applyPatch` in
+`combat-resolver-service.js`) calls `actor.update` / `setFlag` / `setActorStatusEffect`
+**directly on whatever client is resolving** — there is no routing to the GM. The acting client is
+*whoever attacks*. So:
+
+- **GM attacks anyone** → the GM resolves and writes → fine (the GM can write any actor). This is
+  the supported path today, and the GM may possess/control a player token to act for them.
+- **A player attacks a GM-owned actor** → the *player* is the acting client → patches to the
+  unowned target (HP, status, token rotation from a resolved Face/counterattack) **fail on
+  permission** and the effect silently does not apply.
+
+Only the **side-advance** write is currently routed to the GM (`side-advance-request`, §2). The
+attack-resolution patches are **not** routed — so **player-initiated attacks on GM-owned actors do
+not yet apply their writes.** The required fix is a patch-relay: when the acting client lacks
+permission for a patch's target, forward the patch set to a GM client to apply. Tracked in §12 (#1).
 
 ---
 
@@ -313,8 +380,17 @@ Risk-die count added to combat pools; `blocksAdvantage` zeroes advantage dice.
 
 ## 10. Critical points & post-maneuvers
 
-After damage, both sides may spend **critical points** (the summed crit faces of the exchange) on
-`post` maneuvers. `resolveAttackOutcomePhased` builds `defenderPostOptions` and `attackerPostOptions`
+After damage, both sides may spend **critical points** on `post` maneuvers.
+`currentCriticalPoints = attack.crit + defense.crit` — the crit faces from **both** rolls of the
+exchange.
+
+**Pool rule (by design): the crit pool is SHARED and not split.** If a side rolled *any* crits, it
+may use them; if *both* sides rolled crits, *both* may use them. The pool is **not decremented**
+between the defender's and the attacker's post-maneuver windows — each window sees the full
+`currentCriticalPoints` and spends against it independently. (So a single exchange's crits can fuel
+both a defender post-maneuver and an attacker post-maneuver.)
+
+`resolveAttackOutcomePhased` builds `defenderPostOptions` and `attackerPostOptions`
 (`getLegalManeuvers` with `timingType:"post"`, `triggerType:"post-attack"`, `currentCriticalPoints`)
 and emits a `POST_MANEUVER_WINDOW_OPENED` per non-empty window (**defender first, then attacker**).
 Each window carries a `commitPostManeuver(selection)` closure (the actual combat write) and is
@@ -342,25 +418,43 @@ acting client executes the chosen maneuver. Unspent crits are cleared when the w
 
 ## 12. Known gaps & fragilities (the live-test backlog)
 
-1. **Off-turn facing/movement lock — not implemented** (facing spec Part B). Token facing persists
-   across turns, so "Face isn't offered again" is usually correct geometry (defender already faces
-   the attacker), not a turn bug. If a lock is wanted, add a `preUpdateToken` veto that allows only
-   `facingAutoFace`/forced updates on a side's own activation.
-2. **No reaction economy / reset.** Reactions are not budget-gated, so there is nothing to consume
-   or reset on a new turn. If "one reaction per side activation" is intended, add a reaction budget
-   to the action-economy gate and reset it on side advance.
-3. **Reach measurement is center-to-center Chebyshev.** Correct for 1×1 tokens (diagonal = 1) but
+1. **Combat writes are not routed to the GM (priority).** `applyPatch` writes directly on the
+   resolving client (§7). The GM-as-attacker path works; a **player attacking a GM-owned actor**
+   silently fails to apply damage/status/rotation (the player can't write the unowned target). Only
+   side-advance is routed today. **Fix:** a patch-relay that forwards a resolving client's patch set
+   to a GM when it lacks permission for the target. Until then, treat combat as **GM-resolved** (the
+   GM is the acting client; the GM may control a player token to act for them — §5 step 6).
+2. **Damage-taken reaction is machinery-only and its event is reused.** The free **safe
+   counterattack** after taking damage (`executeSafeCounterattackPhased`, `damageTakenReaction`,
+   `buildDamageTakenPrompt.commitSafeCounterattack`) is not wired into the main flow; the
+   `DAMAGE_TAKEN_WINDOW_OPENED` event is currently used for the informational **defense summary**
+   (§5 step 8, §7). **Decide:** keep the safe-counterattack as a post-damage window (and give it its
+   own event, freeing `DAMAGE_TAKEN_WINDOW_OPENED`), or drop it.
+3. **Reaction renewal — intended, not implemented.** Reactions are not budget-gated, so nothing is
+   consumed or reset. Per design, a reaction (e.g. Face) should be available **once per round** and
+   renew each round (§3). **Fix:** track a per-actor reaction-used flag and clear it on round/side
+   advance. (Attack/movement economy stays **manual** for now, by GM ruling.) Note: a *specific*
+   reaction like Face is also gated by geometry (§8) — facing persists (gap #5), so "Face missing"
+   is often correct, separate from renewal.
+4. **Reach measurement is center-to-center Chebyshev.** Correct for 1×1 tokens (diagonal = 1) but
    can misjudge **larger tokens** or off-grid placement (it ignores footprint edges). The recurring
    "diagonal out of reach" is most likely a token-size/placement case — switch reach to
    footprint-edge distance (min Chebyshev between attacker and defender tiles) to harden it.
-4. **Fully-defeated opposing side wraps** (§2). Side Ready loops back to the surviving side instead
-   of ending combat. Decide: end combat, or surface "the opposing side is defeated".
-5. **Dice totals once depended on Dice So Nice.** Now read from the evaluated roll
+5. **Off-turn facing/movement lock — not implemented** (facing spec Part B). Token facing persists
+   across turns/rounds; a `preUpdateToken` veto allowing only `facingAutoFace`/forced updates off a
+   side's own activation would make facing a rule rather than a convention. This is *why* facing
+   carries over between rounds (relevant to #3).
+6. **Fully-defeated opposing side wraps** (§2). Side Ready loops back to the surviving side instead
+   of ending combat. **Decide:** end combat, or surface "the opposing side is defeated."
+7. **Dice totals once depended on Dice So Nice.** Now read from the evaluated roll
    (`computeRollTotals`) with the DSN hook as fallback — keep new combat math off the animation hook.
-6. **Multiplier flag path** writes `multiplier` via `buildResultPayload(multiplier × multiplyFail)`;
+8. **Multiplier flag path** writes `multiplier` via `buildResultPayload(multiplier × multiplyFail)`;
    the direct `computeDice1547Totals` path is authoritative. Ensure both agree if the flag is read.
-7. **Face does not yet roll a separate defense** — it cancels the rear +1 and turns the defender; if
-   Face should also let a normal defense roll, thread it like the other defense reactions.
+9. **Face does not roll a separate defense** — it cancels the rear +1 and turns the defender. If
+   Face should *also* let a normal defense roll, thread it like the other defense reactions.
+10. **Multi-target & ammunition under-specified.** `declareAttack` accepts `targets[]` and consumes
+    loaded ammo (`planConsumeLoadedAmmo`, `ammoAddDice`); this spec documents the single-target melee
+    path. Area/multi-target resolution and reload/ammo economy need their own treatment.
 
 ---
 
