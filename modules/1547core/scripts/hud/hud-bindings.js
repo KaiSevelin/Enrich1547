@@ -421,6 +421,7 @@
             const stat = event.currentTarget.dataset.hudStat;
             if (!stat) return;
             const context = buildHudActionContext(token?.actor, token);
+            context.rollModifier = event.altKey ? "advantage" : (event.ctrlKey || event.metaKey) ? "disadvantage" : null;
             const descriptor = createStatActionDescriptor(context, stat);
             await runHudAction(descriptor, context);
             void renderHudForSelection();
@@ -431,6 +432,7 @@
             const skill = event.currentTarget.dataset.hudSkill;
             if (!skill) return;
             const context = buildHudActionContext(token?.actor, token);
+            context.rollModifier = event.altKey ? "advantage" : (event.ctrlKey || event.metaKey) ? "disadvantage" : null;
             const descriptor = createSkillActionDescriptor(context, skill);
             await runHudAction(descriptor, context);
             void renderHudForSelection();
@@ -441,6 +443,7 @@
             const weaponId = event.currentTarget.dataset.hudWeaponAttack;
             if (!weaponId || !token?.actor) return;
             const context = buildHudActionContext(token.actor, token);
+            context.rollModifier = event.altKey ? "advantage" : (event.ctrlKey || event.metaKey) ? "disadvantage" : null;
             const descriptor = createWeaponAttackActionDescriptor(context, weaponId);
             await runHudAction(descriptor, context);
             void renderHudForSelection();

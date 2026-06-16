@@ -244,6 +244,24 @@ async function waitForDice1547Totals(game, message, { timeoutMs = 5000, interval
     return hookResult ?? polledResult ?? null;
 }
 
+// Click modifier on a HUD roll button: ALT → advantage (+1 die on the base
+// pool), CTRL/Cmd → disadvantage (-1 die, never below 1d6). Adjusts the first
+// dice term of the formula so it applies uniformly to stat / skill / attack rolls.
+// (The event → "advantage"/"disadvantage" mapping is set on context.rollModifier
+// in hud-bindings.)
+function applyRollClickModifier(formula, modifier) {
+    if (!modifier || !formula) return formula;
+    const str = String(formula);
+    const m = str.match(/(\d+)d([a-z0-9]+)/i);
+    if (!m) return formula;
+    const count = Number(m[1]) || 1;
+    const next = modifier === "advantage" ? count + 1
+        : modifier === "disadvantage" ? Math.max(1, count - 1)
+        : count;
+    if (next === count) return formula;
+    return str.replace(m[0], `${next}d${m[2]}`);
+}
+
 async function rollFormulaToChatAndSummarize({ Roll, speaker, formula, flavor, game }) {
     if (!formula) return null;
     const roll = await new Roll(formula).evaluate({ async: true });
@@ -269,7 +287,7 @@ async function consumeHudFullTurn(actor) {
 async function executeStatAction(descriptor, context, evaluation, deps = {}) {
     const { HUD_STATE, Roll, ChatMessage, escapeHtml, maybeRollCounter, getPendingNextSkillDice, clearPendingNextSkillDice } = deps;
     const stat = evaluation.resolvedSource;
-    const formula = evaluation.rollPreview?.finalFormula ?? stat?.formula;
+    const formula = applyRollClickModifier(evaluation.rollPreview?.finalFormula ?? stat?.formula, context.rollModifier);
     if (!formula || !stat) return;
 
     HUD_STATE.activeStatPreview = stat.label;
@@ -289,7 +307,7 @@ async function executeStatAction(descriptor, context, evaluation, deps = {}) {
 async function executeSkillAction(descriptor, context, evaluation, deps = {}) {
     const { HUD_STATE, Roll, ChatMessage, escapeHtml, maybeRollCounter, getPendingNextSkillDice, clearPendingNextSkillDice } = deps;
     const skill = evaluation.resolvedSource;
-    const formula = evaluation.rollPreview?.finalFormula ?? skill?.formula;
+    const formula = applyRollClickModifier(evaluation.rollPreview?.finalFormula ?? skill?.formula, context.rollModifier);
     if (!formula || !skill) return;
 
     if (skill.linkedStat) {
@@ -360,7 +378,7 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
             });
             return;
         }
-        const roll = await new Roll(attackFormula).evaluate({ async: true });
+        const roll = await new Roll(applyRollClickModifier(attackFormula, context.rollModifier)).evaluate({ async: true });
         const speaker = ChatMessage.getSpeaker({ actor: context.actor, token: context.token?.document });
         const flavor = `${descriptor.label}<br>No target selected: rolled to chat only.`;
         await roll.toMessage({ speaker, flavor });
@@ -495,7 +513,7 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
         const attackRollSummary = await rollFormulaToChatAndSummarize({
             Roll,
             speaker,
-            formula: finalAttackFormula,
+            formula: applyRollClickModifier(finalAttackFormula, context.rollModifier),
             flavor: `${descriptor.label}<br>Target: ${escapeHtml(targetActor?.name ?? "Target")}${positionNote ? `<br><em>${escapeHtml(positionNote)}</em>` : ""}`,
             game,
         });
