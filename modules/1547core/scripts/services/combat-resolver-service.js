@@ -1,6 +1,6 @@
 ﻿import { COMBAT_EVENTS, emitCombatEvent, onCombatEvent } from "./combat-events.js";
 import { evaluateManeuverLegality, getLegalManeuvers } from "../combat/maneuver-legality.mjs";
-import { buildDefenderPool } from "../combat/pool-builder.mjs";
+import { buildDefenderPool, toFoundryFormula } from "../combat/pool-builder.mjs";
 import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 import {
     normalizeManeuver,
@@ -34,7 +34,7 @@ import {
     planCommitPostManeuver,
     planCommitFullTurnManeuver,
 } from "../combat/attack-lifecycle.mjs";
-import { planMarkReactionUsed } from "../combat/activation-state.mjs";
+import { planMarkReactionUsed, planMarkMovementReacted } from "../combat/activation-state.mjs";
 
 // PENDING_ATTACK_KIND now lives in combat/attack-lifecycle.mjs and is re-imported above.
 const DEFAULT_UNARMED_WEAPON_SOURCE = {
@@ -101,6 +101,7 @@ export function registerCombatResolverService() {
             resolveAttackOutcome,
             executeSafeCounterattack,
             markReactionUsed,
+            markMovementReacted,
             rotateTokenAuthoritative,
             spendLoadedAmmo,
             swapLoadedAmmo,
@@ -199,10 +200,19 @@ export async function declareMovement(options = {}) {
 }
 
 async function executeResolvedReaction(resolution) {
-    return executeResolvedReactionPhased(resolution, runPhases, {
+    const declared = await executeResolvedReactionPhased(resolution, runPhases, {
         normalizeWeapon,
         buildAttackReactionCandidates,
     });
+    // Threat reactions (overwatch / opportunity) declare a free attack here but
+    // nothing rolls it — resolve it now so the shot deals damage. Scoped to the
+    // threat-zone trigger so it never double-fires with the attack-side safe
+    // counterattack (handled separately by the HUD flow).
+    if (resolution?.trigger === "threat-zone" && declared?.pendingAttack && !declared.cancelled) {
+        try { await resolveFreeAttack(declared.pendingAttack); }
+        catch (err) { console.error(`${MODULE_ID} | resolveFreeAttack failed`, err); }
+    }
+    return declared;
 }
 // ─── Reaction-candidate orchestrators ─────────────────────────────────────
 //
@@ -579,6 +589,64 @@ async function spendActorManeuverCost(actor, maneuver) {
 async function markReactionUsed(actor) {
     const { patches } = planMarkReactionUsed(actor, game.combat);
     if (patches.length) await applyPatches(patches);
+}
+
+// Mark a reactor's movement reaction against a specific mover spent this round.
+async function markMovementReacted(reactor, mover) {
+    const { patches } = planMarkMovementReacted(reactor, mover, game.combat);
+    if (patches.length) await applyPatches(patches);
+}
+
+// Roll + resolve a free attack that was only *declared* (e.g. an overwatch /
+// opportunity shot from a threat reaction; executeResolvedReactionPhased declares
+// but doesn't resolve). Rolls the attacker's profile, the target's armour, then
+// resolveAttackOutcome — writes route to the GM via the dispatcher.
+async function rollPublicTotals(formula, speaker, flavor) {
+    if (!formula) return null;
+    const RollCls = globalThis.Roll;
+    const roll = await new RollCls(formula).evaluate({ async: true });
+    const publicMode = globalThis.CONST?.DICE_ROLL_MODES?.PUBLIC ?? "publicroll";
+    await roll.toMessage({ speaker, flavor }, { rollMode: publicMode });
+    const computeRollTotals = game.modules.get(MODULE_ID)?.api?.computeRollTotals;
+    return typeof computeRollTotals === "function" ? computeRollTotals([roll]) : null;
+}
+
+function actorDefenseFormula(actor) {
+    const armor = (actor?.items?.contents ?? actor?.items ?? [])
+        .map((item) => {
+            const props = item?.system?.props ?? {};
+            const sourceData = item?.flags?.["1547Core"]?.sourceData ?? item?.flags?.["1547core"]?.sourceData ?? {};
+            const equipped = props.Equipped === true || Number(props.Equipped) === 1
+                || String(props.Equipped ?? "").trim().toLowerCase() === "true" || sourceData?.equipped === true;
+            if (!equipped) return null;
+            const dice = Array.isArray(sourceData?.defenseDice)
+                ? [...sourceData.defenseDice]
+                : String(props.Defense ?? "").split(",").map((e) => e.trim()).filter(Boolean);
+            return dice.length ? dice : null;
+        })
+        .filter(Boolean)[0] ?? buildDefenderPool(undefined);
+    return toFoundryFormula(armor);
+}
+
+async function resolveFreeAttack(pendingAttack) {
+    const attacker = pendingAttack?.actor ?? null;
+    const target = pendingAttack?.target ?? null;
+    if (!attacker || !target) return;
+    const dice = Array.isArray(pendingAttack?.profile?.dice) ? pendingAttack.profile.dice : [];
+    const formula = toFoundryFormula(dice);
+    if (!formula) return;
+    const ChatMessageCls = globalThis.ChatMessage;
+    const aTok = attacker.getActiveTokens?.(true)?.[0] ?? null;
+    const tTok = target.getActiveTokens?.(true)?.[0] ?? null;
+    const speaker = ChatMessageCls.getSpeaker({ actor: attacker, token: aTok?.document });
+    const attackRoll = await rollPublicTotals(formula, speaker, `Reaction Attack<br>${attacker.name ?? "Attacker"} -> ${target.name ?? "Target"}`);
+    if (!attackRoll) return;
+    const defenseRoll = await rollPublicTotals(actorDefenseFormula(target), ChatMessageCls.getSpeaker({ actor: target, token: tTok?.document }), `Defense<br>${target.name ?? "Target"}`);
+    const resolved = await resolveAttackOutcome({ pendingAttack, attackRoll, defenseRoll });
+    await ChatMessageCls.create({
+        speaker,
+        content: `<strong>Reaction Attack</strong><br>${attacker.name ?? "Attacker"} -> ${target.name ?? "Target"}<br>Damage: ${attackRoll.damage ?? 0}<br>Protection: ${defenseRoll?.protection ?? 0}<br>Applied: ${resolved?.damageApplied ?? 0}`,
+    });
 }
 
 async function appendCommittedManeuverState(actor, record) {

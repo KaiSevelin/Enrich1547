@@ -47,6 +47,11 @@ Hooks.once("init", () => {
         (module) => module.registerSafeCounterattackRelay()
     );
     void runImportedModuleStep(
+        "registerMovementReactions",
+        () => import("./combat/movement-reactions.js"),
+        (module) => module.registerMovementReactions()
+    );
+    void runImportedModuleStep(
         "registerTurnCues",
         () => import("./combat/turn-cues.js"),
         (module) => module.registerTurnCues()

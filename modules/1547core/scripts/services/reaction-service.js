@@ -12,7 +12,7 @@ import {
     presentCandidateDialog,
     escapeRelayHtml,
 } from "./remote-window-relay.js";
-import { isReactionAvailable } from "../combat/activation-state.mjs";
+import { isReactionAvailable, isMovementReactionAvailable } from "../combat/activation-state.mjs";
 
 const DEFAULT_REACTION_WINDOW_SECONDS = 10;
 
@@ -183,9 +183,16 @@ async function handleReactionTrigger(sourceEvent, trigger) {
         ?? reactionWindow.actor
         ?? null;
 
-    // Once-per-round reaction economy (Move 3): if the reactor already spent its
-    // reaction this round, offer nothing — it renews next round.
-    if (reactorActor && !isReactionAvailable(reactorActor, globalThis.game?.combat)) return null;
+    // Reaction economy (Move 3). Attack reactions are once-per-round; movement
+    // (threat / overwatch) reactions are once-per-mover-per-round (so opponent C
+    // can still react after B has). Offer nothing when the reactor has none left.
+    const mover = trigger === "threat-zone" ? (sourceEvent.payload?.mover ?? null) : null;
+    if (reactorActor) {
+        const available = trigger === "threat-zone"
+            ? isMovementReactionAvailable(reactorActor, mover, globalThis.game?.combat)
+            : isReactionAvailable(reactorActor, globalThis.game?.combat);
+        if (!available) return null;
+    }
 
     const relayed = relayReactionWindow({
         windowId, reactorActor, selectionController, candidates, trigger, timeoutMs,
@@ -216,11 +223,18 @@ async function handleReactionTrigger(sourceEvent, trigger) {
     // and clear the waiting indicator (no-op if the responder already answered).
     if (relayed) closeRelayedWindow(windowId);
 
-    if (!selectedReaction) return null;
+    // Spend the reaction economy. A movement (threat) reaction is spent on
+    // resolution — pass OR use — so declining the first opportunity doesn't
+    // re-trigger on the same mover this round. An attack reaction is spent only
+    // when actually used.
+    const combatApi = game.modules.get(MODULE_ID)?.api?.combat;
+    if (trigger === "threat-zone") {
+        if (reactorActor && mover) void combatApi?.markMovementReacted?.(reactorActor, mover);
+    } else if (selectedReaction && reactorActor) {
+        void combatApi?.markReactionUsed?.(reactorActor);
+    }
 
-    // A reaction was actually taken — spend it for this round (Move 3).
-    const markReactionUsed = game.modules.get(MODULE_ID)?.api?.combat?.markReactionUsed;
-    if (typeof markReactionUsed === "function" && reactorActor) void markReactionUsed(reactorActor);
+    if (!selectedReaction) return null;
 
     if (selectedReaction?.generatedByPersistentEffect === "overwatch") {
         const consumePersistentEffect = game.modules.get(MODULE_ID)?.api?.combat?.consumePersistentEffect;

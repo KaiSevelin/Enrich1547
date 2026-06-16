@@ -240,12 +240,20 @@ Combat is not only attacks — moving through a threatened space can provoke rea
 full-turn **overwatch** stance lets an actor strike movers. This is the second resolution path,
 parallel to the attack lifecycle (§5).
 
-- **Declare movement** — `declareMovementPhased` builds a pending move, emits `MOVEMENT_STARTED`,
-  then for **each threatened square entered along the path** emits a `THREAT_ZONE_ENTERED` event
-  carrying a `reactor` (the zone owner, `resolveThreatReactionActor`) and threat-reaction candidates
-  (`buildThreatReactionCandidates` → `getLegalManeuvers` with `triggerType:"threat-zone-entered"`).
-  Each threat event resolves through the **same reaction machinery** as an attack (§6); resolutions
-  are collected on `reactionResolutions`.
+- **Trigger (✅ wired).** `combat/movement-reactions.js` watches `updateToken`: when a combatant
+  moves, the **GM** (authoritative) computes the move path and, for each opposing live combatant
+  whose threat reach the path approaches, calls `declareMovement` with **one threat event per
+  reactor** (not per square). `declareMovementPhased` emits `MOVEMENT_STARTED` then a
+  `THREAT_ZONE_ENTERED` per event (`reactor` + `distanceSquares`), resolving through the **same
+  reaction machinery** as an attack (§6) — relayed to each reactor's owner.
+- **Economy (per-mover, per-round).** A reactor gets **one** movement reaction against a **given
+  mover per round** (`isMovementReactionAvailable` / `planMarkMovementReacted`, separate from the
+  attack economy). It is spent on **resolution — pass or use** — so declining the first opportunity
+  doesn't re-trigger on the mover's later steps; a different opponent can still react.
+- **The shot resolves.** A threat/overwatch reaction that grants a free attack is now **rolled and
+  resolved** (`resolveFreeAttack` in the resolver — attacker roll → target defense →
+  `resolveAttackOutcome` → card), scoped to the `threat-zone` trigger so it never double-fires with
+  the attack-side safe counterattack (§5 step 8).
 - **Overwatch** is a **full-turn persistent effect** (`createsPersistentEffect:"overwatch"`,
   `persistent-effects.mjs`). While active, the actor gains a synthetic **overwatch reaction
   candidate** (`buildOverwatchReactionCandidate`) — a free ranged/reach shot — offered on
