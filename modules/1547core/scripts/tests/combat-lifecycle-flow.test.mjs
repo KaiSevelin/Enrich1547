@@ -302,6 +302,35 @@ console.log("\nresolveAttackOutcomePhased...");
 }
 
 {
+    // Crits are PER-TOKEN: the attacker keeps its attack crits, the defender its
+    // defense crits; they are not pooled. The sum is exposed only for the card.
+    const attacker = fakeActor({ id: "a", name: "Attacker" });
+    const defender = fakeActor({ id: "d", name: "Defender", hp: 10 });
+    const pendingAttack = {
+        kind: "1547core.pendingAttack",
+        actor: attacker, target: defender,
+        weapon: fakeWeapon(),
+        profile: { id: "default", attackType: "melee", allowedAmmoTypes: [] },
+        loadedAmmo: null, committed: false, mergedModifiers: {}, metadata: {},
+    };
+    const fakeRun = makeFakeRun([
+        { cancelled: false, results: [] },  // damageApplied
+        { cancelled: false, results: [] },  // actionCommitted
+    ]);
+    const result = await resolveAttackOutcomePhased({
+        pendingAttack,
+        attackRoll: { damage: 5, protection: 0, crit: 2, fumble: 0, multiplier: 1 },
+        defenseRoll: { damage: 0, protection: 2, crit: 1, fumble: 0, multiplier: 1 },
+        buildDefaultDefenseRollSummary: () => null,
+    }, fakeRun);
+
+    assert.strictEqual(result.attackerCriticalPoints, 2, "attacker keeps its 2 attack crits");
+    assert.strictEqual(result.defenderCriticalPoints, 1, "defender keeps its 1 defense crit");
+    assert.strictEqual(result.currentCriticalPoints, 3, "sum (3) is exposed only for the result card");
+    console.log("  ✓ per-token crits: attacker 2 / defender 1, not pooled");
+}
+
+{
     // Zero damage: no applyDamage phase
     const attacker = fakeActor({ id: "a" });
     const defender = fakeActor({ id: "d", hp: 10 });

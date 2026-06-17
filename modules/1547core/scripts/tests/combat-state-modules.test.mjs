@@ -103,12 +103,12 @@ console.log("\nhp-state.planApplyDamage...");
     assert.strictEqual(result.currentHitPoints, 7);
     assert.strictEqual(result.isDead, false);
     assert.strictEqual(result.isUnconscious, false);
-    assert.strictEqual(patches.length, 4, "HP update + 3 status effects");
+    assert.strictEqual(patches.length, 3, "HP update + 2 status effects");
     assert.strictEqual(patches[0].kind, "actor.update");
     assert.strictEqual(patches[0].data["system.props.CurrentHitPoints"], 7);
     const statusKinds = patches.slice(1).map((p) => `${p.keyword}=${p.active}`);
-    assert.deepStrictEqual(statusKinds, ["dead=false", "defeated=false", "unconscious=false"]);
-    console.log("  ✓ partial damage: HP patch + 3 inactive status effects");
+    assert.deepStrictEqual(statusKinds, ["dead=false", "unconscious=false"]);
+    console.log("  ✓ partial damage: HP patch + 2 inactive status effects");
 }
 
 {
@@ -118,8 +118,8 @@ console.log("\nhp-state.planApplyDamage...");
     assert.strictEqual(result.isDead, true);
     assert.strictEqual(result.isUnconscious, false);
     const statusKinds = patches.slice(1).map((p) => `${p.keyword}=${p.active}`);
-    assert.deepStrictEqual(statusKinds, ["dead=true", "defeated=true", "unconscious=false"]);
-    console.log("  ✓ lethal damage: dead+defeated true, unconscious false");
+    assert.deepStrictEqual(statusKinds, ["dead=true", "unconscious=false"]);
+    console.log("  ✓ lethal damage: dead true, unconscious false");
 }
 
 {

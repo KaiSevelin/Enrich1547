@@ -132,6 +132,17 @@ const COMBAT_FILES = [
     "maneuver-state.mjs",
     "attack-lifecycle.mjs",
     "lifecycle-flow.mjs",
+    // Side-model, cover, reaction-economy and turn-cue modules (no side effects at
+    // import; none pull in dice1547 / dice-so-nice).
+    "activation-state.mjs",
+    "facing.mjs",
+    "movement-reactions.js",
+    "ranged-cover.js",
+    "safe-counterattack.js",
+    "post-maneuver-relay.js",
+    "defense-summary.js",
+    "turn-cues.js",
+    "public-initiative.js",
 ];
 
 console.log("smoke-load: services/...");

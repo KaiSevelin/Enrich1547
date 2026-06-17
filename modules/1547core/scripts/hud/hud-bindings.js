@@ -1,4 +1,15 @@
-﻿export function bindHudInteractions(root, token, deps = {}) {
+﻿// Modifier keys for roll buttons. ALT (or SHIFT, a reliable alternate) → advantage;
+// CTRL/META → disadvantage. Event keys are primary; game.keyboard is a defensive fallback
+// for the case where the synthesized event loses modifier state.
+function resolveRollModifier(event) {
+    const MODS = globalThis.KeyboardManager?.MODIFIER_KEYS ?? { ALT: "Alt", CONTROL: "Control" };
+    const kb = globalThis.game?.keyboard;
+    const advantage = event.altKey || event.shiftKey || kb?.isModifierActive?.(MODS.ALT);
+    const disadvantage = event.ctrlKey || event.metaKey || kb?.isModifierActive?.(MODS.CONTROL);
+    return advantage ? "advantage" : disadvantage ? "disadvantage" : null;
+}
+
+export function bindHudInteractions(root, token, deps = {}) {
     const {
         HUD_STATE,
         ui,
@@ -416,34 +427,42 @@
             void renderHudForSelection();
         });
     }
+    // Roll buttons fire on `pointerup`, not `click`: holding ALT triggers Foundry's
+    // "Highlight Objects" keybinding, which suppresses the synthesized click on the button
+    // (CTRL has no such binding, so it worked). `pointerup` fires regardless and reads the
+    // modifier from the pointer event. SHIFT is wired as a guaranteed-reliable advantage
+    // alternate. See resolveRollModifier.
     for (const button of root.querySelectorAll("[data-hud-stat]")) {
-        button.addEventListener("click", async (event) => {
+        button.addEventListener("pointerup", async (event) => {
+            if (event.button !== 0) return;
             const stat = event.currentTarget.dataset.hudStat;
             if (!stat) return;
             const context = buildHudActionContext(token?.actor, token);
-            context.rollModifier = event.altKey ? "advantage" : (event.ctrlKey || event.metaKey) ? "disadvantage" : null;
+            context.rollModifier = resolveRollModifier(event);
             const descriptor = createStatActionDescriptor(context, stat);
             await runHudAction(descriptor, context);
             void renderHudForSelection();
         });
     }
     for (const button of root.querySelectorAll("[data-hud-skill]")) {
-        button.addEventListener("click", async (event) => {
+        button.addEventListener("pointerup", async (event) => {
+            if (event.button !== 0) return;
             const skill = event.currentTarget.dataset.hudSkill;
             if (!skill) return;
             const context = buildHudActionContext(token?.actor, token);
-            context.rollModifier = event.altKey ? "advantage" : (event.ctrlKey || event.metaKey) ? "disadvantage" : null;
+            context.rollModifier = resolveRollModifier(event);
             const descriptor = createSkillActionDescriptor(context, skill);
             await runHudAction(descriptor, context);
             void renderHudForSelection();
         });
     }
     for (const button of root.querySelectorAll("[data-hud-weapon-attack]")) {
-        button.addEventListener("click", async (event) => {
+        button.addEventListener("pointerup", async (event) => {
+            if (event.button !== 0) return;
             const weaponId = event.currentTarget.dataset.hudWeaponAttack;
             if (!weaponId || !token?.actor) return;
             const context = buildHudActionContext(token.actor, token);
-            context.rollModifier = event.altKey ? "advantage" : (event.ctrlKey || event.metaKey) ? "disadvantage" : null;
+            context.rollModifier = resolveRollModifier(event);
             const descriptor = createWeaponAttackActionDescriptor(context, weaponId);
             await runHudAction(descriptor, context);
             void renderHudForSelection();

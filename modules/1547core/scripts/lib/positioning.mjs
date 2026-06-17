@@ -60,6 +60,25 @@ export function footprintTiles(token) {
     return out;
 }
 
+// Nearest-edge Chebyshev distance (in grid tiles) between two token footprints,
+// each described as { col, row, w, h }. Overlapping footprints → 0; touching
+// (orthogonally OR diagonally) → 1. This is the melee reach / adjacency metric
+// (battle-flow-spec §12 #4): it measures the gap between occupied tiles, so large
+// tokens and diagonal placement read correctly (center-to-center misjudged them).
+// For a 1×1-vs-1×1 pair it equals the old center-Chebyshev exactly.
+export function footprintDistanceSquares(a, b) {
+    if (!a || !b) return null;
+    const aw = Math.max(1, Math.round(a.w ?? 1));
+    const ah = Math.max(1, Math.round(a.h ?? 1));
+    const bw = Math.max(1, Math.round(b.w ?? 1));
+    const bh = Math.max(1, Math.round(b.h ?? 1));
+    // Separation of two closed integer intervals [lo,hi]; 0 when they overlap.
+    const axisGap = (lo1, hi1, lo2, hi2) => Math.max(0, lo1 - hi2, lo2 - hi1);
+    const gapX = axisGap(a.col, a.col + aw - 1, b.col, b.col + bw - 1);
+    const gapY = axisGap(a.row, a.row + ah - 1, b.row, b.row + bh - 1);
+    return Math.max(gapX, gapY);
+}
+
 // Whether tile offset (dx,dy) at Chebyshev `distance` lies in the cone facing
 // `facing`. Identical masks to the HUD's getThreatTiles, so the lib and the
 // on-canvas overlay agree exactly.

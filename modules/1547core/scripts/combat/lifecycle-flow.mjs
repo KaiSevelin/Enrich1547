@@ -444,7 +444,6 @@ export async function resolveAttackOutcomePhased({
     defenseReaction = null,
     defenderPostChoice = null,
     attackerPostChoice = null,
-    currentCriticalPoints = null,
     currentDamageTakenReaction = null,
     buildDefaultDefenseRollSummary,
 } = {}, run) {
@@ -548,9 +547,13 @@ export async function resolveAttackOutcomePhased({
     }
     const damageApplied = baseDamageApplied + secondaryDamageApplied;
 
-    const criticalPoints =
-        currentCriticalPoints
-        ?? Math.max(0, normalizedAttackRoll.crit) + Math.max(0, normalizedDefenseRoll.crit);
+    // Crits are PER-TOKEN (battle-flow-spec §10): each side spends only the crits
+    // IT rolled — the defender its defense crits, the attacker its attack crits.
+    // They are NOT pooled. `criticalPoints` (the sum) is retained only for the
+    // informational Attack Result card; the post-windows use the per-side values.
+    const attackerCriticalPoints = Math.max(0, normalizedAttackRoll.crit);
+    const defenderCriticalPoints = Math.max(0, normalizedDefenseRoll.crit);
+    const criticalPoints = attackerCriticalPoints + defenderCriticalPoints;
 
     // ── Phase 2: defense follow-up patches (locked parrying weapon) ──
     const { patches: defensePatches, result: defenseResult } = planApplyDefenseFollowUpState(pendingAttack, defenseModifiers);
@@ -588,7 +591,7 @@ export async function resolveAttackOutcomePhased({
         target: pendingAttack.actor,
         timingType: "post",
         triggerType: "post-attack",
-        currentCriticalPoints: criticalPoints,
+        currentCriticalPoints: defenderCriticalPoints,
         actorConditions: pendingAttack.metadata?.targetConditions,
         targetConditions: pendingAttack.metadata?.actorConditions,
     });
@@ -599,7 +602,7 @@ export async function resolveAttackOutcomePhased({
         target: pendingAttack.target,
         timingType: "post",
         triggerType: "post-attack",
-        currentCriticalPoints: criticalPoints,
+        currentCriticalPoints: attackerCriticalPoints,
         actorConditions: pendingAttack.metadata?.actorConditions,
         targetConditions: pendingAttack.metadata?.targetConditions,
     });
@@ -611,7 +614,7 @@ export async function resolveAttackOutcomePhased({
             actor: pendingAttack.target,
             target: pendingAttack.actor,
             pendingAttack,
-            currentCriticalPoints: criticalPoints,
+            currentCriticalPoints: defenderCriticalPoints,
             legalPostManeuvers: defenderPostOptions,
             selectedPostManeuver: defenderPostChoice,
             actorConditions: pendingAttack.metadata?.targetConditions,
@@ -622,7 +625,7 @@ export async function resolveAttackOutcomePhased({
             actor: pendingAttack.actor,
             target: pendingAttack.target,
             pendingAttack,
-            currentCriticalPoints: criticalPoints,
+            currentCriticalPoints: attackerCriticalPoints,
             legalPostManeuvers: attackerPostOptions,
             selectedPostManeuver: attackerPostChoice,
             actorConditions: pendingAttack.metadata?.actorConditions,
@@ -683,7 +686,9 @@ export async function resolveAttackOutcomePhased({
         secondaryDamageApplied,
         secondaryEffects: triggeredModifierEffects,
         hitPointUpdate,
-        currentCriticalPoints: criticalPoints,
+        currentCriticalPoints: criticalPoints, // sum, for the informational result card
+        attackerCriticalPoints,
+        defenderCriticalPoints,
         appliedModifiers,
         defenseModifiers,
         defenseFollowUpState,

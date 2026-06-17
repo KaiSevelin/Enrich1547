@@ -1,6 +1,8 @@
 ﻿import { COMBAT_EVENTS, onCombatEvent } from "../services/combat-events.js";
 import { buildAttackPool, toFoundryFormula } from "../combat/pool-builder.mjs";
 import { relayPostManeuverWindow } from "../combat/post-maneuver-relay.js";
+import { laneObstacles } from "../combat/ranged-cover.js";
+import { tokenDescriptor, footprintDistanceSquares } from "../lib/positioning.mjs";
 import {
     HUD_STATE,
     getSelectedPreManeuverIds,
@@ -767,6 +769,12 @@ function getWeaponRangeBands(item) {
 }
 
 function getChebyshevDistanceSquares(sourceToken, targetToken) {
+    // Nearest-edge footprint distance (battle-flow-spec §12 #4): correct for large
+    // tokens and diagonals, and identical to center-Chebyshev for 1×1 pairs.
+    const a = tokenDescriptor(sourceToken);
+    const b = tokenDescriptor(targetToken);
+    if (a && b) return footprintDistanceSquares(a, b);
+    // Fallback: center-to-center if descriptors are unavailable.
     const source = sourceToken?.center ?? null;
     const target = targetToken?.center ?? null;
     const size = Number(canvas?.dimensions?.size) || 0;
@@ -1309,6 +1317,9 @@ function renderThreatOverlay(token) {
 
     const graphics = new PIXI.Graphics();
     let hasOverlay = false;
+    // PIXI.Text badges live as direct children of the layer (Text can't go in a
+    // Graphics); collected here and added ON TOP of the graphics at the end.
+    const laneBadges = [];
 
     const rangedSource = getRangedSource(token.actor);
     const { shortRange, longRange, maxRange } = getWeaponRangeBands(rangedSource);
@@ -1347,6 +1358,48 @@ function renderThreatOverlay(token) {
         }
     }
 
+    // Ranged-shot lane (ranged-shot-visualization-spec Phase 1): when this token is a
+    // ranged shooter with a current target, draw the shot lane tinted by range band, a
+    // "n/6" cover-odds badge over each obstacle in the lane (ally badges red), and the
+    // target's rear cone (where the +1 lands). Pure presentation; reuses laneObstacles.
+    if (rangedSource && Number.isFinite(maxRange) && maxRange > 0) {
+        const target = getPrimaryTargetToken();
+        const sc = token.center;
+        const tc = target?.center;
+        if (target && target !== token && target.id !== token.id && sc && tc) {
+            const dist = getChebyshevDistanceSquares(token, target);
+            const laneColor = !Number.isFinite(dist) || dist <= shortRange
+                ? RANGE_SHORT_FILL_COLOR
+                : dist <= longRange ? RANGE_LONG_FILL_COLOR : RANGE_MAX_FILL_COLOR;
+            graphics.lineStyle(3, laneColor, 0.85).moveTo(sc.x, sc.y).lineTo(tc.x, tc.y);
+            hasOverlay = true;
+
+            const grid = Number(canvas?.grid?.size) || Number(canvas?.dimensions?.size) || 100;
+            for (const obstacle of laneObstacles(token, target)) {
+                const obstacleToken = canvas?.tokens?.get?.(obstacle.id);
+                const oc = obstacleToken?.center;
+                if (!oc) continue;
+                const ally = obstacleToken.document?.disposition === token.document?.disposition;
+                const badge = new PIXI.Text(`${obstacle.blockValue}/6`, {
+                    fontFamily: "sans-serif",
+                    fontSize: Math.round(grid * 0.28),
+                    fill: ally ? 0xff5555 : 0xffffff,
+                    stroke: 0x000000,
+                    strokeThickness: 3,
+                });
+                badge.anchor.set(0.5, 0.5);
+                badge.position.set(oc.x, oc.y);
+                laneBadges.push(badge);
+            }
+
+            // Target's rear cone — reuse the vulnerability colour to show the +1 is available.
+            const rearTiles = getVulnerabilityTiles(target);
+            if (rearTiles.length) {
+                drawOverlayTiles(graphics, rearTiles, VULNERABILITY_FILL_COLOR, VULNERABILITY_FILL_ALPHA, VULNERABILITY_STROKE_ALPHA);
+            }
+        }
+    }
+
     const threatSource = getThreatSource(token.actor);
     const { minReach, maxReach } = getWeaponReach(threatSource);
     if (Number.isFinite(minReach) && Number.isFinite(maxReach) && maxReach >= minReach && maxReach >= 1) {
@@ -1369,6 +1422,7 @@ function renderThreatOverlay(token) {
     }
 
     layer.addChild(graphics);
+    for (const badge of laneBadges) layer.addChild(badge); // on top of the graphics
     layer.visible = true;
 }
 
@@ -2204,7 +2258,13 @@ export function register1547ActorHud() {
     Hooks.on("updateItem", (item) => rerenderHudIfViewingActor(item.parent?.id));
     Hooks.on("deleteItem", (item) => rerenderHudIfViewingActor(item.parent?.id));
     Hooks.on("updateCombat", () => void renderHudForSelection());
-    Hooks.on("targetToken", () => void renderHudForSelection());
+    Hooks.on("targetToken", () => {
+        void renderHudForSelection();
+        // Refresh the overlay so the ranged-shot lane / cover badges / rear marker
+        // track the new target (the lane is anchored on the selected shooter).
+        const selectedToken = getSelectedToken();
+        if (selectedToken) renderThreatOverlay(selectedToken);
+    });
     Hooks.on("updateToken", (document) => {
         const selectedToken = getSelectedToken();
         const targetedTokenIds = new Set(Array.from(game.user?.targets ?? []).map((token) => token.document?.id));

@@ -4,6 +4,7 @@ import { autoFaceAttacker, getAttackPositioning, positioningNote, positionalAdva
 import { showDefenseSummary } from "../combat/defense-summary.js";
 import { relayRemoteWindow, presentCandidateDialog, escapeRelayHtml } from "../services/remote-window-relay.js";
 import { laneObstacles, rollLaneInterception, describeLaneOdds, lineOfSightBlocked } from "../combat/ranged-cover.js";
+import { applyRollClickModifier } from "../lib/roll-modifier.mjs";
 
 const SAFE_COUNTERATTACK_WINDOW_MS = 15000;
 
@@ -242,28 +243,6 @@ async function waitForDice1547Totals(game, message, { timeoutMs = 5000, interval
 
     const [hookResult, polledResult] = await Promise.all([hookPromise, pollPromise]);
     return hookResult ?? polledResult ?? null;
-}
-
-// Click modifier on a HUD roll button: ALT → advantage (+1 die on the base
-// pool), CTRL/Cmd → disadvantage (-1 die, never below 1d6). Adjusts the first
-// dice term of the formula so it applies uniformly to stat / skill / attack rolls.
-// (The event → "advantage"/"disadvantage" mapping is set on context.rollModifier
-// in hud-bindings.)
-function applyRollClickModifier(formula, modifier) {
-    if (!modifier || !formula) return formula;
-    const str = String(formula);
-    const m = str.match(/(\d+)d([a-z0-9]+)/i);
-    if (!m) return formula;
-    const count = Number(m[1]) || 1;
-    if (modifier === "advantage") {
-        return str.replace(m[0], `${count + 1}d${m[2]}`);
-    }
-    // Disadvantage: one fewer die (never below 1d6) AND drop a trailing flat "+N"
-    // bonus, so e.g. a "1d6 + 3" stat roll becomes a bare "1d6". (Pure dice terms
-    // like "+1dr" are not stripped — only a flat numeric bonus.)
-    return str
-        .replace(m[0], `${Math.max(1, count - 1)}d${m[2]}`)
-        .replace(/\s*\+\s*\d+\s*$/, "");
 }
 
 async function rollFormulaToChatAndSummarize({ Roll, speaker, formula, flavor, game }) {
@@ -593,7 +572,7 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
             : "";
         await ChatMessage.create({
             speaker,
-            content: `<strong>Attack Result</strong><br>${escapeHtml(attackerName)} -> ${escapeHtml(defenderName)}<br>Damage: ${escapeHtml(String(resolvedAttack?.attackRoll?.damage ?? 0))}<br>Protection: ${escapeHtml(String(resolvedAttack?.defenseRoll?.protection ?? 0))}<br>Applied: ${escapeHtml(String(resolvedAttack?.damageApplied ?? 0))}<br>Critical: ${escapeHtml(String(resolvedAttack?.currentCriticalPoints ?? 0))}${hpText}${ridersText}`
+            content: `<strong>Attack Result</strong><br>${escapeHtml(attackerName)} -> ${escapeHtml(defenderName)}<br>Damage: ${escapeHtml(String(resolvedAttack?.attackRoll?.damage ?? 0))}<br>Protection: ${escapeHtml(String(resolvedAttack?.defenseRoll?.protection ?? 0))}<br>Applied: ${escapeHtml(String(resolvedAttack?.damageApplied ?? 0))}<br>Critical: attacker ${escapeHtml(String(resolvedAttack?.attackerCriticalPoints ?? 0))} / defender ${escapeHtml(String(resolvedAttack?.defenderCriticalPoints ?? 0))}${hpText}${ridersText}`
         });
 
         // Push a defense summary to the defender's own client (informational).

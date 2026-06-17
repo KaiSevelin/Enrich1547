@@ -373,12 +373,15 @@ card as a secondary path.
 3. `baseDamage = max(0, attack.damage − defense.protection − reduceDamageTaken)`.
 4. Secondary/on-hit effects (gated by trigger mode, base-damage-passed, save/contest) add to
    `secondaryDamage`. `damageApplied = base + secondary`.
-5. **Critical points** = `attack.crit + defense.crit` (both sides) → feed post-maneuvers.
+5. **Critical points** are **per-token**: the attacker's post-maneuver window sees `attack.crit`,
+   the defender's sees `defense.crit` — each token spends only the crits *it* rolled (see §10).
 
 ### Damage / HP (`hp-state.mjs`)
 
 `planApplyDamage` writes `system.props.CurrentHitPoints` and toggles status effects: `dead`
-(+`defeated`) when HP ≤ 0, `unconscious` when 0 < HP ≤ 1.
+when HP ≤ 0, `unconscious` when 0 < HP ≤ 1. (`dead` alone marks the outcome — by ruling we no
+longer also set a `defeated` *status*. The Foundry **combatant** `defeated` flag is synced
+separately — it gates movement-reaction targeting and the tracker — and is kept.)
 
 ### Conditions (`condition-registry.js`)
 
@@ -394,18 +397,26 @@ After damage, both sides may spend **critical points** on `post` maneuvers.
 `currentCriticalPoints = attack.crit + defense.crit` — the crit faces from **both** rolls of the
 exchange.
 
-**Pool rule (by design): the crit pool is SHARED and not split.** If a side rolled *any* crits, it
-may use them; if *both* sides rolled crits, *both* may use them. The pool is **not decremented**
-between the defender's and the attacker's post-maneuver windows — each window sees the full
-`currentCriticalPoints` and spends against it independently. (So a single exchange's crits can fuel
-both a defender post-maneuver and an attacker post-maneuver.)
+**Pool rule (by ruling, 2026-06-17): crits are PER-TOKEN, not shared.** Only the token that rolled
+a crit may spend it: the **defender** spends `defense.crit` on its post-maneuver window, the
+**attacker** spends `attack.crit` on its own — neither can spend the other's. Crits **expire at the
+end of the exchange** (not banked across activations) and are the currency for **critical
+maneuvers**, each of which carries its **own crit cost** (variable per maneuver). *(This overrides
+the earlier "shared per side" rule.)*
 
 `resolveAttackOutcomePhased` builds `defenderPostOptions` and `attackerPostOptions`
-(`getLegalManeuvers` with `timingType:"post"`, `triggerType:"post-attack"`, `currentCriticalPoints`)
-and emits a `POST_MANEUVER_WINDOW_OPENED` per non-empty window (**defender first, then attacker**).
-Each window carries a `commitPostManeuver(selection)` closure (the actual combat write) and is
-queued in the HUD; a defender window owned by a remote player is **relayed** to them (§7) while the
-acting client executes the chosen maneuver. Unspent crits are cleared when the window closes.
+(`getLegalManeuvers` with `timingType:"post"`, `triggerType:"post-attack"`) and emits a
+`POST_MANEUVER_WINDOW_OPENED` per non-empty window (**defender first, then attacker**), each window
+seeing **only its own token's crit count**. Each carries a `commitPostManeuver(selection)` closure
+(the actual combat write, which spends the maneuver's crit cost) and is queued in the HUD; a
+defender window owned by a remote player is **relayed** to them (§7) while the acting client
+executes the chosen maneuver. Unspent crits are cleared when the window closes.
+
+`resolveAttackOutcomePhased` computes `attackerCriticalPoints` / `defenderCriticalPoints` separately
+and feeds each window its own; it also returns their **sum** as `currentCriticalPoints` purely for
+the informational Attack Result card. The per-maneuver crit cost is the maneuver's
+`CostAmount` (with `CostType: "CriticalPoints"`), enforced by `passesResourceGate` in
+`maneuver-legality.mjs`.
 
 ---
 
@@ -447,10 +458,11 @@ acting client executes the chosen maneuver. Unspent crits are cleared when the w
    via the Move 1 dispatcher). Attack/movement economy stays **manual** (by ruling). Note: a
    *specific* reaction like Face is *also* gated by geometry (§8) and the off-turn facing lock (#5),
    so "Face missing" can still be correct geometry even with a reaction available.
-4. **Reach measurement is center-to-center Chebyshev.** Correct for 1×1 tokens (diagonal = 1) but
-   can misjudge **larger tokens** or off-grid placement (it ignores footprint edges). The recurring
-   "diagonal out of reach" is most likely a token-size/placement case — switch reach to
-   footprint-edge distance (min Chebyshev between attacker and defender tiles) to harden it.
+4. **Reach measurement — ✅ nearest-edge footprint distance.** Reach/adjacency now uses
+   `footprintDistanceSquares` (min Chebyshev between the attacker's and target's occupied tiles;
+   `lib/positioning.mjs`, unit-tested) instead of center-to-center. Touching footprints (orthogonal
+   or diagonal) read distance 1, overlap reads 0, so large tokens and the recurring "diagonal out of
+   reach" case resolve correctly. 1×1-vs-1×1 is unchanged. *Needs a live check with a 2×2 token.*
 5. **Off-turn facing lock — ✅ implemented (rotation).** `facing.mjs registerFacingLock` is a
    `preUpdateToken` veto: a player may not rotate an in-combat token off its side's activation
    (bypasses: GM, `facingAutoFace`, `facingForced`, non-combatants). Facing is now a rule, not a
@@ -470,6 +482,34 @@ acting client executes the chosen maneuver. Unspent crits are cleared when the w
 10. **Multi-target & ammunition under-specified.** `declareAttack` accepts `targets[]` and consumes
     loaded ammo (`planConsumeLoadedAmmo`, `ammoAddDice`); this spec documents the single-target melee
     path. Area/multi-target resolution and reload/ammo economy need their own treatment.
+11. **Crit pool per-token — ✅ reconciled.** `resolveAttackOutcomePhased` now feeds the defender
+    window `defenderCriticalPoints` and the attacker window `attackerCriticalPoints` (each its own
+    roll's crits, never pooled); `currentCriticalPoints` survives only as their sum for the result
+    card. Per-maneuver crit cost is the maneuver's `CostAmount` (`CostType: "CriticalPoints"`),
+    gated in `maneuver-legality.mjs passesResourceGate`. Unit-tested in
+    `combat-lifecycle-flow.test.mjs` (per-token split). See §10 and §13.
+
+---
+
+## 13. Canonical rulings (owner, 2026-06-17)
+
+The combat-design decisions these specs/code must follow (also in agent memory `project-combat-rules`):
+
+- **Economy is fully manual** — no engine enforcement of attacks, actions, or movement distance; the
+  engine only *reacts* to movement (overwatch), never limits it.
+- **Turn flow:** the active side acts until it calls **Side Ready** (no take-backs), then the other
+  side; once **both** sides have readied the **round advances** (which renews reactions and ticks
+  round-clocked effects).
+- **Initiative:** rolled **once per combat** (3d6 per side); the resulting side order is **fixed for
+  every round** — never re-rolled.
+- **Defense is always free/unlimited;** the once-per-round reaction economy gates only *extras*
+  (Face, free counterattack, overwatch). Reaction **triggers are a closed set: attack + movement.**
+- **Crits are per-token, expire end of exchange,** and buy **critical maneuvers** at a variable
+  per-maneuver cost (see §10).
+- **Reach = nearest-edge footprint-to-footprint Chebyshev** (see §12 #4).
+- **0 HP → `dead` status only** (the `defeated` *status* is dropped; the combatant `defeated` flag is
+  kept for tracker/movement gating). Conditions/effects are **round-clocked**.
+- **Arc/indirect overhead-clear** is a manual GM call.
 
 ---
 

@@ -100,4 +100,21 @@ assert.equal(faceCand.actor.id, "def1");
 assert.equal(faceCand.target.id, "att1");
 assert.equal(f.buildFaceReactionCandidate(null), null);
 
+// Nearest-edge footprint distance (melee reach metric, §12 #4).
+console.log("positioning.footprintDistanceSquares...");
+{
+    const at = (col, row, w = 1, h = 1) => ({ col, row, w, h });
+    // 1×1 vs 1×1: equals center-Chebyshev.
+    assert.equal(p.footprintDistanceSquares(at(0, 0), at(0, 0)), 0, "same tile → 0");
+    assert.equal(p.footprintDistanceSquares(at(0, 0), at(1, 0)), 1, "orthogonally adjacent → 1");
+    assert.equal(p.footprintDistanceSquares(at(0, 0), at(1, 1)), 1, "diagonally adjacent → 1");
+    assert.equal(p.footprintDistanceSquares(at(0, 0), at(2, 0)), 2, "one gap → 2");
+    // 2×2 attacker: nearest edge, not center. A 2×2 at (0,0) touches a 1×1 at (2,1).
+    assert.equal(p.footprintDistanceSquares(at(0, 0, 2, 2), at(2, 1)), 1, "2×2 footprint touches → 1 (in reach)");
+    assert.equal(p.footprintDistanceSquares(at(0, 0, 2, 2), at(1, 1)), 0, "target inside 2×2 footprint → 0");
+    assert.equal(p.footprintDistanceSquares(at(0, 0, 2, 2), at(3, 0)), 2, "2×2 right edge (col 1) to col 3 → 2 (one empty tile between)");
+    assert.equal(p.footprintDistanceSquares(null, at(0, 0)), null, "missing footprint → null");
+}
+console.log("  ✓ nearest-edge: overlap 0, touching 1, large tokens correct");
+
 console.log("positioning.test.mjs — all assertions passed.");
