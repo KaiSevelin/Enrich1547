@@ -1328,6 +1328,25 @@ function renderThreatOverlay(token) {
         }
     }
 
+    // At-risk cover markers: ring other tokens within the weapon's max range —
+    // "things you might hit by shooting this way" (cover-spec interception risk).
+    if (Number.isFinite(maxRange) && maxRange > 0) {
+        const grid = Number(canvas?.grid?.size) || Number(canvas?.dimensions?.size) || 100;
+        const sc = token.center;
+        if (sc) {
+            for (const other of (canvas?.tokens?.placeables ?? [])) {
+                if (!other || other === token || other.id === token.id || other.document?.hidden) continue;
+                const oc = other.center;
+                if (!oc) continue;
+                const dist = Math.round(Math.max(Math.abs(oc.x - sc.x), Math.abs(oc.y - sc.y)) / grid);
+                if (dist < 1 || dist > maxRange) continue;
+                const radius = (Math.max(other.w || grid, other.h || grid) / 2) + 4;
+                graphics.lineStyle(3, 0xff5555, 0.9).drawCircle(oc.x, oc.y, radius);
+                hasOverlay = true;
+            }
+        }
+    }
+
     const threatSource = getThreatSource(token.actor);
     const { minReach, maxReach } = getWeaponReach(threatSource);
     if (Number.isFinite(minReach) && Number.isFinite(maxReach) && maxReach >= minReach && maxReach >= 1) {
@@ -1832,7 +1851,13 @@ async function renderHudForSelection() {
     root.dataset.actorId = token.actor.id;
     root.innerHTML = buildHudHtml(summarizeActor(token.actor, token));
     applyHudPlacement(root);
-    clearThreatOverlay();
+    // Persist the canvas range overlay (with at-risk cover markers) while a
+    // weapon's "show range" toggle is on; otherwise clear it.
+    if (Object.values(HUD_STATE.weaponRangeShownIds ?? {}).some(Boolean)) {
+        renderThreatOverlay(token);
+    } else {
+        clearThreatOverlay();
+    }
     bindHudInteractionsFromModule(root, token, {
         HUD_STATE,
         ui,

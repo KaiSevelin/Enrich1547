@@ -255,11 +255,15 @@ function applyRollClickModifier(formula, modifier) {
     const m = str.match(/(\d+)d([a-z0-9]+)/i);
     if (!m) return formula;
     const count = Number(m[1]) || 1;
-    const next = modifier === "advantage" ? count + 1
-        : modifier === "disadvantage" ? Math.max(1, count - 1)
-        : count;
-    if (next === count) return formula;
-    return str.replace(m[0], `${next}d${m[2]}`);
+    if (modifier === "advantage") {
+        return str.replace(m[0], `${count + 1}d${m[2]}`);
+    }
+    // Disadvantage: one fewer die (never below 1d6) AND drop a trailing flat "+N"
+    // bonus, so e.g. a "1d6 + 3" stat roll becomes a bare "1d6". (Pure dice terms
+    // like "+1dr" are not stripped — only a flat numeric bonus.)
+    return str
+        .replace(m[0], `${Math.max(1, count - 1)}d${m[2]}`)
+        .replace(/\s*\+\s*\d+\s*$/, "");
 }
 
 async function rollFormulaToChatAndSummarize({ Roll, speaker, formula, flavor, game }) {
