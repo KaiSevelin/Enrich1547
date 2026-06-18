@@ -1,5 +1,6 @@
 import { MODULE_ID } from "../lib/constants.mjs";
 const FLAG_SCOPE = "1547Core";
+const SCHEMA_MIGRATION_SETTING = "schemaMigrationVersion";
 const SCHEMA_MIGRATION_CURRENT_VERSION = 1;
 
 const CANONICAL_DICE = [
@@ -228,9 +229,17 @@ async function migrateCollection(items) {
 export async function runSchemaMigrations() {
   if (!game.user?.isGM) return;
 
+  // World-version gate (mirrors reach-migration): skip the O(actors × items)
+  // scan entirely once the current schema version has been applied, instead of
+  // re-walking and re-stringifying every item on every world load.
+  const appliedVersion = Number(game.settings?.get?.(MODULE_ID, SCHEMA_MIGRATION_SETTING) ?? 0) || 0;
+  if (appliedVersion >= SCHEMA_MIGRATION_CURRENT_VERSION) return;
+
   await migrateCollection(game.items.contents ?? game.items ?? []);
 
   for (const actor of game.actors.contents ?? game.actors ?? []) {
     await migrateCollection(actor.items.contents ?? actor.items ?? []);
   }
+
+  await game.settings?.set?.(MODULE_ID, SCHEMA_MIGRATION_SETTING, SCHEMA_MIGRATION_CURRENT_VERSION);
 }

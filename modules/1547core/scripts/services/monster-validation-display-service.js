@@ -15,6 +15,7 @@
 
 import { validateMonster } from "./changeset-drop-hook.js";
 import { MODULE_ID } from "../lib/constants.mjs";
+import { escapeHtml } from "../lib/foundry-utils.mjs";
 
 const BADGE_CLASS = "monster-validation-1547core";
 
@@ -24,15 +25,6 @@ function findCompositionPanelElement(root) {
         ?? root.querySelector('[data-name="CompositionPanel"]')
         ?? root.querySelector('.composition-panel')
         ?? null;
-}
-
-function escapeHtml(value) {
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
 }
 
 function buildBadge(violations) {

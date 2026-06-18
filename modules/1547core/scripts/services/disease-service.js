@@ -15,6 +15,7 @@
 import { applyConditionDiceModifier, applyCondition, removeCondition } from "./condition-registry.js";
 import { emitDomainEvent, DOMAIN_EVENTS } from "./domain-events.js";
 import { MODULE_ID, DISEASE_TEMPLATE_ID } from "../lib/constants.mjs";
+import { statDice, statMod, escapeHtml } from "../lib/foundry-utils.mjs";
 
 const DISEASE_PACK = "1547core.diseases";
 const PHASE_CONDITION = { Weak: "Weakened", Exhausted: "Exhausted" };
@@ -40,15 +41,12 @@ function tableRows(value) {
     if (value && typeof value === "object") return Object.values(value).filter((r) => r && typeof r === "object");
     return [];
 }
-function statDice(actor, stat) { return Number(props(actor)[`Stats_${stat}Dice`] ?? 0); }
-function statMod(actor, stat) { return Number(props(actor)[`Stats_${stat}Mod`] ?? 0); }
 function faithDice(actor) { return statDice(actor, "Faith"); }
 function isHumourDominant(actor, humourKey) { return props(actor)[HUMOUR_PROP[humourKey]] === true; }
 function dominantHumours(actor) { return Object.keys(HUMOUR_PROP).filter((h) => isHumourDominant(actor, h)); }
 
 function humourLabel(key) { return String(key ?? "").replace(/([a-z])([A-Z])/g, "$1 $2"); }
 function phaseLabel(key) { return humourLabel(key); }
-function escapeHtml(s) { return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 
 function statFormula(actor, stat, bonusDice = 0) {
     const dice = applyConditionDiceModifier(actor, stat, statDice(actor, stat), Number(bonusDice) || 0);
@@ -397,31 +395,11 @@ async function postChat(actor, carrier, content) {
     await ChatMessage.create({ speaker, flavor: carrier?.name ? `Disease — ${carrier.name}` : "Disease", content });
 }
 
-// Add a "Treat" button to an actor-owned disease (affliction) item sheet that
-// opens the cure race board for its current phase. Only shown on afflictions
-// carried by an actor — not on world/compendium disease definitions.
-function addTreatmentHeaderButton(app, buttons) {
-    const item = app?.object;
-    if (item?.system?.template !== DISEASE_TEMPLATE_ID) return;
-    if (item?.parent?.documentName !== "Actor") return;
-    buttons.unshift({
-        class: "open-treatment-board",
-        icon: "fas fa-kit-medical",
-        label: "Treat",
-        onclick: () => {
-            void openTreatmentBoard(item.parent, item).catch((error) => {
-                console.error(`${MODULE_ID} | Failed to open treatment board`, error);
-                ui.notifications.error(`1547 Core: failed to open treatment board. ${error.message}`);
-            });
-        }
-    });
-}
+// The actor-owned affliction's "Treat" action is wired as a CSB label-button on
+// the disease template (OpenTreatmentBoardButton → api.disease.openTreatmentBoard).
+// The old getItemSheetHeaderButtons hook is dead in v13 CSB, so it was removed.
 
 export function registerDiseaseService() {
-    Hooks.on("getItemSheetHeaderButtons", (app, buttons) => {
-        addTreatmentHeaderButton(app, buttons);
-    });
-
     // Register the treatment-board resolver with the race board. RaceBoard is
     // built in refreshRaceboardApi at `ready`, but that runs as an async dynamic
     // import and can land after this service's own `ready` — so don't gate on a

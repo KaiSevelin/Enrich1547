@@ -144,6 +144,11 @@ export function unregisterReactionService() {
 }
 
 async function handleReactionTrigger(sourceEvent, trigger) {
+    // A reaction-generated free attack (safe attack / counterattack) re-emits
+    // ATTACK_DECLARED. Don't open a fresh reaction window for it, or reactions
+    // recurse (an overwatch shot would itself be reactable, and so on).
+    if (sourceEvent?.payload?.metadata?.generatedByReaction) return null;
+
     const candidates = await resolveReactionCandidates(sourceEvent, trigger);
     if (!candidates.length) return null;
 
@@ -204,7 +209,8 @@ async function handleReactionTrigger(sourceEvent, trigger) {
     //    also relayed to the defending player (GM attacks a player → both see it).
     // A player attacking a GM-owned reactor must NOT see it locally — only the GM
     // does, via the relay. First response wins via the single-settle controller.
-    if (!relayed || game.user?.isGM) {
+    const openedLocally = !relayed || game.user?.isGM;
+    if (openedLocally) {
         const windowEvent = await emitCombatEvent(
             COMBAT_EVENTS.REACTION_WINDOW_OPENED,
             reactionWindow
@@ -227,9 +233,15 @@ async function handleReactionTrigger(sourceEvent, trigger) {
     // resolution — pass OR use — so declining the first opportunity doesn't
     // re-trigger on the same mover this round. An attack reaction is spent only
     // when actually used.
+    //
+    // Only spend the movement reaction when a prompt was actually presentable:
+    // a relay that reached a live owner, or a locally-opened window with a real
+    // (positive) duration. A zero-length window auto-passes instantly with no
+    // chance to react, so burning the economy there would be a silent no-show.
+    const promptPresented = relayed || (openedLocally && timeoutMs > 0);
     const combatApi = game.modules.get(MODULE_ID)?.api?.combat;
     if (trigger === "threat-zone") {
-        if (reactorActor && mover) void combatApi?.markMovementReacted?.(reactorActor, mover);
+        if (reactorActor && mover && promptPresented) void combatApi?.markMovementReacted?.(reactorActor, mover);
     } else if (selectedReaction && reactorActor) {
         void combatApi?.markReactionUsed?.(reactorActor);
     }

@@ -1,12 +1,9 @@
 import { getItemById } from "./content-registry.js";
 import { MODULE_ID, SOURCE_FLAG_SCOPE, MODIFIER_TEMPLATE_ID, WEAPON_TEMPLATE_ID, AMMO_TEMPLATE_ID } from "../lib/constants.mjs";
+import { readSourceData } from "../lib/foundry-utils.mjs";
 
 export const ON_HIT_EFFECT_TEMPLATE_ID = "OnH1tEffectTmpl0";
 const ATTACH_GUARD = `${MODULE_ID}.weaponModifierAttachGuard`;
-
-function readSourceData(doc) {
-    return doc?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? doc?.flags?.[MODULE_ID]?.sourceData ?? doc ?? {};
-}
 
 export function getAttachedModifierIds(item) {
     const raw = item?.flags?.[SOURCE_FLAG_SCOPE]?.attachedModifierIds

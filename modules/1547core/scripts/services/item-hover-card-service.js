@@ -1,4 +1,5 @@
 import { MODULE_ID } from "../lib/constants.mjs";
+import { escapeHtml } from "../lib/foundry-utils.mjs";
 /**
  * Universal item hover-card service.
  *
@@ -32,12 +33,6 @@ const TEMPLATE_LABELS = {
     "OnH1tEffectTmpl0": "On-Hit Effect",
     "eCIZRFXbcQVZKqEr": "Equipment"
 };
-
-function escapeHtml(s) {
-    return String(s ?? "")
-        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-}
 
 function getCategoryLabel(item) {
     const props = item?.system?.props ?? {};

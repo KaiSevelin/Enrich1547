@@ -1,0 +1,100 @@
+import assert from "assert";
+
+/**
+ * Behavioural test for the chargen template-parsing logic extracted from
+ * chargen.js into chargen-template-parse.js + chargen-utils.js. Locks in the
+ * parse output shapes so the extraction (and future edits) preserve behaviour —
+ * coverage the 5,600-line chargen.js could never carry.
+ */
+
+// interface-registry.js (imported transitively) may touch foundry at import.
+if (typeof globalThis.foundry === "undefined") {
+    globalThis.foundry = { utils: { getProperty: (o, p) => p.split(".").reduce((a, k) => a?.[k], o) } };
+}
+
+const utils = await import("../chargen/chargen-utils.js");
+const parse = await import("../chargen/chargen-template-parse.js");
+
+console.log("chargen-utils: micro-helpers...");
+{
+    assert.strictEqual(utils.toBoolean("yes"), true);
+    assert.strictEqual(utils.toBoolean("0"), false);
+    assert.strictEqual(utils.toBoolean(2), true);
+    assert.strictEqual(utils.numberOrNull("3"), 3);
+    assert.strictEqual(utils.numberOrNull("x"), null);
+    assert.strictEqual(utils.normalizeTemplateType("Skill"), "skill");
+    assert.deepStrictEqual(utils.stringListFromCSV("a, b ,,c"), ["a", "b", "c"]);
+    assert.strictEqual(utils.resultRawJSON({ description: "d", name: "n" }), "d");
+    assert.strictEqual(utils.resultRawJSON({ name: "n" }), "n");
+    console.log("  ✓ toBoolean / numberOrNull / normalizeTemplateType / stringListFromCSV / resultRawJSON");
+}
+
+console.log("\nchargen-template-parse: change builders...");
+{
+    const stat = parse.buildChangeFromTemplateReward(
+        { R1Type: "stat", R1Characteristic: "Strength", R1Steps: "2" }, "R1");
+    assert.deepStrictEqual(stat, { type: "stat", characteristic: "Strength", steps: 2 });
+
+    const skill = parse.buildChangeFromTemplateReward(
+        { R1Type: "skill", R1TargetKey: "perform", R1TargetLevel: "1" }, "R1");
+    assert.deepStrictEqual(skill, { type: "skill", targetKey: "perform", targetLevel: 1 });
+
+    const item = parse.buildChangeFromTemplateReward(
+        { R1Type: "item", R1ItemName: "Dagger", R1Qty: "2", R1Stack: "true" }, "R1");
+    assert.deepStrictEqual(item, { type: "item", name: "Dagger", qty: 2, stack: true });
+
+    assert.strictEqual(
+        parse.buildChangeFromTemplateReward({ R1Type: "nothing" }, "R1"), null);
+
+    console.log("  ✓ buildChangeFromTemplateReward: stat / skill / item / nothing");
+}
+
+console.log("\nchargen-template-parse: effect rows + tables...");
+{
+    const drive = parse.buildChangeFromEffectRow({ Type: "drive", TargetKey: "add", Amount: "Greed" });
+    assert.deepStrictEqual(drive, { type: "drive", action: "add", category: "Greed" });
+
+    const table = parse.buildEffectTableFromProps(
+        { Fx: { 0: { Type: "stat", TargetKey: "Faith", Amount: "1", Weight: "2" },
+                1: { Type: "stat", Weight: "0" } } }, "Fx");
+    assert.strictEqual(table.key, "Fx");
+    assert.strictEqual(table.rows.length, 1, "weight-0 rows are filtered out");
+    assert.strictEqual(table.rows[0].weight, 2);
+    assert.deepStrictEqual(table.rows[0].change, { type: "stat", characteristic: "Faith", steps: 1 });
+
+    assert.strictEqual(parse.buildEffectTableFromProps({ Fx: {} }, "Fx"), null);
+    console.log("  ✓ buildChangeFromEffectRow + buildEffectTableFromProps (weight filtering)");
+}
+
+console.log("\nchargen-template-parse: parseTemplateItemToChoiceData...");
+{
+    let validatedWith = null;
+    const validate = (parsed, name) => { validatedWith = { parsed, name }; };
+
+    const rewardItem = {
+        name: "A Gift",
+        system: { props: {
+            ChoiceTitle: "Gift", ChoiceTags: "boon,minor",
+            Reward1Type: "money", Reward1Amount: "5", Reward1Weight: "1",
+        } },
+    };
+    const parsed = parse.parseTemplateItemToChoiceData(rewardItem, "GiftTable", validate);
+    assert.strictEqual(parsed.choice.title, "Gift");
+    assert.deepStrictEqual(parsed.choice.tags, ["boon", "minor"]);
+    assert.strictEqual(parsed.rewards.length, 1);
+    assert.deepStrictEqual(parsed.rewards[0].changes, [{ type: "money", amount: 5 }]);
+    assert.ok(validatedWith && validatedWith.name === "GiftTable", "validate callback is invoked");
+
+    const fxItem = {
+        name: "Fork",
+        system: { props: {
+            Effects1: { 0: { Type: "stat", TargetKey: "Luck", Amount: "1", Weight: "1" } },
+        } },
+    };
+    const fxParsed = parse.parseTemplateItemToChoiceData(fxItem, "ForkTable");
+    assert.strictEqual(fxParsed.effectTables.length, 1);
+    assert.strictEqual(fxParsed.effectTables[0].rows[0].change.characteristic, "Luck");
+    console.log("  ✓ reward-based + effect-table items parse; validate callback invoked");
+}
+
+console.log("\nAll chargen-template-parse tests passed.");

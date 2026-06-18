@@ -18,6 +18,22 @@ export function getProps(item) {
     return item?.system?.props ?? readSourceData(item) ?? {};
 }
 
+/**
+ * A creature's die count for a stat. Reads the canonical `Stats_<Stat>Dice`
+ * prop, falling back to the un-prefixed `<Stat>Dice` key some authored data
+ * uses — so monsters built either way resolve consistently everywhere.
+ */
+export function statDice(actor, stat) {
+    const props = actor?.system?.props ?? {};
+    return Number(props[`Stats_${stat}Dice`] ?? props[`${stat}Dice`] ?? 0) || 0;
+}
+
+/** A creature's flat modifier for a stat. See {@link statDice}. */
+export function statMod(actor, stat) {
+    const props = actor?.system?.props ?? {};
+    return Number(props[`Stats_${stat}Mod`] ?? props[`${stat}Mod`] ?? 0) || 0;
+}
+
 /** True for items built on the spell CSB template. */
 export function isSpellItem(item) {
     return item?.system?.template === SPELL_TEMPLATE_ID;

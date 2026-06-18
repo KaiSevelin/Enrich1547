@@ -74,7 +74,11 @@ function buildWeaponRollContext(summary, maneuverEffects = {}) {
         addMainDice: Math.max(0, Number(base.addMainDice ?? 0) + Number(maneuverEffects.addMainDice ?? 0)),
         addMultiplierDice: Math.max(0, Number(base.addMultiplierDice ?? 0) + Number(maneuverEffects.addMultiplierDice ?? 0)),
         riskDice: Math.max(0, Number(base.riskDice ?? 0) + Number(maneuverEffects.addRiskDice ?? 0) + Number(maneuverEffects.addDisadvantage ?? 0)),
-        ammoAddDice: Array.isArray(base.ammoAddDice) ? base.ammoAddDice.slice() : []
+        // Carry BOTH staged-dice channels with fresh copies. Previously hud-summary
+        // copied only ammoAddDice and actor-hud copied only extraDiceCounts, so the
+        // attack formula depended on which divergent copy the caller happened to use.
+        ammoAddDice: Array.isArray(base.ammoAddDice) ? base.ammoAddDice.slice() : [],
+        extraDiceCounts: { ...(base.extraDiceCounts ?? {}) },
     };
 }
 
@@ -367,12 +371,14 @@ export function summarizeActor(actor, token, deps = {}) {
                 return weaponAmmoType ? weaponAmmoType === ammoType : true;
             })
             : [];
+        // Resolve the displayed ammo selection without mutating HUD_STATE — this
+        // builder is a pure read called many times per frame. The stored
+        // selection is honoured only while it remains compatible; otherwise we
+        // fall back to the loaded round. Consumers (hud-actions) re-validate the
+        // stored value the same way before acting on it.
         const selectedAmmoId = compatibleAmmo.some((ammo) => ammo.id === HUD_STATE.selectedAmmoByWeapon?.[item.id])
             ? HUD_STATE.selectedAmmoByWeapon[item.id]
             : (loadedAmmoId || null);
-        if (usesAmmo && selectedAmmoId) {
-            HUD_STATE.selectedAmmoByWeapon[item.id] = selectedAmmoId;
-        }
         const selectedAmmo = selectedAmmoId ? ammoItems.find((ammo) => ammo.id === selectedAmmoId) ?? null : null;
         const weaponModifierNames = getAttachedModifierNames(item, items);
         const ammoModifierNames = selectedAmmo ? getAttachedModifierNames(selectedAmmo, items) : [];

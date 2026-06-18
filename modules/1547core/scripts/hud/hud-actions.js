@@ -685,7 +685,12 @@ export async function executeWeaponReloadAction(weaponId, actor, summary, deps =
         return;
     }
 
-    const selectedAmmoId = HUD_STATE.selectedAmmoByWeapon?.[weaponId] ?? weapon.loadedAmmoId ?? null;
+    // Honour the stored selection only while it stays compatible; otherwise fall
+    // back to the loaded round. (summarizeActor resolves the same way for display
+    // but no longer writes the result back into HUD_STATE.)
+    const storedAmmoId = HUD_STATE.selectedAmmoByWeapon?.[weaponId] ?? null;
+    const storedAmmoValid = storedAmmoId && weapon.compatibleAmmo?.some?.((ammo) => ammo.id === storedAmmoId);
+    const selectedAmmoId = (storedAmmoValid ? storedAmmoId : null) ?? weapon.loadedAmmoId ?? null;
     const chosenAmmo = selectedAmmoId
         ? weapon.compatibleAmmo.find((ammo) => ammo.id === selectedAmmoId) ?? null
         : (weapon.compatibleAmmo.length === 1 ? weapon.compatibleAmmo[0] : null);

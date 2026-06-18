@@ -837,29 +837,33 @@ async function handleResolveEffectsClick(item) {
     ui.notifications.warn(`1547 Core: '${item.name}' resolved, but nothing was applied.`);
 }
 
-function addResolveEffectsHeaderButton(app, buttons) {
-    const item = app?.object;
-    if (!isSupportedCarrierItem(item)) return;
-    if (String(item?.system?.template ?? "") === "2kiWw3Cv5Zk1lZxn" && isManualSpellItem(item)) return;
-    if (!collectUsageEffectsFromCarrier(item).length) return;
-    buttons.unshift({
-        class: "resolve-effects",
-        icon: "fas fa-burst",
-        label: "Resolve Effects",
-        onclick: () => {
-            void handleResolveEffectsClick(item).catch((error) => {
-                console.error(`${MODULE_ID} | Failed to resolve usage effects`, error);
-                ui.notifications.error(`1547 Core: failed to resolve effects. ${error.message}`);
-            });
-        }
-    });
+// Self-contained "Resolve Effects" action invoked from the CSB label-button on
+// the spell / supernatural-mark / monster-magic templates (the v13 replacement
+// for the dead getItemSheetHeaderButtons hook). The guards that used to gate the
+// header button now gate the action itself, with a notification so a click on an
+// unsupported, manual, or effect-less carrier explains why nothing happened.
+async function handleResolveEffectsFromSheet(item) {
+    if (!isSupportedCarrierItem(item)) {
+        ui.notifications.warn("1547 Core: this item has no resolvable usage effects.");
+        return;
+    }
+    if (String(item?.system?.template ?? "") === "2kiWw3Cv5Zk1lZxn" && isManualSpellItem(item)) {
+        ui.notifications.warn("1547 Core: this is a manual spell — cast it from the spell manual instead.");
+        return;
+    }
+    if (!collectUsageEffectsFromCarrier(item).length) {
+        ui.notifications.warn(`1547 Core: '${item?.name ?? "Item"}' has no usage effects to resolve.`);
+        return;
+    }
+    try {
+        await handleResolveEffectsClick(item);
+    } catch (error) {
+        console.error(`${MODULE_ID} | Failed to resolve usage effects`, error);
+        ui.notifications.error(`1547 Core: failed to resolve effects. ${error.message}`);
+    }
 }
 
 export function registerUsageEffectActionResolver() {
-    Hooks.on("getItemSheetHeaderButtons", (app, buttons) => {
-        addResolveEffectsHeaderButton(app, buttons);
-    });
-
     const moduleApi = game.modules.get(MODULE_ID);
     if (!moduleApi) {
         console.warn(`${MODULE_ID} | registerUsageEffectActionResolver: module not found`);
@@ -868,6 +872,7 @@ export function registerUsageEffectActionResolver() {
     moduleApi.api = moduleApi.api ?? {};
     moduleApi.api.collectUsageEffectsFromCarrier = collectUsageEffectsFromCarrier;
     moduleApi.api.resolveUsageEffectsFromCarrier = resolveUsageEffectsFromCarrier;
+    moduleApi.api.resolveEffectsFromSheet = handleResolveEffectsFromSheet;
 }
 
 // Pure helpers exported for unit testing (no behavioural change to the runtime).

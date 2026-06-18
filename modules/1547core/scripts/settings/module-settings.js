@@ -888,6 +888,14 @@ export function register1547ModuleSettings() {
         default: 0
     });
 
+    game.settings.register(MODULE_ID, "schemaMigrationVersion", {
+        name: "Schema Migration Version",
+        scope: "world",
+        config: false,
+        type: Number,
+        default: 0
+    });
+
     game.settings.register(MODULE_ID, "reactionWindowSeconds", {
         name: "Reaction Window Seconds",
         hint: "How many seconds a reaction window stays open before it automatically passes.",

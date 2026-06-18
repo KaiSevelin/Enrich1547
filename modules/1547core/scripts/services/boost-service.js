@@ -96,25 +96,16 @@ async function resolveTableResultToItem(result) {
     return null;
 }
 
-async function rollOnBoostTable(table) {
-    const tableRoll = await table.roll();
-    const results = Array.isArray(tableRoll.results) ? tableRoll.results : [tableRoll.results];
-    if (!results.length) return null;
-    return await resolveTableResultToItem(results[0]);
-}
-
-function isChangeSet(item) {
-    return item?.system?.template === "b7A1z6cSZO4dYTKT"
-        || item?.system?.templateSystemUniqueVersion !== undefined && item?.flags?.["custom-system-builder"];
-}
-
 async function drawOneBoost(table) {
     const tableRoll = await table.roll();
     const results = Array.isArray(tableRoll.results) ? tableRoll.results : [tableRoll.results];
     if (!results.length) return null;
     const result = results[0];
     if (!result) return null;
-    return await resolveTableResultToItem(result);
+    // Return the raw table result alongside the resolved item so the caller can
+    // classify the draw (weapon/armor die) on the same basis as
+    // isWeaponDieResult / isArmorDieResult / pickRandomStatBoost.
+    return { result, item: await resolveTableResultToItem(result) };
 }
 
 function isWeaponDieResult(result) {
@@ -153,14 +144,15 @@ export async function boostActor(actorId) {
     // Roll once. If the outcome is a Weapon-Die or Armor-Die boost and the actor lacks
     // the required natural weapon/armor, substitute a random stat boost from the same
     // table (preserves the table's stat-distribution weighting).
-    let rolledItem = await drawOneBoost(table);
+    const draw = await drawOneBoost(table);
+    let rolledItem = draw?.item ?? null;
+    const rolledResult = draw?.result ?? null;
     let mutationKind = null; // "weapon" | "armor" | null
     let targetItem = null;
     let substituted = false;
 
     if (rolledItem) {
-        const rolledId = rolledItem.id ?? rolledItem._id;
-        if (rolledId === WEAPON_DIE_BOOST_ID) {
+        if (isWeaponDieResult(rolledResult)) {
             const weapon = findActorNaturalWeapon(actor);
             if (weapon) {
                 mutationKind = "weapon";
@@ -169,7 +161,7 @@ export async function boostActor(actorId) {
                 rolledItem = await pickRandomStatBoost(table);
                 substituted = true;
             }
-        } else if (rolledId === ARMOR_DIE_BOOST_ID) {
+        } else if (isArmorDieResult(rolledResult)) {
             const armor = findActorNaturalArmor(actor);
             if (armor) {
                 mutationKind = "armor";

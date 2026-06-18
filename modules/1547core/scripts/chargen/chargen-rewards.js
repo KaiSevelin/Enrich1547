@@ -150,7 +150,9 @@ export function pickWeightedReward(rewards) {
     const total = list.reduce((s, r) => s + weightOf(r), 0);
     if (total <= 0) return list[0];
 
-    let roll = (new Roll(`1d${total}`)).evaluate({ async: false }).total;
+    // Uniform integer in [1, total]; avoids Roll#evaluate({async:false}),
+    // whose synchronous path is removed in Foundry v13 (returns a Promise).
+    let roll = Math.ceil(Math.random() * total);
     for (const r of list) {
         roll -= weightOf(r);
         if (roll <= 0) return r;
@@ -165,7 +167,9 @@ export function pickWeightedEffectRow(rows) {
     const total = list.reduce((sum, row) => sum + Math.max(0, Number(row.weight ?? 0)), 0);
     if (total <= 0) return list[0];
 
-    let roll = (new Roll(`1d${total}`)).evaluate({ async: false }).total;
+    // Uniform integer in [1, total]; avoids Roll#evaluate({async:false}),
+    // whose synchronous path is removed in Foundry v13 (returns a Promise).
+    let roll = Math.ceil(Math.random() * total);
     for (const row of list) {
         roll -= Math.max(0, Number(row.weight ?? 0));
         if (roll <= 0) return row;
@@ -307,7 +311,7 @@ export async function applyRewardChanges(app, run, changes = [], deps = {}) {
                 const tone = app.constructor._resultRawJSON(toneRoll.result).trim();
                 const quirk = app.constructor._resultRawJSON(quirkRoll.result).trim();
 
-                const d100 = (new Roll("1d100")).evaluate({ async: false }).total;
+                const d100 = (await (new Roll("1d100")).evaluate()).total;
                 const hookCount = (d100 <= 90) ? 1 : 2;
 
                 const hooks = [];

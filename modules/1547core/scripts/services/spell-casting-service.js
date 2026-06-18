@@ -677,36 +677,29 @@ export async function castSpellItem(spell, options = {}) {
     };
 }
 
+// Self-contained "Cast Spell" action invoked from the CSB label-button on the
+// spell template (the v13 replacement for the dead getItemSheetHeaderButtons
+// hook). Guards the item type and surfaces its own errors so the rollMessage
+// can just await it.
 async function handleCastSpellClick(item) {
-    const result = await castSpellItem(item);
-    if (result.outcome === "success") {
-        ui.notifications.info(`1547 Core: cast '${item.name}'.`);
+    if (!isSpellItem(item)) {
+        ui.notifications.warn("1547 Core: this item is not a spell.");
         return;
     }
-    ui.notifications.warn(`1547 Core: '${item.name}' failed and rolled on its failure table.`);
-}
-
-function addCastSpellHeaderButton(app, buttons) {
-    const item = app?.object;
-    if (!isSpellItem(item)) return;
-    buttons.unshift({
-        class: "cast-spell",
-        icon: "fas fa-hat-wizard",
-        label: "Cast Spell",
-        onclick: () => {
-            void handleCastSpellClick(item).catch((error) => {
-                console.error(`${MODULE_ID} | Failed to cast spell`, error);
-                ui.notifications.error(`1547 Core: failed to cast spell. ${error.message}`);
-            });
+    try {
+        const result = await castSpellItem(item);
+        if (result.outcome === "success") {
+            ui.notifications.info(`1547 Core: cast '${item.name}'.`);
+            return;
         }
-    });
+        ui.notifications.warn(`1547 Core: '${item.name}' failed and rolled on its failure table.`);
+    } catch (error) {
+        console.error(`${MODULE_ID} | Failed to cast spell`, error);
+        ui.notifications.error(`1547 Core: failed to cast spell. ${error.message}`);
+    }
 }
 
 export function registerSpellCastingService() {
-    Hooks.on("getItemSheetHeaderButtons", (app, buttons) => {
-        addCastSpellHeaderButton(app, buttons);
-    });
-
     const moduleApi = game.modules.get(MODULE_ID);
     if (!moduleApi) {
         console.warn(`${MODULE_ID} | registerSpellCastingService: module not found`);
@@ -715,4 +708,5 @@ export function registerSpellCastingService() {
     moduleApi.api = moduleApi.api ?? {};
     moduleApi.api.castSpellItem = castSpellItem;
     moduleApi.api.effectuateSpellOutcome = effectuateSpellOutcome;
+    moduleApi.api.castSpellFromSheet = handleCastSpellClick;
 }

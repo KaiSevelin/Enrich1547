@@ -24,14 +24,12 @@ import {
     SPECIAL_ITEM_TABLES,
     UNKNOWN_CARD_IMAGE
 } from "./interface-registry.js";
+import * as ChargenUtils from "./chargen-utils.js";
+import { normalizeTableKey } from "./chargen-utils.js";
+import * as TemplateParse from "./chargen-template-parse.js";
+import * as Validation from "./chargen-validation.js";
+import * as Simulation from "./chargen-simulation.js";
 console.log("CHARGEN.JS LOADED FROM", import.meta.url);
-
-const UNKNOWN_EXTREME_EXCLUDED_TABLE_REFS = new Set([
-    "RollTable.BhHorosc3d6Q7mR4",
-    "RollTable.BhHumors1d8Q7mRX",
-    "birth-horoscope",
-    "birth-humors"
-]);
 
 const DEFAULT_MANEUVERS_PATH = "modules/1547core/foundry/Templates/chargen/default-maneuvers.json";
 
@@ -46,13 +44,6 @@ function resolveImgPath(p) {
     return s ? foundry.utils.getRoute(s) : "";
 }
 
-function normalizeTableKey(name) {
-    return String(name ?? "")
-        .toLowerCase()
-        .replace(/[â€“â€”]/g, "-")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "");
-}
 
 let BASELINE_MIN_ZERO_SKILLS_CACHE = null;
 let DEFAULT_MANEUVER_REFS_CACHE = null;
@@ -807,78 +798,10 @@ export class SkillTreeChargenApp extends FormApplication {
         return app;
     }
 
-    static _defaultSimulationIdentity(index = 0) {
-        return {
-            name: `Simulated Character ${index + 1}`,
-            nativeLanguage: "Common Tongue"
-        };
-    }
-
-    static _summarizeSimulationOutcomes(outcomes = []) {
-        const list = Array.isArray(outcomes) ? outcomes.filter(Boolean) : [];
-        const totalRuns = list.length;
-        const withDrive = list.filter(o => Number(o.driveCount ?? 0) >= 1).length;
-        const withTwoDrives = list.filter(o => Number(o.driveCount ?? 0) >= 2).length;
-        const withCareer = list.filter(o => Number(o.careerCardsSeen ?? 0) >= 1).length;
-        const careerEndedPrematurely = list.filter(o => o.careerEndedPrematurely).length;
-        const avgDrives = totalRuns ? (list.reduce((sum, o) => sum + Number(o.driveCount ?? 0), 0) / totalRuns) : 0;
-        const avgCareerCards = withCareer
-            ? (list.filter(o => Number(o.careerCardsSeen ?? 0) >= 1).reduce((sum, o) => sum + Number(o.careerCardsSeen ?? 0), 0) / withCareer)
-            : 0;
-
-        const terminalCards = new Map();
-        const driveCategories = new Map();
-        const effectRolls = new Map();
-
-        for (const outcome of list) {
-            const terminalKey = String(outcome.terminalCareerChoiceTitle ?? "").trim();
-            if (terminalKey) {
-                terminalCards.set(terminalKey, (terminalCards.get(terminalKey) ?? 0) + 1);
-            }
-
-            for (const category of outcome.driveCategories ?? []) {
-                const key = String(category ?? "").trim();
-                if (!key) continue;
-                driveCategories.set(key, (driveCategories.get(key) ?? 0) + 1);
-            }
-
-            for (const effect of outcome.effectRolls ?? []) {
-                const key = `${effect.choiceTitle} | Effects${effect.tableIndex} | Row ${effect.rowIndex + 1} | ${effect.type || "unknown"}${effect.targetKey ? ` | ${effect.targetKey}` : ""}`;
-                effectRolls.set(key, (effectRolls.get(key) ?? 0) + 1);
-            }
-        }
-
-        const topTerminalCards = Array.from(terminalCards.entries())
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 10)
-            .map(([choiceTitle, count]) => ({ choiceTitle, count }));
-
-        const topDriveCategories = Array.from(driveCategories.entries())
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 10)
-            .map(([category, count]) => ({ category, count }));
-
-        const topEffectRolls = Array.from(effectRolls.entries())
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 20)
-            .map(([effect, count]) => ({ effect, count }));
-
-        return {
-            totalRuns,
-            withDrive,
-            withTwoDrives,
-            withCareer,
-            careerEndedPrematurely,
-            driveRate: totalRuns ? withDrive / totalRuns : 0,
-            twoDriveRate: totalRuns ? withTwoDrives / totalRuns : 0,
-            prematureCareerEndRate: withCareer ? careerEndedPrematurely / withCareer : 0,
-            avgDrives,
-            avgCareerCards,
-            topTerminalCards,
-            topDriveCategories,
-            topEffectRolls
-        };
-    }
+    // Pure simulation analytics live in chargen-simulation.js; delegators keep
+    // runBatchSimulation’s this._x calls working.
+    static _defaultSimulationIdentity(index = 0) { return Simulation._defaultSimulationIdentity(index); }
+    static _summarizeSimulationOutcomes(outcomes = []) { return Simulation._summarizeSimulationOutcomes(outcomes); }
 
     static async runBatchSimulation(opts = {}) {
         const count = Math.max(1, Number(opts.count ?? 100) || 100);
@@ -1032,346 +955,19 @@ export class SkillTreeChargenApp extends FormApplication {
 
         return summary;
     }
-    static VALID_STATS = new Set(PRIMARY_STATS.map(String));
-
-    static CHANGE_TYPES = new Set([
-        "stat",
-        "skill",
-        "maneuver",
-        "money",
-        "luck",
-        "contact",
-        "body",
-        "social",
-        "drive",
-        "bio",
-        "item",
-        "language"
-    ]);
-
-    static _isObject(v) {
-        return v && typeof v === "object" && !Array.isArray(v);
-    }
-
-    static _tableUsesUnknownExtremeReveal(table) {
-        if (!table) return false;
-
-        const refs = [
-            String(table.uuid ?? "").trim(),
-            String(table.id ?? "").trim(),
-            normalizeTableKey(table.name)
-        ].filter(Boolean);
-
-        return !refs.some(ref => UNKNOWN_EXTREME_EXCLUDED_TABLE_REFS.has(ref));
-    }
-
-    static _resultHasExtremeUnknownReveal(result) {
-        const range = Array.isArray(result?.range) ? result.range : [];
-        if (range.length < 2) return false;
-
-        const [min, max] = range.map(v => Number(v));
-        if (!Number.isFinite(min) || !Number.isFinite(max)) return false;
-
-        return (min <= 3 && max >= 3) || (min <= 18 && max >= 18);
-    }
-
-    static _isFiniteNumber(v) {
-        const n = Number(v);
-        return Number.isFinite(n);
-    }
-
-    static _requireString(v, msg) {
-        if (typeof v !== "string" || !v.trim()) {
-            throw new Error(msg);
-        }
-    }
-
-    static _requireFiniteNumber(v, msg) {
-        if (!SkillTreeChargenApp._isFiniteNumber(v)) {
-            throw new Error(msg);
-        }
-    }
-
-    static _validateChangeSchema(ch, tableName, rewardIdx, changeIdx) {
-        if (!SkillTreeChargenApp._isObject(ch)) {
-            throw new Error(`rewards[${rewardIdx}].changes[${changeIdx}] must be an object in "${tableName}".`);
-        }
-
-        const type = String(ch.type ?? "").trim();
-        if (!SkillTreeChargenApp.CHANGE_TYPES.has(type)) {
-            throw new Error(`Unknown change type "${type}" in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`);
-        }
-
-        if (type === "stat") {
-            SkillTreeChargenApp._requireString(
-                ch.characteristic,
-                `Stat change requires "characteristic" in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`
-            );
-            if (!SkillTreeChargenApp.VALID_STATS.has(String(ch.characteristic).trim())) {
-                throw new Error(`Invalid stat "${ch.characteristic}" in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`);
-            }
-            SkillTreeChargenApp._requireFiniteNumber(
-                ch.steps,
-                `Stat change requires numeric "steps" in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`
-            );
-            return;
-        }
-
-        if (type === "skill" || type === "maneuver") {
-            const targetKey = String(ch.targetKey ?? ch.skill ?? ch.maneuver ?? "").trim();
-            if (!targetKey) {
-                throw new Error(
-                    `${type === "maneuver" ? "Maneuver" : "Skill"} change requires "targetKey" in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`
-                );
-            }
-            if (ch.targetLevel != null) {
-                SkillTreeChargenApp._requireFiniteNumber(
-                    ch.targetLevel,
-                    `${type === "maneuver" ? "Maneuver" : "Skill"} change "targetLevel" must be numeric in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`
-                );
-            }
-            return;
-        }
-
-        if (type === "money") {
-            const hasAmount = ch.amount != null;
-            const hasFormula = ch.formula != null && String(ch.formula).trim() !== "";
-            if (!hasAmount && !hasFormula) {
-                throw new Error(`Money change requires "amount" or "formula" in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`);
-            }
-            if (hasAmount) {
-                SkillTreeChargenApp._requireFiniteNumber(
-                    ch.amount,
-                    `Money change "amount" must be numeric in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`
-                );
-            }
-            if (hasFormula) {
-                SkillTreeChargenApp._requireString(
-                    ch.formula,
-                    `Money change "formula" must be a string in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`
-                );
-            }
-            return;
-        }
-
-        if (type === "luck") {
-            if (typeof ch.on !== "boolean") {
-                throw new Error(`Luck change requires boolean "on" in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`);
-            }
-            return;
-        }
-
-        if (type === "contact") {
-            if (ch.text != null && typeof ch.text !== "string") {
-                throw new Error(`Contact change "text" must be a string in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`);
-            }
-            return;
-        }
-
-        if (type === "body") {
-            return;
-        }
-
-        if (type === "social") {
-            SkillTreeChargenApp._requireFiniteNumber(
-                ch.amount,
-                `Social change requires numeric "amount" in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`
-            );
-            return;
-        }
-
-        if (type === "drive") {
-            const action = String(ch.action ?? "").trim();
-            if (action !== "add" && action !== "remove") {
-                throw new Error(`Drive change requires "action" of "add" or "remove" in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`);
-            }
-            if (action === "add") {
-                SkillTreeChargenApp._requireString(
-                    ch.category,
-                    `Drive change with action "add" requires "category" in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`
-                );
-            }
-            return;
-        }
-
-        if (type === "bio") {
-            const hasText = ch.text != null && String(ch.text).trim() !== "";
-            const hasRoll = SkillTreeChargenApp._isObject(ch.roll) && String(ch.roll.tableUuid ?? "").trim() !== "";
-            if (!hasText && !hasRoll) {
-                throw new Error(`Bio change requires "text" and/or "roll.tableUuid" in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`);
-            }
-            return;
-        }
-
-        if (type === "item") {
-            const hasItemUuid = ch.itemUuid != null && String(ch.itemUuid).trim() !== "";
-            const hasName = ch.name != null && String(ch.name).trim() !== "";
-            const hasTableUuid = ch.tableUuid != null && String(ch.tableUuid).trim() !== "";
-
-            if (!hasItemUuid && !hasName && !hasTableUuid) {
-                throw new Error(`Item change requires one of "itemUuid", "name", or "tableUuid" in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`);
-            }
-
-            if (ch.qty != null) {
-                SkillTreeChargenApp._requireFiniteNumber(
-                    ch.qty,
-                    `Item change "qty" must be numeric in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`
-                );
-            }
-            return;
-        }
-
-        if (type === "language") {
-            if (ch.tableKey != null && typeof ch.tableKey !== "string") {
-                throw new Error(`Language change "tableKey" must be a string in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`);
-            }
-        }
-    }
-
-    static _validateParsedResultSchema(parsed, tableName) {
-        if (!SkillTreeChargenApp._isObject(parsed)) {
-            throw new Error(`Parsed result must be an object in "${tableName}".`);
-        }
-
-        if (!SkillTreeChargenApp._isObject(parsed.choice)) {
-            throw new Error(`Missing "choice" object in "${tableName}".`);
-        }
-
-        SkillTreeChargenApp._requireString(parsed.choice.title, `Missing choice.title in "${tableName}".`);
-        if (parsed.choice.text != null && typeof parsed.choice.text !== "string") {
-            throw new Error(`choice.text must be a string in "${tableName}".`);
-        }
-        if (parsed.choice.icon != null && typeof parsed.choice.icon !== "string") {
-            throw new Error(`choice.icon must be a string in "${tableName}".`);
-        }
-        if (parsed.choice.tags != null && !Array.isArray(parsed.choice.tags)) {
-            throw new Error(`choice.tags must be an array in "${tableName}".`);
-        }
-
-        if (parsed.bio != null && typeof parsed.bio !== "string") {
-            throw new Error(`bio must be a string in "${tableName}".`);
-        }
-
-        if (parsed.deferred != null) {
-            if (!SkillTreeChargenApp._isObject(parsed.deferred)) {
-                throw new Error(`deferred must be an object in "${tableName}".`);
-            }
-            SkillTreeChargenApp._requireString(parsed.deferred.type, `deferred.type must be a non-empty string in "${tableName}".`);
-            if (parsed.deferred.origin != null && typeof parsed.deferred.origin !== "string") {
-                throw new Error(`deferred.origin must be a string in "${tableName}".`);
-            }
-            if (parsed.deferred.delay != null && typeof parsed.deferred.delay !== "string") {
-                throw new Error(`deferred.delay must be a string in "${tableName}".`);
-            }
-            if (parsed.deferred.image != null && typeof parsed.deferred.image !== "string") {
-                throw new Error(`deferred.image must be a string in "${tableName}".`);
-            }
-            if (parsed.deferred.stage != null && !SkillTreeChargenApp._isFiniteNumber(parsed.deferred.stage)) {
-                throw new Error(`deferred.stage must be numeric in "${tableName}".`);
-            }
-        }
-
-        const hasRewards = Array.isArray(parsed.rewards) && parsed.rewards.length > 0;
-        const hasEffectTables = Array.isArray(parsed.effectTables) && parsed.effectTables.length > 0;
-        if (!hasRewards && !hasEffectTables) {
-            throw new Error(`Missing rewards[] or effectTables[] in "${tableName}".`);
-        }
-
-        if (hasRewards) {
-            parsed.rewards.forEach((rw, rewardIdx) => {
-                if (!SkillTreeChargenApp._isObject(rw)) {
-                    throw new Error(`rewards[${rewardIdx}] must be an object in "${tableName}".`);
-                }
-
-                if (!Array.isArray(rw.changes)) {
-                    throw new Error(`rewards[${rewardIdx}].changes must be an array in "${tableName}".`);
-                }
-
-                if (rw.weight != null && !SkillTreeChargenApp._isFiniteNumber(rw.weight)) {
-                    throw new Error(`rewards[${rewardIdx}].weight must be numeric in "${tableName}".`);
-                }
-
-                if (rw.next != null) {
-                    if (!SkillTreeChargenApp._isObject(rw.next)) {
-                        throw new Error(`rewards[${rewardIdx}].next must be an object in "${tableName}".`);
-                    }
-                    SkillTreeChargenApp._requireString(
-                        rw.next.tableUuid,
-                        `rewards[${rewardIdx}].next.tableUuid must be a non-empty string in "${tableName}".`
-                    );
-                }
-                if (rw.transitionMode != null && String(rw.transitionMode).trim() !== "") {
-                    const mode = String(rw.transitionMode).trim().toLowerCase();
-                    if (mode !== "forced" && mode !== "optional") {
-                        throw new Error(`rewards[${rewardIdx}].transitionMode must be "forced" or "optional" in "${tableName}".`);
-                    }
-                }
-                if (rw.transitionPrompt != null && typeof rw.transitionPrompt !== "string") {
-                    throw new Error(`rewards[${rewardIdx}].transitionPrompt must be a string in "${tableName}".`);
-                }
-
-                rw.changes.forEach((ch, changeIdx) => {
-                    SkillTreeChargenApp._validateChangeSchema(ch, tableName, rewardIdx, changeIdx);
-                });
-            });
-        }
-
-        if (hasEffectTables) {
-            parsed.effectTables.forEach((tbl, tableIdx) => {
-                if (!SkillTreeChargenApp._isObject(tbl)) {
-                    throw new Error(`effectTables[${tableIdx}] must be an object in "${tableName}".`);
-                }
-                if (!Array.isArray(tbl.rows) || tbl.rows.length === 0) {
-                    throw new Error(`effectTables[${tableIdx}].rows must be a non-empty array in "${tableName}".`);
-                }
-                tbl.rows.forEach((row, rowIdx) => {
-                    if (!SkillTreeChargenApp._isObject(row)) {
-                        throw new Error(`effectTables[${tableIdx}].rows[${rowIdx}] must be an object in "${tableName}".`);
-                    }
-                    SkillTreeChargenApp._requireFiniteNumber(
-                        row.weight,
-                        `effectTables[${tableIdx}].rows[${rowIdx}].weight must be numeric in "${tableName}".`
-                    );
-                    if (row.transitionText != null && typeof row.transitionText !== "string") {
-                        throw new Error(`effectTables[${tableIdx}].rows[${rowIdx}].transitionText must be a string in "${tableName}".`);
-                    }
-                    if (row.transitionMode != null && String(row.transitionMode).trim() !== "") {
-                        const mode = String(row.transitionMode).trim().toLowerCase();
-                        if (mode !== "forced" && mode !== "optional") {
-                            throw new Error(`effectTables[${tableIdx}].rows[${rowIdx}].transitionMode must be "forced" or "optional" in "${tableName}".`);
-                        }
-                    }
-                    if (row.transitionPrompt != null && typeof row.transitionPrompt !== "string") {
-                        throw new Error(`effectTables[${tableIdx}].rows[${rowIdx}].transitionPrompt must be a string in "${tableName}".`);
-                    }
-                    if (row.next != null) {
-                        if (!SkillTreeChargenApp._isObject(row.next)) {
-                            throw new Error(`effectTables[${tableIdx}].rows[${rowIdx}].next must be an object in "${tableName}".`);
-                        }
-                        SkillTreeChargenApp._requireString(
-                            row.next.tableUuid,
-                            `effectTables[${tableIdx}].rows[${rowIdx}].next.tableUuid must be a non-empty string in "${tableName}".`
-                        );
-                    }
-                    if (row.change != null) {
-                        SkillTreeChargenApp._validateChangeSchema(
-                            row.change,
-                            tableName,
-                            tableIdx,
-                            rowIdx
-                        );
-                    }
-                });
-            });
-        }
-    }
-
-    static _sourceLabel({ rewardIdx = null, changeIdx = null, tableIdx = null, rowIdx = null } = {}) {
-        if (tableIdx != null && rowIdx != null) return `effectTables[${tableIdx}].rows[${rowIdx}]`;
-        if (rewardIdx != null && changeIdx != null) return `rewards[${rewardIdx}].changes[${changeIdx}]`;
-        if (rewardIdx != null) return `rewards[${rewardIdx}]`;
-        return "result";
-    }
+    // Schema-validation core lives in chargen-validation.js (VALID_STATS and
+    // CHANGE_TYPES moved with it; they had no external references). These static
+    // delegators preserve every call site, including the validator injected into
+    // chargen-template-parse.js.
+    static _isObject(v) { return Validation._isObject(v); }
+    static _tableUsesUnknownExtremeReveal(table) { return Validation._tableUsesUnknownExtremeReveal(table); }
+    static _resultHasExtremeUnknownReveal(result) { return Validation._resultHasExtremeUnknownReveal(result); }
+    static _isFiniteNumber(v) { return Validation._isFiniteNumber(v); }
+    static _requireString(v, msg) { return Validation._requireString(v, msg); }
+    static _requireFiniteNumber(v, msg) { return Validation._requireFiniteNumber(v, msg); }
+    static _validateChangeSchema(ch, tableName, rewardIdx, changeIdx) { return Validation._validateChangeSchema(ch, tableName, rewardIdx, changeIdx); }
+    static _validateParsedResultSchema(parsed, tableName) { return Validation._validateParsedResultSchema(parsed, tableName); }
+    static _sourceLabel(meta = {}) { return Validation._sourceLabel(meta); }
 
     static async _validateParsedResultReferences(parsed, tableName) {
         const errors = [];
@@ -2486,414 +2082,33 @@ export class SkillTreeChargenApp extends FormApplication {
         return out;
     }
 
-    static _resultRawJSON(result) {
-        const d = (result?.description ?? "").trim();
-        if (d) return d;
+    // Template-parsing helpers live in chargen-template-parse.js / chargen-utils.js.
+    // These static methods delegate so existing call sites — including external
+    // `app.constructor._resultRawJSON(...)` — keep working unchanged.
+    static _resultRawJSON(result) { return ChargenUtils.resultRawJSON(result); }
+    static _toBoolean(v) { return ChargenUtils.toBoolean(v); }
+    static _stringListFromCSV(v) { return ChargenUtils.stringListFromCSV(v); }
+    static _numberOrNull(v) { return ChargenUtils.numberOrNull(v); }
+    static _normalizeTemplateType(v) { return ChargenUtils.normalizeTemplateType(v); }
+    static _isItemDocument(doc) { return ChargenUtils.isItemDocument(doc); }
+    static _getTemplateProps(item) { return ChargenUtils.getTemplateProps(item); }
 
-        const t = (result?.text ?? "").trim(); // deprecated fallback
-        if (t) return t;
-
-        const n = (result?.name ?? "").trim();
-        return n;
-    }
-
-    static _toBoolean(v) {
-        if (typeof v === "boolean") return v;
-        if (typeof v === "number") return v !== 0;
-        const s = String(v ?? "").trim().toLowerCase();
-        return s === "true" || s === "1" || s === "yes" || s === "on";
-    }
-
-    static _stringListFromCSV(v) {
-        return String(v ?? "")
-            .split(",")
-            .map(s => s.trim())
-            .filter(Boolean);
-    }
-
-    static _numberOrNull(v) {
-        const n = Number(v);
-        return Number.isFinite(n) ? n : null;
-    }
-
-    static _normalizeTemplateType(v) {
-        const raw = String(v ?? "").trim();
-        if (!raw) return "";
-        const map = {
-            stat: "stat",
-            skill: "skill",
-            maneuver: "maneuver",
-            money: "money",
-            luck: "luck",
-            contact: "contact",
-            body: "body",
-            social: "social",
-            drive: "drive",
-            bio: "bio",
-            item: "item",
-            language: "language",
-            nothing: "nothing"
-        };
-        return map[raw.toLowerCase()] ?? raw.toLowerCase();
-    }
-
-    static _isItemDocument(doc) {
-        if (!doc || typeof doc !== "object") return false;
-        if (doc.documentName === "Item") return true;
-        if (doc.collectionName === "items") return true;
-        if (typeof Item !== "undefined" && doc instanceof Item) return true;
-        return false;
-    }
-
-    static _getTemplateProps(item) {
-        return item?.system?.props ?? {};
-    }
-
-    static _rewardIndexesFromProps(props) {
-        const idx = new Set();
-        for (const k of Object.keys(props ?? {})) {
-            const m = /^Reward(\d+)([A-Za-z].*)?$/.exec(k);
-            if (m) idx.add(Number(m[1]));
-        }
-        return Array.from(idx).sort((a, b) => a - b);
-    }
-
-    static _effectIndexesForReward(props, rewardIndex) {
-        const idx = new Set();
-        const rx = new RegExp(`^Reward${rewardIndex}Effect(\\d+)Type$`);
-        for (const k of Object.keys(props ?? {})) {
-            const m = rx.exec(k);
-            if (m) idx.add(Number(m[1]));
-        }
-        return Array.from(idx).sort((a, b) => a - b);
-    }
-
-    static _effectIndexesForLegacySingle(props) {
-        const idx = new Set();
-        const rx = /^Effect(\d+)Type$/;
-        for (const k of Object.keys(props ?? {})) {
-            const m = rx.exec(k);
-            if (m) idx.add(Number(m[1]));
-        }
-        return Array.from(idx).sort((a, b) => a - b);
-    }
-
-    static _collectRewardChangesFromProps(props, rewardIndex) {
-        const out = [];
-        const effectIndexes = SkillTreeChargenApp._effectIndexesForReward(props, rewardIndex);
-        if (effectIndexes.length) {
-            for (const i of effectIndexes) {
-                const prefix = `Reward${rewardIndex}Effect${i}`;
-                const ch = SkillTreeChargenApp._buildChangeFromTemplateReward(props, prefix);
-                if (ch) out.push(ch);
-            }
-            return out;
-        }
-
-        // Backward compatibility: single change fields like Reward1Type/Reward1Amount/...
-        const fallback = SkillTreeChargenApp._buildChangeFromTemplateReward(props, `Reward${rewardIndex}`);
-        if (fallback) out.push(fallback);
-        return out;
-    }
-
-    static _buildChangeFromTemplateReward(props, prefix) {
-        const type = SkillTreeChargenApp._normalizeTemplateType(props[`${prefix}Type`]);
-        if (!type || type === "nothing") return null;
-
-        const ch = { type };
-
-        const characteristic = String(props[`${prefix}Characteristic`] ?? "").trim();
-        const steps = SkillTreeChargenApp._numberOrNull(props[`${prefix}Steps`]);
-        const targetKey = String(props[`${prefix}TargetKey`] ?? "").trim();
-        const targetLevel = SkillTreeChargenApp._numberOrNull(props[`${prefix}TargetLevel`]);
-        const amount = SkillTreeChargenApp._numberOrNull(props[`${prefix}Amount`]);
-        const formula = String(props[`${prefix}Formula`] ?? "").trim();
-        const on = SkillTreeChargenApp._toBoolean(props[`${prefix}On`]);
-        const action = String(props[`${prefix}Action`] ?? "").trim();
-        const category = String(props[`${prefix}Category`] ?? "").trim();
-        const text = String(props[`${prefix}Text`] ?? "").trim();
-        const tableUuid = String(props[`${prefix}TableUuid`] ?? "").trim();
-        const itemUuid = String(props[`${prefix}ItemUuid`] ?? "").trim();
-        const name = String(props[`${prefix}ItemName`] ?? "").trim();
-        const qty = SkillTreeChargenApp._numberOrNull(props[`${prefix}Qty`]);
-        const stack = SkillTreeChargenApp._toBoolean(props[`${prefix}Stack`]);
-        const languageTableKey = String(props[`${prefix}LanguageTableKey`] ?? "").trim();
-
-        if (SPECIAL_BIO_TABLES[type]) {
-            return { type: "bio", roll: { tableUuid: SPECIAL_BIO_TABLES[type] } };
-        }
-        if (SPECIAL_ITEM_TABLES[type]) {
-            const out = { type: "item", tableUuid: SPECIAL_ITEM_TABLES[type] };
-            if (qty != null) out.qty = qty;
-            return out;
-        }
-
-        if (type === "stat") {
-            if (characteristic) ch.characteristic = characteristic;
-            if (steps != null) ch.steps = steps;
-            return ch;
-        }
-        if (type === "skill" || type === "maneuver") {
-            if (targetKey) ch.targetKey = targetKey;
-            if (targetLevel != null) ch.targetLevel = targetLevel;
-            return ch;
-        }
-        if (type === "money") {
-            if (amount != null) ch.amount = amount;
-            if (formula) ch.formula = formula;
-            return ch;
-        }
-        if (type === "luck") {
-            ch.on = on;
-            return ch;
-        }
-        if (type === "social") {
-            if (amount != null) ch.amount = amount;
-            return ch;
-        }
-        if (type === "drive") {
-            if (action) ch.action = action;
-            if (category) ch.category = category;
-            return ch;
-        }
-        if (type === "bio") {
-            if (text) ch.text = text;
-            if (tableUuid) ch.roll = { tableUuid };
-            return ch;
-        }
-        if (type === "item") {
-            if (tableUuid) ch.tableUuid = tableUuid;
-            if (itemUuid) ch.itemUuid = itemUuid;
-            if (name) ch.name = name;
-            if (qty != null) ch.qty = qty;
-            ch.stack = stack;
-            return ch;
-        }
-        if (type === "language") {
-            if (languageTableKey) ch.tableKey = languageTableKey;
-            return ch;
-        }
-
-        if (type === "contact") {
-            if (text) ch.text = text;
-            return ch;
-        }
-
-        // body currently carries no additional fields
-        return ch;
-    }
-
-    static _rowsFromDynamicTable(tableData) {
-        const rawRows = tableData && typeof tableData === "object" ? Object.values(tableData) : [];
-        return rawRows.filter(r => r && typeof r === "object" && !Array.isArray(r) && !r.$deleted);
-    }
-
-    static _buildChangeFromEffectRow(row) {
-        const type = SkillTreeChargenApp._normalizeTemplateType(row?.Type);
-        if (!type || type === "nothing") return null;
-
-        const targetKey = String(row?.TargetKey ?? "").trim();
-        const amountRaw = String(row?.Amount ?? "").trim();
-        const targetText = String(row?.TargetText ?? "").trim();
-        const amountNum = SkillTreeChargenApp._numberOrNull(amountRaw);
-        const ch = { type };
-
-        if (SPECIAL_BIO_TABLES[type]) {
-            return { type: "bio", roll: { tableUuid: SPECIAL_BIO_TABLES[type] } };
-        }
-        if (SPECIAL_ITEM_TABLES[type]) {
-            const out = { type: "item", tableUuid: SPECIAL_ITEM_TABLES[type] };
-            if (amountNum != null) out.qty = amountNum;
-            return out;
-        }
-
-        if (type === "stat") {
-            if (targetKey) ch.characteristic = targetKey;
-            if (amountNum != null) ch.steps = amountNum;
-            return ch;
-        }
-        if (type === "skill" || type === "maneuver") {
-            if (targetKey) ch.targetKey = targetKey;
-            if (amountNum != null) ch.targetLevel = amountNum;
-            return ch;
-        }
-        if (type === "money") {
-            if (amountRaw && amountNum == null) ch.formula = amountRaw;
-            else if (amountNum != null) ch.amount = amountNum;
-            return ch;
-        }
-        if (type === "luck") {
-            ch.on = SkillTreeChargenApp._toBoolean(amountRaw || true);
-            return ch;
-        }
-        if (type === "contact") {
-            if (targetText) ch.text = targetText;
-            return ch;
-        }
-        if (type === "body") return ch;
-        if (type === "social") {
-            if (amountNum != null) ch.amount = amountNum;
-            return ch;
-        }
-        if (type === "drive") {
-            const action = targetKey.toLowerCase();
-            if (action === "add" || action === "remove") ch.action = action;
-            if (action === "add" && amountRaw) ch.category = amountRaw;
-            return ch;
-        }
-        if (type === "bio") {
-            if (amountRaw) ch.text = amountRaw;
-            if (targetKey) ch.roll = { tableUuid: targetKey };
-            return ch;
-        }
-        if (type === "item") {
-            if (targetKey.startsWith("RollTable.")) ch.tableUuid = targetKey;
-            else if (targetKey.includes(".")) ch.itemUuid = targetKey;
-            else if (targetKey) ch.name = targetKey;
-            if (amountNum != null) ch.qty = amountNum;
-            return ch;
-        }
-        if (type === "language") {
-            if (targetKey) ch.tableKey = targetKey;
-            return ch;
-        }
-        return ch;
-    }
-
-    static _buildEffectTableFromProps(props, tableKey) {
-        const rows = SkillTreeChargenApp._rowsFromDynamicTable(props?.[tableKey]).map((row, idx) => {
-            const weight = SkillTreeChargenApp._numberOrNull(row?.Weight) ?? 0;
-            const nextTableUuid = String(row?.NextTable ?? "").trim();
-            const transitionText = String(row?.TransitionText ?? "").trim();
-            const transitionMode = String(row?.TransitionMode ?? "").trim().toLowerCase();
-            const transitionPrompt = String(row?.TransitionPrompt ?? "").trim();
-            return {
-                rowIndex: idx,
-                weight,
-                change: SkillTreeChargenApp._buildChangeFromEffectRow(row),
-                next: nextTableUuid ? { tableUuid: nextTableUuid } : null,
-                transitionText,
-                transitionMode,
-                transitionPrompt,
-                raw: row
-            };
-        }).filter(r => r.weight > 0);
-
-        if (!rows.length) return null;
-        return { key: tableKey, rows };
-    }
-
+    static _rewardIndexesFromProps(props) { return TemplateParse.rewardIndexesFromProps(props); }
+    static _effectIndexesForReward(props, rewardIndex) { return TemplateParse.effectIndexesForReward(props, rewardIndex); }
+    static _effectIndexesForLegacySingle(props) { return TemplateParse.effectIndexesForLegacySingle(props); }
+    static _collectRewardChangesFromProps(props, rewardIndex) { return TemplateParse.collectRewardChangesFromProps(props, rewardIndex); }
+    static _buildChangeFromTemplateReward(props, prefix) { return TemplateParse.buildChangeFromTemplateReward(props, prefix); }
+    static _rowsFromDynamicTable(tableData) { return TemplateParse.rowsFromDynamicTable(tableData); }
+    static _buildChangeFromEffectRow(row) { return TemplateParse.buildChangeFromEffectRow(row); }
+    static _buildEffectTableFromProps(props, tableKey) { return TemplateParse.buildEffectTableFromProps(props, tableKey); }
     static _parseTemplateItemToChoiceData(item, tableName = "RollTable") {
-        const props = SkillTreeChargenApp._getTemplateProps(item);
-        const title = String(props.ChoiceTitle ?? item?.name ?? "").trim();
-        const text = String(props.ChoiceText ?? "").trim();
-        const icon = String(props.ChoiceCard ?? props.ChoiceIcon ?? item?.img ?? "").trim();
-        const tags = SkillTreeChargenApp._stringListFromCSV(props.ChoiceTags);
-        const bio = String(props.ChoiceBio ?? "").trim();
-        const humourChange = SkillTreeChargenApp._parseHumourChange(props.HumourChange);
-        const deferredType = String(props.DeferredType ?? "").trim().toLowerCase();
-        const deferredOrigin = String(props.DeferredOrigin ?? "").trim();
-        const deferredDelay = String(props.DeferredDelay ?? "").trim();
-        const deferredImage = String(props.DeferredImage ?? "").trim();
-        const deferredStage = SkillTreeChargenApp._numberOrNull(props.DeferredStage);
-        const deferred = deferredType
-            ? {
-                type: deferredType,
-                origin: deferredOrigin,
-                delay: deferredDelay || "1d6",
-                image: deferredImage || icon,
-                stage: deferredStage == null ? 1 : deferredStage
-            }
-            : null;
-
-        const effectTables = ["Effects1", "Effects2", "Effects3"]
-            .map(key => SkillTreeChargenApp._buildEffectTableFromProps(props, key))
-            .filter(Boolean);
-
-        if (effectTables.length) {
-            const parsed = {
-                choice: { title, text, icon, tags },
-                bio,
-                humourChange,
-                deferred,
-                rewards: [{ weight: 1, changes: [] }],
-                effectTables
-            };
-            SkillTreeChargenApp._validateParsedResultSchema(parsed, tableName);
-            return parsed;
-        }
-
-        const rewards = [];
-        const rewardIndexes = SkillTreeChargenApp._rewardIndexesFromProps(props);
-        for (const n of rewardIndexes) {
-            const prefix = `Reward${n}`;
-            const changes = SkillTreeChargenApp._collectRewardChangesFromProps(props, n);
-            const nextTableUuid = String(props[`${prefix}NextTableUuid`] ?? "").trim();
-            const weightRaw = SkillTreeChargenApp._numberOrNull(props[`${prefix}Weight`]);
-
-            if (!changes.length && !nextTableUuid) continue;
-            const rw = {
-                weight: weightRaw == null ? 1 : weightRaw,
-                changes
-            };
-            if (nextTableUuid) rw.next = { tableUuid: nextTableUuid };
-            rewards.push(rw);
-        }
-
-        // Backstop for the single-reward template variant.
-        if (!rewards.length) {
-            const weightRaw = SkillTreeChargenApp._numberOrNull(props.Weight);
-            const nextTableUuid = String(props.NextTableUuid ?? "").trim();
-            const changes = [];
-            const legacyIdx = SkillTreeChargenApp._effectIndexesForLegacySingle(props);
-            if (legacyIdx.length) {
-                for (const i of legacyIdx) {
-                    const ch = SkillTreeChargenApp._buildChangeFromTemplateReward(props, `Effect${i}`);
-                    if (ch) changes.push(ch);
-                }
-            } else {
-                const ch = SkillTreeChargenApp._buildChangeFromTemplateReward(props, "Effect1");
-                if (ch) changes.push(ch);
-            }
-            if (changes.length || nextTableUuid) {
-                const rw = {
-                    weight: weightRaw == null ? 1 : weightRaw,
-                    changes,
-                    transitionMode: String(props[`${prefix}TransitionMode`] ?? "").trim().toLowerCase(),
-                    transitionPrompt: String(props[`${prefix}TransitionPrompt`] ?? "").trim()
-                };
-                if (nextTableUuid) rw.next = { tableUuid: nextTableUuid };
-                rewards.push(rw);
-            }
-        }
-
-        const parsed = {
-            choice: { title, text, icon, tags },
-            bio,
-            humourChange,
-            deferred,
-            rewards
-        };
-        SkillTreeChargenApp._validateParsedResultSchema(parsed, tableName);
-        return parsed;
+        return TemplateParse.parseTemplateItemToChoiceData(
+            item,
+            tableName,
+            (parsed, name) => SkillTreeChargenApp._validateParsedResultSchema(parsed, name)
+        );
     }
-
-    // Parse a HumourChange directive: a CSV of +Humour / -Humour tokens, e.g.
-    // "+YellowBile,-Phlegm". Valid humours: Blood, YellowBile, BlackBile, Phlegm.
-    static _parseHumourChange(raw) {
-        const VALID = new Set(["Blood", "YellowBile", "BlackBile", "Phlegm"]);
-        const add = [];
-        const remove = [];
-        for (const tokenRaw of String(raw ?? "").split(/[,\n;]+/)) {
-            const token = tokenRaw.trim();
-            if (token.length < 2) continue;
-            const name = token.slice(1).trim();
-            if (!VALID.has(name)) continue;
-            if (token[0] === "+") add.push(name);
-            else if (token[0] === "-") remove.push(name);
-        }
-        return { add, remove };
-    }
+    static _parseHumourChange(raw) { return TemplateParse.parseHumourChange(raw); }
 
     static _tableStageType(table = null) {
         return String(
@@ -5276,14 +4491,15 @@ export class SkillTreeChargenApp extends FormApplication {
         }
 
         const run = state.run;
-        if (run.remainingGlobal <= 0) {
-            await this._finishWithSummary(run);
-            return;
-        }
-
         const picked = run.cards?.[index];
-        if (!picked) return;
         try {
+            // These early returns must live inside the try so the finally
+            // block always clears _actionInFlight; otherwise the UI locks up.
+            if (run.remainingGlobal <= 0) {
+                await this._finishWithSummary(run);
+                return;
+            }
+            if (!picked) return;
             if (picked.masked) {
                 picked.masked = false;
                 await this._setState({ ...state, run });

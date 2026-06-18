@@ -1,4 +1,5 @@
 import { MODULE_ID, SOURCE_FLAG_SCOPE, ON_HIT_EFFECT_TEMPLATE_ID } from "../lib/constants.mjs";
+import { readSourceData } from "../lib/foundry-utils.mjs";
 /**
  * combat/normalisation.mjs
  *
@@ -201,10 +202,6 @@ export function applyAmmoRangeEffects(rangeBands, ammo) {
 }
 
 // ────────────────────────────────────────────────────── Document normalisers ──
-
-function readSourceData(doc) {
-    return doc?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? doc?.flags?.[MODULE_ID]?.sourceData ?? doc;
-}
 
 function readAttachedModifierIds(doc, source = {}) {
     const runtimeAttached = doc?.flags?.[SOURCE_FLAG_SCOPE]?.attachedModifierIds

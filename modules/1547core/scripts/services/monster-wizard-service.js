@@ -16,6 +16,7 @@
 
 import { findChangeSetsByGroup, getItemById } from "./content-registry.js";
 import { MODULE_ID } from "../lib/constants.mjs";
+import { escapeHtml } from "../lib/foundry-utils.mjs";
 
 const ACTOR_TYPES = [
     "HiddenFolk", "TheUnseen", "Beast", "Undead", "Colossal",
@@ -29,15 +30,6 @@ function getChangeSetsByGroup(group, typeFilter = null) {
 function getChangeSetDescription(item) {
     const props = item.system?.props ?? {};
     return String(props.Description ?? props.Notes ?? "").trim() || item.name;
-}
-
-function escapeHtml(s) {
-    return String(s ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
 }
 
 class MonsterWizard extends Application {

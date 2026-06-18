@@ -44,6 +44,7 @@ import { resolveThreatReactionActor } from "./reaction-candidates.mjs";
 import { getLegalManeuvers } from "./maneuver-legality.mjs";
 import { COMBAT_EVENTS } from "../services/combat-events.js";
 import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
+import { statDice, statMod } from "../lib/foundry-utils.mjs";
 
 
 function normalizeAttachedModifierIdList(value) {
@@ -66,10 +67,7 @@ function normalizeAttachedModifierIdList(value) {
 function getActorStatCheckValue(actor, statName) {
     const normalized = String(statName ?? "").trim();
     if (!normalized) return 0;
-    const props = actor?.system?.props ?? {};
-    const dice = Number(props[`Stats_${normalized}Dice`] ?? props[`${normalized}Dice`] ?? 0) || 0;
-    const mod = Number(props[`Stats_${normalized}Mod`] ?? props[`${normalized}Mod`] ?? 0) || 0;
-    return dice + mod;
+    return statDice(actor, normalized) + statMod(actor, normalized);
 }
 
 // Accepts either "source X" / "target X" (legacy/freeform) or a bare stat

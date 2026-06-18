@@ -175,7 +175,9 @@ export function planLoadWeaponAmmo({
     }
 
     const nextQuantity = Math.max(0, currentQuantity - 1);
-    const nextLoaded = Math.min(Math.max(1, normalizedWeapon.ammoCapacity ?? 1), 1);
+    // One load action chambers a single round (mirrors planSpendLoadedAmmo,
+    // which spends one at a time, and the single-round source decrement above).
+    const nextLoaded = 1;
 
     const patches = [
         {

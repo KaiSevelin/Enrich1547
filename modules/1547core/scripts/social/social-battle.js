@@ -21,6 +21,7 @@
  */
 
 import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
+import { statDice, statMod, escapeHtml } from "../lib/foundry-utils.mjs";
 import { promptAddDrive } from "../chargen/drive-prompts.js";
 import {
     buildAlarmContext, defaultAlarm, ALARM_MAX_LEVEL,
@@ -46,12 +47,7 @@ const sbMirrors = new Map();
 /*  Small helpers                           */
 /* ---------------------------------------- */
 
-function escapeHtml(value) {
-    return String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-}
 function actorProps(actor) { return actor?.system?.props ?? {}; }
-function statDice(actor, stat) { return Number(actorProps(actor)[`Stats_${stat}Dice`] ?? 0) || 0; }
-function statMod(actor, stat) { return Number(actorProps(actor)[`Stats_${stat}Mod`] ?? 0) || 0; }
 function activeParticipant(side) { return side?.participants?.[side?.activeIdx ?? 0] ?? null; }
 function activeName(side) { return activeParticipant(side)?.name ?? "?"; }
 function actorOf(side) {

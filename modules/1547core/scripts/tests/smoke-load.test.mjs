@@ -99,7 +99,11 @@ const CHARGEN_FILES = [
     "settings.js",
     "interface-registry.js",
     "legacy-rolltable-map.js",
-    "drive-prompts.js"
+    "drive-prompts.js",
+    "chargen-utils.js",
+    "chargen-template-parse.js",
+    "chargen-validation.js",
+    "chargen-simulation.js"
     // chargen.js, chargen-deferred.js, chargen-rewards.js, import-world-content.js
     // pull in foundry runtime classes / large data trees — exercised at runtime, skipped here.
 ];

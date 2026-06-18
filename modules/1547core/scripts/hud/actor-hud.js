@@ -3,6 +3,7 @@ import { buildAttackPool, toFoundryFormula } from "../combat/pool-builder.mjs";
 import { relayPostManeuverWindow } from "../combat/post-maneuver-relay.js";
 import { laneObstacles } from "../combat/ranged-cover.js";
 import { tokenDescriptor, footprintDistanceSquares } from "../lib/positioning.mjs";
+import { escapeHtml } from "../lib/foundry-utils.mjs";
 import {
     HUD_STATE,
     getSelectedPreManeuverIds,
@@ -47,7 +48,11 @@ import {
     getIgnoredCostManeuverIds,
     setIgnoredCostManeuver,
 } from "./hud-state.js";
-import { summarizeActor as summarizeActorFromModule } from "./hud-summary.js";
+import {
+    summarizeActor as summarizeActorFromModule,
+    summarizeManeuverEffects,
+    buildWeaponRollContext,
+} from "./hud-summary.js";
 import {
     buildReactionPrompt as buildReactionPromptFromModule,
     buildDamageTakenPrompt as buildDamageTakenPromptFromModule,
@@ -252,34 +257,6 @@ function buildManeuverTooltip(maneuver, blockingReason = "") {
     ].filter(Boolean).join(" | ");
 }
 
-function summarizeManeuverEffects(maneuvers) {
-    return (Array.isArray(maneuvers) ? maneuvers : []).reduce((summary, maneuver) => {
-        const effect = maneuver?.effectData ?? {};
-        summary.addMainDice += Number(effect.addMainDice ?? 0) || 0;
-        summary.addMultiplierDice += Number(effect.addMultiplierDice ?? 0) || 0;
-        summary.addRiskDice += Number(effect.addRiskDice ?? 0) || 0;
-        summary.addDisadvantage += Number(effect.addDisadvantage ?? 0) || 0;
-        return summary;
-    }, {
-        addMainDice: 0,
-        addMultiplierDice: 0,
-        addRiskDice: 0,
-        addDisadvantage: 0,
-    });
-}
-
-function buildWeaponRollContext(summary, maneuverEffects = {}) {
-    const base = summary?.weaponRollContext ?? summary?.rollContext ?? { advantageDice: 0, riskDice: 0 };
-    return {
-        ...base,
-        addMainDice: Math.max(0, Number(base.addMainDice ?? 0) + Number(maneuverEffects.addMainDice ?? 0)),
-        addMultiplierDice: Math.max(0, Number(base.addMultiplierDice ?? 0) + Number(maneuverEffects.addMultiplierDice ?? 0)),
-        riskDice: Math.max(0, Number(base.riskDice ?? 0) + Number(maneuverEffects.addRiskDice ?? 0) + Number(maneuverEffects.addDisadvantage ?? 0)),
-        extraDiceCounts: {
-            ...(base.extraDiceCounts ?? {}),
-        },
-    };
-}
 const INVENTORY_FILTER_OPTIONS = [
     { value: "all", label: "All" },
     { value: "Item.389uqkKKn8M1SKux", label: "Ammunition" },
@@ -1426,15 +1403,6 @@ function renderThreatOverlay(token) {
     layer.visible = true;
 }
 
-function escapeHtml(value) {
-    return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll("\"", "&quot;")
-        .replaceAll("'", "&#39;");
-}
-
 function formatFormula(dice, mod) {
     const safeDice = Number.isFinite(dice) ? Math.max(0, dice) : 0;
     const safeMod = Number.isFinite(mod) ? Math.max(0, mod) : 0;
@@ -2178,6 +2146,11 @@ function releaseDeferredPostWindowsIntoHud() {
     return released;
 }
 
+// Guards against re-running the one-time hook/listener registration (a second
+// init pass, hot reload, or world reload without a page refresh would otherwise
+// double every hook and re-render twice per event).
+let hudRegistered = false;
+
 // GM-side listener: a player asked to advance the side (they can't write the
 // Combat doc themselves). Only the GM acts on it.
 let sideAdvanceSocketBound = false;
@@ -2202,6 +2175,9 @@ function bindSideAdvanceSocket() {
 }
 
 export function register1547ActorHud() {
+    if (hudRegistered) return;
+    hudRegistered = true;
+
     ensureHudRoot().innerHTML = buildEmptyHtml("Waiting for selection");
     bindSideAdvanceSocket();
 

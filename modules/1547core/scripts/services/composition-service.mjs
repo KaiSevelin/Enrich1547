@@ -17,7 +17,16 @@ import { getContainerChildItems, firstRefId } from "./csb-container-helpers.mjs"
 import { MODULE_ID, CHANGESET_TEMPLATE_ID, CHANGE_TEMPLATE_ID, REQUIREMENT_TEMPLATE_ID } from "../lib/constants.mjs";
 
 const CACHE_KEY = "_1547core_effectiveCache";
+// Monotonic counter bumped on every embedded-item change. Foundry does NOT bump
+// actor._stats.modifiedTime when an embedded Item is created/updated/deleted, so
+// versioning the cache on modifiedTime alone would serve stale state after a
+// ChangeSet/Change is added or edited. The composite version below combines both.
+const ITEM_VERSION_KEY = "_1547core_compositionItemVersion";
 const APPLIED_CHANGES_KEY = "_1547core_appliedChanges";
+
+function compositionCacheVersion(actor) {
+    return `${actor?._stats?.modifiedTime ?? 0}:${actor?.[ITEM_VERSION_KEY] ?? 0}`;
+}
 
 const CHANGE_CONTAINER_KEY = "ChangeDisplayer";
 const REQUIREMENT_CONTAINER_KEY = "RequirementsDisplayer";
@@ -408,14 +417,14 @@ export function getEffectiveActorCached(actor) {
 
     // Check if cache is valid
     const cache = actor[CACHE_KEY];
-    if (cache && cache.version === actor._stats?.modifiedTime) {
+    if (cache && cache.version === compositionCacheVersion(actor)) {
         return cache.state;
     }
 
     // Derive fresh state
     const state = deriveEffectiveActorState(actor);
     actor[CACHE_KEY] = {
-        version: actor._stats?.modifiedTime,
+        version: compositionCacheVersion(actor),
         state
     };
 
@@ -423,11 +432,13 @@ export function getEffectiveActorCached(actor) {
 }
 
 /**
- * Invalidate the cached effective state.
+ * Invalidate the cached effective state. Also bumps the item-version counter so
+ * any cache derived before this point (e.g. on another sheet render) is rejected.
  */
 export function invalidateEffectiveActorCache(actor) {
     if (actor) {
         delete actor[CACHE_KEY];
+        actor[ITEM_VERSION_KEY] = (actor[ITEM_VERSION_KEY] ?? 0) + 1;
     }
 }
 
@@ -451,27 +462,12 @@ export function registerCompositionService() {
         applyChange
     };
 
-    // Hook into item updates to invalidate cache
-    Hooks.on("createItem", (item) => {
-        const actor = item.parent;
-        if (actor?.isOwner) {
-            invalidateEffectiveActorCache(actor);
-        }
-    });
-
-    Hooks.on("updateItem", (item) => {
-        const actor = item.parent;
-        if (actor?.isOwner) {
-            invalidateEffectiveActorCache(actor);
-        }
-    });
-
-    Hooks.on("deleteItem", (item) => {
-        const actor = item.parent;
-        if (actor?.isOwner) {
-            invalidateEffectiveActorCache(actor);
-        }
-    });
+    // Hook into item updates to invalidate cache. No isOwner gate: the cache is a
+    // non-persisted in-memory property, so every client (including a player
+    // viewing a GM-owned actor) must drop its own stale copy.
+    Hooks.on("createItem", (item) => invalidateEffectiveActorCache(item.parent));
+    Hooks.on("updateItem", (item) => invalidateEffectiveActorCache(item.parent));
+    Hooks.on("deleteItem", (item) => invalidateEffectiveActorCache(item.parent));
 
     console.log(`${MODULE_ID} | Composition service registered`);
 }
