@@ -99,6 +99,11 @@ export function registerTierDisplay() {
         const actor = app?.actor ?? app?.object;
         if (!actor || actor.documentName !== "Actor") return;
         if (actor.type === "_template") return;
+        // The tier/composition badge is a monster-maker concept (Boost tier). Hide
+        // it on player characters (TypeDropdown "Player") and on untyped actors —
+        // only typed monsters get a composition tier.
+        const type = String(actor.system?.props?.TypeDropdown ?? "").trim();
+        if (!type || type === "Player") return;
         injectTierBadge(actor, html);
     });
 

@@ -347,23 +347,6 @@ export async function createRitualFromSpell(spell, options = {}) {
     return created;
 }
 
-// Self-contained "Generate Ritual" action invoked from the CSB label-button on
-// the spell template (the v13 replacement for the dead getItemSheetHeaderButtons
-// hook). Guards the item type and surfaces its own errors.
-async function handleGenerateRitualClick(item) {
-    if (!isSpellItem(item)) {
-        ui.notifications.warn("1547 Core: this item is not a spell.");
-        return;
-    }
-    try {
-        const created = await createRitualFromSpell(item);
-        ui.notifications.info(`1547 Core: generated ritual '${created?.name ?? `${item.name} Ritual`}'.`);
-    } catch (error) {
-        console.error(`${MODULE_ID} | Failed to generate ritual`, error);
-        ui.notifications.error(`1547 Core: failed to generate ritual. ${error.message}`);
-    }
-}
-
 export function registerRitualGenerationService() {
     const moduleApi = game.modules.get(MODULE_ID);
     if (!moduleApi) {
@@ -374,5 +357,4 @@ export function registerRitualGenerationService() {
     moduleApi.api.parseRandomStepRollFormula = parseRandomStepRollFormula;
     moduleApi.api.generateRitualStepsFromSpell = generateRitualStepsFromSpell;
     moduleApi.api.createRitualFromSpell = createRitualFromSpell;
-    moduleApi.api.generateRitualFromSheet = handleGenerateRitualClick;
 }

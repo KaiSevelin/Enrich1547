@@ -4795,7 +4795,17 @@ export class SkillTreeChargenApp extends FormApplication {
         const workHistory = await this._buildWorkHistory(run);
         const workHistoryText = workHistory.join("\n");
 
+        // CurrentHitPoints defaults to ${MaxHitPoints} at actor creation, but
+        // MaxHitPoints is derived from stats and is 0 before chargen grants them
+        // — so a freshly generated character is left at 0 HP. Now that stats are
+        // final, sync current HP up to max. Guarded so we never write 0/NaN.
+        const maxHitPoints = Number(actor.system?.props?.MaxHitPoints);
+        const hpUpdate = Number.isFinite(maxHitPoints) && maxHitPoints > 0
+            ? { "system.props.CurrentHitPoints": maxHitPoints }
+            : {};
+
         await actor.update({
+            ...hpUpdate,
             "system.props.Biography": finalBiographyHtml,
             "system.props.BiographyCompiled": compiledBioHtml,
             "system.props.BiographyDetailed": bioHtml ? `<ul>${bioHtml}</ul>` : "",
