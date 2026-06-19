@@ -2,7 +2,7 @@
 // (build-packs.mjs) and the Foundry runtime seeder (module-settings.js) can
 // import them. No fs / Foundry-CLI / Foundry-global imports at module scope.
 
-export const ACTOR_TYPES = ["Player", "HiddenFolk", "TheUnseen", "Beast", "Undead", "Colossal", "Unnatural", "Construct", "Zone", "People"];
+export const ACTOR_TYPES = ["Player", "HiddenFolk", "TheUnseen", "Beast", "Undead", "Colossal", "Unnatural", "Construct", "Zone", "People", "Spirit"];
 
 // A valid Foundry document id: 16 alphanumerics.
 export const VALID_FOUNDRY_ID = /^[A-Za-z0-9]{16}$/;

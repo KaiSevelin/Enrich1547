@@ -5,7 +5,7 @@ cover. **Reset to a clean state (unchecked, no carried-over notes) each release;
 the version line below is auto-stamped by `release.ps1`. **Regression** = verifies
 a fix/feature from a recent release.
 
-_Current target: 1547core 0.3.108._
+_Current target: 1547core 0.3.109._
 
 ## Setup
 - [ ] Update to the current **1547core** build, reload the world (GM).
@@ -17,7 +17,7 @@ _Current target: 1547core 0.3.108._
 ## 1. Load & Setup Data
 - [ ] World loads with no `1547core | ... failed` errors; exactly **one** `CHARGEN.JS LOADED FROM ...` line.
 - [ ] Setup Data reports counts and finishes without uncaught errors.
-- [ ] No `No Base ChangeSet found for type "..."` warnings for wired types (NatureSpirit excepted — see Known Issues).
+- [ ] No `No Base ChangeSet found for type "..."` warnings for **any** wired type — including the renamed **Spirit** (was NatureSpirit). **Regression.**
 - [ ] A wired base monster (Beast/Undead) has a **Base**-group ChangeSet and derived stats.
 
 ---
@@ -52,6 +52,7 @@ _Current target: 1547core 0.3.108._
 ## 4. Actor sheets & monster wizard
 - [ ] **Composition gating:** a **player character** sheet shows **no** Composition panel; a **typed monster** sheet **does**. _(Requires Setup Data.)_
 - [ ] **Monster wizard:** creates a **real monster** (`character` actor in Monsters), **not** a `_template`, with its Base chassis auto-applied.
+- [ ] **Spirit type (Regression — renamed from NatureSpirit):** the monster wizard lists **Spirit**; creating one applies the **Spirit Base** chassis; the actor sheet's **Actor Type** dropdown offers **Spirit**.
 
 ---
 
@@ -77,7 +78,6 @@ _Current target: 1547core 0.3.108._
 
 ## Known issues (expected — not test failures)
 - **CharacterSheetV2 close error** — closing some actor sheets throws `You must provide an _id for every object in the update data Array` (a CSB dynamic-table form-submit issue, seen with the corrupt/duplicate Zone Base). **Open — under investigation.**
-- **NatureSpirit** isn't wired into the ForType system -> absent from the monster wizard, base not auto-applied. Separate content task.
 - **Duplicate "Zone Base"** in an existing world is a stale orphan (earlier seed, different `_id`); source/packs have one. Setup does not prune orphaned actors — delete the orphan manually (keep id `MonBaseZone0001`).
 - **move-remaining** stat on monsters is the per-turn movement budget on the shared actor template — intentional.
 

@@ -965,10 +965,10 @@
     ]
   },
   {
-    "id": "SpellFailure_NatureSpirit_Major",
-    "name": "Spell Failure Nature Spirits (Major)",
+    "id": "SpellFailure_Spirit_Major",
+    "name": "Spell Failure Spirits (Major)",
     "severity": "Major",
-    "entityNature": "NatureSpirit",
+    "entityNature": "Spirit",
     "drawFormula": "3d6",
     "drawMode": "single",
     "entries": [
@@ -1071,10 +1071,10 @@
     ]
   },
   {
-    "id": "SpellFailure_NatureSpirit_Catastrophic",
-    "name": "Spell Failure Nature Spirits (Catastrophic)",
+    "id": "SpellFailure_Spirit_Catastrophic",
+    "name": "Spell Failure Spirits (Catastrophic)",
     "severity": "Catastrophic",
-    "entityNature": "NatureSpirit",
+    "entityNature": "Spirit",
     "drawFormula": "3d6",
     "drawMode": "single",
     "entries": [

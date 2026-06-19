@@ -1891,9 +1891,11 @@ a.enricher-1547::before {
 	transition: border-color 0.15s ease, background 0.15s ease;
 }
 
-/* The Add button sits on the left; the row's content fills the rest. */
+/* The Add button sits on the left and claims a small fixed slice; the row's
+   content shrinks into the rest (min-width:0) so total row width never changes. */
 .skilltree-chargen .chargen-dialog__choice-list.is-row-select .chargen-dialog__choice-body {
 	flex: 1 1 auto;
+	min-width: 0;
 }
 
 .skilltree-chargen .chargen-dialog__choice-list.is-row-select .chargen-dialog__choice:hover {
@@ -1909,12 +1911,15 @@ a.enricher-1547::before {
 
 .skilltree-chargen .chargen-row-accept {
 	flex: 0 0 auto;
-	padding: 0.4rem 0.95rem;
-	border-radius: 10px;
+	align-self: center;
+	padding: 0.2rem 0.55rem;
+	border-radius: 8px;
 	border: 1px solid rgba(247, 215, 144, 0.7);
 	background: linear-gradient(180deg, #82501f, #5d3715);
 	color: #fff4d6;
-	font-weight: 800;
+	font-size: 0.78rem;
+	font-weight: 700;
+	line-height: 1.2;
 	cursor: pointer;
 }
 

@@ -20,7 +20,7 @@ import { escapeHtml } from "../lib/foundry-utils.mjs";
 
 const ACTOR_TYPES = [
     "HiddenFolk", "TheUnseen", "Beast", "Undead", "Colossal",
-    "Unnatural", "Construct", "Zone", "People"
+    "Unnatural", "Construct", "Zone", "People", "Spirit"
 ];
 
 function getChangeSetsByGroup(group, typeFilter = null) {
