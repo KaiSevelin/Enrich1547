@@ -7,6 +7,7 @@
     - Reads modules/1547core/module.json
     - Bumps the version field (patch by default; semver part name accepted)
     - Writes module.json back
+    - Syncs the "Current target" version line in docs/manual-test-plan.md
     - Zips modules/1547core into 1547core.zip at the repo root, with
       "1547core/" as the zip's top-level folder (matching the existing
       release layout). Includes everything under the module dir.
@@ -86,6 +87,23 @@ $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 )
 
 Write-Output "Version: $oldVer -> $newVer"
+
+# --- Sync the manual test plan's target version -----------------------------
+# The single living test plan (docs/manual-test-plan.md) carries a
+# "_Current target: 1547core X.Y.Z._" line. Keep it in lockstep with the bump
+# so the shipped plan always names the build it covers. Matches line content
+# only (not the EOL) so LF/CRLF is preserved.
+$testPlanPath = Join-Path $moduleDir 'docs/manual-test-plan.md'
+if (Test-Path $testPlanPath) {
+    $tpContent = Get-Content $testPlanPath -Raw
+    $tpUpdated = $tpContent -replace '(?m)^_Current target: 1547core [^\r\n]*', ("_Current target: 1547core {0}._" -f $newVer)
+    if ($tpUpdated -ne $tpContent) {
+        [System.IO.File]::WriteAllText($testPlanPath, $tpUpdated, $utf8NoBom)
+        Write-Output "Test plan target -> $newVer"
+    } else {
+        Write-Output "Test plan: no '_Current target:_' line to update (skipped)."
+    }
+}
 
 # --- Build compendium packs -------------------------------------------------
 # Regenerate modules/1547core/packs/*/ from foundry/Templates/*.json so the
