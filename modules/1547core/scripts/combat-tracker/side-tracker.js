@@ -347,6 +347,31 @@ function combatantDisposition(combatant) {
         ?? null;
 }
 
+async function roll3d6Total() {
+    const roll = await new Roll("3d6").evaluate();
+    return Number(roll.total) || 0;
+}
+
+// Roll 3d6 per side, then re-roll tied sides (a roll-off) until every side has a
+// distinct total, so the fixed turn order is unambiguous. Capped to avoid an
+// infinite loop in the vanishingly unlikely event rolls keep colliding.
+async function rollSideInitiative(sideIds) {
+    const rollsBySide = new Map();
+    for (const sideId of sideIds) rollsBySide.set(sideId, await roll3d6Total());
+    for (let attempt = 0; attempt < 50; attempt += 1) {
+        const byTotal = new Map();
+        for (const [sideId, total] of rollsBySide) {
+            const group = byTotal.get(total) ?? [];
+            group.push(sideId);
+            byTotal.set(total, group);
+        }
+        const tied = [...byTotal.values()].filter((group) => group.length > 1).flat();
+        if (!tied.length) break;
+        for (const sideId of tied) rollsBySide.set(sideId, await roll3d6Total());
+    }
+    return rollsBySide;
+}
+
 async function postSideInitiativeMessage(sideOrder, rollsBySide) {
     try {
         const rows = sideOrder.map((sideId, index) =>
@@ -395,11 +420,7 @@ export async function applyCombatStartSidesAndInitiative(combat) {
         const sideId = resolveCombatantSideId(combatant);
         if (sideId && !sideIds.includes(sideId)) sideIds.push(sideId);
     }
-    const rollsBySide = new Map();
-    for (const sideId of sideIds) {
-        const roll = await new Roll("3d6").evaluate();
-        rollsBySide.set(sideId, Number(roll.total) || 0);
-    }
+    const rollsBySide = await rollSideInitiative(sideIds);
     const sideOrder = orderSidesByInitiative(sideIds, rollsBySide);
 
     await combat.setFlag(MODULE_ID, "sideOrder", sideOrder);

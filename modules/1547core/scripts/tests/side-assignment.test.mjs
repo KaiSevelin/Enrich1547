@@ -33,16 +33,27 @@ console.log("  ✓ dispositionSide maps friendly/hostile/neutral");
 // ───────────────────────────────────────────────────────────────── assignSides ──
 console.log("assignSides...");
 
-// THE headline bug being fixed: two players with friendly/neutral disposition.
-// Legacy behaviour put BOTH on team-1; they must now be on different sides.
-const twoPlayers = assignSides([
+// PvP duel: a PLAYERS-ONLY fight (no NPCs) splits the players across sides,
+// regardless of disposition.
+const twoPlayersDuel = assignSides([
     { id: "a", ownerUserIds: ["alice"], disposition: 1 },
     { id: "b", ownerUserIds: ["bob"], disposition: 1 },
 ]);
-assert.strictEqual(twoPlayers.get("a"), "team-1");
-assert.strictEqual(twoPlayers.get("b"), "team-2");
-assert.notStrictEqual(twoPlayers.get("a"), twoPlayers.get("b"), "two players are never on the same side");
-console.log("  ✓ two players land on different sides regardless of disposition");
+assert.strictEqual(twoPlayersDuel.get("a"), "team-1");
+assert.strictEqual(twoPlayersDuel.get("b"), "team-2");
+assert.notStrictEqual(twoPlayersDuel.get("a"), twoPlayersDuel.get("b"), "players-only -> opposing sides");
+console.log("  ✓ players-only fight splits the players (duel/PvP)");
+
+// Co-op: two players + any NPC -> players SHARE a side; NPCs by disposition.
+const coop = assignSides([
+    { id: "a", ownerUserIds: ["alice"], disposition: 0 },
+    { id: "b", ownerUserIds: ["bob"], disposition: 0 },
+    { id: "foe", ownerUserIds: [], disposition: -1 },   // a monster makes it a co-op fight
+]);
+assert.strictEqual(coop.get("a"), "team-1");
+assert.strictEqual(coop.get("b"), "team-1", "players share a side once an NPC is present");
+assert.strictEqual(coop.get("foe"), "team-2", "hostile NPC opposes the party");
+console.log("  ✓ two players + an NPC keeps the party together (co-op default)");
 
 // A single player: rule does NOT trigger — leave defaults (empty map).
 const onePlayer = assignSides([
@@ -52,7 +63,7 @@ const onePlayer = assignSides([
 assert.strictEqual(onePlayer.size, 0, "fewer than two players -> no override");
 console.log("  ✓ a single player leaves the disposition defaults alone");
 
-// Three players round-robin across exactly two teams (A->1, B->2, C->1).
+// Three players, PLAYERS-ONLY -> round-robin across exactly two teams (A->1, B->2, C->1).
 const threePlayers = assignSides([
     { id: "a", ownerUserIds: ["alice"] },
     { id: "b", ownerUserIds: ["bob"] },
@@ -63,22 +74,22 @@ assert.deepStrictEqual(
     ["team-1", "team-2", "team-1"],
     "round-robin across two teams"
 );
-console.log("  ✓ 3+ players alternate across the two teams");
+console.log("  ✓ 3+ players (players-only) alternate across the two teams");
 
-// All of one player's combatants stay together; NPCs fall back to disposition.
-const withNpcs = assignSides([
+// Co-op with NPCs: all of every player's tokens land on the party side; NPCs by disposition.
+const partyWithNpcs = assignSides([
     { id: "a1", ownerUserIds: ["alice"] },
     { id: "b1", ownerUserIds: ["bob"] },
-    { id: "a2", ownerUserIds: ["alice"] },         // alice's 2nd token -> alice's side
+    { id: "a2", ownerUserIds: ["alice"] },              // alice's 2nd token
     { id: "ally", ownerUserIds: [], disposition: 1 },   // friendly NPC
     { id: "foe", ownerUserIds: [], disposition: -1 },   // hostile NPC
 ]);
-assert.strictEqual(withNpcs.get("a1"), withNpcs.get("a2"), "a player's tokens share a side");
-assert.strictEqual(withNpcs.get("a1"), "team-1");
-assert.strictEqual(withNpcs.get("b1"), "team-2");
-assert.strictEqual(withNpcs.get("ally"), "team-1", "friendly NPC by disposition");
-assert.strictEqual(withNpcs.get("foe"), "team-2", "hostile NPC by disposition");
-console.log("  ✓ a player's tokens stay together; NPCs fall back to disposition");
+assert.strictEqual(partyWithNpcs.get("a1"), "team-1");
+assert.strictEqual(partyWithNpcs.get("a2"), "team-1");
+assert.strictEqual(partyWithNpcs.get("b1"), "team-1", "all players share the party side in a co-op fight");
+assert.strictEqual(partyWithNpcs.get("ally"), "team-1", "friendly NPC joins the party");
+assert.strictEqual(partyWithNpcs.get("foe"), "team-2", "hostile NPC opposes the party");
+console.log("  ✓ co-op party stays together; NPCs fall back to disposition");
 
 // ───────────────────────────────────────────────────── orderSidesByInitiative ──
 console.log("orderSidesByInitiative...");

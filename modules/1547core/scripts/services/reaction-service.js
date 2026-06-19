@@ -188,14 +188,18 @@ async function handleReactionTrigger(sourceEvent, trigger) {
         ?? reactionWindow.actor
         ?? null;
 
-    // Reaction economy (Move 3). Attack reactions are once-per-round; movement
-    // (threat / overwatch) reactions are once-per-mover-per-round (so opponent C
-    // can still react after B has). Offer nothing when the reactor has none left.
+    // Reaction economy: ONE reaction per round. Using any reaction (movement or
+    // attack) spends it, after which NO further window is offered this round.
+    // Movement additionally de-dups per opponent: each mover entering the threat
+    // zone offers at most once per round (passing burns that opponent's offer but
+    // NOT the one reaction), so a pass on A doesn't block reacting to B.
+    const combat = globalThis.game?.combat;
     const mover = trigger === "threat-zone" ? (sourceEvent.payload?.mover ?? null) : null;
     if (reactorActor) {
+        const hasReaction = isReactionAvailable(reactorActor, combat);
         const available = trigger === "threat-zone"
-            ? isMovementReactionAvailable(reactorActor, mover, globalThis.game?.combat)
-            : isReactionAvailable(reactorActor, globalThis.game?.combat);
+            ? hasReaction && isMovementReactionAvailable(reactorActor, mover, combat)
+            : hasReaction;
         if (!available) return null;
     }
 
@@ -229,19 +233,22 @@ async function handleReactionTrigger(sourceEvent, trigger) {
     // and clear the waiting indicator (no-op if the responder already answered).
     if (relayed) closeRelayedWindow(windowId);
 
-    // Spend the reaction economy. A movement (threat) reaction is spent on
-    // resolution — pass OR use — so declining the first opportunity doesn't
-    // re-trigger on the same mover this round. An attack reaction is spent only
-    // when actually used.
+    // Spend the reaction economy. ONE reaction per round: actually USING a
+    // reaction (movement or attack) marks the single per-round reaction spent, so
+    // no further window of any kind is offered this round.
     //
-    // Only spend the movement reaction when a prompt was actually presentable:
-    // a relay that reached a live owner, or a locally-opened window with a real
-    // (positive) duration. A zero-length window auto-passes instantly with no
-    // chance to react, so burning the economy there would be a silent no-show.
+    // Movement also marks a per-opponent flag on resolution — pass OR use — so a
+    // declined opportunity doesn't re-trigger on the same mover this round (the
+    // "once per opponent" offer), while a pass still leaves the one reaction
+    // available for a different mover or an incoming attack. Only spend it when a
+    // prompt was actually presentable: a relay that reached a live owner, or a
+    // locally-opened window with a real (positive) duration — a zero-length window
+    // auto-passes instantly, so burning the economy there would be a silent no-show.
     const promptPresented = relayed || (openedLocally && timeoutMs > 0);
     const combatApi = game.modules.get(MODULE_ID)?.api?.combat;
     if (trigger === "threat-zone") {
         if (reactorActor && mover && promptPresented) void combatApi?.markMovementReacted?.(reactorActor, mover);
+        if (selectedReaction && reactorActor) void combatApi?.markReactionUsed?.(reactorActor);
     } else if (selectedReaction && reactorActor) {
         void combatApi?.markReactionUsed?.(reactorActor);
     }

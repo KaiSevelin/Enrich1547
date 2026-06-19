@@ -8,16 +8,19 @@
  * feeds plain descriptors in and applies the results.
  *
  * Rules encoded here (see docs/specs/battle-flow-spec):
- *   - If TWO OR MORE distinct players start a combat, they must always be on
- *     different sides: distinct player owners are distributed round-robin
- *     across team-1 / team-2 (player A -> team-1, B -> team-2, C -> team-1...).
- *     All of one player's combatants stay together on that player's side.
- *     Non-player (GM/NPC) combatants fall back to disposition.
+ *   - Players DEFAULT TO THE SAME SIDE. The one exception is a players-only
+ *     fight (no NPC combatants): there the distinct players split round-robin
+ *     across team-1 / team-2 (A -> team-1, B -> team-2, C -> team-1, ...), so a
+ *     pure-PvP duel puts each player on their own side. In any MIXED fight
+ *     (at least one NPC present) all players share team-1 and NPCs fall back to
+ *     disposition — the co-op "party vs the GM's monsters" case.
+ *   - All of one player's combatants stay together on that player's side.
  *   - With fewer than two distinct players, NOTHING is overridden — the
  *     existing per-combatant disposition default stands (assignSides returns
  *     an empty map, signalling "leave defaults alone").
- *   - Side turn order is the 3d6 side-initiative result, highest first,
- *     fixed for the whole combat (ties keep their incoming order).
+ *   - Side turn order is the 3d6 side-initiative result, highest first, fixed
+ *     for the whole combat; tied side rolls are re-rolled (roll-off) by the
+ *     Foundry orchestrator before this ordering runs.
  *
  * Exports:
  *   primaryPlayerOwner(ownerUserIds) -> string | null
@@ -55,7 +58,7 @@ export function dispositionSide(disposition) {
  *
  * @param {Array<{id:string, ownerUserIds?:string[], disposition?:number}>} combatants
  *   Combatants in their tracker order (order matters: it fixes which player
- *   gets team-1 vs team-2, and the disposition fallback for NPCs).
+ *   gets team-1 vs team-2 in a duel, and the disposition fallback for NPCs).
  * @returns {Map<string,string>} combatantId -> sideId. Empty when there are
  *   fewer than two distinct players (caller should not override anything).
  */
@@ -63,27 +66,40 @@ export function assignSides(combatants = []) {
     const result = new Map();
     const list = Array.isArray(combatants) ? combatants.filter((c) => c && c.id) : [];
 
-    // Distinct player owners, in first-appearance order.
+    // Distinct player owners (first-appearance order) and whether any NPC is in.
     const ownerByCombatant = new Map();
     const playerOwnerOrder = [];
+    let hasNpc = false;
     for (const c of list) {
         const owner = primaryPlayerOwner(c.ownerUserIds);
         ownerByCombatant.set(c.id, owner);
-        if (owner && !playerOwnerOrder.includes(owner)) playerOwnerOrder.push(owner);
+        if (owner) {
+            if (!playerOwnerOrder.includes(owner)) playerOwnerOrder.push(owner);
+        } else {
+            hasNpc = true;
+        }
     }
 
     // Fewer than two players: leave the existing defaults untouched.
     if (playerOwnerOrder.length < 2) return result;
 
-    // Round-robin distinct players across the two teams.
+    // Mixed fight (any NPC present): co-op default — all players share a side,
+    // NPCs fall back to disposition.
+    if (hasNpc) {
+        for (const c of list) {
+            const owner = ownerByCombatant.get(c.id);
+            result.set(c.id, owner ? TEAM_ONE : dispositionSide(c.disposition));
+        }
+        return result;
+    }
+
+    // Players-only fight: a duel/PvP — distinct players round-robin across teams.
     const sideForOwner = new Map();
     playerOwnerOrder.forEach((owner, index) => {
         sideForOwner.set(owner, index % 2 === 0 ? TEAM_ONE : TEAM_TWO);
     });
-
     for (const c of list) {
-        const owner = ownerByCombatant.get(c.id);
-        result.set(c.id, owner ? sideForOwner.get(owner) : dispositionSide(c.disposition));
+        result.set(c.id, sideForOwner.get(ownerByCombatant.get(c.id)));
     }
     return result;
 }
