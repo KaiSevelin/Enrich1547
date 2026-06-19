@@ -97,4 +97,37 @@ console.log("\nchargen-template-parse: parseTemplateItemToChoiceData...");
     console.log("  ✓ reward-based + effect-table items parse; validate callback invoked");
 }
 
+console.log("\nchargen-template-parse: legacy single-reward backstop...");
+{
+    // No Reward{n} fields and no effect tables → exercises the single-reward
+    // backstop. This branch previously threw a ReferenceError (out-of-scope
+    // `prefix`); it must now parse and read top-level transition props.
+    const legacy = {
+        name: "Old Card",
+        system: { props: {
+            ChoiceTitle: "Old Card",
+            Effect1Type: "money", Effect1Amount: "7",
+            NextTableUuid: "RollTable.abc",
+            TransitionMode: "Optional",
+            TransitionPrompt: "Continue down this path?",
+        } },
+    };
+    const parsed = parse.parseTemplateItemToChoiceData(legacy, "LegacyTable");
+    assert.strictEqual(parsed.rewards.length, 1, "backstop produced one reward");
+    assert.deepStrictEqual(parsed.rewards[0].changes, [{ type: "money", amount: 7 }]);
+    assert.deepStrictEqual(parsed.rewards[0].next, { tableUuid: "RollTable.abc" });
+    assert.strictEqual(parsed.rewards[0].transitionMode, "optional", "top-level TransitionMode read + lowercased");
+    assert.strictEqual(parsed.rewards[0].transitionPrompt, "Continue down this path?");
+
+    // Same shape without the transition props → must still parse (defaults to "").
+    const noTransition = {
+        name: "Old Card 2",
+        system: { props: { ChoiceTitle: "Old Card 2", Effect1Type: "luck", Effect1On: "true" } },
+    };
+    const parsed2 = parse.parseTemplateItemToChoiceData(noTransition, "LegacyTable2");
+    assert.strictEqual(parsed2.rewards[0].transitionMode, "");
+    assert.deepStrictEqual(parsed2.rewards[0].changes, [{ type: "luck", on: true }]);
+    console.log("  ✓ legacy single-reward item parses (no ReferenceError); reads top-level transitions");
+}
+
 console.log("\nAll chargen-template-parse tests passed.");

@@ -335,17 +335,16 @@ export function parseTemplateItemToChoiceData(item, tableName = "RollTable", val
             if (ch) changes.push(ch);
         }
         if (changes.length || nextTableUuid) {
-            // NOTE: faithful port of chargen.js. `prefix` here is out of scope
-            // (it was block-scoped to the reward loop above), so these two reads
-            // throw a ReferenceError if this backstop branch is ever reached —
-            // a pre-existing latent bug, preserved verbatim rather than guessed
-            // at during extraction. Fix separately once the intended prop names
-            // are confirmed.
+            // Read top-level transition props, matching the unprefixed
+            // props.Weight / props.NextTableUuid reads above. (The original code
+            // referenced `${prefix}…` here, but `prefix` was block-scoped to the
+            // reward loop above — out of scope in this backstop — so it threw a
+            // ReferenceError whenever this legacy single-reward branch was hit.)
             const rw = {
                 weight: weightRaw == null ? 1 : weightRaw,
                 changes,
-                transitionMode: String(props[`${prefix}TransitionMode`] ?? "").trim().toLowerCase(),
-                transitionPrompt: String(props[`${prefix}TransitionPrompt`] ?? "").trim()
+                transitionMode: String(props.TransitionMode ?? "").trim().toLowerCase(),
+                transitionPrompt: String(props.TransitionPrompt ?? "").trim()
             };
             if (nextTableUuid) rw.next = { tableUuid: nextTableUuid };
             rewards.push(rw);
