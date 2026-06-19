@@ -604,7 +604,7 @@ async function markMovementReacted(reactor, mover) {
 async function rollPublicTotals(formula, speaker, flavor) {
     if (!formula) return null;
     const RollCls = globalThis.Roll;
-    const roll = await new RollCls(formula).evaluate({ async: true });
+    const roll = await new RollCls(formula).evaluate();
     const publicMode = globalThis.CONST?.DICE_ROLL_MODES?.PUBLIC ?? "publicroll";
     await roll.toMessage({ speaker, flavor }, { rollMode: publicMode });
     const computeRollTotals = game.modules.get(MODULE_ID)?.api?.computeRollTotals;

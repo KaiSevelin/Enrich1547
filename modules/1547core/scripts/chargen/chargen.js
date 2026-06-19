@@ -3315,7 +3315,7 @@ export class SkillTreeChargenApp extends FormApplication {
         const formula = String(table.formula ?? "").trim();
         if (formula) {
             try {
-                roll = await (new Roll(formula)).evaluate({ async: true });
+                roll = await (new Roll(formula)).evaluate();
                 matched = table.getResultsForRoll?.(roll.total) ?? [];
             } catch (err) {
                 console.warn(`Chargen: failed to evaluate rolltable formula for "${table.name}" (${tableUuidOrId}). Falling back to weighted pick.`, err);
@@ -4002,7 +4002,7 @@ export class SkillTreeChargenApp extends FormApplication {
 
             const maxAttempts = Math.max(20, pool.length * 12);
             for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
-                const roll = await (new Roll(table.formula)).evaluate({ async: true });
+                const roll = await (new Roll(table.formula)).evaluate();
                 const matches = (table.getResultsForRoll?.(roll.total) ?? [])
                     .filter(result => pool.some(entry => entry.id === result.id));
 
@@ -4028,7 +4028,7 @@ export class SkillTreeChargenApp extends FormApplication {
             // accept the replacement without another social-status gate so the user keeps a full choice set.
             if (hasStatusTag(drawn.data)) {
                 const target = statusCheckTarget();
-                const roll = (await (new Roll("2d6")).evaluate({ async: true })).total;
+                const roll = (await (new Roll("2d6")).evaluate()).total;
 
                 if (roll > target) {
                     const s = getSocialStatus();

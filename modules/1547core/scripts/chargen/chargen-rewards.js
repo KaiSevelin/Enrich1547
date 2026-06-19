@@ -266,7 +266,7 @@ export async function applyRewardChanges(app, run, changes = [], deps = {}) {
             let amount = 0;
 
             if (ch.formula) {
-                const roll = await (new Roll(String(ch.formula))).evaluate({ async: true });
+                const roll = await (new Roll(String(ch.formula))).evaluate();
                 amount = roll.total;
             } else if (Number.isFinite(Number(ch.amount))) {
                 amount = Number(ch.amount);

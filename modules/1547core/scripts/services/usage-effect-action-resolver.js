@@ -326,7 +326,7 @@ function resolveFormulaText(formulaText, sourceActor, targetActor, fallbackStat 
 async function evaluateFormula(formulaText) {
     const text = String(formulaText ?? "").trim();
     if (!text) return { formula: "", total: 0, roll: null };
-    const roll = await new Roll(text).evaluate({ async: true });
+    const roll = await new Roll(text).evaluate();
     return { formula: text, total: Number(roll.total ?? 0) || 0, roll };
 }
 

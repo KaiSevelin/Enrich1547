@@ -278,7 +278,7 @@ function getPrimaryStatFormula(actor, statLabel, bonusDice = 0) {
 
 async function evaluateRollFormula(formula) {
     const safeFormula = String(formula ?? "").trim() || "0";
-    const roll = await new Roll(safeFormula).evaluate({ async: true });
+    const roll = await new Roll(safeFormula).evaluate();
     return {
         formula: safeFormula,
         total: Number(roll.total ?? 0) || 0,

@@ -326,7 +326,10 @@ class MonsterWizard extends Application {
 
             const actor = await Actor.create({
                 name: s.name,
-                type: "_template",
+                // Real monster actors are CSB "character" type — not "_template"
+                // (a _template actor is a blueprint, and ensureBaseChangeSetForActor
+                // skips _template, so the base chassis never auto-applied either).
+                type: "character",
                 folder: actorFolder?.id ?? null,
                 system: { props: { TypeDropdown: s.typeKey } }
             });

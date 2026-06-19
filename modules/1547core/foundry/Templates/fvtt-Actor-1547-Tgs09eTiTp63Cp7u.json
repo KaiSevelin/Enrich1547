@@ -1145,7 +1145,7 @@
                     "editRole": 0,
                     "permission": 0,
                     "tooltip": "ChangeSets grouped by their pipeline slot. Drop ChangeSet items into the matching group.",
-                    "visibilityFormula": "",
+                    "visibilityFormula": "not(equalText(TypeDropdown, 'Player'))",
                     "editableFormula": "",
                     "escapeHTML": false,
                     "type": "panel",

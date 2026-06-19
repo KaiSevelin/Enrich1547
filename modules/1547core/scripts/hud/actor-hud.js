@@ -1968,7 +1968,7 @@ async function maybeRollCounter(context, label, playerTotal) {
     }
     if (!counterFormula) return;
 
-    const counterRoll = await new Roll(counterFormula).evaluate({ async: true });
+    const counterRoll = await new Roll(counterFormula).evaluate();
     const speaker = ChatMessage.getSpeaker({ actor: context.actor, token: context.token?.document });
     const success = Number(playerTotal) >= Number(counterRoll.total);
     const resultText = success ? "Success" : "Failure";

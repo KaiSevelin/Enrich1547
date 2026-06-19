@@ -164,7 +164,7 @@ async function evaluateDelay(delay) {
     if (!raw) return 1;
     const numeric = Number(raw);
     if (Number.isFinite(numeric)) return Math.max(1, Math.floor(numeric));
-    const roll = await (new Roll(raw)).evaluate({ async: true });
+    const roll = await (new Roll(raw)).evaluate();
     return Math.max(1, Number(roll.total ?? 1));
 }
 

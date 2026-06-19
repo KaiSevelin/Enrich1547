@@ -247,7 +247,7 @@ async function waitForDice1547Totals(game, message, { timeoutMs = 5000, interval
 
 async function rollFormulaToChatAndSummarize({ Roll, speaker, formula, flavor, game }) {
     if (!formula) return null;
-    const roll = await new Roll(formula).evaluate({ async: true });
+    const roll = await new Roll(formula).evaluate();
     // Force public so both clients see the dice (Dice So Nice animates for every
     // user who can view the message). Otherwise the GM's chat roll-mode setting
     // (e.g. "Private GM Roll") would hide combat rolls from the player.
@@ -274,7 +274,7 @@ async function executeStatAction(descriptor, context, evaluation, deps = {}) {
     if (!formula || !stat) return;
 
     HUD_STATE.activeStatPreview = stat.label;
-    const roll = await new Roll(formula).evaluate({ async: true });
+    const roll = await new Roll(formula).evaluate();
     const speaker = ChatMessage.getSpeaker({ actor: context.actor, token: context.token?.document });
     const flavor = `${descriptor.label}<br>Base: ${escapeHtml(evaluation.rollPreview.baseFormula)}<br>Advantage Dice: ${escapeHtml(evaluation.rollPreview.advantageDice)}<br>Risk Dice: ${escapeHtml(evaluation.rollPreview.riskDice)}`;
     await roll.toMessage({
@@ -297,7 +297,7 @@ async function executeSkillAction(descriptor, context, evaluation, deps = {}) {
         HUD_STATE.activeStatPreview = skill.linkedStat;
     }
 
-    const roll = await new Roll(formula).evaluate({ async: true });
+    const roll = await new Roll(formula).evaluate();
     const speaker = ChatMessage.getSpeaker({ actor: context.actor, token: context.token?.document });
     const fallbackNote = skill.rollData?.usedFallback ? "<br>Fallback: minimum skill roll is 1d6" : "";
     const flavor = `${descriptor.label}<br>Stat: ${escapeHtml(skill.linkedStat)}<br>Base Stat: ${escapeHtml(skill.baseFormula || "-")}<br>Level: ${escapeHtml(skill.currentLevel)}<br>Dice Shift: ${escapeHtml(skill.diceShift)}<br>Advantage Dice: ${escapeHtml(evaluation.rollPreview.advantageDice)}<br>Risk Dice: ${escapeHtml(evaluation.rollPreview.riskDice)}${fallbackNote}`;
@@ -361,7 +361,7 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
             });
             return;
         }
-        const roll = await new Roll(applyRollClickModifier(attackFormula, context.rollModifier)).evaluate({ async: true });
+        const roll = await new Roll(applyRollClickModifier(attackFormula, context.rollModifier)).evaluate();
         const speaker = ChatMessage.getSpeaker({ actor: context.actor, token: context.token?.document });
         const flavor = `${descriptor.label}<br>No target selected: rolled to chat only.`;
         await roll.toMessage({ speaker, flavor });

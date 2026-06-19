@@ -125,7 +125,7 @@ export async function show1547RollDialog(formulas, titleLabel = "@1547") {
 
 async function rollCombinedToChat(combinedFormula, titleLabel, terms) {
     try {
-        const roll = await new Roll(combinedFormula).evaluate({ async: true });
+        const roll = await new Roll(combinedFormula).evaluate();
         await roll.toMessage({
             flavor: `${titleLabel}: ${terms.join(" + ")}`,
             speaker: ChatMessage.getSpeaker(),

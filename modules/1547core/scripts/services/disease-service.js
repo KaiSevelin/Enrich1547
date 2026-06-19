@@ -57,7 +57,7 @@ function statFormula(actor, stat, bonusDice = 0) {
 
 async function rollTotal(formula) {
     const safe = String(formula ?? "0").trim() || "0";
-    const roll = await new Roll(safe).evaluate({ async: true });
+    const roll = await new Roll(safe).evaluate();
     return { total: Number(roll.total ?? 0) || 0, formula: safe, roll };
 }
 

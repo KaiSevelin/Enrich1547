@@ -194,7 +194,7 @@ export function bindHudInteractions(root, token, deps = {}) {
             const selection = getDiceTabAttackSelection(token.actor.id);
             const terms = (getAttackDiceTabOptions?.() ?? []).flatMap((option) => Array.from({ length: Math.max(0, Number(selection?.[option.key] ?? 0) || 0) }, () => `1d${option.code}`));
             if (!terms.length) return;
-            const roll = await new Roll(terms.join(" + ")).evaluate({ async: true });
+            const roll = await new Roll(terms.join(" + ")).evaluate();
             const speaker = ChatMessage.getSpeaker({ actor: token.actor, token: token.document });
             await roll.toMessage({ speaker, flavor: "Dice Tab Attack Dice" });
         });
@@ -224,7 +224,7 @@ export function bindHudInteractions(root, token, deps = {}) {
             if (!token?.actor || button.disabled) return;
             const count = Math.max(0, Number(getDiceTabSkillDice(token.actor.id)) || 0);
             if (count <= 0) return;
-            const roll = await new Roll(`${count}d6`).evaluate({ async: true });
+            const roll = await new Roll(`${count}d6`).evaluate();
             const speaker = ChatMessage.getSpeaker({ actor: token.actor, token: token.document });
             await roll.toMessage({ speaker, flavor: "Dice Tab D6" });
         });
