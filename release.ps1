@@ -95,7 +95,9 @@ Write-Output "Version: $oldVer -> $newVer"
 # only (not the EOL) so LF/CRLF is preserved.
 $testPlanPath = Join-Path $moduleDir 'docs/manual-test-plan.md'
 if (Test-Path $testPlanPath) {
-    $tpContent = Get-Content $testPlanPath -Raw
+    # -Encoding utf8 is required: PS 5.1's Get-Content default is the ANSI
+    # codepage, which mangles em-dashes / arrows when the file is UTF-8.
+    $tpContent = Get-Content $testPlanPath -Raw -Encoding utf8
     $tpUpdated = $tpContent -replace '(?m)^_Current target: 1547core [^\r\n]*', ("_Current target: 1547core {0}._" -f $newVer)
     if ($tpUpdated -ne $tpContent) {
         [System.IO.File]::WriteAllText($testPlanPath, $tpUpdated, $utf8NoBom)

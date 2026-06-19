@@ -1,4 +1,4 @@
-# 1547 Core â€” Manual Test Plan
+# 1547 Core — Manual Test Plan
 
 Single living checklist for the live/Foundry-coupled paths the Node suite can't
 cover. **Reset to a clean state (unchecked, no carried-over notes) each release;**
@@ -9,36 +9,36 @@ _Current target: 1547core 0.3.103._
 
 ## Setup
 - [ ] Update to the current **1547core** build, reload the world (GM).
-- [ ] Run **Game Settings â†’ 1547 Core â†’ Setup Data**.
-- [ ] Keep the browser console (F12) open â€” "no `1547core | â€¦ failed` / no red errors" is an implicit pass condition for every step.
+- [ ] Run **Game Settings -> 1547 Core -> Setup Data**.
+- [ ] Keep the browser console (F12) open — "no `1547core | ... failed` / no red errors" is an implicit pass condition for every step.
 
 ---
 
 ## 1. Load & Setup Data
-- [ ] World loads with no `1547core | â€¦ failed` errors; exactly **one** `CHARGEN.JS LOADED FROM â€¦` line.
+- [ ] World loads with no `1547core | ... failed` errors; exactly **one** `CHARGEN.JS LOADED FROM ...` line.
 - [ ] Setup Data reports counts and finishes without uncaught errors.
-- [ ] No `No Base ChangeSet found for type "â€¦"` warnings for wired types (NatureSpirit excepted â€” see Known Issues).
+- [ ] No `No Base ChangeSet found for type "..."` warnings for wired types (NatureSpirit excepted — see Known Issues).
 - [ ] A wired base monster (Beast/Undead) has a **Base**-group ChangeSet and derived stats.
 
 ---
 
 ## 2. Item sheet actions
-- [ ] **Spell** / **Supernatural Mark** / **Monster Magic** sheets â†’ **no** Actions panel / Resolve Effects button.
-- [ ] Right-click a **spell** â†’ **Generate Ritual** works; right-click a **ritual** â†’ **Open Ritual Board** works.
-- [ ] Actor-owned **Disease/affliction** â†’ **Treat** opens the cure board.
+- [ ] **Spell** / **Supernatural Mark** / **Monster Magic** sheets -> **no** Actions panel / Resolve Effects button.
+- [ ] Right-click a **spell** -> **Generate Ritual** works; right-click a **ritual** -> **Open Ritual Board** works.
+- [ ] Actor-owned **Disease/affliction** -> **Treat** opens the cure board.
 
 ---
 
-## 3. Character generation â€” **Regression** (inline prompts; no dialogs behind the window)
-- [ ] Run a full chargen startâ†’finish; cards roll, choices apply, biography fills in.
-- [ ] **Inline prompts:** drive (add/remove), language (award â†’ new-name / upgrade), and change-career picks all appear as an **expandable panel at the bottom of the chargen form** â€” **no separate Dialog window** opens.
+## 3. Character generation — **Regression** (inline prompts; no dialogs behind the window)
+- [ ] Run a full chargen start->finish; cards roll, choices apply, biography fills in.
+- [ ] **Inline prompts:** drive (add/remove), language (award -> new-name / upgrade), and change-career picks all appear as an **expandable panel at the bottom of the chargen form** — **no separate Dialog window** opens.
 - [ ] Each inline panel is **pre-populated with a default** (first option selected / field focused).
 - [ ] **Language upgrade** applies read/write to the **chosen** language (not index 0).
-- [ ] **Career-advancement wizard:** stat â†’ skill â†’ maneuver/alternative picks appear **in sequence** in the tray; cards stay non-interactive while a panel is open; "Skip" ends the wizard with the "ended early" bio line.
+- [ ] **Career-advancement wizard:** stat -> skill -> maneuver/alternative picks appear **in sequence** in the tray; cards stay non-interactive while a panel is open; "Skip" ends the wizard with the "ended early" bio line.
 - [ ] **Drives:** add (textarea + cause hint) and remove (radio list) update the actor's Drives.
 - [ ] **Optional transition:** inline confirm ("Take the New Path" / "Remain Where You Are"); both resume the flow correctly.
-- [ ] Closing the chargen window while a panel is open â†’ no console error.
-- [ ] **External drive callers still use a Dialog:** trigger a failure effect and a social-battle drive prompt â†’ these open the original **Dialog** (not the inline panel).
+- [ ] Closing the chargen window while a panel is open -> no console error.
+- [ ] **External drive callers still use a Dialog:** trigger a failure effect and a social-battle drive prompt -> these open the original **Dialog** (not the inline panel).
 - [ ] **Regression (v13 rolls):** no `Roll#evaluate ... async option ... removed` error; chargen does not stall on a card.
 - [ ] **Regression (HP):** finished character has **full HP** (Current = Max), not 0.
 - [ ] **Regression (weighted picks):** rewards vary across runs (not always the last option).
@@ -53,30 +53,30 @@ _Current target: 1547core 0.3.103._
 ---
 
 ## 5. Combat HUD
-- [ ] Token select â†’ HUD renders; hover/target/rotate mid-combat â†’ no console errors; buttons stay clickable.
-- [ ] **Ammo weapon:** ammo chip + profile switch + fire â†’ correct ammo; loading loads **one** round.
-- [ ] Attack with maneuver/staged + ammo dice â†’ rolled pool matches HUD preview.
+- [ ] Token select -> HUD renders; hover/target/rotate mid-combat -> no console errors; buttons stay clickable.
+- [ ] **Ammo weapon:** ammo chip + profile switch + fire -> correct ammo; loading loads **one** round.
+- [ ] Attack with maneuver/staged + ammo dice -> rolled pool matches HUD preview.
 
 ---
 
 ## 6. Reactions & monster stats
 - [ ] Overwatch/free counterattack does **not** pop a fresh reaction window against the original attacker.
 - [ ] A movement reaction nobody is prompted for does **not** silently consume that reactor's movement reaction.
-- [ ] **Social Battle** / **Disease â†’ Treat** vs a **monster** read stat dice/mods correctly (not 0).
+- [ ] **Social Battle** / **Disease -> Treat** vs a **monster** read stat dice/mods correctly (not 0).
 - [ ] Boosting a monster with a natural weapon/armor applies the weapon-die/armor-die boost.
 
 ---
 
 ## 7. Cross-client (second client)
-- [ ] GM edits a **ChangeSet** on an actor a **player** has open â†’ the player's derived values update **without** reload.
+- [ ] GM edits a **ChangeSet** on an actor a **player** has open -> the player's derived values update **without** reload.
 
 ---
 
-## Known issues (expected â€” not test failures)
-- **CharacterSheetV2 close error** â€” closing some actor sheets throws `You must provide an _id for every object in the update data Array` (a CSB dynamic-table form-submit issue, seen with the corrupt/duplicate Zone Base). **Open â€” under investigation.**
-- **NatureSpirit** isn't wired into the ForType system â†’ absent from the monster wizard, base not auto-applied. Separate content task.
-- **Duplicate "Zone Base"** in an existing world is a stale orphan (earlier seed, different `_id`); source/packs have one. Setup does not prune orphaned actors â€” delete the orphan manually (keep id `MonBaseZone0001`).
-- **move-remaining** stat on monsters is the per-turn movement budget on the shared actor template â€” intentional.
+## Known issues (expected — not test failures)
+- **CharacterSheetV2 close error** — closing some actor sheets throws `You must provide an _id for every object in the update data Array` (a CSB dynamic-table form-submit issue, seen with the corrupt/duplicate Zone Base). **Open — under investigation.**
+- **NatureSpirit** isn't wired into the ForType system -> absent from the monster wizard, base not auto-applied. Separate content task.
+- **Duplicate "Zone Base"** in an existing world is a stale orphan (earlier seed, different `_id`); source/packs have one. Setup does not prune orphaned actors — delete the orphan manually (keep id `MonBaseZone0001`).
+- **move-remaining** stat on monsters is the per-turn movement budget on the shared actor template — intentional.
 
 ---
 
