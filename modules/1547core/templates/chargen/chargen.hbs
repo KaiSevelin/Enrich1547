@@ -194,4 +194,60 @@
     </div>
     {{/if}}
 
+    {{#if pendingPrompt}}
+    <section class="chargen-inline-prompt chargen-inline-prompt--open"
+             data-prompt-id="{{pendingPrompt.id}}"
+             data-prompt-kind="{{pendingPrompt.kind}}"
+             aria-label="{{pendingPrompt.title}}">
+        <div class="chargen-dialog chargen-inline-prompt__body">
+            {{#if pendingPrompt.eyebrow}}<div class="chargen-dialog__eyebrow">{{pendingPrompt.eyebrow}}</div>{{/if}}
+            <h2 class="chargen-dialog__title">{{pendingPrompt.title}}</h2>
+            {{#if pendingPrompt.copy}}<p class="chargen-dialog__copy">{{pendingPrompt.copy}}</p>{{/if}}
+            {{#if pendingPrompt.hintHtml}}<div class="chargen-dialog__hint">{{{pendingPrompt.hintHtml}}}</div>{{/if}}
+
+            {{#if pendingPrompt.isChoice}}
+            <div class="chargen-dialog__choice-list">
+                {{#each pendingPrompt.options}}
+                <label class="chargen-dialog__choice">
+                    <input type="radio" name="cg-inline-choice" value="{{this.value}}" {{#if this.checked}}checked{{/if}}>
+                    <span class="chargen-dialog__choice-body">
+                        <span class="chargen-dialog__choice-mark"></span>
+                        <span>
+                            <span class="chargen-dialog__choice-title">{{this.title}}</span>
+                            {{#if this.meta}}<span class="chargen-dialog__choice-meta">{{this.meta}}</span>{{/if}}
+                        </span>
+                    </span>
+                </label>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{#if pendingPrompt.isSelect}}
+            <div class="chargen-dialog__field">
+                <select name="cg-inline-select">
+                    {{#each pendingPrompt.options}}
+                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.title}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            {{/if}}
+
+            {{#if pendingPrompt.isText}}
+            <div class="chargen-dialog__field">
+                {{#if pendingPrompt.multiline}}
+                <textarea name="cg-inline-text" rows="3" placeholder="{{pendingPrompt.placeholder}}">{{pendingPrompt.defaultText}}</textarea>
+                {{else}}
+                <input type="text" name="cg-inline-text" placeholder="{{pendingPrompt.placeholder}}" value="{{pendingPrompt.defaultText}}">
+                {{/if}}
+            </div>
+            {{/if}}
+
+            <div class="chargen-inline-prompt__actions">
+                <button type="button" data-action="inline-prompt-cancel">{{pendingPrompt.cancelLabel}}</button>
+                <button type="button" class="primary-action" data-action="inline-prompt-confirm">{{pendingPrompt.confirmLabel}}</button>
+            </div>
+        </div>
+    </section>
+    {{/if}}
+
 </form>

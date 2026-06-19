@@ -772,7 +772,7 @@ function getDriveHintData(category) {
     };
 }
 
-function renderDriveHintHtml(category) {
+export function renderDriveHintHtml(category) {
     const hint = getDriveHintData(category);
     const safeCategory = foundry.utils.escapeHTML(category);
     const safePrompt = foundry.utils.escapeHTML(hint.prompt);

@@ -1,84 +1,87 @@
-# 1547 Core — Manual Test Plan
+# 1547 Core â€” Manual Test Plan
 
 Single living checklist for the live/Foundry-coupled paths the Node suite can't
 cover. **Reset to a clean state (unchecked, no carried-over notes) each release;**
 the version line below is auto-stamped by `release.ps1`. **Regression** = verifies
-a fix from a recent release.
+a fix/feature from a recent release.
 
-_Current target: 1547core 0.3.102._
+_Current target: 1547core 0.3.103._
 
 ## Setup
 - [ ] Update to the current **1547core** build, reload the world (GM).
-- [ ] Run **Game Settings → 1547 Core → Setup Data** (so updated templates/packs apply to the world — required for the Composition-panel gating below).
-- [ ] Keep the browser console (F12) open — "no `1547core | … failed` / no red errors" is an implicit pass condition for every step.
+- [ ] Run **Game Settings â†’ 1547 Core â†’ Setup Data**.
+- [ ] Keep the browser console (F12) open â€” "no `1547core | â€¦ failed` / no red errors" is an implicit pass condition for every step.
 
 ---
 
 ## 1. Load & Setup Data
-- [ ] World loads with no `1547core | … failed` errors.
-- [ ] Exactly **one** `CHARGEN.JS LOADED FROM …` line appears (not two).
-- [ ] Setup Data reports loaded counts and finishes without uncaught errors.
-- [ ] No `No Base ChangeSet found for type "…"` warnings for wired types (Beast, Undead, Construct, …). _(NatureSpirit excepted — see Known Issues.)_
-- [ ] A wired base monster (e.g. **Beast**, **Undead**) has a **Base**-group ChangeSet attached and derived stats populated.
+- [ ] World loads with no `1547core | â€¦ failed` errors; exactly **one** `CHARGEN.JS LOADED FROM â€¦` line.
+- [ ] Setup Data reports counts and finishes without uncaught errors.
+- [ ] No `No Base ChangeSet found for type "â€¦"` warnings for wired types (NatureSpirit excepted â€” see Known Issues).
+- [ ] A wired base monster (Beast/Undead) has a **Base**-group ChangeSet and derived stats.
 
 ---
 
-## 2. Item sheet actions — **Regression** (bug #8 buttons removed)
-- [ ] **Spell** item sheet → **no "Actions" panel**, no Cast Spell / Resolve Effects / Generate Ritual buttons.
-- [ ] **Supernatural Mark** and **Monster Magic** sheets → no Resolve Effects button.
-- [ ] Right-click a **spell** in the directory → **Generate Ritual** works (creates a ritual).
-- [ ] Right-click a **ritual** → **Open Ritual Board** works (the casting flow).
-- [ ] Actor-owned **Disease/affliction** → **Treat** button opens the cure board.
+## 2. Item sheet actions
+- [ ] **Spell** / **Supernatural Mark** / **Monster Magic** sheets â†’ **no** Actions panel / Resolve Effects button.
+- [ ] Right-click a **spell** â†’ **Generate Ritual** works; right-click a **ritual** â†’ **Open Ritual Board** works.
+- [ ] Actor-owned **Disease/affliction** â†’ **Treat** opens the cure board.
 
 ---
 
-## 3. Character generation
-- [ ] Run a full chargen start→finish; cards roll, choices apply, biography fills in.
-- [ ] **Regression (v13 rolls):** no `The async option for Roll#evaluate has been removed` error in the console; chargen does **not** stall on a card.
-- [ ] **Regression (HP):** the finished character has **full HP** (Current HP = Max HP), not 0.
-- [ ] **Regression (UI lockup):** the **final** roll's last choice does not freeze the UI — continue/finish still work.
-- [ ] **Regression (weighted picks):** across several runs, rewards vary — not always the same/last option.
-- [ ] **Regression (legacy template):** a legacy single-reward table (Effect1-style + NextTable) parses with no console `ReferenceError`.
-- [ ] (If used) Batch **simulation** runs and renders summary stats.
+## 3. Character generation â€” **Regression** (inline prompts; no dialogs behind the window)
+- [ ] Run a full chargen startâ†’finish; cards roll, choices apply, biography fills in.
+- [ ] **Inline prompts:** drive (add/remove), language (award â†’ new-name / upgrade), and change-career picks all appear as an **expandable panel at the bottom of the chargen form** â€” **no separate Dialog window** opens.
+- [ ] Each inline panel is **pre-populated with a default** (first option selected / field focused).
+- [ ] **Language upgrade** applies read/write to the **chosen** language (not index 0).
+- [ ] **Career-advancement wizard:** stat â†’ skill â†’ maneuver/alternative picks appear **in sequence** in the tray; cards stay non-interactive while a panel is open; "Skip" ends the wizard with the "ended early" bio line.
+- [ ] **Drives:** add (textarea + cause hint) and remove (radio list) update the actor's Drives.
+- [ ] **Optional transition:** inline confirm ("Take the New Path" / "Remain Where You Are"); both resume the flow correctly.
+- [ ] Closing the chargen window while a panel is open â†’ no console error.
+- [ ] **External drive callers still use a Dialog:** trigger a failure effect and a social-battle drive prompt â†’ these open the original **Dialog** (not the inline panel).
+- [ ] **Regression (v13 rolls):** no `Roll#evaluate ... async option ... removed` error; chargen does not stall on a card.
+- [ ] **Regression (HP):** finished character has **full HP** (Current = Max), not 0.
+- [ ] **Regression (weighted picks):** rewards vary across runs (not always the last option).
+- [ ] (If used) Batch **simulation** runs headless with **no inline panel ever shown** and renders summary stats.
 
 ---
 
 ## 4. Actor sheets & monster wizard
-- [ ] **Regression (Composition gating):** a **player character** sheet shows **no** Composition panel; a **typed monster** sheet **does**. _(Requires Setup Data to have re-applied the template.)_
-- [ ] **Regression (monster wizard):** the wizard creates a **real monster** (a `character` actor in the Monsters folder), **not** a `_template`, and its Base chassis is auto-applied.
+- [ ] **Composition gating:** a **player character** sheet shows **no** Composition panel; a **typed monster** sheet **does**. _(Requires Setup Data.)_
+- [ ] **Monster wizard:** creates a **real monster** (`character` actor in Monsters), **not** a `_template`, with its Base chassis auto-applied.
 
 ---
 
 ## 5. Combat HUD
-- [ ] Select a token → HUD renders. Hover/target other tokens and rotate a token mid-combat → no console errors; buttons stay clickable.
-- [ ] **Ammo weapon:** pick an ammo chip, switch profile, fire → correct ammo used; loading ammo loads **one** round.
-- [ ] Attack with **maneuver/staged dice + ammo dice** → the rolled pool matches the HUD preview.
+- [ ] Token select â†’ HUD renders; hover/target/rotate mid-combat â†’ no console errors; buttons stay clickable.
+- [ ] **Ammo weapon:** ammo chip + profile switch + fire â†’ correct ammo; loading loads **one** round.
+- [ ] Attack with maneuver/staged + ammo dice â†’ rolled pool matches HUD preview.
 
 ---
 
 ## 6. Reactions & monster stats
-- [ ] **Regression (reaction recursion):** an overwatch / free counterattack resolves but does **not** pop a fresh reaction window against the original attacker.
-- [ ] **Regression (movement economy):** a movement reaction nobody is actually prompted for does **not** silently consume that reactor's movement reaction for the round.
-- [ ] **Regression (monster stats):** **Social Battle** and **Disease → Treat** against a **monster** read its stat dice/mods correctly (not 0).
-- [ ] **Regression (boost):** boosting a monster with a natural weapon/armor a few times applies the weapon-die/armor-die boost to it.
+- [ ] Overwatch/free counterattack does **not** pop a fresh reaction window against the original attacker.
+- [ ] A movement reaction nobody is prompted for does **not** silently consume that reactor's movement reaction.
+- [ ] **Social Battle** / **Disease â†’ Treat** vs a **monster** read stat dice/mods correctly (not 0).
+- [ ] Boosting a monster with a natural weapon/armor applies the weapon-die/armor-die boost.
 
 ---
 
-## 7. Cross-client (needs a second connected client)
-- [ ] **Regression (derived-state cache):** as GM, add/edit a **ChangeSet** on an actor a **player** has open → the player's sheet/derived values update **without** a reload.
+## 7. Cross-client (second client)
+- [ ] GM edits a **ChangeSet** on an actor a **player** has open â†’ the player's derived values update **without** reload.
 
 ---
 
-## Known issues (expected — not test failures)
-- **NatureSpirit** isn't wired into the ForType system (no `ForType_NatureSpirit` on its changesets), so it's absent from the monster wizard and its base isn't auto-applied. Separate content task.
-- **Duplicate "Zone Base"** in an existing world is a stale orphan from an earlier seed (different `_id`); source/packs have one. Setup upserts by `_id` and does not prune orphaned actors, so delete the orphan manually (keep the one with id `MonBaseZone0001`).
-- The **move-remaining** stat on monsters is the per-turn movement budget on the shared actor template — intentional, shows on all actors.
+## Known issues (expected â€” not test failures)
+- **CharacterSheetV2 close error** â€” closing some actor sheets throws `You must provide an _id for every object in the update data Array` (a CSB dynamic-table form-submit issue, seen with the corrupt/duplicate Zone Base). **Open â€” under investigation.**
+- **NatureSpirit** isn't wired into the ForType system â†’ absent from the monster wizard, base not auto-applied. Separate content task.
+- **Duplicate "Zone Base"** in an existing world is a stale orphan (earlier seed, different `_id`); source/packs have one. Setup does not prune orphaned actors â€” delete the orphan manually (keep id `MonBaseZone0001`).
+- **move-remaining** stat on monsters is the per-turn movement budget on the shared actor template â€” intentional.
 
 ---
 
 ## Pass criteria
 - [ ] Every checked item behaves as described.
 - [ ] Console clean of `1547core` errors throughout.
-- [ ] No `No Base ChangeSet found` warnings for wired types (NatureSpirit excepted).
 
 When a case fails, capture the **console error + the step** (and a **Run Diagnostics** dump if relevant).

@@ -1,4 +1,4 @@
-import { promptAddDrive, promptRemoveDrive } from "./drive-prompts.js";
+import { renderDriveHintHtml } from "./drive-prompts.js";
 import { PRIMARY_STATS } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
 import {
     advanceDeferredQueue,
@@ -1916,6 +1916,72 @@ export class SkillTreeChargenApp extends FormApplication {
         this.actor = actor;
         this._actionInFlight = false;
         this._simulation = options.simulation ?? null;
+        // In-flow prompts (drive/language/career/transition) render as an inline
+        // panel on the form instead of separate Dialogs (which could hide behind
+        // the window). Only one is pending at a time; the resolve fn lives here,
+        // not in serialized state.
+        this._pendingPrompt = null;
+        this._pendingResolve = null;
+    }
+
+    /**
+     * Show an inline prompt panel at the bottom of the chargen form and resolve
+     * with the user's choice (or the descriptor's cancelValue). Replaces the old
+     * `new Promise(resolve => new Dialog(...).render(true))` pattern.
+     *
+     * descriptor: { kind: "choice"|"text"|"select"|"confirm", eyebrow, title,
+     *   copy, options:[{value,title,meta}], defaultValue, placeholder,
+     *   defaultText, multiline, confirmLabel, cancelLabel, confirmValue,
+     *   cancelValue, hintHtml }
+     */
+    _inlinePrompt(descriptor = {}) {
+        return new Promise((resolve) => {
+            const id = foundry.utils.randomID();
+            const kind = descriptor.kind ?? "choice";
+            const defaultValue = descriptor.defaultValue ?? null;
+            const options = (descriptor.options ?? []).map((opt) => ({
+                value: String(opt.value),
+                title: opt.title ?? String(opt.value),
+                meta: opt.meta ?? "",
+                checked: String(opt.value) === String(defaultValue),
+                selected: String(opt.value) === String(defaultValue),
+            }));
+            this._pendingPrompt = {
+                id,
+                kind,
+                isChoice: kind === "choice",
+                isText: kind === "text",
+                isSelect: kind === "select",
+                isConfirm: kind === "confirm",
+                eyebrow: descriptor.eyebrow ?? "",
+                title: descriptor.title ?? "",
+                copy: descriptor.copy ?? "",
+                hintHtml: descriptor.hintHtml ?? "",
+                options,
+                placeholder: descriptor.placeholder ?? "",
+                defaultText: descriptor.defaultText ?? "",
+                multiline: Boolean(descriptor.multiline),
+                confirmLabel: descriptor.confirmLabel ?? "Apply",
+                cancelLabel: descriptor.cancelLabel ?? "Cancel",
+                confirmValue: descriptor.confirmValue ?? null,
+                cancelValue: descriptor.cancelValue ?? null,
+            };
+            this._pendingResolve = (value) => {
+                if (!this._pendingPrompt || this._pendingPrompt.id !== id) return;
+                this._pendingPrompt = null;
+                this._pendingResolve = null;
+                resolve(value);
+            };
+            this.render(false);
+        });
+    }
+
+    /** Resolve any pending inline prompt to its cancel value, then close. */
+    async close(options = {}) {
+        if (this._pendingResolve) {
+            this._pendingResolve(this._pendingPrompt?.cancelValue ?? null);
+        }
+        return super.close(options);
     }
 
     /* ---------------- State helpers ---------------- */
@@ -2723,54 +2789,20 @@ export class SkillTreeChargenApp extends FormApplication {
         if (this._simulationEnabled()) {
             return this._randomChoice(PRIMARY_STATS);
         }
-        const statChoices = PRIMARY_STATS
-            .map((stat, idx) => `
-                <label class="chargen-dialog__choice">
-                  <input type="radio" name="careerStatPick" value="${foundry.utils.escapeHTML(stat)}" ${idx === 0 ? "checked" : ""}>
-                  <span class="chargen-dialog__choice-body">
-                    <span class="chargen-dialog__choice-mark"></span>
-                    <span>
-                      <span class="chargen-dialog__choice-title">${foundry.utils.escapeHTML(stat)}</span>
-                      <span class="chargen-dialog__choice-meta">Increase ${foundry.utils.escapeHTML(stat)} by one step.</span>
-                    </span>
-                  </span>
-                </label>
-            `)
-            .join("");
-
-        return await new Promise((resolve) => {
-            let settled = false;
-            const finish = (value) => {
-                if (settled) return;
-                settled = true;
-                resolve(value);
-            };
-            new Dialog({
-                title: "Career Advancement",
-                content: `
-                  <div class="chargen-dialog">
-                    <div class="chargen-dialog__eyebrow">Advancement</div>
-                    <h2 class="chargen-dialog__title">${foundry.utils.escapeHTML(title)}</h2>
-                    <p class="chargen-dialog__copy">${picksRemaining} stat increase${picksRemaining === 1 ? "" : "s"} remaining.</p>
-                    <div class="chargen-dialog__choice-list">${statChoices}</div>
-                  </div>
-                `,
-                buttons: {
-                    apply: {
-                        label: "Apply",
-                        callback: (html) => {
-                            const value = String(html[0]?.querySelector('input[name="careerStatPick"]:checked')?.value ?? "").trim();
-                            finish(value || null);
-                        }
-                    },
-                    cancel: {
-                        label: "Skip",
-                        callback: () => finish(null)
-                    }
-                },
-                default: "apply",
-                close: () => finish(null)
-            }, { width: 520, classes: ["skilltree-chargen-dialog"] }).render(true);
+        return this._inlinePrompt({
+            kind: "choice",
+            eyebrow: "Advancement",
+            title,
+            copy: `${picksRemaining} stat increase${picksRemaining === 1 ? "" : "s"} remaining.`,
+            options: PRIMARY_STATS.map((stat) => ({
+                value: stat,
+                title: stat,
+                meta: `Increase ${stat} by one step.`,
+            })),
+            defaultValue: PRIMARY_STATS[0],
+            confirmLabel: "Apply",
+            cancelLabel: "Skip",
+            cancelValue: null,
         });
     }
 
@@ -2782,66 +2814,29 @@ export class SkillTreeChargenApp extends FormApplication {
             ];
             return this._randomChoice(options);
         }
-        const optionRows = [
-            ...entries.map((entry, idx) => `
-                <label class="chargen-dialog__choice">
-                  <input type="radio" name="careerAdvancePick" value="${foundry.utils.escapeHTML(entry.nodeId)}" ${idx === 0 ? "checked" : ""}>
-                  <span class="chargen-dialog__choice-body">
-                    <span class="chargen-dialog__choice-mark"></span>
-                    <span>
-                      <span class="chargen-dialog__choice-title">${foundry.utils.escapeHTML(entry.name)}</span>
-                      <span class="chargen-dialog__choice-meta">${foundry.utils.escapeHTML(String(entry.kind ?? "skill"))} • ${entry.currentLevel} -> ${entry.nextLevel}</span>
-                    </span>
-                  </span>
-                </label>
-            `),
-            ...alternativeOptions.map((option, idx) => `
-                <label class="chargen-dialog__choice">
-                  <input type="radio" name="careerAdvancePick" value="${foundry.utils.escapeHTML(option.value)}" ${(entries.length === 0 && idx === 0) ? "checked" : ""}>
-                  <span class="chargen-dialog__choice-body">
-                    <span class="chargen-dialog__choice-mark"></span>
-                    <span>
-                      <span class="chargen-dialog__choice-title">${foundry.utils.escapeHTML(option.label)}</span>
-                      <span class="chargen-dialog__choice-meta">Alternative reward</span>
-                    </span>
-                  </span>
-                </label>
-            `)
-        ].join("");
-
-        return await new Promise((resolve) => {
-            let settled = false;
-            const finish = (value) => {
-                if (settled) return;
-                settled = true;
-                resolve(value);
-            };
-            new Dialog({
-                title: "Career Advancement",
-                content: `
-                  <div class="chargen-dialog">
-                    <div class="chargen-dialog__eyebrow">Advancement</div>
-                    <h2 class="chargen-dialog__title">${foundry.utils.escapeHTML(title)}</h2>
-                    <p class="chargen-dialog__copy">${picksRemaining} pick${picksRemaining === 1 ? "" : "s"} remaining.</p>
-                    <div class="chargen-dialog__choice-list">${optionRows}</div>
-                  </div>
-                `,
-                buttons: {
-                    apply: {
-                        label: "Apply",
-                        callback: (html) => {
-                            const value = String(html[0]?.querySelector('input[name="careerAdvancePick"]:checked')?.value ?? "").trim();
-                            finish(value || null);
-                        }
-                    },
-                    cancel: {
-                        label: "Skip",
-                        callback: () => finish(null)
-                    }
-                },
-                default: "apply",
-                close: () => finish(null)
-            }, { width: 560, classes: ["skilltree-chargen-dialog"] }).render(true);
+        const options = [
+            ...entries.map((entry) => ({
+                value: entry.nodeId,
+                title: entry.name,
+                meta: `${String(entry.kind ?? "skill")} • ${entry.currentLevel} -> ${entry.nextLevel}`,
+            })),
+            ...alternativeOptions.map((option) => ({
+                value: option.value,
+                title: option.label,
+                meta: "Alternative reward",
+            })),
+        ];
+        return this._inlinePrompt({
+            kind: "choice",
+            eyebrow: "Advancement",
+            title,
+            copy: `${picksRemaining} pick${picksRemaining === 1 ? "" : "s"} remaining.`,
+            options,
+            // Mirror the old dialog: first entry checked, else first alternative.
+            defaultValue: entries.length ? entries[0].nodeId : (alternativeOptions[0]?.value ?? null),
+            confirmLabel: "Apply",
+            cancelLabel: "Skip",
+            cancelValue: null,
         });
     }
 
@@ -3586,66 +3581,22 @@ export class SkillTreeChargenApp extends FormApplication {
         if (this._simulationEnabled()) {
             return canUpgrade && Math.random() < 0.35 ? "upgrade" : "add";
         }
-        return new Promise((resolve) => {
-            let settled = false;
-            const finish = (value) => {
-                if (settled) return;
-                settled = true;
-                resolve(value);
-            };
-            const options = [
-                {
-                    value: "add",
-                    title: "Add New Language",
-                    meta: "Add a new spoken language to the character."
-                }
-            ];
-            if (canUpgrade) {
-                options.unshift({
-                    value: "upgrade",
-                    title: "Upgrade Read/Write",
-                    meta: "Improve literacy in a language the character already knows."
-                });
-            }
-            const optionRows = options.map((option, idx) => `
-                <label class="chargen-dialog__choice">
-                  <input type="radio" name="languageAwardAction" value="${option.value}" ${idx === 0 ? "checked" : ""}>
-                  <span class="chargen-dialog__choice-body">
-                    <span class="chargen-dialog__choice-mark"></span>
-                    <span>
-                      <span class="chargen-dialog__choice-title">${foundry.utils.escapeHTML(option.title)}</span>
-                      <span class="chargen-dialog__choice-meta">${foundry.utils.escapeHTML(option.meta)}</span>
-                    </span>
-                  </span>
-                </label>
-            `).join("");
-
-            new Dialog({
-                title: "Language Award",
-                content: `
-                  <div class="chargen-dialog">
-                    <div class="chargen-dialog__eyebrow">Tongues</div>
-                    <h2 class="chargen-dialog__title">Language Award</h2>
-                    <p class="chargen-dialog__copy">Choose how this language gain should shape the character.</p>
-                    <div class="chargen-dialog__choice-list">${optionRows}</div>
-                  </div>
-                `,
-                buttons: {
-                    apply: {
-                        label: "Apply",
-                        callback: (html) => {
-                            const value = String(html[0]?.querySelector('input[name="languageAwardAction"]:checked')?.value ?? "").trim();
-                            finish(value || null);
-                        }
-                    },
-                    cancel: {
-                        label: "Cancel",
-                        callback: () => finish(null)
-                    }
-                },
-                default: "apply",
-                close: () => finish(null)
-            }, { width: 560, classes: ["skilltree-chargen-dialog"] }).render(true);
+        const options = [
+            { value: "add", title: "Add New Language", meta: "Add a new spoken language to the character." },
+        ];
+        if (canUpgrade) {
+            options.unshift({ value: "upgrade", title: "Upgrade Read/Write", meta: "Improve literacy in a language the character already knows." });
+        }
+        return this._inlinePrompt({
+            kind: "choice",
+            eyebrow: "Tongues",
+            title: "Language Award",
+            copy: "Choose how this language gain should shape the character.",
+            options,
+            defaultValue: options[0].value,
+            confirmLabel: "Apply",
+            cancelLabel: "Cancel",
+            cancelValue: null,
         });
     }
 
@@ -3654,42 +3605,16 @@ export class SkillTreeChargenApp extends FormApplication {
             const index = Number(this._simulationOption("runIndex", 0)) + this._getKnownLanguages(this._resolveLanguageTable().rows).length + 1;
             return `SimLanguage${index}`;
         }
-        return new Promise((resolve) => {
-            let settled = false;
-            const finish = (value) => {
-                if (settled) return;
-                settled = true;
-                resolve(value);
-            };
-            new Dialog({
-                title: "Add New Language",
-                content: `
-                  <div class="chargen-dialog">
-                    <div class="chargen-dialog__eyebrow">Tongues</div>
-                    <h2 class="chargen-dialog__title">Add New Language</h2>
-                    <p class="chargen-dialog__copy">Name a language the character can now speak.</p>
-                    <div class="chargen-dialog__field">
-                      <label for="cg-language-name">Language</label>
-                      <input id="cg-language-name" name="languageName" type="text" placeholder="e.g. Castilian" />
-                    </div>
-                  </div>
-                `,
-                buttons: {
-                    ok: {
-                        label: "Add",
-                        callback: (html) => {
-                            const value = String(html.find("[name='languageName']").val() ?? "").trim();
-                            finish(value || null);
-                        }
-                    },
-                    cancel: {
-                        label: "Cancel",
-                        callback: () => finish(null)
-                    }
-                },
-                default: "ok",
-                close: () => finish(null)
-            }, { width: 480, classes: ["skilltree-chargen-dialog"] }).render(true);
+        return this._inlinePrompt({
+            kind: "text",
+            eyebrow: "Tongues",
+            title: "Add New Language",
+            copy: "Name a language the character can now speak.",
+            placeholder: "e.g. Castilian",
+            defaultText: "",
+            confirmLabel: "Add",
+            cancelLabel: "Cancel",
+            cancelValue: null,
         });
     }
 
@@ -3697,59 +3622,27 @@ export class SkillTreeChargenApp extends FormApplication {
         if (this._simulationEnabled()) {
             return this._randomChoice(upgradable);
         }
-        const options = upgradable
-            .map((l, i) => `
-                <label class="chargen-dialog__choice">
-                  <input type="radio" name="languageUpgrade" value="${i}" ${i === 0 ? "checked" : ""}>
-                  <span class="chargen-dialog__choice-body">
-                    <span class="chargen-dialog__choice-mark"></span>
-                    <span>
-                      <span class="chargen-dialog__choice-title">${foundry.utils.escapeHTML(l.name)}</span>
-                      <span class="chargen-dialog__choice-meta">Known language, upgrade to read and write.</span>
-                    </span>
-                  </span>
-                </label>
-            `)
-            .join("");
-
-        return new Promise((resolve) => {
-            let settled = false;
-            const finish = (value) => {
-                if (settled) return;
-                settled = true;
-                resolve(value);
-            };
-            new Dialog({
-                title: "Upgrade Language Read/Write",
-                content: `
-                  <div class="chargen-dialog">
-                    <div class="chargen-dialog__eyebrow">Tongues</div>
-                    <h2 class="chargen-dialog__title">Upgrade Language Read/Write</h2>
-                    <p class="chargen-dialog__copy">Choose which known language should become fully literate.</p>
-                    <div class="chargen-dialog__choice-list">${options}</div>
-                  </div>
-                `,
-                buttons: {
-                    ok: {
-                        label: "Upgrade",
-                        callback: (html) => {
-                            const idx = Number(html[0]?.querySelector('input[name="languageUpgrade"]:checked')?.value);
-                            if (!Number.isInteger(idx) || idx < 0 || idx >= upgradable.length) {
-                                finish(null);
-                                return;
-                            }
-                            finish(upgradable[idx]);
-                        }
-                    },
-                    cancel: {
-                        label: "Cancel",
-                        callback: () => finish(null)
-                    }
-                },
-                default: "ok",
-                close: () => finish(null)
-            }, { width: 560, classes: ["skilltree-chargen-dialog"] }).render(true);
+        // The panel can only carry a string, so options encode the index; map the
+        // returned index back to the language object to preserve the contract.
+        const raw = await this._inlinePrompt({
+            kind: "choice",
+            eyebrow: "Tongues",
+            title: "Upgrade Language Read/Write",
+            copy: "Choose which known language should become fully literate.",
+            options: upgradable.map((l, i) => ({
+                value: String(i),
+                title: l.name,
+                meta: "Known language, upgrade to read and write.",
+            })),
+            defaultValue: "0",
+            confirmLabel: "Upgrade",
+            cancelLabel: "Cancel",
+            cancelValue: null,
         });
+        if (raw == null) return null;
+        const idx = Number(raw);
+        if (!Number.isInteger(idx) || idx < 0 || idx >= upgradable.length) return null;
+        return upgradable[idx];
     }
 
     async _promptOptionalTransition({ fromName = "", toUuid = "", prompt = "" } = {}) {
@@ -3764,40 +3657,22 @@ export class SkillTreeChargenApp extends FormApplication {
         const fromLabel = String(fromName ?? "").trim() || "your current path";
         const promptText = String(prompt ?? "").trim()
             || `You may move to ${toName}, or remain on ${fromLabel}.`;
+        const esc = foundry.utils.escapeHTML;
+        const hintHtml = `
+            <p class="chargen-dialog__copy"><strong>Current:</strong> ${esc(fromLabel)}</p>
+            <p class="chargen-dialog__copy"><strong>New path:</strong> ${esc(toName)}</p>
+        `;
 
-        return new Promise((resolve) => {
-            let settled = false;
-            const finish = (value) => {
-                if (settled) return;
-                settled = true;
-                resolve(Boolean(value));
-            };
-            new Dialog({
-                title: "A New Path Opens",
-                content: `
-                  <div class="chargen-dialog">
-                    <div class="chargen-dialog__eyebrow">Transition</div>
-                    <h2 class="chargen-dialog__title">A New Path Opens</h2>
-                    <p class="chargen-dialog__copy">${foundry.utils.escapeHTML(promptText)}</p>
-                    <div class="chargen-dialog__section">
-                      <p class="chargen-dialog__copy"><strong>Current:</strong> ${foundry.utils.escapeHTML(fromLabel)}</p>
-                      <p class="chargen-dialog__copy"><strong>New path:</strong> ${foundry.utils.escapeHTML(toName)}</p>
-                    </div>
-                  </div>
-                `,
-                buttons: {
-                    take: {
-                        label: "Take the New Path",
-                        callback: () => finish(true)
-                    },
-                    stay: {
-                        label: "Remain Where You Are",
-                        callback: () => finish(false)
-                    }
-                },
-                default: "take",
-                close: () => finish(false)
-            }, { width: 560, classes: ["skilltree-chargen-dialog"] }).render(true);
+        return this._inlinePrompt({
+            kind: "confirm",
+            eyebrow: "Transition",
+            title: "A New Path Opens",
+            copy: promptText,
+            hintHtml,
+            confirmLabel: "Take the New Path",
+            cancelLabel: "Remain Where You Are",
+            confirmValue: true,
+            cancelValue: false,
         });
     }
 
@@ -3947,7 +3822,7 @@ export class SkillTreeChargenApp extends FormApplication {
                     await actor.update({ "system.props.Drives": updated });
                     return true;
                 }
-                return await promptAddDrive(actor, category);
+                return await this._inlinePromptAddDrive(actor, category);
             },
             promptRemoveDrive: async (actor) => {
                 if (this._simulationEnabled()) {
@@ -3957,10 +3832,64 @@ export class SkillTreeChargenApp extends FormApplication {
                     await actor.update({ "system.props.Drives": updated });
                     return true;
                 }
-                return await promptRemoveDrive(actor);
+                return await this._inlinePromptRemoveDrive(actor);
             }
         });
     }
+
+    // Inline equivalents of drive-prompts.js' Dialogs, used only inside the
+    // chargen flow. The exported Dialog functions stay for external callers
+    // (failure-effect-service, social-battle). Both resolve a boolean.
+    async _inlinePromptAddDrive(actor, category) {
+        const text = await this._inlinePrompt({
+            kind: "text",
+            multiline: true,
+            eyebrow: "Inner Life",
+            title: "Define a Drive",
+            copy: `${category} asks for a conviction that will pull at the character's choices.`,
+            hintHtml: renderDriveHintHtml(category),
+            placeholder: "Write a conviction that influences your actions.",
+            defaultText: "",
+            confirmLabel: "Add Drive",
+            cancelLabel: "Skip",
+            cancelValue: null,
+        });
+        if (!text) return false;
+        const line = `[${category}] ${text}`;
+        const existing = String(actor.system?.props?.Drives ?? "").trim();
+        const updated = existing ? `${existing}\n${line}` : line;
+        await actor.update({ "system.props.Drives": updated });
+        return true;
+    }
+
+    async _inlinePromptRemoveDrive(actor) {
+        const raw = String(actor.system?.props?.Drives ?? "").trim();
+        const lines = raw ? raw.split("\n").map(s => s.trim()).filter(Boolean) : [];
+        if (!lines.length) return false;
+
+        const picked = await this._inlinePrompt({
+            kind: "choice",
+            eyebrow: "Inner Life",
+            title: "Lose a Drive",
+            copy: "Choose which conviction is slipping away.",
+            options: lines.map((l, i) => ({
+                value: String(i),
+                title: l,
+                meta: "Remove this drive from the character.",
+            })),
+            defaultValue: "0",
+            confirmLabel: "Remove Drive",
+            cancelLabel: "Keep All",
+            cancelValue: null,
+        });
+        if (picked == null) return false;
+        const idx = Number(picked);
+        if (!Number.isInteger(idx) || idx < 0 || idx >= lines.length) return false;
+        const updated = lines.filter((_, i) => i !== idx).join("\n");
+        await actor.update({ "system.props.Drives": updated });
+        return true;
+    }
+
     async _rollLuckTable(run) {
         const luckTableUuid = "RollTable.mWI6zmHkHhQA84Yp";
         const rollResult = await this._rollOnce(luckTableUuid);
@@ -4255,7 +4184,8 @@ export class SkillTreeChargenApp extends FormApplication {
             }),
             bio: run?.bio ?? [],
             compiledBio: this._buildCompiledBiography(run?.bioEvents ?? []),
-            workHistory: await this._buildWorkHistory(run)
+            workHistory: await this._buildWorkHistory(run),
+            pendingPrompt: this._pendingPrompt
         };
     }
 
@@ -4342,6 +4272,8 @@ export class SkillTreeChargenApp extends FormApplication {
         html.find("[data-action='finish']").on("click", () => this._onFinish());
         html.find("[data-action='continue']").on("click", () => this._onContinue());
 
+        this._bindInlinePrompt(html);
+
         html.on("keydown", ".deferred-overlay", (ev) => {
             if (ev.key !== "Enter" && ev.key !== " ") return;
             ev.preventDefault();
@@ -4364,6 +4296,69 @@ export class SkillTreeChargenApp extends FormApplication {
 
             this._onChoose(idx, cardEl);
         });
+    }
+
+    // Wire the inline-prompt panel's confirm/cancel/keyboard. Re-bound each
+    // render; the descriptor id guards against a stale listener resolving a
+    // newer prompt. See _inlinePrompt.
+    _bindInlinePrompt(html) {
+        const root = html[0] ?? html;
+        const panel = root?.querySelector?.(".chargen-inline-prompt");
+        if (!panel || !this._pendingPrompt || !this._pendingResolve) return;
+
+        const pid = this._pendingPrompt.id;
+        const current = () => (this._pendingPrompt && this._pendingPrompt.id === pid ? this._pendingPrompt : null);
+
+        const readValue = () => {
+            const p = current();
+            if (!p) return null;
+            if (p.kind === "text") {
+                return String(panel.querySelector("[name='cg-inline-text']")?.value ?? "").trim() || null;
+            }
+            if (p.kind === "select") {
+                return String(panel.querySelector("[name='cg-inline-select']")?.value ?? "").trim() || null;
+            }
+            if (p.kind === "choice") {
+                return String(panel.querySelector("input[name='cg-inline-choice']:checked")?.value ?? "").trim() || null;
+            }
+            return p.confirmValue ?? true; // confirm kind
+        };
+
+        const settle = (value) => {
+            if (!current() || !this._pendingResolve) return;
+            this._pendingResolve(value);
+            this.render(false);
+        };
+
+        panel.querySelector("[data-action='inline-prompt-confirm']")
+            ?.addEventListener("click", () => settle(readValue()));
+        panel.querySelector("[data-action='inline-prompt-cancel']")
+            ?.addEventListener("click", () => settle(current()?.cancelValue ?? null));
+
+        const field = panel.querySelector("[name='cg-inline-text']");
+        if (field) {
+            field.addEventListener("keydown", (ev) => {
+                if (ev.key === "Enter" && !(field.tagName === "TEXTAREA" && ev.shiftKey)) {
+                    ev.preventDefault();
+                    settle(readValue());
+                }
+            });
+            // Preserve typed input across an incidental re-render.
+            field.addEventListener("input", () => {
+                const p = current();
+                if (p) p.defaultText = field.value;
+            });
+        }
+
+        // Focus the panel's field/primary control once per prompt id.
+        if (this._lastFocusedPromptId !== pid) {
+            this._lastFocusedPromptId = pid;
+            const focusTarget = field
+                ?? panel.querySelector("input[name='cg-inline-choice']:checked")
+                ?? panel.querySelector("[name='cg-inline-select']")
+                ?? panel.querySelector("[data-action='inline-prompt-confirm']");
+            requestAnimationFrame(() => { try { focusTarget?.focus(); } catch { /* noop */ } });
+        }
     }
 
     async _onReroll() {
