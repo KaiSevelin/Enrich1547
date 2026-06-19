@@ -4496,12 +4496,12 @@ export class SkillTreeChargenApp extends FormApplication {
                 accept.type = "button";
                 accept.className = "chargen-row-accept";
                 accept.dataset.action = "row-accept";
-                accept.textContent = "Accept";
+                accept.textContent = "Add";
                 accept.addEventListener("click", (e) => {
                     e.stopPropagation();
                     if (live()) this._resolvePendingFromDom(panel);
                 });
-                row.appendChild(accept);
+                row.insertBefore(accept, row.firstChild);
             };
             for (const row of rows) {
                 row.addEventListener("click", (ev) => {

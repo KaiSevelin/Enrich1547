@@ -1882,13 +1882,18 @@ a.enricher-1547::before {
 	cursor: pointer;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: flex-start;
 	gap: 0.6rem;
 	border: 1px solid rgba(234, 214, 176, 0.28);
 	border-radius: 12px;
 	padding: 0.6rem 0.8rem;
 	background: rgba(7, 13, 23, 0.3);
 	transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+/* The Add button sits on the left; the row's content fills the rest. */
+.skilltree-chargen .chargen-dialog__choice-list.is-row-select .chargen-dialog__choice-body {
+	flex: 1 1 auto;
 }
 
 .skilltree-chargen .chargen-dialog__choice-list.is-row-select .chargen-dialog__choice:hover {
@@ -1915,18 +1920,6 @@ a.enricher-1547::before {
 
 .skilltree-chargen .chargen-row-accept:hover {
 	box-shadow: 0 0 14px rgba(195, 128, 44, 0.3);
-}
-
-/* Cue over the cards while a prompt is open. */
-.skilltree-chargen .chargen-prompt-cue {
-	margin: 0 0 0.6rem;
-	padding: 0.5rem 0.8rem;
-	border: 1px solid rgba(247, 215, 144, 0.4);
-	border-radius: 10px;
-	background: linear-gradient(180deg, rgba(130, 80, 31, 0.32), rgba(93, 55, 21, 0.28));
-	color: #fff4d6;
-	font-weight: 700;
-	text-align: center;
 }
 
 .skilltree-chargen .chargen-main-cards.is-awaiting-prompt .chargen-card {

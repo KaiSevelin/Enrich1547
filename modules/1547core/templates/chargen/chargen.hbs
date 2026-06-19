@@ -29,11 +29,6 @@
 
     <section class="chargen-main">
         <div class="chargen-main-cards {{#if pendingPrompt}}is-awaiting-prompt{{/if}}">
-            {{#if pendingPrompt}}
-            <div class="chargen-prompt-cue" role="status">
-                <i class="fas fa-arrow-right"></i> Choose at the side, then click a card to continue.
-            </div>
-            {{/if}}
             <section class="chargen-cards">
                 {{#each cards}}
                 <article class="chargen-card {{this.cardClass}} {{#if this.masked}}is-veiled{{/if}}"
@@ -177,7 +172,7 @@
                                     <button type="button" class="primary-action" data-action="inline-prompt-confirm">{{pendingPrompt.confirmButton}}</button>
                                 </div>
                                 {{else if pendingPrompt.rowSelect}}
-                                <p class="chargen-prompt-continue"><i class="fas fa-hand-pointer"></i> Pick a row, then click <strong>Accept</strong>.</p>
+                                <p class="chargen-prompt-continue"><i class="fas fa-hand-pointer"></i> Pick a row, then click <strong>Add</strong>.</p>
                                 {{else}}
                                 <p class="chargen-prompt-continue"><i class="fas fa-hand-pointer"></i> Make your choice, then click a card to continue.</p>
                                 {{/if}}
