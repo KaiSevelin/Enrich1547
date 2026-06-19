@@ -216,7 +216,7 @@ Deployment rule:
 
 Primary test plan file for this project:
 
-- `modules/1547core/docs/specs/manual-foundry-test-plan-v1.md`
+- `modules/1547core/docs/manual-test-plan.md`
 
 Minimum expectation for each deploy:
 
