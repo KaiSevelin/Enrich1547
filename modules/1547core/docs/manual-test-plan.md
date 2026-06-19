@@ -5,7 +5,7 @@ cover. **Reset to a clean state (unchecked, no carried-over notes) each release;
 the version line below is auto-stamped by `release.ps1`. **Regression** = verifies
 a fix/feature from a recent release.
 
-_Current target: 1547core 0.3.103._
+_Current target: 1547core 0.3.104._
 
 ## Setup
 - [ ] Update to the current **1547core** build, reload the world (GM).
@@ -29,15 +29,18 @@ _Current target: 1547core 0.3.103._
 
 ---
 
-## 3. Character generation — **Regression** (inline prompts; no dialogs behind the window)
+## 3. Character generation — **Regression** (inline prompts in the flipped bio panel; no dialogs)
 - [ ] Run a full chargen start->finish; cards roll, choices apply, biography fills in.
-- [ ] **Inline prompts:** drive (add/remove), language (award -> new-name / upgrade), and change-career picks all appear as an **expandable panel at the bottom of the chargen form** — **no separate Dialog window** opens.
-- [ ] Each inline panel is **pre-populated with a default** (first option selected / field focused).
+- [ ] **Inline prompts flip the biography panel** (card-style rotation) to show the prompt — **no separate Dialog window** opens; the bio flips back after continuing.
+- [ ] Inputs are **radios** (career picks, language award/upgrade, optional transition) or a **text box pre-filled** with a suggestion (drive / new language). There are **no confirm/cancel buttons**.
+- [ ] **Confirm by clicking a chargen card** ("click to continue"); a cue shows over the cards and on the panel.
+- [ ] The **option panel scrolls** for long lists (e.g. career increase picks).
+- [ ] **Skip / decline** works: pick the "— Skip … —" radio, or clear the pre-filled text box, then click a card.
 - [ ] **Language upgrade** applies read/write to the **chosen** language (not index 0).
-- [ ] **Career-advancement wizard:** stat -> skill -> maneuver/alternative picks appear **in sequence** in the tray; cards stay non-interactive while a panel is open; "Skip" ends the wizard with the "ended early" bio line.
-- [ ] **Drives:** add (textarea + cause hint) and remove (radio list) update the actor's Drives.
-- [ ] **Optional transition:** inline confirm ("Take the New Path" / "Remain Where You Are"); both resume the flow correctly.
-- [ ] Closing the chargen window while a panel is open -> no console error.
+- [ ] **Career-advancement wizard:** stat -> skill -> maneuver/alternative picks appear **in sequence** (each flips in); "Skip" ends the wizard with the "ended early" bio line.
+- [ ] **Drives:** add (pre-filled textarea + cause hint) and remove (radio list) update the actor's Drives.
+- [ ] **Optional transition:** two radios ("Take the New Path" / "Remain Where You Are"); both resume the flow correctly.
+- [ ] Closing the chargen window while a prompt is open -> no console error.
 - [ ] **External drive callers still use a Dialog:** trigger a failure effect and a social-battle drive prompt -> these open the original **Dialog** (not the inline panel).
 - [ ] **Regression (v13 rolls):** no `Roll#evaluate ... async option ... removed` error; chargen does not stall on a card.
 - [ ] **Regression (HP):** finished character has **full HP** (Current = Max), not 0.

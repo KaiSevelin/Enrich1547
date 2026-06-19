@@ -28,7 +28,12 @@
     {{/if}}
 
     <section class="chargen-main">
-        <div class="chargen-main-cards">
+        <div class="chargen-main-cards {{#if pendingPrompt}}is-awaiting-prompt{{/if}}">
+            {{#if pendingPrompt}}
+            <div class="chargen-prompt-cue" role="status">
+                <i class="fas fa-arrow-right"></i> Choose at the side, then click a card to continue.
+            </div>
+            {{/if}}
             <section class="chargen-cards">
                 {{#each cards}}
                 <article class="chargen-card {{this.cardClass}} {{#if this.masked}}is-veiled{{/if}}"
@@ -74,44 +79,93 @@
             </section>
             {{/if}}
 
-            <section class="chargen-bio-panel">
-                <header class="chargen-bio-panel__header">
-                    <i class="fas fa-book-open"></i>
-                    <span>Biography so far</span>
-                </header>
-                <div class="chargen-bio-scroll" role="log" aria-live="polite">
-                    {{#if compiledBio.length}}
-                    <div class="chargen-bio-block">
-                        <div class="chargen-bio-block__title">Life Summary</div>
-                        {{#each compiledBio}}
-                        <p>{{this}}</p>
-                        {{/each}}
-                    </div>
-                    {{/if}}
+            <section class="chargen-bio-panel chargen-bio-flip {{#if pendingPrompt}}is-flipped{{/if}}">
+                <div class="chargen-bio-flip__inner">
+                    <div class="chargen-bio-flip__face chargen-bio-flip__front">
+                        <header class="chargen-bio-panel__header">
+                            <i class="fas fa-book-open"></i>
+                            <span>Biography so far</span>
+                        </header>
+                        <div class="chargen-bio-scroll" role="log" aria-live="polite">
+                            {{#if compiledBio.length}}
+                            <div class="chargen-bio-block">
+                                <div class="chargen-bio-block__title">Life Summary</div>
+                                {{#each compiledBio}}
+                                <p>{{this}}</p>
+                                {{/each}}
+                            </div>
+                            {{/if}}
 
-                    {{#if workHistory.length}}
-                    <div class="chargen-bio-block">
-                        <div class="chargen-bio-block__title">Work History</div>
-                        <ul class="chargen-bio-list">
-                            {{#each workHistory}}
-                            <li>{{this}}</li>
-                            {{/each}}
-                        </ul>
-                    </div>
-                    {{/if}}
+                            {{#if workHistory.length}}
+                            <div class="chargen-bio-block">
+                                <div class="chargen-bio-block__title">Work History</div>
+                                <ul class="chargen-bio-list">
+                                    {{#each workHistory}}
+                                    <li>{{this}}</li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                            {{/if}}
 
-                    {{#if bio.length}}
-                    <div class="chargen-bio-block">
-                        <div class="chargen-bio-block__title">Chronicle</div>
-                        <ul class="chargen-bio-list">
-                            {{#each bio}}
-                            <li>{{this}}</li>
-                            {{/each}}
-                        </ul>
+                            {{#if bio.length}}
+                            <div class="chargen-bio-block">
+                                <div class="chargen-bio-block__title">Chronicle</div>
+                                <ul class="chargen-bio-list">
+                                    {{#each bio}}
+                                    <li>{{this}}</li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                            {{else}}
+                            <p class="chargen-bio-empty">This life has only just begun.</p>
+                            {{/if}}
+                        </div>
                     </div>
-                    {{else}}
-                    <p class="chargen-bio-empty">This life has only just begun.</p>
-                    {{/if}}
+
+                    <div class="chargen-bio-flip__face chargen-bio-flip__back">
+                        {{#if pendingPrompt}}
+                        <header class="chargen-bio-panel__header">
+                            <i class="fas fa-hand-pointer"></i>
+                            <span>{{#if pendingPrompt.eyebrow}}{{pendingPrompt.eyebrow}}{{else}}Choose{{/if}}</span>
+                        </header>
+                        <div class="chargen-prompt-scroll">
+                            <div class="chargen-dialog chargen-prompt-body">
+                                <h2 class="chargen-dialog__title">{{pendingPrompt.title}}</h2>
+                                {{#if pendingPrompt.copy}}<p class="chargen-dialog__copy">{{pendingPrompt.copy}}</p>{{/if}}
+                                {{#if pendingPrompt.hintHtml}}<div class="chargen-dialog__hint">{{{pendingPrompt.hintHtml}}}</div>{{/if}}
+
+                                {{#if pendingPrompt.isRadio}}
+                                <div class="chargen-dialog__choice-list">
+                                    {{#each pendingPrompt.options}}
+                                    <label class="chargen-dialog__choice">
+                                        <input type="radio" name="cg-inline-choice" value="{{this.value}}" {{#if this.checked}}checked{{/if}}>
+                                        <span class="chargen-dialog__choice-body">
+                                            <span class="chargen-dialog__choice-mark"></span>
+                                            <span>
+                                                <span class="chargen-dialog__choice-title">{{this.title}}</span>
+                                                {{#if this.meta}}<span class="chargen-dialog__choice-meta">{{this.meta}}</span>{{/if}}
+                                            </span>
+                                        </span>
+                                    </label>
+                                    {{/each}}
+                                </div>
+                                {{/if}}
+
+                                {{#if pendingPrompt.isText}}
+                                <div class="chargen-dialog__field">
+                                    {{#if pendingPrompt.multiline}}
+                                    <textarea name="cg-inline-text" rows="3" placeholder="{{pendingPrompt.placeholder}}">{{pendingPrompt.defaultText}}</textarea>
+                                    {{else}}
+                                    <input type="text" name="cg-inline-text" placeholder="{{pendingPrompt.placeholder}}" value="{{pendingPrompt.defaultText}}">
+                                    {{/if}}
+                                </div>
+                                {{/if}}
+
+                                <p class="chargen-prompt-continue"><i class="fas fa-hand-pointer"></i> Make your choice, then click a card to continue.</p>
+                            </div>
+                        </div>
+                        {{/if}}
+                    </div>
                 </div>
             </section>
 
@@ -194,60 +248,5 @@
     </div>
     {{/if}}
 
-    {{#if pendingPrompt}}
-    <section class="chargen-inline-prompt chargen-inline-prompt--open"
-             data-prompt-id="{{pendingPrompt.id}}"
-             data-prompt-kind="{{pendingPrompt.kind}}"
-             aria-label="{{pendingPrompt.title}}">
-        <div class="chargen-dialog chargen-inline-prompt__body">
-            {{#if pendingPrompt.eyebrow}}<div class="chargen-dialog__eyebrow">{{pendingPrompt.eyebrow}}</div>{{/if}}
-            <h2 class="chargen-dialog__title">{{pendingPrompt.title}}</h2>
-            {{#if pendingPrompt.copy}}<p class="chargen-dialog__copy">{{pendingPrompt.copy}}</p>{{/if}}
-            {{#if pendingPrompt.hintHtml}}<div class="chargen-dialog__hint">{{{pendingPrompt.hintHtml}}}</div>{{/if}}
-
-            {{#if pendingPrompt.isChoice}}
-            <div class="chargen-dialog__choice-list">
-                {{#each pendingPrompt.options}}
-                <label class="chargen-dialog__choice">
-                    <input type="radio" name="cg-inline-choice" value="{{this.value}}" {{#if this.checked}}checked{{/if}}>
-                    <span class="chargen-dialog__choice-body">
-                        <span class="chargen-dialog__choice-mark"></span>
-                        <span>
-                            <span class="chargen-dialog__choice-title">{{this.title}}</span>
-                            {{#if this.meta}}<span class="chargen-dialog__choice-meta">{{this.meta}}</span>{{/if}}
-                        </span>
-                    </span>
-                </label>
-                {{/each}}
-            </div>
-            {{/if}}
-
-            {{#if pendingPrompt.isSelect}}
-            <div class="chargen-dialog__field">
-                <select name="cg-inline-select">
-                    {{#each pendingPrompt.options}}
-                    <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.title}}</option>
-                    {{/each}}
-                </select>
-            </div>
-            {{/if}}
-
-            {{#if pendingPrompt.isText}}
-            <div class="chargen-dialog__field">
-                {{#if pendingPrompt.multiline}}
-                <textarea name="cg-inline-text" rows="3" placeholder="{{pendingPrompt.placeholder}}">{{pendingPrompt.defaultText}}</textarea>
-                {{else}}
-                <input type="text" name="cg-inline-text" placeholder="{{pendingPrompt.placeholder}}" value="{{pendingPrompt.defaultText}}">
-                {{/if}}
-            </div>
-            {{/if}}
-
-            <div class="chargen-inline-prompt__actions">
-                <button type="button" data-action="inline-prompt-cancel">{{pendingPrompt.cancelLabel}}</button>
-                <button type="button" class="primary-action" data-action="inline-prompt-confirm">{{pendingPrompt.confirmLabel}}</button>
-            </div>
-        </div>
-    </section>
-    {{/if}}
 
 </form>

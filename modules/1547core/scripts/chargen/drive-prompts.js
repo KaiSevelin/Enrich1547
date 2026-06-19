@@ -761,7 +761,7 @@ const DRIVE_HINTS = {
     }
 };
 
-function getDriveHintData(category) {
+export function getDriveHintData(category) {
     return DRIVE_HINTS[category] ?? {
         prompt: `What conviction does ${category} leave behind in you?`,
         examples: [

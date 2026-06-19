@@ -1,4 +1,4 @@
-import { renderDriveHintHtml } from "./drive-prompts.js";
+import { renderDriveHintHtml, getDriveHintData } from "./drive-prompts.js";
 import { PRIMARY_STATS } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
 import {
     advanceDeferredQueue,
@@ -1924,35 +1924,62 @@ export class SkillTreeChargenApp extends FormApplication {
         this._pendingResolve = null;
     }
 
+    // Sentinel radio values for the inline prompt (map back to cancel/confirm).
+    static _INLINE_SKIP = "__cg_inline_skip__";
+    static _INLINE_CONFIRM = "__cg_inline_confirm__";
+    static _INLINE_CANCEL = "__cg_inline_cancel__";
+
     /**
-     * Show an inline prompt panel at the bottom of the chargen form and resolve
-     * with the user's choice (or the descriptor's cancelValue). Replaces the old
-     * `new Promise(resolve => new Dialog(...).render(true))` pattern.
+     * Show an inline prompt in the (flipped) biography panel and resolve with the
+     * user's choice. The player picks a radio or edits a text box, then clicks a
+     * chargen card ("click to continue") to confirm — there are no buttons.
+     * Replaces the old `new Dialog(...)` prompts. One pending at a time; the
+     * resolve fn lives on the instance (functions can't go in serialized state).
      *
-     * descriptor: { kind: "choice"|"text"|"select"|"confirm", eyebrow, title,
-     *   copy, options:[{value,title,meta}], defaultValue, placeholder,
-     *   defaultText, multiline, confirmLabel, cancelLabel, confirmValue,
-     *   cancelValue, hintHtml }
+     * descriptor: { kind:"choice"|"select"|"text"|"confirm", eyebrow, title, copy,
+     *   hintHtml, options:[{value,title,meta}], defaultValue, skippable, skipLabel,
+     *   placeholder, defaultText, multiline, confirmLabel, cancelLabel,
+     *   confirmValue, cancelValue }
      */
     _inlinePrompt(descriptor = {}) {
         return new Promise((resolve) => {
             const id = foundry.utils.randomID();
             const kind = descriptor.kind ?? "choice";
-            const defaultValue = descriptor.defaultValue ?? null;
-            const options = (descriptor.options ?? []).map((opt) => ({
-                value: String(opt.value),
-                title: opt.title ?? String(opt.value),
-                meta: opt.meta ?? "",
-                checked: String(opt.value) === String(defaultValue),
-                selected: String(opt.value) === String(defaultValue),
-            }));
+            const isText = kind === "text";
+            const SKIP = SkillTreeChargenApp._INLINE_SKIP;
+            const CONFIRM = SkillTreeChargenApp._INLINE_CONFIRM;
+            const CANCEL = SkillTreeChargenApp._INLINE_CANCEL;
+
+            let options = [];
+            if (kind === "confirm") {
+                options = [
+                    { value: CONFIRM, title: descriptor.confirmLabel ?? "Confirm", meta: "", checked: true },
+                    { value: CANCEL, title: descriptor.cancelLabel ?? "Cancel", meta: "", checked: false },
+                ];
+            } else if (!isText) {
+                const dv = descriptor.defaultValue ?? null;
+                options = (descriptor.options ?? []).map((opt) => ({
+                    value: String(opt.value),
+                    title: opt.title ?? String(opt.value),
+                    meta: opt.meta ?? "",
+                    checked: false,
+                }));
+                if (descriptor.skippable) {
+                    options.push({ value: SKIP, title: descriptor.skipLabel ?? "— Skip —", meta: "", checked: false });
+                }
+                let defaulted = false;
+                for (const o of options) {
+                    o.checked = (dv != null && o.value === String(dv));
+                    if (o.checked) defaulted = true;
+                }
+                if (!defaulted && options.length) options[0].checked = true;
+            }
+
             this._pendingPrompt = {
                 id,
-                kind,
-                isChoice: kind === "choice",
-                isText: kind === "text",
-                isSelect: kind === "select",
-                isConfirm: kind === "confirm",
+                inputType: isText ? "text" : "radio",
+                isText,
+                isRadio: !isText,
                 eyebrow: descriptor.eyebrow ?? "",
                 title: descriptor.title ?? "",
                 copy: descriptor.copy ?? "",
@@ -1961,8 +1988,6 @@ export class SkillTreeChargenApp extends FormApplication {
                 placeholder: descriptor.placeholder ?? "",
                 defaultText: descriptor.defaultText ?? "",
                 multiline: Boolean(descriptor.multiline),
-                confirmLabel: descriptor.confirmLabel ?? "Apply",
-                cancelLabel: descriptor.cancelLabel ?? "Cancel",
                 confirmValue: descriptor.confirmValue ?? null,
                 cancelValue: descriptor.cancelValue ?? null,
             };
@@ -1974,6 +1999,30 @@ export class SkillTreeChargenApp extends FormApplication {
             };
             this.render(false);
         });
+    }
+
+    /**
+     * Read the inline prompt's selection from the rendered panel and resolve.
+     * Called when the player clicks a chargen card (confirm) or presses Enter.
+     */
+    _resolvePendingFromDom(panel) {
+        const p = this._pendingPrompt;
+        if (!p || !this._pendingResolve) return;
+        const SKIP = SkillTreeChargenApp._INLINE_SKIP;
+        const CONFIRM = SkillTreeChargenApp._INLINE_CONFIRM;
+        const CANCEL = SkillTreeChargenApp._INLINE_CANCEL;
+        let value;
+        if (p.inputType === "text") {
+            value = String(panel?.querySelector("[name='cg-inline-text']")?.value ?? "").trim() || null;
+            if (value == null) value = p.cancelValue ?? null; // empty text == skip
+        } else {
+            const raw = String(panel?.querySelector("input[name='cg-inline-choice']:checked")?.value ?? "");
+            if (raw === SKIP || raw === CANCEL) value = p.cancelValue ?? null;
+            else if (raw === CONFIRM) value = p.confirmValue ?? true;
+            else value = raw || (p.cancelValue ?? null);
+        }
+        this._pendingResolve(value);
+        this.render(false);
     }
 
     /** Resolve any pending inline prompt to its cancel value, then close. */
@@ -2800,8 +2849,8 @@ export class SkillTreeChargenApp extends FormApplication {
                 meta: `Increase ${stat} by one step.`,
             })),
             defaultValue: PRIMARY_STATS[0],
-            confirmLabel: "Apply",
-            cancelLabel: "Skip",
+            skippable: true,
+            skipLabel: "— Skip this increase —",
             cancelValue: null,
         });
     }
@@ -2834,8 +2883,8 @@ export class SkillTreeChargenApp extends FormApplication {
             options,
             // Mirror the old dialog: first entry checked, else first alternative.
             defaultValue: entries.length ? entries[0].nodeId : (alternativeOptions[0]?.value ?? null),
-            confirmLabel: "Apply",
-            cancelLabel: "Skip",
+            skippable: true,
+            skipLabel: "— Skip this pick —",
             cancelValue: null,
         });
     }
@@ -3594,8 +3643,8 @@ export class SkillTreeChargenApp extends FormApplication {
             copy: "Choose how this language gain should shape the character.",
             options,
             defaultValue: options[0].value,
-            confirmLabel: "Apply",
-            cancelLabel: "Cancel",
+            skippable: true,
+            skipLabel: "— Don't gain a language —",
             cancelValue: null,
         });
     }
@@ -3635,8 +3684,8 @@ export class SkillTreeChargenApp extends FormApplication {
                 meta: "Known language, upgrade to read and write.",
             })),
             defaultValue: "0",
-            confirmLabel: "Upgrade",
-            cancelLabel: "Cancel",
+            skippable: true,
+            skipLabel: "— Don't upgrade —",
             cancelValue: null,
         });
         if (raw == null) return null;
@@ -3841,6 +3890,9 @@ export class SkillTreeChargenApp extends FormApplication {
     // chargen flow. The exported Dialog functions stay for external callers
     // (failure-effect-service, social-battle). Both resolve a boolean.
     async _inlinePromptAddDrive(actor, category) {
+        // Pre-fill with a suggested conviction the player can accept or edit;
+        // clearing the box and continuing skips the drive.
+        const suggestion = String(getDriveHintData(category)?.examples?.[0] ?? "").trim();
         const text = await this._inlinePrompt({
             kind: "text",
             multiline: true,
@@ -3849,9 +3901,7 @@ export class SkillTreeChargenApp extends FormApplication {
             copy: `${category} asks for a conviction that will pull at the character's choices.`,
             hintHtml: renderDriveHintHtml(category),
             placeholder: "Write a conviction that influences your actions.",
-            defaultText: "",
-            confirmLabel: "Add Drive",
-            cancelLabel: "Skip",
+            defaultText: suggestion,
             cancelValue: null,
         });
         if (!text) return false;
@@ -3878,8 +3928,8 @@ export class SkillTreeChargenApp extends FormApplication {
                 meta: "Remove this drive from the character.",
             })),
             defaultValue: "0",
-            confirmLabel: "Remove Drive",
-            cancelLabel: "Keep All",
+            skippable: true,
+            skipLabel: "— Keep all drives —",
             cancelValue: null,
         });
         if (picked == null) return false;
@@ -4284,6 +4334,14 @@ export class SkillTreeChargenApp extends FormApplication {
             ev.preventDefault();
             ev.stopPropagation();
 
+            // While an inline prompt is open, a card click confirms the prompt
+            // ("click to continue") — read the selection from the flipped panel.
+            if (this._pendingPrompt) {
+                const root = html[0] ?? html;
+                this._resolvePendingFromDom(root?.querySelector?.(".chargen-bio-flip__back"));
+                return;
+            }
+
             const state = this._getState();
             const cardEl = ev.currentTarget;
             const idx = Number(cardEl.dataset.index);
@@ -4298,65 +4356,48 @@ export class SkillTreeChargenApp extends FormApplication {
         });
     }
 
-    // Wire the inline-prompt panel's confirm/cancel/keyboard. Re-bound each
-    // render; the descriptor id guards against a stale listener resolving a
-    // newer prompt. See _inlinePrompt.
+    // Wire the inline-prompt panel (in the flipped bio area). There are no
+    // confirm/cancel buttons — confirmation is a chargen-card click (see the
+    // card handler). Here we only handle Enter-to-confirm on text, preserve the
+    // selection across re-renders, and focus the control once. Re-bound each
+    // render; the prompt id guards against a stale listener.
     _bindInlinePrompt(html) {
         const root = html[0] ?? html;
-        const panel = root?.querySelector?.(".chargen-inline-prompt");
-        if (!panel || !this._pendingPrompt || !this._pendingResolve) return;
+        const panel = root?.querySelector?.(".chargen-bio-flip__back");
+        if (!panel || !this._pendingPrompt) return;
 
         const pid = this._pendingPrompt.id;
-        const current = () => (this._pendingPrompt && this._pendingPrompt.id === pid ? this._pendingPrompt : null);
-
-        const readValue = () => {
-            const p = current();
-            if (!p) return null;
-            if (p.kind === "text") {
-                return String(panel.querySelector("[name='cg-inline-text']")?.value ?? "").trim() || null;
-            }
-            if (p.kind === "select") {
-                return String(panel.querySelector("[name='cg-inline-select']")?.value ?? "").trim() || null;
-            }
-            if (p.kind === "choice") {
-                return String(panel.querySelector("input[name='cg-inline-choice']:checked")?.value ?? "").trim() || null;
-            }
-            return p.confirmValue ?? true; // confirm kind
-        };
-
-        const settle = (value) => {
-            if (!current() || !this._pendingResolve) return;
-            this._pendingResolve(value);
-            this.render(false);
-        };
-
-        panel.querySelector("[data-action='inline-prompt-confirm']")
-            ?.addEventListener("click", () => settle(readValue()));
-        panel.querySelector("[data-action='inline-prompt-cancel']")
-            ?.addEventListener("click", () => settle(current()?.cancelValue ?? null));
+        const live = () => (this._pendingPrompt && this._pendingPrompt.id === pid ? this._pendingPrompt : null);
 
         const field = panel.querySelector("[name='cg-inline-text']");
         if (field) {
             field.addEventListener("keydown", (ev) => {
                 if (ev.key === "Enter" && !(field.tagName === "TEXTAREA" && ev.shiftKey)) {
                     ev.preventDefault();
-                    settle(readValue());
+                    if (live()) this._resolvePendingFromDom(panel);
                 }
             });
-            // Preserve typed input across an incidental re-render.
             field.addEventListener("input", () => {
-                const p = current();
+                const p = live();
                 if (p) p.defaultText = field.value;
             });
         }
 
-        // Focus the panel's field/primary control once per prompt id.
+        // Keep the chosen radio across an incidental re-render.
+        panel.querySelectorAll("input[name='cg-inline-choice']").forEach((radio) => {
+            radio.addEventListener("change", () => {
+                const p = live();
+                if (!p) return;
+                for (const o of p.options) o.checked = (o.value === radio.value);
+            });
+        });
+
+        // Focus the field / checked radio once per prompt id.
         if (this._lastFocusedPromptId !== pid) {
             this._lastFocusedPromptId = pid;
             const focusTarget = field
                 ?? panel.querySelector("input[name='cg-inline-choice']:checked")
-                ?? panel.querySelector("[name='cg-inline-select']")
-                ?? panel.querySelector("[data-action='inline-prompt-confirm']");
+                ?? panel.querySelector("input[name='cg-inline-choice']");
             requestAnimationFrame(() => { try { focusTarget?.focus(); } catch { /* noop */ } });
         }
     }
