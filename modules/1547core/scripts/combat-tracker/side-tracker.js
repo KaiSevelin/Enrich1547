@@ -1,4 +1,6 @@
-﻿const MODULE_ID = "1547core";
+﻿import { assignSides, orderSidesByInitiative } from "../combat/side-assignment.mjs";
+
+const MODULE_ID = "1547core";
 const DEFAULT_TEAM_IDS = ["team-1", "team-2"];
 
 function escapeHtml(value) {
@@ -91,7 +93,11 @@ function getAvailableTeamIds(combat, orderedCombatants = []) {
         ? Object.keys(combat.flags[MODULE_ID].sides).filter((value) => typeof value === "string" && value.trim())
         : [];
     const encountered = [];
-    for (const sideId of [...DEFAULT_TEAM_IDS, ...storedOrder, ...storedSides]) {
+    // Stored side order is authoritative (it carries the fixed 3d6 side-initiative
+    // result); DEFAULT_TEAM_IDS only fill in sides not yet ordered. Seeding the
+    // defaults first would pin team-1 ahead of team-2 and silently override the
+    // initiative ordering.
+    for (const sideId of [...storedOrder, ...DEFAULT_TEAM_IDS, ...storedSides]) {
         if (sideId && !encountered.includes(sideId)) encountered.push(sideId);
     }
     for (const combatant of orderedCombatants) {
@@ -322,9 +328,93 @@ async function showTeamAssignmentDialog(combat, app) {
     dialog.render(true);
 }
 
+function combatantOwnerUserIds(combatant) {
+    const actor = combatant?.actor;
+    if (!actor) return [];
+    const users = game.users?.filter?.(
+        (user) => user && !user.isGM && actor.testUserPermission?.(user, "OWNER")
+    ) ?? [];
+    return users.map((user) => user.id);
+}
+
+function combatantDisposition(combatant) {
+    const tokenDocument = getCombatantTokenDocument(combatant);
+    return tokenDocument?.disposition
+        ?? combatant?.token?.object?.document?.disposition
+        ?? combatant?.token?.disposition
+        ?? combatant?.actor?.token?.disposition
+        ?? combatant?.actor?.prototypeToken?.disposition
+        ?? null;
+}
+
+async function postSideInitiativeMessage(sideOrder, rollsBySide) {
+    try {
+        const rows = sideOrder.map((sideId, index) =>
+            `<li><strong>${index + 1}. ${escapeHtml(getSideLabel(sideId))}</strong> — 3d6: ${rollsBySide.get(sideId) ?? "?"}</li>`
+        ).join("");
+        const content = `<div class="onefivefourseven-side-initiative"><h3>Side Initiative</h3><ol>${rows}</ol></div>`;
+        const publicMode = globalThis.CONST?.DICE_ROLL_MODES?.PUBLIC ?? "publicroll";
+        await ChatMessage.create({ content, rollMode: publicMode });
+    } catch (error) {
+        console.error(`${MODULE_ID} | side-initiative chat message failed`, error);
+    }
+}
+
+/**
+ * Run once when combat starts (GM-authoritative). Enforces two rules:
+ *   1. Two+ players are always on different sides (round-robin across the two
+ *      teams); NPCs fall back to disposition. With <2 players nothing is
+ *      overridden — the per-combatant disposition default stands.
+ *   2. Each side rolls 3d6 group initiative; the result fixes the side turn
+ *      order (highest first) for the rest of the combat.
+ * Guarded by a flag so a re-fired combatStart never re-rolls or re-assigns.
+ */
+export async function applyCombatStartSidesAndInitiative(combat) {
+    if (!game.user?.isGM || !combat) return;
+    if (combat.getFlag(MODULE_ID, "sideInitiativeRolled")) return;
+
+    const orderedCombatants = getOrderedCombatants(combat);
+    if (!orderedCombatants.length) return;
+
+    // 1) Side assignment — two+ players never share a side.
+    const assignment = assignSides(orderedCombatants.map((combatant) => ({
+        id: combatant.id,
+        ownerUserIds: combatantOwnerUserIds(combatant),
+        disposition: combatantDisposition(combatant),
+    })));
+    for (const [combatantId, sideId] of assignment) {
+        const combatant = combat.combatants?.get?.(combatantId);
+        if (combatant && getStoredSideId(combatant) !== sideId) {
+            await combatant.setFlag(MODULE_ID, "sideId", sideId);
+        }
+    }
+
+    // 2) 3d6 side initiative — roll per side, order high-first (fixed).
+    const sideIds = [];
+    for (const combatant of orderedCombatants) {
+        const sideId = resolveCombatantSideId(combatant);
+        if (sideId && !sideIds.includes(sideId)) sideIds.push(sideId);
+    }
+    const rollsBySide = new Map();
+    for (const sideId of sideIds) {
+        const roll = await new Roll("3d6").evaluate();
+        rollsBySide.set(sideId, Number(roll.total) || 0);
+    }
+    const sideOrder = orderSidesByInitiative(sideIds, rollsBySide);
+
+    await combat.setFlag(MODULE_ID, "sideOrder", sideOrder);
+    await combat.setFlag(MODULE_ID, "activeSideId", sideOrder[0] ?? "");
+    await combat.setFlag(MODULE_ID, "sideInitiativeRolled", true);
+    await persistCombatSideState(combat);
+    await postSideInitiativeMessage(sideOrder, rollsBySide);
+}
+
 export function register1547CombatTrackerSideGroups() {
     Hooks.on("createCombat", (combat) => {
         void persistCombatSideState(combat);
+    });
+    Hooks.on("combatStart", (combat) => {
+        void applyCombatStartSidesAndInitiative(combat);
     });
     Hooks.on("createCombatant", (combatant) => {
         if (game.user?.isGM) void combatant.setFlag(MODULE_ID, "sideId", resolveCombatantSideId(combatant));

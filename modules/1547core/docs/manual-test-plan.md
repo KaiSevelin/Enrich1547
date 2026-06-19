@@ -5,7 +5,7 @@ cover. **Reset to a clean state (unchecked, no carried-over notes) each release;
 the version line below is auto-stamped by `release.ps1`. **Regression** = verifies
 a fix/feature from a recent release.
 
-_Current target: 1547core 0.3.109._
+_Current target: 1547core 0.3.110._
 
 ## Setup
 - [ ] Update to the current **1547core** build, reload the world (GM).
@@ -53,6 +53,15 @@ _Current target: 1547core 0.3.109._
 - [ ] **Composition gating:** a **player character** sheet shows **no** Composition panel; a **typed monster** sheet **does**. _(Requires Setup Data.)_
 - [ ] **Monster wizard:** creates a **real monster** (`character` actor in Monsters), **not** a `_template`, with its Base chassis auto-applied.
 - [ ] **Spirit type (Regression — renamed from NatureSpirit):** the monster wizard lists **Spirit**; creating one applies the **Spirit Base** chassis; the actor sheet's **Actor Type** dropdown offers **Spirit**.
+
+---
+
+## 4b. Side assignment & side initiative — **Regression** (0.3.110)
+- [ ] **Two players, both friendly/neutral disposition,** start a combat → they land on **different sides** (Team 1 vs Team 2), not the same side.
+- [ ] **3+ players** → players alternate across the two teams; each player's own tokens stay on that player's side; NPCs sort by disposition.
+- [ ] **Single player + NPCs** → behaves as before (disposition default; no forced split).
+- [ ] **Begin Combat** posts a public **"Side Initiative"** chat message (3d6 per side) and the **side turn order follows the roll** (highest first), not always Team 1 → Team 2.
+- [ ] Side order stays **fixed** across rounds (no re-roll); adding a combatant mid-combat doesn't reshuffle the rolled order.
 
 ---
 
