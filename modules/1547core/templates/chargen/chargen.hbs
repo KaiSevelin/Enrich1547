@@ -79,7 +79,7 @@
             </section>
             {{/if}}
 
-            <section class="chargen-bio-panel chargen-bio-flip {{#if pendingPrompt}}is-flipped{{/if}}">
+            <section class="chargen-bio-panel chargen-bio-flip">
                 <div class="chargen-bio-flip__inner">
                     <div class="chargen-bio-flip__face chargen-bio-flip__front">
                         <header class="chargen-bio-panel__header">
@@ -161,7 +161,13 @@
                                 </div>
                                 {{/if}}
 
+                                {{#if pendingPrompt.confirmButton}}
+                                <div class="chargen-inline-prompt__actions">
+                                    <button type="button" class="primary-action" data-action="inline-prompt-confirm">{{pendingPrompt.confirmButton}}</button>
+                                </div>
+                                {{else}}
                                 <p class="chargen-prompt-continue"><i class="fas fa-hand-pointer"></i> Make your choice, then click a card to continue.</p>
+                                {{/if}}
                             </div>
                         </div>
                         {{/if}}

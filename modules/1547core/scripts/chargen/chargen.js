@@ -703,9 +703,14 @@ export class SkillTreeChargenApp extends FormApplication {
             Object.keys(game.system?.model?.Actor ?? {})[0] ??
             "character";
 
+        // Put new characters in a "Players" actor folder (created once if absent).
+        const playersFolder = game.folders?.find((f) => f.type === "Actor" && f.name === "Players")
+            ?? await Folder.create({ name: "Players", type: "Actor" });
+
         const actor = await Actor.create({
             name,
             type,
+            folder: playersFolder?.id ?? null,
             ownership: {
                 default: 0,
                 [game.user.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
@@ -1926,12 +1931,22 @@ export class SkillTreeChargenApp extends FormApplication {
         // card renders "turned" while a prompt is open (prompts fire before
         // run.reveal is set). Null outside a card-choice flow.
         this._pendingChosenIndex = null;
+        // Guards _finishWithSummary so the advancement wizard (which awaits inline
+        // prompts mid-finish) can't be re-entered by a second Finish click.
+        this._finishing = false;
     }
 
     // Sentinel radio values for the inline prompt (map back to cancel/confirm).
     static _INLINE_SKIP = "__cg_inline_skip__";
     static _INLINE_CONFIRM = "__cg_inline_confirm__";
     static _INLINE_CANCEL = "__cg_inline_cancel__";
+
+    // Period-appropriate tongues suggested (in order) as the default when adding
+    // a new language — the first one the character doesn't already know is used.
+    static SUGGESTED_LANGUAGES = [
+        "Latin", "Castilian", "French", "German", "Italian", "Dutch", "English",
+        "Portuguese", "Greek", "Arabic", "Hebrew", "Polish", "Hungarian", "Gaelic",
+    ];
 
     /**
      * Show an inline prompt in the (flipped) biography panel and resolve with the
@@ -1940,16 +1955,21 @@ export class SkillTreeChargenApp extends FormApplication {
      * Replaces the old `new Dialog(...)` prompts. One pending at a time; the
      * resolve fn lives on the instance (functions can't go in serialized state).
      *
-     * descriptor: { kind:"choice"|"select"|"text"|"confirm", eyebrow, title, copy,
-     *   hintHtml, options:[{value,title,meta}], defaultValue, skippable, skipLabel,
-     *   placeholder, defaultText, multiline, confirmLabel, cancelLabel,
-     *   confirmValue, cancelValue }
+     * descriptor: { kind:"choice"|"select"|"text"|"confirm"|"summary", eyebrow,
+     *   title, copy, hintHtml, options:[{value,title,meta}], defaultValue,
+     *   skippable, skipLabel, placeholder, defaultText, multiline, confirmLabel,
+     *   cancelLabel, confirmValue, cancelValue, confirmButton }
+     *
+     * confirmButton (label) renders an in-panel button that confirms and disables
+     * card-click confirmation — used by the career-advancement "Add choice" flow.
      */
     _inlinePrompt(descriptor = {}) {
         return new Promise((resolve) => {
             const id = foundry.utils.randomID();
             const kind = descriptor.kind ?? "choice";
             const isText = kind === "text";
+            const isSummary = kind === "summary";
+            const isRadio = !isText && !isSummary;
             const SKIP = SkillTreeChargenApp._INLINE_SKIP;
             const CONFIRM = SkillTreeChargenApp._INLINE_CONFIRM;
             const CANCEL = SkillTreeChargenApp._INLINE_CANCEL;
@@ -1960,7 +1980,7 @@ export class SkillTreeChargenApp extends FormApplication {
                     { value: CONFIRM, title: descriptor.confirmLabel ?? "Confirm", meta: "", checked: true },
                     { value: CANCEL, title: descriptor.cancelLabel ?? "Cancel", meta: "", checked: false },
                 ];
-            } else if (!isText) {
+            } else if (isRadio) {
                 const dv = descriptor.defaultValue ?? null;
                 options = (descriptor.options ?? []).map((opt) => ({
                     value: String(opt.value),
@@ -1981,9 +2001,10 @@ export class SkillTreeChargenApp extends FormApplication {
 
             this._pendingPrompt = {
                 id,
-                inputType: isText ? "text" : "radio",
+                inputType: isText ? "text" : (isSummary ? "none" : "radio"),
                 isText,
-                isRadio: !isText,
+                isRadio,
+                isSummary,
                 eyebrow: descriptor.eyebrow ?? "",
                 title: descriptor.title ?? "",
                 copy: descriptor.copy ?? "",
@@ -1994,6 +2015,9 @@ export class SkillTreeChargenApp extends FormApplication {
                 multiline: Boolean(descriptor.multiline),
                 confirmValue: descriptor.confirmValue ?? null,
                 cancelValue: descriptor.cancelValue ?? null,
+                // In-panel button (e.g. "Add choice"); disables card-click confirm.
+                confirmButton: descriptor.confirmButton ?? null,
+                cardConfirm: !descriptor.confirmButton,
             };
             this._pendingResolve = (value) => {
                 if (!this._pendingPrompt || this._pendingPrompt.id !== id) return;
@@ -2016,7 +2040,9 @@ export class SkillTreeChargenApp extends FormApplication {
         const CONFIRM = SkillTreeChargenApp._INLINE_CONFIRM;
         const CANCEL = SkillTreeChargenApp._INLINE_CANCEL;
         let value;
-        if (p.inputType === "text") {
+        if (p.inputType === "none") {
+            value = p.confirmValue ?? true; // summary: the button just confirms
+        } else if (p.inputType === "text") {
             value = String(panel?.querySelector("[name='cg-inline-text']")?.value ?? "").trim() || null;
             if (value == null) value = p.cancelValue ?? null; // empty text == skip
         } else {
@@ -2856,6 +2882,7 @@ export class SkillTreeChargenApp extends FormApplication {
             skippable: true,
             skipLabel: "— Skip this increase —",
             cancelValue: null,
+            confirmButton: "Add choice",
         });
     }
 
@@ -2890,6 +2917,7 @@ export class SkillTreeChargenApp extends FormApplication {
             skippable: true,
             skipLabel: "— Skip this pick —",
             cancelValue: null,
+            confirmButton: "Add choice",
         });
     }
 
@@ -2951,6 +2979,7 @@ export class SkillTreeChargenApp extends FormApplication {
         const statPickCount = Math.max(0, Number(settings.careerStatPicks ?? 3) || 0);
         const skillPickCount = Math.max(0, Number(settings.careerSkillPicks ?? 3) || 0);
         const maneuverPickCount = Math.max(0, Number(settings.careerManeuverPicks ?? 2) || 0);
+        const summary = []; // human-readable choices, shown before completing
 
         for (let i = 0; i < statPickCount; i += 1) {
             const stat = await this._promptCareerAdvancementStatPick(`How Did This Career Change You?`, statPickCount - i);
@@ -2967,6 +2996,7 @@ export class SkillTreeChargenApp extends FormApplication {
             const before = `${beforeDice}d6+${beforeMod}`;
             const after = await advanceStat(this.actor, stat, 1);
             await this._addBio(run, `Career advancement improved ${stat} (${before} -> ${after.dice}d6+${after.mod})`);
+            summary.push(`${stat} +1 step (now ${after.dice}d6+${after.mod})`);
         }
 
         for (let i = 0; i < skillPickCount; i += 1) {
@@ -3000,6 +3030,7 @@ export class SkillTreeChargenApp extends FormApplication {
                 await this._addBio(run, `Career advancement could not apply ${picked.name}.`);
                 return false;
             }
+            summary.push(`Skill: ${picked.name}`);
         }
 
         const maneuverAlternatives = [
@@ -3030,6 +3061,7 @@ export class SkillTreeChargenApp extends FormApplication {
                     await this._addBio(run, `Career advancement alternative reward failed: ${pick}.`);
                     return false;
                 }
+                summary.push(maneuverAlternatives.find((a) => a.value === pick)?.label ?? pick);
                 continue;
             }
 
@@ -3044,9 +3076,23 @@ export class SkillTreeChargenApp extends FormApplication {
                 await this._addBio(run, `Career advancement could not apply ${picked.name}.`);
                 return false;
             }
+            summary.push(`Maneuver: ${picked.name}`);
         }
 
         await this._addBio(run, `Career advancement completed after ${tableName}.`);
+
+        // Present all advancement choices, then complete the character on the
+        // panel's Finish button (no card click for advancement).
+        const items = summary.map((s) => `<li>${foundry.utils.escapeHTML(s)}</li>`).join("");
+        await this._inlinePrompt({
+            kind: "summary",
+            eyebrow: "Advancement",
+            title: "Career Advancement Complete",
+            copy: `Your time as ${tableName} shaped you:`,
+            hintHtml: items ? `<ul class="chargen-bio-list">${items}</ul>` : "<p>No changes were applied.</p>",
+            confirmButton: "Finish — Complete Character",
+            confirmValue: true,
+        });
         return true;
     }
 
@@ -3658,15 +3704,20 @@ export class SkillTreeChargenApp extends FormApplication {
             const index = Number(this._simulationOption("runIndex", 0)) + this._getKnownLanguages(this._resolveLanguageTable().rows).length + 1;
             return `SimLanguage${index}`;
         }
+        // Pre-fill with the first common tongue the character doesn't already
+        // know, so the box has a sensible default the player can accept or edit.
+        const known = new Set(
+            this._getKnownLanguages(this._resolveLanguageTable().rows ?? [])
+                .map((l) => l.name.toLowerCase())
+        );
+        const suggestion = SkillTreeChargenApp.SUGGESTED_LANGUAGES.find((l) => !known.has(l.toLowerCase())) ?? "";
         return this._inlinePrompt({
             kind: "text",
             eyebrow: "Tongues",
             title: "Add New Language",
             copy: "Name a language the character can now speak.",
             placeholder: "e.g. Castilian",
-            defaultText: "",
-            confirmLabel: "Add",
-            cancelLabel: "Cancel",
+            defaultText: suggestion,
             cancelValue: null,
         });
     }
@@ -4359,11 +4410,15 @@ export class SkillTreeChargenApp extends FormApplication {
             // While an inline prompt is open, the chosen ("turned") card confirms
             // it — read the selection from the flipped panel and continue. Other
             // (rejected) cards are inert. If no card is chosen yet, any card works.
+            // Prompts with an in-panel confirm button (advancement) are NOT
+            // card-confirmable.
             if (this._pendingPrompt) {
-                const chosen = state?.run?.reveal?.chosenIndex ?? this._pendingChosenIndex;
-                if (chosen == null || idx === chosen) {
-                    const root = html[0] ?? html;
-                    this._resolvePendingFromDom(root?.querySelector?.(".chargen-bio-flip__back"));
+                if (this._pendingPrompt.cardConfirm !== false) {
+                    const chosen = state?.run?.reveal?.chosenIndex ?? this._pendingChosenIndex;
+                    if (chosen == null || idx === chosen) {
+                        const root = html[0] ?? html;
+                        this._resolvePendingFromDom(root?.querySelector?.(".chargen-bio-flip__back"));
+                    }
                 }
                 return;
             }
@@ -4387,8 +4442,20 @@ export class SkillTreeChargenApp extends FormApplication {
         const panel = root?.querySelector?.(".chargen-bio-flip__back");
         if (!panel || !this._pendingPrompt) return;
 
+        // Animate the flip: the panel renders un-flipped, then we add the class on
+        // the next frame so the rotateY transition actually fires (a fresh render
+        // that already had the class would jump straight to flipped, no animation).
+        const flip = root?.querySelector?.(".chargen-bio-flip");
+        if (flip && !flip.classList.contains("is-flipped")) {
+            requestAnimationFrame(() => requestAnimationFrame(() => flip.classList.add("is-flipped")));
+        }
+
         const pid = this._pendingPrompt.id;
         const live = () => (this._pendingPrompt && this._pendingPrompt.id === pid ? this._pendingPrompt : null);
+
+        // In-panel confirm button (e.g. "Add choice" / "Complete Character").
+        panel.querySelector("[data-action='inline-prompt-confirm']")
+            ?.addEventListener("click", () => { if (live()) this._resolvePendingFromDom(panel); });
 
         const field = panel.querySelector("[name='cg-inline-text']");
         if (field) {
@@ -4844,6 +4911,18 @@ export class SkillTreeChargenApp extends FormApplication {
     }
 
     async _finishWithSummary(run) {
+        // The advancement wizard awaits inline prompts mid-finish; this guard
+        // stops a second Finish click (footer) from re-entering and re-running it.
+        if (this._finishing) return;
+        this._finishing = true;
+        try {
+            return await this._finishWithSummaryInner(run);
+        } finally {
+            this._finishing = false;
+        }
+    }
+
+    async _finishWithSummaryInner(run) {
         const state = this._getState();
         await this._maybeApplyCareerAdvancementBundle(state, run);
 

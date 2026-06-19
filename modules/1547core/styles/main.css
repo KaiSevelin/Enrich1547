@@ -1852,6 +1852,30 @@ a.enricher-1547::before {
 	text-align: center;
 }
 
+/* In-panel confirm button ("Add choice" / "Complete Character"). */
+.skilltree-chargen .chargen-inline-prompt__actions {
+	margin-top: 1rem;
+	padding-top: 0.8rem;
+	border-top: 1px dashed rgba(236, 206, 146, 0.3);
+	display: flex;
+	justify-content: center;
+}
+
+.skilltree-chargen .chargen-inline-prompt__actions button {
+	min-width: 12rem;
+	padding: 0.6rem 1.1rem;
+	border-radius: 12px;
+	border: 1px solid rgba(247, 215, 144, 0.7);
+	background: linear-gradient(180deg, #82501f, #5d3715);
+	color: #fff4d6;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.skilltree-chargen .chargen-inline-prompt__actions button:hover {
+	box-shadow: 0 0 16px rgba(195, 128, 44, 0.28);
+}
+
 /* Cue over the cards while a prompt is open. */
 .skilltree-chargen .chargen-prompt-cue {
 	margin: 0 0 0.6rem;
