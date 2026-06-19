@@ -135,8 +135,18 @@
                                 {{#if pendingPrompt.hintHtml}}<div class="chargen-dialog__hint">{{{pendingPrompt.hintHtml}}}</div>{{/if}}
 
                                 {{#if pendingPrompt.isRadio}}
-                                <div class="chargen-dialog__choice-list">
+                                <div class="chargen-dialog__choice-list {{#if pendingPrompt.rowSelect}}is-row-select{{/if}}">
                                     {{#each pendingPrompt.options}}
+                                    {{#if ../pendingPrompt.rowSelect}}
+                                    <div class="chargen-dialog__choice" data-row-value="{{this.value}}" role="button" tabindex="0">
+                                        <span class="chargen-dialog__choice-body">
+                                            <span>
+                                                <span class="chargen-dialog__choice-title">{{this.title}}</span>
+                                                {{#if this.meta}}<span class="chargen-dialog__choice-meta">{{this.meta}}</span>{{/if}}
+                                            </span>
+                                        </span>
+                                    </div>
+                                    {{else}}
                                     <label class="chargen-dialog__choice">
                                         <input type="radio" name="cg-inline-choice" value="{{this.value}}" {{#if this.checked}}checked{{/if}}>
                                         <span class="chargen-dialog__choice-body">
@@ -147,6 +157,7 @@
                                             </span>
                                         </span>
                                     </label>
+                                    {{/if}}
                                     {{/each}}
                                 </div>
                                 {{/if}}
@@ -165,6 +176,8 @@
                                 <div class="chargen-inline-prompt__actions">
                                     <button type="button" class="primary-action" data-action="inline-prompt-confirm">{{pendingPrompt.confirmButton}}</button>
                                 </div>
+                                {{else if pendingPrompt.rowSelect}}
+                                <p class="chargen-prompt-continue"><i class="fas fa-hand-pointer"></i> Pick a row, then click <strong>Accept</strong>.</p>
                                 {{else}}
                                 <p class="chargen-prompt-continue"><i class="fas fa-hand-pointer"></i> Make your choice, then click a card to continue.</p>
                                 {{/if}}

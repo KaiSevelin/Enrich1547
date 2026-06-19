@@ -2017,7 +2017,10 @@ export class SkillTreeChargenApp extends FormApplication {
                 cancelValue: descriptor.cancelValue ?? null,
                 // In-panel button (e.g. "Add choice"); disables card-click confirm.
                 confirmButton: descriptor.confirmButton ?? null,
-                cardConfirm: !descriptor.confirmButton,
+                // Row-select mode (advancement): each option is a button; clicking
+                // a row reveals a per-row Accept button that confirms.
+                rowSelect: Boolean(descriptor.rowSelect),
+                cardConfirm: !(descriptor.confirmButton || descriptor.rowSelect),
             };
             this._pendingResolve = (value) => {
                 if (!this._pendingPrompt || this._pendingPrompt.id !== id) return;
@@ -2040,7 +2043,14 @@ export class SkillTreeChargenApp extends FormApplication {
         const CONFIRM = SkillTreeChargenApp._INLINE_CONFIRM;
         const CANCEL = SkillTreeChargenApp._INLINE_CANCEL;
         let value;
-        if (p.inputType === "none") {
+        if (p.rowSelect) {
+            // Value comes from the active (clicked) row; Accept only appears on one.
+            const raw = String(panel?.querySelector(".chargen-dialog__choice.is-active")?.dataset?.rowValue ?? "");
+            if (!raw) return; // no row chosen yet — ignore
+            if (raw === SKIP || raw === CANCEL) value = p.cancelValue ?? null;
+            else if (raw === CONFIRM) value = p.confirmValue ?? true;
+            else value = raw || (p.cancelValue ?? null);
+        } else if (p.inputType === "none") {
             value = p.confirmValue ?? true; // summary: the button just confirms
         } else if (p.inputType === "text") {
             value = String(panel?.querySelector("[name='cg-inline-text']")?.value ?? "").trim() || null;
@@ -2882,7 +2892,7 @@ export class SkillTreeChargenApp extends FormApplication {
             skippable: true,
             skipLabel: "— Skip this increase —",
             cancelValue: null,
-            confirmButton: "Add choice",
+            rowSelect: true,
         });
     }
 
@@ -2917,7 +2927,7 @@ export class SkillTreeChargenApp extends FormApplication {
             skippable: true,
             skipLabel: "— Skip this pick —",
             cancelValue: null,
-            confirmButton: "Add choice",
+            rowSelect: true,
         });
     }
 
@@ -4469,6 +4479,44 @@ export class SkillTreeChargenApp extends FormApplication {
                 const p = live();
                 if (p) p.defaultText = field.value;
             });
+        }
+
+        // Row-select mode (advancement): each row is a button. Clicking a row
+        // activates it and reveals an inline Accept button (moved from any
+        // previously-active row); Accept confirms that row's value.
+        if (this._pendingPrompt.rowSelect) {
+            const rows = Array.from(panel.querySelectorAll(".chargen-dialog__choice"));
+            const activate = (row) => {
+                for (const r of rows) {
+                    r.classList.remove("is-active");
+                    r.querySelector("[data-action='row-accept']")?.remove();
+                }
+                row.classList.add("is-active");
+                const accept = document.createElement("button");
+                accept.type = "button";
+                accept.className = "chargen-row-accept";
+                accept.dataset.action = "row-accept";
+                accept.textContent = "Accept";
+                accept.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    if (live()) this._resolvePendingFromDom(panel);
+                });
+                row.appendChild(accept);
+            };
+            for (const row of rows) {
+                row.addEventListener("click", (ev) => {
+                    if (ev.target.closest("[data-action='row-accept']")) return;
+                    activate(row);
+                });
+                row.addEventListener("keydown", (ev) => {
+                    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); activate(row); }
+                });
+            }
+            if (this._lastFocusedPromptId !== pid) {
+                this._lastFocusedPromptId = pid;
+                requestAnimationFrame(() => { try { rows[0]?.focus(); } catch { /* noop */ } });
+            }
+            return;
         }
 
         // Keep the chosen radio across an incidental re-render.
