@@ -1922,6 +1922,10 @@ export class SkillTreeChargenApp extends FormApplication {
         // not in serialized state.
         this._pendingPrompt = null;
         this._pendingResolve = null;
+        // Index of the card chosen in the current _onChoose, kept so the chosen
+        // card renders "turned" while a prompt is open (prompts fire before
+        // run.reveal is set). Null outside a card-choice flow.
+        this._pendingChosenIndex = null;
     }
 
     // Sentinel radio values for the inline prompt (map back to cancel/confirm).
@@ -4200,6 +4204,15 @@ export class SkillTreeChargenApp extends FormApplication {
             }
             : null;
 
+        // Through the whole _onChoose window (before run.reveal is set), keep the
+        // chosen card "turned" so only it stays clickable — across any prompts and
+        // the processing between them (no flicker). Reveal takes over afterward.
+        const promptChosenIndex = (!reveal && this._pendingChosenIndex != null)
+            ? this._pendingChosenIndex
+            : null;
+        const chosenIndex = reveal ? reveal.chosenIndex : promptChosenIndex;
+        const hasChosen = chosenIndex != null;
+
         return {
             revealDeferredLines,
             revealDeferredHtml,
@@ -4222,11 +4235,15 @@ export class SkillTreeChargenApp extends FormApplication {
                     img: c.masked ? unknownImg : (c.img ?? ""),
                     masked: Boolean(c.masked),
                     badges,
-                    cardClass: reveal
-                        ? (idx === reveal.chosenIndex ? "is-selected" : "is-flipped is-rejected")
+                    cardClass: hasChosen
+                        ? (idx === chosenIndex ? "is-selected" : "is-flipped is-rejected")
                         : "",
-                    tooltip: reveal
-                        ? (idx === reveal.chosenIndex ? "Click this card again to continue." : "Not chosen.")
+                    tooltip: hasChosen
+                        ? (idx === chosenIndex
+                            ? (this._pendingPrompt
+                                ? "Make your choice at the side, then click here to continue."
+                                : "Click this card again to continue.")
+                            : "Not chosen.")
                         : (c.masked
                             ? "Click to reveal this hidden result."
                             : `Click to choose this option. The reward is rolled immediately.${badgeTip}`)
@@ -4334,18 +4351,22 @@ export class SkillTreeChargenApp extends FormApplication {
             ev.preventDefault();
             ev.stopPropagation();
 
-            // While an inline prompt is open, a card click confirms the prompt
-            // ("click to continue") — read the selection from the flipped panel.
-            if (this._pendingPrompt) {
-                const root = html[0] ?? html;
-                this._resolvePendingFromDom(root?.querySelector?.(".chargen-bio-flip__back"));
-                return;
-            }
-
             const state = this._getState();
             const cardEl = ev.currentTarget;
             const idx = Number(cardEl.dataset.index);
             if (Number.isNaN(idx)) return;
+
+            // While an inline prompt is open, the chosen ("turned") card confirms
+            // it — read the selection from the flipped panel and continue. Other
+            // (rejected) cards are inert. If no card is chosen yet, any card works.
+            if (this._pendingPrompt) {
+                const chosen = state?.run?.reveal?.chosenIndex ?? this._pendingChosenIndex;
+                if (chosen == null || idx === chosen) {
+                    const root = html[0] ?? html;
+                    this._resolvePendingFromDom(root?.querySelector?.(".chargen-bio-flip__back"));
+                }
+                return;
+            }
 
             if (state?.run?.reveal) {
                 if (idx === state.run.reveal.chosenIndex) this._onContinue();
@@ -4543,6 +4564,11 @@ export class SkillTreeChargenApp extends FormApplication {
                 return;
             }
 
+            // Keep the chosen card "turned" through any prompts that fire during
+            // reward application (a prompt's re-render rebuilds the cards from
+            // getData, which reads this). Reveal takes over once it's set.
+            this._pendingChosenIndex = index;
+
             const cardNodes = Array.from(this.element?.find(".chargen-card") ?? []);
             for (const [i, node] of cardNodes.entries()) {
                 if (!(node instanceof HTMLElement)) continue;
@@ -4687,6 +4713,7 @@ export class SkillTreeChargenApp extends FormApplication {
             console.error(e);
         } finally {
             delete run._bioContext;
+            this._pendingChosenIndex = null;
             this._actionInFlight = false;
         }
     }

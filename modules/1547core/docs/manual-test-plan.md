@@ -5,7 +5,7 @@ cover. **Reset to a clean state (unchecked, no carried-over notes) each release;
 the version line below is auto-stamped by `release.ps1`. **Regression** = verifies
 a fix/feature from a recent release.
 
-_Current target: 1547core 0.3.104._
+_Current target: 1547core 0.3.105._
 
 ## Setup
 - [ ] Update to the current **1547core** build, reload the world (GM).
