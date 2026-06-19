@@ -1,5 +1,5 @@
-2026/06/19-05:58:01.000 5240 Delete type=3 #1
-2026/06/19-05:58:01.002 9810 Level-0 table #5: started
-2026/06/19-05:58:01.003 9810 Level-0 table #5: 18109 bytes OK
-2026/06/19-05:58:01.003 9810 Delete type=0 #3
-2026/06/19-05:58:01.004 9810 Manual compaction at level-0 from '!items!modBlessed001' @ 72057594037927935 : 1 .. '!items!modSilvered01' @ 0 : 0; will stop at (end)
+2026/06/19-10:05:30.858 acb4 Delete type=3 #1
+2026/06/19-10:05:30.860 2ff4 Level-0 table #5: started
+2026/06/19-10:05:30.861 2ff4 Level-0 table #5: 18109 bytes OK
+2026/06/19-10:05:30.862 2ff4 Delete type=0 #3
+2026/06/19-10:05:30.862 2ff4 Manual compaction at level-0 from '!items!modBlessed001' @ 72057594037927935 : 1 .. '!items!modSilvered01' @ 0 : 0; will stop at (end)

@@ -1770,6 +1770,25 @@ function createModuleSetupFormApplicationClass() {
                 ])
             ]);
 
+            // Base ChangeSets and monster actors above are imported concurrently,
+            // so a monster's TypeDropdown can fire ensureBaseChangeSetForActor
+            // before its Base ChangeSet has finished importing — leaving the
+            // monster without a chassis (base monsters ship with no embedded
+            // base). Now that every ChangeSet is in the world, reconcile each
+            // imported monster's base deterministically.
+            const ensureBase = game.modules.get(MODULE_ID)?.api?.ensureBaseChangeSetForActor;
+            if (typeof ensureBase === "function") {
+                for (const monsterDoc of monsterDocs) {
+                    const actor = game.actors.get(monsterDoc._id);
+                    if (!actor) continue;
+                    try {
+                        await ensureBase(actor);
+                    } catch (err) {
+                        console.error(`${MODULE_ID} | Base ChangeSet reconcile failed for "${actor.name}"`, err);
+                    }
+                }
+            }
+
             return {
                 totalItems: docs.length,
                 totalActors: monsterDocs.length,
