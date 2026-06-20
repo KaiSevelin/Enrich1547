@@ -28,18 +28,26 @@ export const CONDITIONS = {
     Silenced: { noVerbal: true }, // prevents spoken/verbal actions — situational legality
     // Combat grapples/knockdowns — each imposes disadvantage on the held/downed
     // combatant's attack and defence rolls (one Risk die via conditionCombatDisadvantage).
-    // `escape` is how you break free, deterministically (no roll): spend `amount`
-    // of the `cost` stat-point pool to clear it. `manual: true` is a free "stand up"
-    // that instead forgoes all movement for the turn (not engine-enforced).
-    Locked: { combat: true, escape: { cost: "StrengthPoints", amount: 1 } },
-    Prone: { combat: true, attackersAdvantage: 1, escape: { manual: true, note: "Stand up — forgo all movement this turn." } },
-    Grappled: { combat: true, escape: { cost: "DexterityPoints", amount: 1 } },
-    "Choking Hold": {
-        combat: true,
-        blocksAdvantage: true, // severe: also cancels advantage
-        inflictorAttackEachRound: "unarmed", // the choker gets a free unarmed attack each round
-        escape: { cost: "StrengthPoints", amount: 1 }
-    }
+    // Escaping them is its own granted maneuver (see foundry/Templates/maneuvers.json).
+    Locked: { combat: true, img: "icons/svg/net.svg" },
+    Prone: { combat: true, attackersAdvantage: 1, img: "icons/svg/falling.svg" },
+    Grappled: { combat: true, img: "icons/svg/trap.svg" },
+    // Choking Hold is severe: also cancels advantage, and the choker gets a free
+    // unarmed attack each round (inflictorAttackEachRound).
+    "Choking Hold": { combat: true, blocksAdvantage: true, inflictorAttackEachRound: "unarmed", img: "icons/svg/terror.svg" }
+};
+
+// Default icons for the registry's afflictions so they read clearly in the token
+// status menu (see registerConditionStatusEffects). Combat conditions carry their
+// own img above; these cover the rest.
+const CONDITION_IMG = {
+    Weakened: "icons/svg/downgrade.svg",
+    Exhausted: "icons/svg/unconscious.svg",
+    Cursed: "icons/svg/hazard.svg",
+    Doomed: "icons/svg/skull.svg",
+    Restless: "icons/svg/daze.svg",
+    Marked: "icons/svg/target.svg",
+    Silenced: "icons/svg/deaf.svg",
 };
 
 function slug(name) { return String(name ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""); }
@@ -107,45 +115,45 @@ export function applyConditionDiceModifier(actor, statLabel, baseDice, advantage
     return dice;
 }
 
-/** Apply a named condition as an ActiveEffect (idempotent). `inflictorId` records
- *  who applied it (the grappler/choker) so an opposed escape can roll against them. */
+/** The icon for a condition (canonical), for both programmatic apply and the menu. */
+function conditionImg(canonicalName) {
+    return CONDITIONS[canonicalName]?.img ?? CONDITION_IMG[canonicalName] ?? "icons/svg/aura.svg";
+}
+
+/** Apply a named condition as an ActiveEffect (idempotent). The name is canonicalised
+ *  so a programmatic apply and a token-menu toggle produce an identical effect.
+ *  `inflictorId` records who applied it (e.g. the choker) for round-effect use. */
 export async function applyCondition(actor, name, { durationType = "", durationValue = "", inflictorId = "" } = {}) {
     const target = actor?.actor ?? actor;
     if (!target?.createEmbeddedDocuments || !name) return null;
-    if (effectList(target).some((e) => slug(e?.name) === slug(name))) return null;
+    const canonical = CONDITION_BY_SLUG[slug(name)] ?? String(name);
+    if (effectList(target).some((e) => slug(e?.name) === slug(canonical))) return null;
     const data = {
-        name,
-        img: "icons/svg/aura.svg",
-        statuses: [slug(name)],
+        name: canonical,
+        img: conditionImg(canonical),
+        statuses: [slug(canonical)],
         changes: [],
         disabled: false,
-        flags: { [MODULE_ID]: { condition: name, durationType, durationValue, inflictorId } }
+        flags: { [MODULE_ID]: { condition: canonical, durationType, durationValue, inflictorId } }
     };
     const [created] = await target.createEmbeddedDocuments("ActiveEffect", [data]);
     return created ?? null;
 }
 
 /**
- * Escapable conditions currently on the actor, with the canonical rule + who
- * applied each. The HUD shows an "Escape" reaction per entry; the opposed roll
- * uses `escape.stat` (held) vs the inflictor's `escape.vs` stat.
+ * Add the registry's conditions to CONFIG.statusEffects so the GM (and owners) can
+ * toggle Grappled/Locked/Prone/etc. from the token's status menu, with icons. The
+ * resulting ActiveEffect's name matches a registry key, so the combat automation
+ * picks it up exactly like a maneuver-applied one. Call once at init.
  */
-export function getEscapableConditions(actor) {
-    const target = actor?.actor ?? actor;
-    const out = [];
-    for (const ef of effectList(target)) {
-        if (ef?.disabled) continue;
-        const canonical = ef?.name ? CONDITION_BY_SLUG[slug(ef.name)] : null;
-        const escape = canonical ? CONDITIONS[canonical]?.escape : null;
-        if (!escape) continue;
-        out.push({
-            name: canonical,
-            effectId: ef.id ?? null,
-            escape,
-            inflictorId: ef.flags?.[MODULE_ID]?.inflictorId ?? null,
-        });
+export function registerConditionStatusEffects() {
+    const list = globalThis.CONFIG?.statusEffects;
+    if (!Array.isArray(list)) return;
+    for (const name of Object.keys(CONDITIONS)) {
+        const id = slug(name);
+        if (!id || list.some((s) => s?.id === id)) continue;
+        list.push({ id, name, img: conditionImg(name) });
     }
-    return out;
 }
 
 /** Remove a named condition if present. */
@@ -156,13 +164,14 @@ export async function removeCondition(actor, name) {
 }
 
 export function registerConditionRegistry() {
+    registerConditionStatusEffects();
     const coreModule = game.modules.get(MODULE_ID);
     if (coreModule) {
         coreModule.api = coreModule.api ?? {};
         coreModule.api.condition = {
             CONDITIONS, getActiveConditions, conditionDisadvantage, conditionBlocksAdvantage,
             conditionCombatDisadvantage, applyConditionDiceModifier, applyCondition, removeCondition,
-            getEscapableConditions
+            registerConditionStatusEffects
         };
     }
 }

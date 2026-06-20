@@ -8,7 +8,7 @@ import assert from "assert";
  * must resolve them by slug, and the combat grapples must impose disadvantage.
  */
 
-const { getActiveConditions, conditionCombatDisadvantage, getEscapableConditions, CONDITIONS } =
+const { getActiveConditions, conditionCombatDisadvantage, registerConditionStatusEffects, CONDITIONS } =
     await import("../services/condition-registry.js");
 
 const actorWith = (...names) => ({ effects: { contents: names.map((name) => ({ name })) } });
@@ -42,28 +42,27 @@ for (const name of ["Locked", "Prone", "Grappled", "Choking Hold"]) {
 }
 console.log("  ✓ Locked/Prone/Grappled/Choking Hold are registered combat conditions");
 
-console.log("escape config + inflictor...");
-// Each grapple/knockdown declares a deterministic stat-point escape cost.
-assert.deepStrictEqual(CONDITIONS.Grappled.escape, { cost: "DexterityPoints", amount: 1 });
-assert.deepStrictEqual(CONDITIONS.Locked.escape, { cost: "StrengthPoints", amount: 1 });
-assert.deepStrictEqual(CONDITIONS["Choking Hold"].escape, { cost: "StrengthPoints", amount: 1 });
-assert.strictEqual(CONDITIONS.Prone.escape.manual, true);
+console.log("condition flags...");
 assert.strictEqual(CONDITIONS.Prone.attackersAdvantage, 1);
 assert.strictEqual(CONDITIONS["Choking Hold"].inflictorAttackEachRound, "unarmed");
+for (const name of ["Locked", "Prone", "Grappled", "Choking Hold"]) {
+    assert.strictEqual(typeof CONDITIONS[name].img, "string", `${name} has a status icon`);
+}
+console.log("  ✓ combat conditions carry attacker/round flags + an icon");
 
-// getEscapableConditions surfaces the rule + who applied it, by slug, skipping disabled.
-const held = {
-    effects: { contents: [
-        { name: "grappled", id: "ae1", flags: { "1547core": { inflictorId: "grappler-1" } } },
-        { name: "weakened", id: "ae2" },                       // not escapable
-        { name: "locked", id: "ae3", disabled: true, flags: { "1547core": { inflictorId: "x" } } }, // disabled
-    ] },
-};
-const escapable = getEscapableConditions(held);
-assert.strictEqual(escapable.length, 1, "only the active escapable condition");
-assert.strictEqual(escapable[0].name, "Grappled");
-assert.strictEqual(escapable[0].inflictorId, "grappler-1");
-assert.deepStrictEqual(escapable[0].escape, { cost: "DexterityPoints", amount: 1 });
-console.log("  ✓ escape config + inflictor surfaced via getEscapableConditions");
+console.log("status-effect registration...");
+// registerConditionStatusEffects appends each registry condition to CONFIG.statusEffects
+// (by slug id), idempotently, with an icon.
+const fakeConfig = { statusEffects: [{ id: "dead" }] };
+globalThis.CONFIG = fakeConfig;
+registerConditionStatusEffects();
+registerConditionStatusEffects(); // idempotent
+const grappledStatus = fakeConfig.statusEffects.filter((s) => s.id === "grappled");
+assert.strictEqual(grappledStatus.length, 1, "registered once (idempotent)");
+assert.strictEqual(grappledStatus[0].name, "Grappled");
+assert.strictEqual(typeof grappledStatus[0].img, "string");
+assert.ok(fakeConfig.statusEffects.some((s) => s.id === "choking-hold"), "kebab id for multi-word name");
+delete globalThis.CONFIG;
+console.log("  ✓ registerConditionStatusEffects adds conditions idempotently");
 
 console.log("condition-registry: all assertions passed");
