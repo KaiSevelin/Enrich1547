@@ -1,6 +1,9 @@
 ﻿import { assignSides, orderSidesByInitiative } from "../combat/side-assignment.mjs";
+import { ACTOR_TYPES } from "../lib/build-helpers.mjs";
 
 const MODULE_ID = "1547core";
+// The monster/NPC actor types. Anything else (incl. "Player" and untyped) is a PC.
+const MONSTER_TYPES = new Set(ACTOR_TYPES.filter((type) => type !== "Player"));
 const DEFAULT_TEAM_IDS = ["team-1", "team-2"];
 
 function escapeHtml(value) {
@@ -73,11 +76,15 @@ function deriveDefaultSideId(combatant) {
     return "team-2";
 }
 
-// A player character: owned by a player OR typed "Player" (so a GM-owned PC still
-// counts). Used both for the disposition default and the two+ players split.
+// A player character: owned by a player, OR not an explicit MONSTER type — so a
+// GM-owned PC, and a freshly-made chargen actor whose TypeDropdown isn't stored
+// yet (reads ""), both count. Mirrors the codebase convention that any non-Player
+// TypeDropdown is a monster (changeset-drop-hook / tier-display). Used for both
+// the disposition default and the two+ players split.
 function combatantIsPlayer(combatant) {
     if (combatant?.actor?.hasPlayerOwner === true) return true;
-    return String(combatant?.actor?.system?.props?.TypeDropdown ?? "").trim() === "Player";
+    const type = String(combatant?.actor?.system?.props?.TypeDropdown ?? "").trim();
+    return !MONSTER_TYPES.has(type);
 }
 
 export function resolveCombatantSideId(combatant) {

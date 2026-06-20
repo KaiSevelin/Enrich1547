@@ -1,9 +1,8 @@
 # 1547 Core — Manual Test Plan
 
 Single living checklist for the live/Foundry-coupled paths the Node suite can't
-cover. **Reset to a clean state (unchecked, no carried-over notes) each release;**
-the version line below is auto-stamped by `release.ps1`. **Regression** = verifies
-a fix/feature from a recent release.
+cover. **Reset to a clean state (unchecked, no carried-over notes) each release.**
+**Regression** = verifies a fix/feature from a recent release.
 
 _Current target: 1547core 0.3.117._
 
