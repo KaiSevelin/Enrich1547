@@ -8,7 +8,7 @@ import assert from "assert";
  * must resolve them by slug, and the combat grapples must impose disadvantage.
  */
 
-const { getActiveConditions, conditionCombatDisadvantage, registerConditionStatusEffects, CONDITIONS } =
+const { getActiveConditions, conditionCombatDisadvantage, conditionAttackersAdvantage, registerConditionStatusEffects, CONDITIONS } =
     await import("../services/condition-registry.js");
 
 const actorWith = (...names) => ({ effects: { contents: names.map((name) => ({ name })) } });
@@ -35,6 +35,19 @@ assert.strictEqual(conditionCombatDisadvantage(actorWith("Choking Hold")), 1);
 assert.strictEqual(conditionCombatDisadvantage(actorWith("prone", "grappled")), 2);
 assert.strictEqual(conditionCombatDisadvantage(actorWith()), 0);
 console.log("  ✓ combat grapples each impose one disadvantage die");
+
+console.log("Prone scoping + attackers advantage...");
+// Prone disadvantages ATTACKS only; Locked/Grappled hit both attack and defence.
+assert.strictEqual(conditionCombatDisadvantage(actorWith("prone"), "attack"), 1);
+assert.strictEqual(conditionCombatDisadvantage(actorWith("prone"), "defense"), 0);
+assert.strictEqual(conditionCombatDisadvantage(actorWith("locked"), "defense"), 1);
+assert.strictEqual(conditionCombatDisadvantage(actorWith("locked"), "attack"), 1);
+// A general affliction (Cursed) still hits both.
+assert.strictEqual(conditionCombatDisadvantage(actorWith("cursed"), "defense"), 1);
+// Attackers gain advantage against a prone target only.
+assert.strictEqual(conditionAttackersAdvantage(actorWith("prone")), 1);
+assert.strictEqual(conditionAttackersAdvantage(actorWith("grappled")), 0);
+console.log("  ✓ Prone = attack-only disadvantage + grants attackers advantage");
 
 console.log("registry shape...");
 for (const name of ["Locked", "Prone", "Grappled", "Choking Hold"]) {

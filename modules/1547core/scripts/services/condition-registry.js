@@ -30,7 +30,9 @@ export const CONDITIONS = {
     // combatant's attack and defence rolls (one Risk die via conditionCombatDisadvantage).
     // Escaping them is its own granted maneuver (see foundry/Templates/maneuvers.json).
     Locked: { combat: true, img: "icons/svg/net.svg" },
-    Prone: { combat: true, attackersAdvantage: 1, img: "icons/svg/falling.svg" },
+    // Prone: disadvantage on your ATTACKS only (you can still defend normally), and
+    // anyone attacking you gets one advantage die.
+    Prone: { combat: true, combatDisadvantage: "attack", attackersAdvantage: 1, img: "icons/svg/falling.svg" },
     Grappled: { combat: true, img: "icons/svg/trap.svg" },
     // Choking Hold is severe: also cancels advantage, and the choker gets a free
     // unarmed attack each round (inflictorAttackEachRound).
@@ -92,14 +94,30 @@ export function conditionBlocksAdvantage(actor) {
  * a physical domain, so "physical" and "all" disadvantage apply, plus combat-only
  * conditions (Locked). Returns a count of disadvantage/Risk dice.
  */
-export function conditionCombatDisadvantage(actor) {
+export function conditionCombatDisadvantage(actor, rollType = "both") {
     let d = 0;
     for (const n of getActiveConditions(actor)) {
         const r = CONDITIONS[n];
         if (!r) continue;
-        if (r.disadvantage === "all" || r.disadvantage === "physical" || r.combat) d += 1;
+        // General afflictions (Weakened/Cursed/Exhausted) hit every combat roll.
+        if (r.disadvantage === "all" || r.disadvantage === "physical") { d += 1; continue; }
+        // Combat grapples/knockdowns: `combatDisadvantage` ("attack"|"defense"|"both",
+        // default "both") scopes which rolls they hit — e.g. Prone hits attacks only.
+        if (r.combat) {
+            const scope = r.combatDisadvantage ?? "both";
+            if (rollType === "both" || scope === "both" || scope === rollType) d += 1;
+        }
     }
     return d;
+}
+
+/** Advantage dice anyone attacking this actor gains from its conditions (e.g. Prone). */
+export function conditionAttackersAdvantage(actor) {
+    let a = 0;
+    for (const n of getActiveConditions(actor)) {
+        a += Number(CONDITIONS[n]?.attackersAdvantage ?? 0) || 0;
+    }
+    return a;
 }
 
 /**
@@ -170,8 +188,8 @@ export function registerConditionRegistry() {
         coreModule.api = coreModule.api ?? {};
         coreModule.api.condition = {
             CONDITIONS, getActiveConditions, conditionDisadvantage, conditionBlocksAdvantage,
-            conditionCombatDisadvantage, applyConditionDiceModifier, applyCondition, removeCondition,
-            registerConditionStatusEffects
+            conditionCombatDisadvantage, conditionAttackersAdvantage, applyConditionDiceModifier,
+            applyCondition, removeCondition, registerConditionStatusEffects
         };
     }
 }

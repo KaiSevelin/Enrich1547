@@ -1,5 +1,5 @@
 ﻿import { buildDefenderPool, toFoundryFormula } from "../combat/pool-builder.mjs";
-import { conditionCombatDisadvantage } from "../services/condition-registry.js";
+import { conditionCombatDisadvantage, conditionAttackersAdvantage } from "../services/condition-registry.js";
 import { autoFaceAttacker, getAttackPositioning, positioningNote, positionalAdvantageToApply } from "../combat/facing.mjs";
 import { showDefenseSummary } from "../combat/defense-summary.js";
 import { relayRemoteWindow, presentCandidateDialog, escapeRelayHtml } from "../services/remote-window-relay.js";
@@ -180,8 +180,9 @@ function consumePersistentEffectIfPresent(actor, effectType, deps = {}) {
 
 function buildDefenseRollFormula(armorSummary, defender = null) {
     const pool = buildDefenderPool(Array.isArray(armorSummary?.defenseDice) ? armorSummary.defenseDice : undefined);
-    // Conditions (Locked, Weakened, Exhausted, Cursed) add Risk dice to the defence pool.
-    const disadvantage = defender ? conditionCombatDisadvantage(defender) : 0;
+    // Conditions (Locked, Weakened, Exhausted, Cursed) add Risk dice to the defence
+    // pool — Prone is excluded (its disadvantage is on attacks only).
+    const disadvantage = defender ? conditionCombatDisadvantage(defender, "defense") : 0;
     for (let i = 0; i < disadvantage; i += 1) pool.push("Risk");
     return toFoundryFormula(pool);
 }
@@ -343,8 +344,8 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
         return;
     }
     const currentManeuverEffects = summarizeManeuverEffects(currentSummary.selectedPreManeuvers);
-    // Conditions (Weakened, Exhausted, Cursed, Locked) add Risk dice to the attack pool.
-    currentManeuverEffects.addDisadvantage = Number(currentManeuverEffects.addDisadvantage ?? 0) + conditionCombatDisadvantage(context.actor);
+    // Conditions (Weakened, Exhausted, Cursed, Locked, Prone) add Risk dice to the attack pool.
+    currentManeuverEffects.addDisadvantage = Number(currentManeuverEffects.addDisadvantage ?? 0) + conditionCombatDisadvantage(context.actor, "attack");
     const baseWeaponRollContext = buildWeaponRollContext(currentSummary, currentManeuverEffects);
     const effectiveWeaponRollContext = {
         ...baseWeaponRollContext,
@@ -477,13 +478,19 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
         // An arced shot (indirect) drops from above and forfeits the rear +1.
         const facedThisAttack = result.reactionResolution?.reaction?.effectData?.facingFace === true;
         const appliedPositionAdvantage = (facedThisAttack || isIndirect) ? 0 : positionalAdvantageToApply(positioning);
-        const positionNote = facedThisAttack
-            ? "Defender faced the attacker — rear advantage cancelled."
-            : (isIndirect ? "Arced shot — rear advantage forfeited." : positioningNote(positioning));
-        const finalAttackFormula = appliedPositionAdvantage > 0
+        // A prone (or otherwise vulnerable) target grants the attacker advantage dice.
+        const targetConditionAdvantage = targetActor ? conditionAttackersAdvantage(targetActor) : 0;
+        const bonusAdvantage = appliedPositionAdvantage + targetConditionAdvantage;
+        const positionNote = [
+            facedThisAttack
+                ? "Defender faced the attacker — rear advantage cancelled."
+                : (isIndirect ? "Arced shot — rear advantage forfeited." : positioningNote(positioning)),
+            targetConditionAdvantage > 0 ? `Target is vulnerable: +${targetConditionAdvantage} advantage.` : "",
+        ].filter(Boolean).join(" ");
+        const finalAttackFormula = bonusAdvantage > 0
             ? (buildFoundryAttackRollFormula(
                 currentWeapon?.activeAttackProfileData,
-                { ...effectiveWeaponRollContext, advantageDice: (Number(effectiveWeaponRollContext.advantageDice) || 0) + appliedPositionAdvantage }
+                { ...effectiveWeaponRollContext, advantageDice: (Number(effectiveWeaponRollContext.advantageDice) || 0) + bonusAdvantage }
             ) || attackFormula)
             : attackFormula;
 

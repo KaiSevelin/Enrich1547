@@ -889,8 +889,9 @@ export function summarizeActor(actor, token, deps = {}) {
     };
 
     const maneuverEffects = summarizeManeuverEffects(selectedPreManeuvers);
-    // Conditions (Weakened, Exhausted, Cursed, Locked, …) add combat disadvantage (Risk dice).
-    maneuverEffects.addDisadvantage = Number(maneuverEffects.addDisadvantage ?? 0) + conditionCombatDisadvantage(actor);
+    // Conditions (Weakened, Exhausted, Cursed, Locked, Prone, …) add combat disadvantage
+    // (Risk dice) to this actor's ATTACK pool — Prone is attack-only.
+    maneuverEffects.addDisadvantage = Number(maneuverEffects.addDisadvantage ?? 0) + conditionCombatDisadvantage(actor, "attack");
     const effectiveWeaponRollContext = buildWeaponRollContext({ weaponRollContext, rollContext }, maneuverEffects);
     const diceTab = {
         attackOptions: attackDiceOptions.map((option) => ({
