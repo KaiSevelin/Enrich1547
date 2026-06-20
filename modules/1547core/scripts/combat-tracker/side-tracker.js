@@ -69,8 +69,15 @@ function deriveDefaultSideId(combatant) {
 
     if (Number(disposition) > 0) return "team-1";
     if (Number(disposition) < 0) return "team-2";
-    if (combatant?.actor?.hasPlayerOwner === true) return "team-1";
+    if (combatantIsPlayer(combatant)) return "team-1";
     return "team-2";
+}
+
+// A player character: owned by a player OR typed "Player" (so a GM-owned PC still
+// counts). Used both for the disposition default and the two+ players split.
+function combatantIsPlayer(combatant) {
+    if (combatant?.actor?.hasPlayerOwner === true) return true;
+    return String(combatant?.actor?.system?.props?.TypeDropdown ?? "").trim() === "Player";
 }
 
 export function resolveCombatantSideId(combatant) {
@@ -398,6 +405,7 @@ export async function applyAutoSideAssignment(combat) {
     if (!orderedCombatants.length) return;
     const assignment = assignSides(orderedCombatants.map((combatant) => ({
         id: combatant.id,
+        isPlayer: combatantIsPlayer(combatant),
         ownerUserIds: combatantOwnerUserIds(combatant),
         disposition: combatantDisposition(combatant),
     })));

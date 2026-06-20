@@ -56,9 +56,15 @@ export function dispositionSide(disposition) {
 /**
  * Assign combatants to sides at combat start.
  *
- * @param {Array<{id:string, ownerUserIds?:string[], disposition?:number}>} combatants
- *   Combatants in their tracker order (order matters: it fixes which player
- *   gets team-1 vs team-2 in a duel, and the disposition fallback for NPCs).
+ * A combatant counts as a player when `isPlayer` is true (the caller derives this
+ * from the character type, e.g. a "Player" actor, OR player ownership) — NOT just
+ * from `ownerUserIds`, so a GM-owned player character still groups as a player.
+ * Players sharing an owning user stay together; a player with no distinct owner
+ * (GM-owned) is its own group, so two such characters still split in a duel.
+ *
+ * @param {Array<{id:string, isPlayer?:boolean, ownerUserIds?:string[], disposition?:number}>} combatants
+ *   Combatants in their tracker order (order fixes which group gets team-1 vs
+ *   team-2 in a duel, and the disposition fallback for NPCs).
  * @returns {Map<string,string>} combatantId -> sideId. Empty when there are
  *   fewer than two distinct players (caller should not override anything).
  */
@@ -66,40 +72,44 @@ export function assignSides(combatants = []) {
     const result = new Map();
     const list = Array.isArray(combatants) ? combatants.filter((c) => c && c.id) : [];
 
-    // Distinct player owners (first-appearance order) and whether any NPC is in.
-    const ownerByCombatant = new Map();
-    const playerOwnerOrder = [];
+    // Group each player by owning user; a player with no distinct owner (GM-owned)
+    // becomes its own group so duels still split. Non-players mark the fight mixed.
+    const groupByCombatant = new Map();
+    const playerGroupOrder = [];
     let hasNpc = false;
     for (const c of list) {
         const owner = primaryPlayerOwner(c.ownerUserIds);
-        ownerByCombatant.set(c.id, owner);
-        if (owner) {
-            if (!playerOwnerOrder.includes(owner)) playerOwnerOrder.push(owner);
-        } else {
+        const isPlayer = c.isPlayer === true || !!owner;
+        if (!isPlayer) {
             hasNpc = true;
+            groupByCombatant.set(c.id, null);
+            continue;
         }
+        const group = owner ?? `self:${c.id}`;
+        groupByCombatant.set(c.id, group);
+        if (!playerGroupOrder.includes(group)) playerGroupOrder.push(group);
     }
 
-    // Fewer than two players: leave the existing defaults untouched.
-    if (playerOwnerOrder.length < 2) return result;
+    // Fewer than two distinct players: leave the existing defaults untouched.
+    if (playerGroupOrder.length < 2) return result;
 
     // Mixed fight (any NPC present): co-op default — all players share a side,
     // NPCs fall back to disposition.
     if (hasNpc) {
         for (const c of list) {
-            const owner = ownerByCombatant.get(c.id);
-            result.set(c.id, owner ? TEAM_ONE : dispositionSide(c.disposition));
+            const group = groupByCombatant.get(c.id);
+            result.set(c.id, group ? TEAM_ONE : dispositionSide(c.disposition));
         }
         return result;
     }
 
-    // Players-only fight: a duel/PvP — distinct players round-robin across teams.
-    const sideForOwner = new Map();
-    playerOwnerOrder.forEach((owner, index) => {
-        sideForOwner.set(owner, index % 2 === 0 ? TEAM_ONE : TEAM_TWO);
+    // Players-only fight: a duel/PvP — distinct player groups round-robin teams.
+    const sideForGroup = new Map();
+    playerGroupOrder.forEach((group, index) => {
+        sideForGroup.set(group, index % 2 === 0 ? TEAM_ONE : TEAM_TWO);
     });
     for (const c of list) {
-        result.set(c.id, sideForOwner.get(ownerByCombatant.get(c.id)));
+        result.set(c.id, sideForGroup.get(groupByCombatant.get(c.id)));
     }
     return result;
 }

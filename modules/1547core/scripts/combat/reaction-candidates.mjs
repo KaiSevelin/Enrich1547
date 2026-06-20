@@ -105,8 +105,26 @@ export function buildOverwatchReactionCandidate({
 }
 
 /**
+ * Would this reaction do literally nothing against the incoming attack? Today the
+ * only case is an Evade-style maneuver whose sole effect is removing incoming
+ * multiplier dice when the attack has none — offering it would just waste the
+ * defender's reaction. Reactions with any other live effect are always kept.
+ */
+function reactionWouldDoNothing(candidate, { incomingMultiplierDice = null } = {}) {
+    const effect = candidate?.effectData ?? {};
+    const removesMultiplier = Number(effect.removeIncomingMultiplierDice ?? 0) || 0;
+    if (removesMultiplier <= 0) return false;
+    if (incomingMultiplierDice == null || Number(incomingMultiplierDice) > 0) return false;
+    // Only suppress when removing multiplier dice is the candidate's sole effect.
+    const otherLiveEffect = Object.entries(effect).some(([key, value]) =>
+        key !== "removeIncomingMultiplierDice" && (value === true || (Number(value) || 0) !== 0)
+    );
+    return !otherLiveEffect;
+}
+
+/**
  * Reaction candidates a defender may take when an attack is declared
- * against them.
+ * against them. No-op reactions for this attack are filtered out.
  */
 export function buildAttackReactionCandidates({
     attacker,
@@ -119,7 +137,7 @@ export function buildAttackReactionCandidates({
 } = {}) {
     if (!defender) return [];
 
-    return getLegalManeuvers({
+    const candidates = getLegalManeuvers({
         actor: defender,
         weapon: reactionWeapon,
         profile: reactionProfile,
@@ -135,6 +153,10 @@ export function buildAttackReactionCandidates({
             profile: pendingProfile,
         },
     });
+
+    return candidates.filter((candidate) => !reactionWouldDoNothing(candidate, {
+        incomingMultiplierDice: context.incomingMultiplierDice,
+    }));
 }
 
 /**

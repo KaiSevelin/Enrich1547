@@ -55,6 +55,26 @@ assert.strictEqual(coop.get("b"), "team-1", "players share a side once an NPC is
 assert.strictEqual(coop.get("foe"), "team-2", "hostile NPC opposes the party");
 console.log("  ✓ two players + an NPC keeps the party together (co-op default)");
 
+// GM-owned player characters (no distinct owning user) still split in a duel:
+// they're flagged isPlayer by type, and each becomes its own group.
+const gmOwnedDuel = assignSides([
+    { id: "p1", isPlayer: true, ownerUserIds: [] },
+    { id: "p2", isPlayer: true, ownerUserIds: [] },
+]);
+assert.notStrictEqual(gmOwnedDuel.get("p1"), gmOwnedDuel.get("p2"), "GM-owned player characters split in a duel");
+console.log("  ✓ GM-owned player characters still split (players-only)");
+
+// GM-owned player characters + a monster -> co-op: players share a side.
+const gmOwnedCoop = assignSides([
+    { id: "p1", isPlayer: true, ownerUserIds: [] },
+    { id: "p2", isPlayer: true, ownerUserIds: [] },
+    { id: "foe", isPlayer: false, ownerUserIds: [], disposition: -1 },
+]);
+assert.strictEqual(gmOwnedCoop.get("p1"), "team-1");
+assert.strictEqual(gmOwnedCoop.get("p2"), "team-1", "GM-owned players group together vs a monster");
+assert.strictEqual(gmOwnedCoop.get("foe"), "team-2");
+console.log("  ✓ GM-owned player characters group together vs an NPC (co-op)");
+
 // A single player: rule does NOT trigger — leave defaults (empty map).
 const onePlayer = assignSides([
     { id: "a", ownerUserIds: ["alice"], disposition: 1 },

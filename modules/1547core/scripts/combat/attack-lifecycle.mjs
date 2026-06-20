@@ -335,6 +335,17 @@ export function buildPendingAttack({
         throw new Error(`Illegal pre-maneuver selection. ${summary}`);
     }
 
+    const mergedModifiers = mergeModifierSummaries(mergeManeuverEffects(selected), extraModifiers);
+
+    // Total multiplier dice the defender faces: the profile's own Multiplier dice
+    // plus any the attacker's pre-maneuvers add. Lets the reaction list hide
+    // options that would do nothing (e.g. Evade removes a multiplier die that
+    // isn't there — see buildAttackReactionCandidates).
+    const profileMultiplierDice = Array.isArray(selectedProfile?.dice)
+        ? selectedProfile.dice.filter((die) => String(die) === "Multiplier").length
+        : 0;
+    const incomingMultiplierDice = profileMultiplierDice + (Number(mergedModifiers?.addMultiplierDice ?? 0) || 0);
+
     return {
         kind: PENDING_ATTACK_KIND,
         actor,
@@ -358,10 +369,10 @@ export function buildPendingAttack({
             defender: target,
             pendingWeapon: normalizedWeapon,
             pendingProfile: selectedProfile,
-            context,
+            context: { ...context, incomingMultiplierDice },
         }),
         reservedCosts: collectReservedCosts(selected),
-        mergedModifiers: mergeModifierSummaries(mergeManeuverEffects(selected), extraModifiers),
+        mergedModifiers,
         metadata: {
             ...context,
             generatedByReaction,

@@ -5,7 +5,7 @@ cover. **Reset to a clean state (unchecked, no carried-over notes) each release;
 the version line below is auto-stamped by `release.ps1`. **Regression** = verifies
 a fix/feature from a recent release.
 
-_Current target: 1547core 0.3.116._
+_Current target: 1547core 0.3.117._
 
 ## Setup
 - [ ] Update to the current **1547core** build, reload the world (GM).
@@ -63,7 +63,7 @@ _Current target: 1547core 0.3.116._
 ## 4b. Side assignment & side initiative — **Regression**
 - [ ] **Co-op (players + at least one NPC):** two+ players start a combat with a monster present → **all players share one side**; hostile NPCs oppose them. Players are NOT split against each other.
 - [ ] **Duel (players only, no NPCs):** two players start a combat with no NPC → they land on **different sides** (Team 1 vs Team 2). 3+ players-only → alternate across the two teams.
-- [ ] **Split shows on add (Regression):** in a players-only combat, the two players appear on **different teams as soon as the second is added** to the tracker — not only after Begin Combat.
+- [ ] **Split shows on add (Regression):** in a players-only combat, the two players appear on **different teams as soon as the second is added** to the tracker — not only after Begin Combat. Holds even for **GM-owned player characters** (PC type), which must not both land on Team 2.
 - [ ] **Side Ready advances (Regression):** with the players split, the active player (GM **or** player) calling **Side Ready** moves the active side to the **other** team (and increments the round only after both sides have readied).
 - [ ] Each player's own tokens always stay **on that player's side**; a single player + NPCs behaves as before (disposition default).
 - [ ] **Begin Combat** posts a public **"Side Initiative"** chat message (3d6 per side) and the **side turn order follows the roll** (highest first), not always Team 1 → Team 2.
@@ -84,6 +84,7 @@ _Current target: 1547core 0.3.116._
 - [ ] **One reaction per round (Regression):** after a token **uses** a reaction (movement OR attack), it gets **no further reaction window** that round — neither a later attack against it nor another opponent's movement prompts it again.
 - [ ] **Movement offer is per-opponent:** **passing** a movement reaction on opponent A still lets the token react to opponent B's movement, or to an incoming attack, later that round (the pass didn't spend the reaction).
 - [ ] You are **not** offered a reaction on **your own** side's turn, and a reaction-generated free attack does **not** itself open a reaction window (no react-to-a-reaction).
+- [ ] **No-op reactions hidden (Regression):** **Evade** (and any reaction whose only effect is removing incoming multiplier dice) is **not offered** when the incoming attack has **no multiplier dice**; it still appears against an attack that has them.
 - [ ] **Social Battle** / **Disease -> Treat** vs a **monster** read stat dice/mods correctly (not 0).
 - [ ] Boosting a monster with a natural weapon/armor applies the weapon-die/armor-die boost.
 
