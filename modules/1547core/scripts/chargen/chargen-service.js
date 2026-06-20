@@ -11,8 +11,37 @@
 import { SkillTreeChargenApp } from "./chargen.js";
 import { importWorldContent } from "./import-world-content.js";
 import { getChargenSettings, registerChargenSettings } from "./settings.js";
+import { MODULE_ID } from "../lib/constants.mjs";
 
 const LEGACY_NAMESPACE = "chargen1547_v2";
+const SOCKET_CHANNEL = `module.${MODULE_ID}`;
+const CHARGEN_DELETE_TYPE = "chargen-delete-actor";
+let chargenSocketBound = false;
+
+// The single GM that services routed chargen requests (avoids a double-delete
+// when more than one GM is connected).
+function isDesignatedChargenGM() {
+    if (!game.user?.isGM) return false;
+    const activeGM = game.users?.activeGM;
+    if (activeGM) return activeGM.id === game.user.id;
+    const gms = Array.from(game.users ?? [])
+        .filter((user) => user.active && user.isGM)
+        .sort((a, b) => String(a.id).localeCompare(String(b.id)));
+    return !gms.length || gms[0].id === game.user.id;
+}
+
+// A player can't delete a world Actor even one they own (deletion is GM-gated and
+// there's no grantable ACTOR_DELETE permission). The chargen Cancel button emits
+// this request; the designated GM performs the delete.
+function bindChargenSocket() {
+    if (chargenSocketBound || !game?.socket) return;
+    chargenSocketBound = true;
+    game.socket.on(SOCKET_CHANNEL, (msg) => {
+        if (msg?.type !== CHARGEN_DELETE_TYPE || !isDesignatedChargenGM()) return;
+        const actor = game.actors?.get(msg.actorId);
+        if (actor) void actor.delete().catch((err) => console.error("1547core | GM chargen delete failed", err));
+    });
+}
 
 function buildSkillTreeChargenApi() {
     return {
@@ -247,5 +276,6 @@ export function registerChargenService() {
 export function refreshChargenApi() {
     installChargenApi();
     void ensurePlayerActorCreatePermission();
+    bindChargenSocket();
     console.log("1547core | SkillTreeChargen registered:", globalThis.SkillTreeChargen);
 }

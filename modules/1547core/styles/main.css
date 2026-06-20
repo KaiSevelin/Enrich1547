@@ -1909,6 +1909,29 @@ a.enricher-1547::before {
 	box-shadow: 0 0 14px rgba(195, 128, 44, 0.2);
 }
 
+.skilltree-chargen .chargen-row-accept {
+	flex: 0 0 auto;
+	/* Foundry's default `button { width: 100% }` makes the flex item resolve to a
+	   full-row basis and swallow the row; pin it to content width so it stays a
+	   small button on the right with the option text beside it. */
+	width: auto;
+	align-self: center;
+	margin-left: 0.6rem;
+	padding: 0.2rem 0.55rem;
+	border-radius: 8px;
+	border: 1px solid rgba(247, 215, 144, 0.7);
+	background: linear-gradient(180deg, #82501f, #5d3715);
+	color: #fff4d6;
+	font-size: 0.78rem;
+	font-weight: 700;
+	line-height: 1.2;
+	cursor: pointer;
+}
+
+.skilltree-chargen .chargen-row-accept:hover {
+	box-shadow: 0 0 14px rgba(195, 128, 44, 0.3);
+}
+
 .skilltree-chargen .chargen-cancel {
 	border-color: rgba(190, 90, 70, 0.6);
 	color: #f0c9bf;

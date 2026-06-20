@@ -1,3 +1,4 @@
+import { MODULE_ID } from "../lib/constants.mjs";
 import { renderDriveHintHtml, getDriveHintData } from "./drive-prompts.js";
 import { PRIMARY_STATS } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
 import {
@@ -4489,20 +4490,45 @@ export class SkillTreeChargenApp extends FormApplication {
             });
         }
 
-        // Row-select mode (advancement): each row is a button and clicking it
-        // immediately adds that choice (no separate Accept step). The clicked row
-        // is marked active so _resolvePendingFromDom reads its value.
+        // Row-select mode (advancement): two-step. The first click on a row arms
+        // it and reveals an "Add" button on the right; clicking the armed row again
+        // (or its Add button) confirms. Clicking another row re-arms that one.
         if (this._pendingPrompt.rowSelect) {
             const rows = Array.from(panel.querySelectorAll(".chargen-dialog__choice"));
-            const choose = (row) => {
-                for (const r of rows) r.classList.remove("is-active");
+            const disarmAll = () => {
+                for (const r of rows) {
+                    r.classList.remove("is-active");
+                    r.querySelector("[data-action='row-accept']")?.remove();
+                }
+            };
+            const arm = (row) => {
+                disarmAll();
                 row.classList.add("is-active");
-                if (live()) this._resolvePendingFromDom(panel);
+                const accept = document.createElement("button");
+                accept.type = "button";
+                accept.className = "chargen-row-accept";
+                accept.dataset.action = "row-accept";
+                accept.textContent = "Add";
+                accept.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    if (live()) this._resolvePendingFromDom(panel);
+                });
+                row.appendChild(accept); // right-hand side: the body flexes, button sits at the end
+            };
+            const onActivate = (row) => {
+                if (row.classList.contains("is-active")) {
+                    if (live()) this._resolvePendingFromDom(panel); // second click confirms
+                } else {
+                    arm(row);
+                }
             };
             for (const row of rows) {
-                row.addEventListener("click", () => choose(row));
+                row.addEventListener("click", (ev) => {
+                    if (ev.target.closest("[data-action='row-accept']")) return; // Add handles itself
+                    onActivate(row);
+                });
                 row.addEventListener("keydown", (ev) => {
-                    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); choose(row); }
+                    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); onActivate(row); }
                 });
             }
             if (this._lastFocusedPromptId !== pid) {
@@ -5032,11 +5058,25 @@ export class SkillTreeChargenApp extends FormApplication {
         this._pendingPrompt = null;
         this._pendingResolve = null;
         await this.close();
+        if (!actor) return;
+
+        // A player can't delete a world Actor even one they own (GM-gated). Delete
+        // locally when allowed (GM), otherwise ask the designated GM over the socket.
+        const canDeleteLocally = game.user?.isGM || actor.canUserModify?.(game.user, "delete");
+        if (canDeleteLocally) {
+            try {
+                await actor.delete();
+                return;
+            } catch (error) {
+                console.error("SkillTreeChargen | cancel/delete failed", error);
+            }
+        }
         try {
-            await actor?.delete();
+            game.socket?.emit(`module.${MODULE_ID}`, { type: "chargen-delete-actor", actorId: actor.id });
+            ui.notifications?.info?.("Character generation cancelled; the GM will remove the character.");
         } catch (error) {
-            console.error("SkillTreeChargen | cancel/delete failed", error);
-            ui.notifications?.warn?.("Could not delete the character — remove it manually.");
+            console.error("SkillTreeChargen | cancel/delete relay failed", error);
+            ui.notifications?.warn?.("Cancelled, but the character couldn't be deleted — ask your GM to remove it.");
         }
     }
 }

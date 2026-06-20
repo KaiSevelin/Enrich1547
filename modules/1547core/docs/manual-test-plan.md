@@ -5,7 +5,7 @@ cover. **Reset to a clean state (unchecked, no carried-over notes) each release;
 the version line below is auto-stamped by `release.ps1`. **Regression** = verifies
 a fix/feature from a recent release.
 
-_Current target: 1547core 0.3.114._
+_Current target: 1547core 0.3.115._
 
 ## Setup
 - [ ] Update to the current **1547core** build, reload the world (GM).
@@ -38,9 +38,10 @@ _Current target: 1547core 0.3.114._
 - [ ] **Skip / decline** works: pick the "— Skip … —" radio, or clear the pre-filled text box, then click a card.
 - [ ] **Language upgrade** applies read/write to the **chosen** language (not index 0).
 - [ ] **Career-advancement wizard:** stat -> skill -> maneuver/alternative picks appear **in sequence** (each flips in); "Skip" ends the wizard with the "ended early" bio line.
-- [ ] **Advancement row-click (Regression):** in the advancement picks, **clicking a choice row adds it immediately** (no separate "Add" button); the option text is fully visible.
+- [ ] **Advancement two-step (Regression):** clicking a choice row **arms** it and shows a small **Add** button on the **right**; clicking **Add** (or the armed row again) confirms; clicking a different row moves the arm. Option text stays fully visible.
 - [ ] **Cancel & Delete (Regression):** the footer **Cancel & Delete** button prompts to confirm, then stops chargen and **deletes** the character; declining the confirm leaves chargen open.
 - [ ] **Player creation (Regression):** a **non-GM player** can launch the **Character Generator** and create a character (no `lacks permission to create Actor` error); the new actor is owned by that player.
+- [ ] **Player cancel (Regression):** a **non-GM player** clicking **Cancel & Delete** removes the character — the **GM client deletes it** over the socket (no `lacks permission to delete Actor` error); requires a GM online.
 - [ ] **Drives:** add (pre-filled textarea + cause hint) and remove (radio list) update the actor's Drives.
 - [ ] **Optional transition:** two radios ("Take the New Path" / "Remain Where You Are"); both resume the flow correctly.
 - [ ] Closing the chargen window while a prompt is open -> no console error.
