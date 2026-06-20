@@ -18,12 +18,81 @@ import {
 /* ------------------------------------------------------------------ */
 
 const DEFAULT_POST_MANEUVER_SECONDS = 30;
+const MODULE_ID = "1547core";
+const VIEW_CHANNEL = `module.${MODULE_ID}`;
+const VIEW_OPEN = "crit-view-open";
+const VIEW_UPDATE = "crit-view-update";
+const VIEW_CLOSE = "crit-view-close";
 
 function getPostManeuverTimeoutMs() {
-    const moduleId = "1547core";
-    const configured = Number(globalThis.game?.settings?.get?.(moduleId, "criticalWindowSeconds"));
+    const configured = Number(globalThis.game?.settings?.get?.(MODULE_ID, "criticalWindowSeconds"));
     const seconds = Number.isFinite(configured) && configured >= 0 ? configured : DEFAULT_POST_MANEUVER_SECONDS;
     return seconds * 1000;
+}
+
+/* ----------------- GM view-only mirror of a player's window ---------------- */
+// "Always show for GM": when a critical window belongs to a PLAYER, the GM gets a
+// read-only mirror that updates as the player spends. View-only (no buttons) so
+// it can never double-commit or over-spend — the controlling player drives.
+const critViews = new Map();
+
+function openCritView({ windowId, title, actorName, crit, candidates }) {
+    if (!windowId || critViews.has(windowId)) return;
+    const list = (Array.isArray(candidates) ? candidates : [])
+        .map((c) => `<li>${escapeRelayHtml(c.name)}${c.cost ? ` — ${c.cost} crit` : ""}</li>`).join("");
+    const content = `<div class="post-crit-view">`
+        + `<p><strong>${escapeRelayHtml(actorName ?? "Combatant")}</strong> is spending critical points `
+        + `<span class="crit-view-remaining">(${Number(crit) || 0} left)</span></p>`
+        + `<ul class="crit-view-list">${list || "<li>(none)</li>"}</ul>`
+        + `<p class="crit-view-log"></p>`
+        + `<p><em>View only — the controlling player chooses.</em></p></div>`;
+    const dlg = new Dialog(
+        { title: title ?? "Critical Maneuvers (watching)", content, buttons: { ok: { label: "Close" } }, default: "ok" },
+        { classes: ["post-maneuver-dialog", "post-crit-view-dialog"] }
+    );
+    dlg.render(true);
+    critViews.set(windowId, dlg);
+}
+
+function updateCritView({ windowId, committedName, remaining }) {
+    const dlg = critViews.get(windowId);
+    if (!dlg) return;
+    const root = dlg.element?.[0] ?? dlg.element;
+    const rem = root?.querySelector?.(".crit-view-remaining");
+    if (rem) rem.textContent = `(${Number(remaining) || 0} left)`;
+    const log = root?.querySelector?.(".crit-view-log");
+    if (log && committedName) log.innerHTML += `${log.innerHTML ? "<br>" : ""}Spent: ${escapeRelayHtml(committedName)}`;
+}
+
+function closeCritView(windowId) {
+    const dlg = critViews.get(windowId);
+    if (!dlg) return;
+    critViews.delete(windowId);
+    try { dlg.close(); } catch { /* noop */ }
+}
+
+// Drive the GM mirror: act locally if we ARE the GM (the acting client), else send
+// it to the GM over the socket (a player is acting).
+function notifyGmCritView(kind, payload) {
+    if (globalThis.game?.user?.isGM) {
+        if (kind === VIEW_OPEN) openCritView(payload);
+        else if (kind === VIEW_UPDATE) updateCritView(payload);
+        else if (kind === VIEW_CLOSE) closeCritView(payload.windowId);
+        return;
+    }
+    try { globalThis.game?.socket?.emit(VIEW_CHANNEL, { type: kind, ...payload }); } catch { /* noop */ }
+}
+
+let viewSocketBound = false;
+function bindCritViewSocket() {
+    if (viewSocketBound || !globalThis.game?.socket) return;
+    viewSocketBound = true;
+    globalThis.game.socket.on(VIEW_CHANNEL, (msg) => {
+        if (!globalThis.game?.user?.isGM || !msg) return;
+        if (msg.type === VIEW_OPEN) openCritView(msg);
+        else if (msg.type === VIEW_UPDATE) updateCritView(msg);
+        else if (msg.type === VIEW_CLOSE) closeCritView(msg.windowId);
+    });
 }
 
 // Serialise a post-maneuver candidate for the wire (id + label only).
@@ -49,7 +118,22 @@ export function relayPostManeuverWindow(windowPayload) {
     if (!candidates.length) return false; // nothing to choose — let the local/no-op path handle it
 
     const windowId = windowPayload.id ?? foundry.utils.randomID();
+    const actorName = actor.name ?? "Combatant";
+    const side = windowPayload.side ?? "";
+    // The GM watches a PLAYER's critical window (read-only mirror). A GM/NPC actor
+    // is already shown to the GM (local HUD or relayed to the GM), so no mirror.
+    const mirrorToGm = actor.hasPlayerOwner === true;
+    let viewRemaining = Number(windowPayload.currentCriticalPoints ?? 0) || 0;
     let committedAny = false;
+    if (mirrorToGm) {
+        notifyGmCritView(VIEW_OPEN, {
+            windowId,
+            title: side === "defender" ? "Defender Critical Maneuvers (watching)" : "Critical Maneuvers (watching)",
+            actorName,
+            crit: viewRemaining,
+            candidates,
+        });
+    }
     return relayRemoteWindow({
         kind: "post-maneuver",
         windowId,
@@ -57,9 +141,9 @@ export function relayPostManeuverWindow(windowPayload) {
         timeoutMs: getPostManeuverTimeoutMs(),
         multi: true, // sustained window: spend several criticals before closing
         request: {
-            side: windowPayload.side ?? "",
-            actorName: actor.name ?? "Combatant",
-            currentCriticalPoints: Number(windowPayload.currentCriticalPoints ?? 0) || 0,
+            side,
+            actorName,
+            currentCriticalPoints: viewRemaining,
             candidates,
         },
         // Each pick the responder makes commits one critical maneuver.
@@ -67,10 +151,15 @@ export function relayPostManeuverWindow(windowPayload) {
             const selection = id ? legal.find((c) => normalizePostManeuverChoiceId(c) === id) ?? null : null;
             if (!selection || typeof windowPayload.commitPostManeuver !== "function") return;
             try { void windowPayload.commitPostManeuver(selection); committedAny = true; } catch (_err) { /* non-fatal */ }
+            if (mirrorToGm) {
+                viewRemaining = Math.max(0, viewRemaining - (Number(serializePostManeuver(selection)?.cost) || 0));
+                notifyGmCritView(VIEW_UPDATE, { windowId, committedName: selection.name ?? "critical maneuver", remaining: viewRemaining });
+            }
         },
         // The window closed (Done / timeout / out of points). If nothing was spent,
         // resolve the underlying choice as a pass so the orchestrator settles.
         onResolve: () => {
+            if (mirrorToGm) notifyGmCritView(VIEW_CLOSE, { windowId });
             if (!committedAny && typeof windowPayload.passPostManeuver === "function") {
                 try { windowPayload.passPostManeuver(); } catch (_err) { /* non-fatal */ }
             }
@@ -156,5 +245,6 @@ function presentPostManeuver(msg, helpers = {}) {
 
 export function registerPostManeuverRelay() {
     bindRemoteWindowRelay();
+    bindCritViewSocket();
     registerRemoteWindowPresenter("post-maneuver", presentPostManeuver);
 }

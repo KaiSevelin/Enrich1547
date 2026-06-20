@@ -87,6 +87,7 @@ _Current target: 1547core 0.3.117._
 - [ ] You are **not** offered a reaction on **your own** side's turn, and a reaction-generated free attack does **not** itself open a reaction window (no react-to-a-reaction).
 - [ ] **No-op reactions hidden (Regression):** **Evade** (and any reaction whose only effect is removing incoming multiplier dice) is **not offered** when the incoming attack has **no multiplier dice**; it still appears against an attack that has them.
 - [ ] **Critical window (post-attack, sustained):** when an actor earns critical points and has critical (post) maneuvers, a window opens after the attack **relayed to the owner's browser** (and shown locally for a self-owned actor). It **stays open** so the actor can spend on **several** critical maneuvers — each pick deducts its cost and the list re-filters to what's still affordable. It closes on **Done**, when **no affordable maneuver remains**, or on **timeout** (the **Critical Window Seconds** setting, default **30**).
+- [ ] **GM mirror (Regression):** when the critical window belongs to a **player-controlled** token, the **GM also sees a read-only "watching" copy** that updates as the player spends (and closes with it). A **GM/NPC** actor's window shows only on the GM (no duplicate). The mirror never lets the GM commit (no double-spend).
 - [ ] **Social Battle** / **Disease -> Treat** vs a **monster** read stat dice/mods correctly (not 0).
 - [ ] Boosting a monster with a natural weapon/armor applies the weapon-die/armor-die boost.
 
