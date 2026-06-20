@@ -35,7 +35,7 @@ import {
     planCommitPostManeuver,
     planCommitFullTurnManeuver,
 } from "../combat/attack-lifecycle.mjs";
-import { planMarkReactionUsed, planMarkMovementReacted } from "../combat/activation-state.mjs";
+import { planMarkReactionUsed, planMarkMovementReacted, isReactionAvailable } from "../combat/activation-state.mjs";
 
 // PENDING_ATTACK_KIND now lives in combat/attack-lifecycle.mjs and is re-imported above.
 const DEFAULT_UNARMED_WEAPON_SOURCE = {
@@ -103,6 +103,7 @@ export function registerCombatResolverService() {
             executeSafeCounterattack,
             markReactionUsed,
             markMovementReacted,
+            isReactionAvailable: (actor) => isReactionAvailable(actor, game.combat),
             rotateTokenAuthoritative,
             spendLoadedAmmo,
             swapLoadedAmmo,

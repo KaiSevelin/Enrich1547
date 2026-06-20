@@ -808,6 +808,24 @@ export function buildHudHtml(data, deps = {}) {
             <span>Side Ready</span>
         </button>
     ` : "";
+    // Escape buttons: one per condition the actor can break free of. Prone is a
+    // no-roll "Stand up"; the grapples spend the reaction on an opposed roll.
+    const escapeButtons = (data.isCombatActive ? (data.escapableConditions ?? []) : []).map((condition) => {
+        const manual = condition.escape?.manual === true;
+        const label = manual ? `Stand up` : `Escape ${condition.name}`;
+        const title = manual
+            ? "Stand up — forgo your movement this turn"
+            : "Spend your reaction to break free (opposed roll vs the grappler)";
+        return `
+        <button
+            type="button"
+            class="hud-category-tab hud-escape-btn"
+            data-hud-escape="${escapeHtml(condition.name)}"
+            title="${escapeHtml(title)}"
+        >
+            <i class="fa-solid fa-person-running"></i><span>${escapeHtml(label)}</span>
+        </button>`;
+    }).join("");
     const categoryTabs = categories.map((category) => `
         <button
             type="button"
@@ -851,7 +869,7 @@ export function buildHudHtml(data, deps = {}) {
 
             ${HUD_STATE.collapsed ? "" : `
             <section class="hud-section">
-                <div class="hud-category-row">${sideReadyButton}${categoryTabs}</div>
+                <div class="hud-category-row">${sideReadyButton}${escapeButtons}${categoryTabs}</div>
             </section>
 
             <section class="hud-section hud-tree-panel">

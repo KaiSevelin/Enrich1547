@@ -237,6 +237,16 @@ a.enricher-1547::before {
   gap: 0.35rem;
 }
 
+.actor-hud-1547 .hud-escape-btn {
+  border-color: rgba(220, 110, 85, 0.55);
+  background: rgba(150, 60, 45, 0.22);
+  color: #f3d2c8;
+}
+.actor-hud-1547 .hud-escape-btn:hover {
+  border-color: rgba(235, 130, 100, 0.85);
+  box-shadow: 0 0 12px rgba(200, 80, 60, 0.3);
+}
+
 .actor-hud-1547 .hud-category-tab {
   display: inline-flex;
   align-items: center;

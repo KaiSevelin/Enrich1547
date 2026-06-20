@@ -1,5 +1,5 @@
 import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
-﻿import { conditionCombatDisadvantage } from "../services/condition-registry.js";
+﻿import { conditionCombatDisadvantage, getEscapableConditions } from "../services/condition-registry.js";
 
 
 function parseManeuverJson(value, fallback = null) {
@@ -899,6 +899,10 @@ export function summarizeActor(actor, token, deps = {}) {
         equippedInventory,
         maneuverCount: maneuvers.length + fullTurnManeuvers.length,
         isCombatActive,
+        // Conditions the selected actor can break free of (Grappled/Locked/Choke
+        // via an opposed reaction; Prone by standing up). Consumed by the HUD's
+        // escape buttons. Reaction availability is re-checked at click time.
+        escapableConditions: isCombatActive ? getEscapableConditions(actor) : [],
         round: game.combat?.round ?? null,
         checkTarget: buildCheckTargetSnapshot({
             targetedTokens,
