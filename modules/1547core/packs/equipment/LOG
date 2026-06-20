@@ -1,5 +1,5 @@
-2026/06/19-22:13:36.433 cc78 Delete type=3 #1
-2026/06/19-22:13:36.440 c880 Level-0 table #5: started
-2026/06/19-22:13:36.444 c880 Level-0 table #5: 359240 bytes OK
-2026/06/19-22:13:36.445 c880 Delete type=0 #3
-2026/06/19-22:13:36.445 c880 Manual compaction at level-0 from '!items!09JgDkuTdkmlT3Ij' @ 72057594037927935 : 1 .. '!items!zzrfZuaVOiROtLGJ' @ 0 : 0; will stop at (end)
+2026/06/20-11:18:26.604 95a4 Delete type=3 #1
+2026/06/20-11:18:26.612 c92c Level-0 table #5: started
+2026/06/20-11:18:26.617 c92c Level-0 table #5: 359240 bytes OK
+2026/06/20-11:18:26.619 c92c Delete type=0 #3
+2026/06/20-11:18:26.619 c92c Manual compaction at level-0 from '!items!09JgDkuTdkmlT3Ij' @ 72057594037927935 : 1 .. '!items!zzrfZuaVOiROtLGJ' @ 0 : 0; will stop at (end)

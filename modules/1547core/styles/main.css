@@ -1911,6 +1911,10 @@ a.enricher-1547::before {
 
 .skilltree-chargen .chargen-row-accept {
 	flex: 0 0 auto;
+	/* Foundry's default `button { width: 100% }` makes the flex item resolve to a
+	   full-row basis and swallow the row; pin it to content width so the option
+	   text stays visible beside it. */
+	width: auto;
 	align-self: center;
 	padding: 0.2rem 0.55rem;
 	border-radius: 8px;

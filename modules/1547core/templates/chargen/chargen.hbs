@@ -187,7 +187,8 @@
                 <button type="button" data-action="settings">
                     <i class="fas fa-sliders"></i> Settings
                 </button>
-                <button type="button" data-action="finish" class="primary-action">
+                <button type="button" data-action="finish" class="primary-action"
+                    {{#if pendingPrompt}}disabled title="Resolve the choice shown above first"{{/if}}>
                     <i class="fas fa-flag-checkered"></i> Finish
                 </button>
             </footer>
