@@ -386,10 +386,33 @@ async function postSideInitiativeMessage(sideOrder, rollsBySide) {
 }
 
 /**
+ * Apply the side-assignment rule across all combatants (GM-authoritative):
+ * assignSides splits two+ players (players-only -> opposing sides; mixed ->
+ * party together, NPCs by disposition). Runs as combatants are ADDED so two
+ * players split the moment the second joins — not only at Begin Combat.
+ * Combatants the rule doesn't cover keep their existing/derived side.
+ */
+export async function applyAutoSideAssignment(combat) {
+    if (!game.user?.isGM || !combat) return;
+    const orderedCombatants = getOrderedCombatants(combat);
+    if (!orderedCombatants.length) return;
+    const assignment = assignSides(orderedCombatants.map((combatant) => ({
+        id: combatant.id,
+        ownerUserIds: combatantOwnerUserIds(combatant),
+        disposition: combatantDisposition(combatant),
+    })));
+    for (const combatant of orderedCombatants) {
+        const sideId = assignment.get(combatant.id) ?? resolveCombatantSideId(combatant);
+        if (getStoredSideId(combatant) !== sideId) {
+            await combatant.setFlag(MODULE_ID, "sideId", sideId);
+        }
+    }
+}
+
+/**
  * Run once when combat starts (GM-authoritative). Enforces two rules:
- *   1. Two+ players are always on different sides (round-robin across the two
- *      teams); NPCs fall back to disposition. With <2 players nothing is
- *      overridden — the per-combatant disposition default stands.
+ *   1. Side assignment (see applyAutoSideAssignment) — two+ players never
+ *      share a side.
  *   2. Each side rolls 3d6 group initiative; the result fixes the side turn
  *      order (highest first) for the rest of the combat.
  * Guarded by a flag so a re-fired combatStart never re-rolls or re-assigns.
@@ -402,17 +425,7 @@ export async function applyCombatStartSidesAndInitiative(combat) {
     if (!orderedCombatants.length) return;
 
     // 1) Side assignment — two+ players never share a side.
-    const assignment = assignSides(orderedCombatants.map((combatant) => ({
-        id: combatant.id,
-        ownerUserIds: combatantOwnerUserIds(combatant),
-        disposition: combatantDisposition(combatant),
-    })));
-    for (const [combatantId, sideId] of assignment) {
-        const combatant = combat.combatants?.get?.(combatantId);
-        if (combatant && getStoredSideId(combatant) !== sideId) {
-            await combatant.setFlag(MODULE_ID, "sideId", sideId);
-        }
-    }
+    await applyAutoSideAssignment(combat);
 
     // 2) 3d6 side initiative — roll per side, order high-first (fixed).
     const sideIds = [];
@@ -438,8 +451,19 @@ export function register1547CombatTrackerSideGroups() {
         void applyCombatStartSidesAndInitiative(combat);
     });
     Hooks.on("createCombatant", (combatant) => {
-        if (game.user?.isGM) void combatant.setFlag(MODULE_ID, "sideId", resolveCombatantSideId(combatant));
-        if (combatant.combat) void persistCombatSideState(combatant.combat);
+        const combat = combatant.combat;
+        if (!combat || !game.user?.isGM) return;
+        void (async () => {
+            // Before combat starts, re-run the group assignment so two players
+            // split onto opposing sides as soon as the second is added. Once
+            // combat is live the sides are fixed — just give the newcomer a side.
+            if (combat.started) {
+                await combatant.setFlag(MODULE_ID, "sideId", resolveCombatantSideId(combatant));
+            } else {
+                await applyAutoSideAssignment(combat);
+            }
+            await persistCombatSideState(combat);
+        })();
     });
     Hooks.on("deleteCombatant", (combatant) => {
         if (combatant.combat) void persistCombatSideState(combatant.combat);

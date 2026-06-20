@@ -5,7 +5,7 @@ cover. **Reset to a clean state (unchecked, no carried-over notes) each release;
 the version line below is auto-stamped by `release.ps1`. **Regression** = verifies
 a fix/feature from a recent release.
 
-_Current target: 1547core 0.3.115._
+_Current target: 1547core 0.3.116._
 
 ## Setup
 - [ ] Update to the current **1547core** build, reload the world (GM).
@@ -63,6 +63,8 @@ _Current target: 1547core 0.3.115._
 ## 4b. Side assignment & side initiative — **Regression**
 - [ ] **Co-op (players + at least one NPC):** two+ players start a combat with a monster present → **all players share one side**; hostile NPCs oppose them. Players are NOT split against each other.
 - [ ] **Duel (players only, no NPCs):** two players start a combat with no NPC → they land on **different sides** (Team 1 vs Team 2). 3+ players-only → alternate across the two teams.
+- [ ] **Split shows on add (Regression):** in a players-only combat, the two players appear on **different teams as soon as the second is added** to the tracker — not only after Begin Combat.
+- [ ] **Side Ready advances (Regression):** with the players split, the active player (GM **or** player) calling **Side Ready** moves the active side to the **other** team (and increments the round only after both sides have readied).
 - [ ] Each player's own tokens always stay **on that player's side**; a single player + NPCs behaves as before (disposition default).
 - [ ] **Begin Combat** posts a public **"Side Initiative"** chat message (3d6 per side) and the **side turn order follows the roll** (highest first), not always Team 1 → Team 2.
 - [ ] Side order stays **fixed** across rounds (no re-roll); adding a combatant mid-combat doesn't reshuffle the rolled order. **Tied side rolls re-roll** until distinct.
