@@ -1871,7 +1871,16 @@ async function renderHudForSelection() {
     }
 
     root.dataset.actorId = token.actor.id;
-    root.innerHTML = buildHudHtml(summarizeActor(token.actor, token));
+    try {
+        root.innerHTML = buildHudHtml(summarizeActor(token.actor, token));
+    } catch (err) {
+        // TEMP DIAGNOSTIC (0.3.119) — see register1547ActorHud.
+        console.error("1547core DIAG | HUD render failed for", {
+            actor: token?.actor?.name, actorId: token?.actor?.id, token: token?.name,
+            reactionWindow: getActiveReactionWindow() ? "open" : "none",
+        }, err);
+        throw err;
+    }
     applyHudPlacement(root);
     // Persist the canvas range overlay (with at-risk cover markers) while a
     // weapon's "show range" toggle is on; otherwise clear it.
@@ -2177,6 +2186,24 @@ function bindSideAdvanceSocket() {
 export function register1547ActorHud() {
     if (hudRegistered) return;
     hudRegistered = true;
+
+    // TEMP DIAGNOSTIC (0.3.119): capture the "reading 'name' of undefined" thrown
+    // inside Foundry's #fetch when a player attacks a GM token, with the FULL stack
+    // (the console default only shows the top frame). Remove once root-caused.
+    try {
+        const logNameError = (reason, source) => {
+            const message = String(reason?.message ?? reason ?? "");
+            if (!/reading '?name'?/.test(message)) return;
+            console.error(
+                `1547core DIAG | '${source}' captured a 'name' error\n`
+                + `selectedToken=${getSelectedToken()?.name ?? "(none)"} `
+                + `reactionWindow=${getActiveReactionWindow() ? "open" : "none"}\n`
+                + `FULL STACK:\n${reason?.stack ?? String(reason)}`
+            );
+        };
+        window.addEventListener("unhandledrejection", (ev) => logNameError(ev?.reason, "unhandledrejection"));
+        window.addEventListener("error", (ev) => logNameError(ev?.error ?? ev, "error"));
+    } catch { /* noop */ }
 
     ensureHudRoot().innerHTML = buildEmptyHtml("Waiting for selection");
     bindSideAdvanceSocket();
