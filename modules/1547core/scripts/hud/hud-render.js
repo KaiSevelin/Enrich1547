@@ -647,6 +647,17 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                 const reactionWindow = deps.getActiveReactionWindow ? deps.getActiveReactionWindow() : null;
                 const postWindow = deps.getActivePostManeuverWindow ? deps.getActivePostManeuverWindow() : null;
                 const maneuverFilterOptions = deps.getManeuverFilterOptions ? deps.getManeuverFilterOptions() : [{ value: "all", label: "All" }];
+                // Contextual default: reactions when a reaction window is open,
+                // criticals when the actor has critical points to spend, preparations
+                // while in combat, else all. The filter follows context changes; a
+                // manual pick sticks until the context next changes.
+                const contextualFilter = reactionWindow ? "reaction"
+                    : (Number(data.criticalPoints ?? 0) > 0 ? "post"
+                        : (data.isCombatActive === true ? "pre" : "all"));
+                if (HUD_STATE.maneuverFilterContext !== contextualFilter) {
+                    HUD_STATE.maneuverFilter = contextualFilter;
+                    HUD_STATE.maneuverFilterContext = contextualFilter;
+                }
                 const activeFilter = maneuverFilterOptions.some((option) => option.value === (HUD_STATE.maneuverFilter || "all"))
                     ? HUD_STATE.maneuverFilter
                     : "all";
@@ -678,7 +689,10 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                     tooltip: candidate.tooltip ?? "Use from the post-maneuver prompt when available.",
                     reason: "Use from the post-maneuver prompt when available.",
                 }));
-                const allManeuvers = [...(data.maneuvers ?? []), ...(data.fullTurnManeuvers ?? []), ...postList, ...reactionList];
+                // The actor's known critical (post) maneuvers, for the "Criticals"
+                // filter — minus any already surfaced by an open post window.
+                const knownPost = (data.postManeuvers ?? []).filter((pm) => !postList.some((pl) => pl.id === pm.id));
+                const allManeuvers = [...(data.maneuvers ?? []), ...(data.fullTurnManeuvers ?? []), ...knownPost, ...postList, ...reactionList];
                 // Default behaviour hides anything not currently usable so the
                 // list stays short; the "View all" checkbox below relaxes the
                 // gate when the player wants the full menu (browse mode).

@@ -626,6 +626,62 @@ export function summarizeActor(actor, token, deps = {}) {
             distanceSquares: getChebyshevDistanceSquares(token, primaryTarget)
         };
     });
+    // Post (critical) maneuvers — shown in the HUD's "Criticals" filter for
+    // browsing; they're actually spent through the post-attack critical window.
+    const currentCriticalPoints = getNumericProp(props, ["CriticalPoints", "CurrentCriticalPoints"]) ?? 0;
+    const fallbackPostEntries = storedManeuverEntries.filter((entry) => entry.timingKey === "post" && !learnedSourceIds.has(entry.sourceId));
+    const postManeuverEntries = [
+        ...maneuverEntries.filter((entry) => entry.timingKey === "post"),
+        ...fallbackPostEntries
+    ];
+    const postContext = {
+        actor,
+        armors: armorItems,
+        weapon: activeWeaponItem,
+        profile: activeWeaponSummary?.activeAttackProfileData ?? null,
+        target: primaryTarget?.actor ?? null,
+        targets: primaryTarget?.actor ? [primaryTarget.actor] : [],
+        timingType: "post",
+        triggerType: "post-attack",
+        distanceSquares: getChebyshevDistanceSquares(token, primaryTarget),
+        rangeSquares: getChebyshevDistanceSquares(token, primaryTarget),
+        attacksRemaining,
+        fullTurnAvailable: isCombatActive ? isTruthyLike(fullTurnAvailable) : true,
+        actorConditions,
+        targetConditions,
+        hasVisibleAlly,
+        usedManeuvers,
+        reservedResources,
+        selectedManeuverIds: [],
+        currentCriticalPoints
+    };
+    const postManeuvers = postManeuverEntries.map((entry) => {
+        const evaluation = typeof evaluateManeuverLegality === "function"
+            ? evaluateManeuverLegality(entry.source, postContext)
+            : { legal: true, reasons: [] };
+        const reason = getPlayerFacingManeuverReason(evaluation.reasons?.[0] ?? "", entry.source, postContext);
+        return {
+            id: entry.itemId,
+            sourceId: entry.sourceId,
+            name: entry.name,
+            timing: entry.timing,
+            timingKey: entry.timingKey,
+            type: entry.timingKey,
+            state: evaluation.legal ? "enabled" : "disabled",
+            selected: false,
+            disabled: true,
+            usable: evaluation.legal,
+            selectable: false,
+            tooltip: buildManeuverTooltip(entry.source, reason),
+            reason: reason || "Spent from the critical window after an attack.",
+            costSummary: getManeuverCostSummary(entry.source),
+            effectSummary: getManeuverEffectSummary(entry.source),
+            summaryLine: buildManeuverSummaryLine(entry.source),
+            detailLine: buildManeuverDetailLine(entry.source),
+            source: entry.source,
+            item: entry.item
+        };
+    });
     const selectedPreManeuvers = maneuvers.filter((maneuver) => maneuver.selected).map((maneuver) => maneuver.source);
     const selectedFullTurnManeuver = fullTurnManeuvers.find((maneuver) => maneuver.selected) ?? null;
     const inventory = inventoryItems.map((item) => {
@@ -828,6 +884,8 @@ export function summarizeActor(actor, token, deps = {}) {
         equippedArmor,
         maneuvers,
         fullTurnManeuvers,
+        postManeuvers,
+        criticalPoints: currentCriticalPoints,
         selectedPreManeuvers,
         selectedFullTurnManeuver,
         reservedResources,

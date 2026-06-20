@@ -24,6 +24,9 @@
     weaponRangeShownIds: {},
     inventoryFilter: "all",
     maneuverFilter: "all",
+    // The contextual default last applied to maneuverFilter (reaction/post/pre/all);
+    // when the context changes, the filter follows it (see hud-render maneuvers case).
+    maneuverFilterContext: null,
     maneuverShowAll: false,
     selectedPreManeuverIdsByActor: {},
     selectedFullTurnManeuverIdByActor: {},

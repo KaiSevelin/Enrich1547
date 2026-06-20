@@ -72,6 +72,8 @@ _Current target: 1547core 0.3.117._
 
 ## 5. Combat HUD
 - [ ] Token select -> HUD renders; hover/target/rotate mid-combat -> no console errors; buttons stay clickable.
+- [ ] **Criticals filter (Regression):** the maneuver **Filter -> Criticals** now lists the actor's **critical (post) maneuvers** (e.g. Disarm, Throw, Lock); affordable ones show directly, the rest under **View all**.
+- [ ] **Maneuver filter default (Regression):** the filter auto-selects **Reactions** when a reaction window is open, **Criticals** when the actor has critical points, **Preparations** while in combat, and **All** out of combat — and a manual pick sticks until the context next changes.
 - [ ] **Ammo weapon:** ammo chip + profile switch + fire -> correct ammo; loading loads **one** round.
 - [ ] Attack with maneuver/staged + ammo dice -> rolled pool matches HUD preview.
 
