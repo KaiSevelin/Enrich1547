@@ -226,7 +226,8 @@ async function applyPostManeuverEffect(options = {}) {
     const conditionName = postManeuverConditionName(effect);
     if (conditionName && target?.id) {
         try {
-            await applyPatches([{ kind: "actor.applyCondition", actorId: target.id, name: conditionName }]);
+            // inflictorId = the attacker, so an opposed escape can roll against them.
+            await applyPatches([{ kind: "actor.applyCondition", actorId: target.id, name: conditionName, inflictorId: actor?.id ?? "" }]);
         } catch (err) {
             console.error("1547core | post-maneuver condition apply failed", err);
         }
@@ -587,7 +588,7 @@ async function applyPatch(patch) {
         }
         case "actor.applyCondition": {
             const actor = resolveActorById(patch.actorId);
-            if (actor && patch.name) await applyCondition(actor, patch.name, patch.options ?? {});
+            if (actor && patch.name) await applyCondition(actor, patch.name, { inflictorId: patch.inflictorId ?? "", ...(patch.options ?? {}) });
             return;
         }
         case "token.update": {

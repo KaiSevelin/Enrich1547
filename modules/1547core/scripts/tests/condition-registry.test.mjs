@@ -8,7 +8,7 @@ import assert from "assert";
  * must resolve them by slug, and the combat grapples must impose disadvantage.
  */
 
-const { getActiveConditions, conditionCombatDisadvantage, CONDITIONS } =
+const { getActiveConditions, conditionCombatDisadvantage, getEscapableConditions, CONDITIONS } =
     await import("../services/condition-registry.js");
 
 const actorWith = (...names) => ({ effects: { contents: names.map((name) => ({ name })) } });
@@ -41,5 +41,29 @@ for (const name of ["Locked", "Prone", "Grappled", "Choking Hold"]) {
     assert.strictEqual(CONDITIONS[name]?.combat, true, `${name} is a combat condition`);
 }
 console.log("  ✓ Locked/Prone/Grappled/Choking Hold are registered combat conditions");
+
+console.log("escape config + inflictor...");
+// Each grapple/knockdown declares an escape rule.
+assert.deepStrictEqual(CONDITIONS.Grappled.escape.stat, ["Strength", "Dexterity"]);
+assert.strictEqual(CONDITIONS.Locked.escape.vs, "Strength");
+assert.strictEqual(CONDITIONS["Choking Hold"].escape.disadvantage, true);
+assert.strictEqual(CONDITIONS.Prone.escape.manual, true);
+assert.strictEqual(CONDITIONS.Prone.attackersAdvantage, 1);
+assert.strictEqual(CONDITIONS["Choking Hold"].inflictorAttackEachRound, "unarmed");
+
+// getEscapableConditions surfaces the rule + who applied it, by slug, skipping disabled.
+const held = {
+    effects: { contents: [
+        { name: "grappled", id: "ae1", flags: { "1547core": { inflictorId: "grappler-1" } } },
+        { name: "weakened", id: "ae2" },                       // not escapable
+        { name: "locked", id: "ae3", disabled: true, flags: { "1547core": { inflictorId: "x" } } }, // disabled
+    ] },
+};
+const escapable = getEscapableConditions(held);
+assert.strictEqual(escapable.length, 1, "only the active escapable condition");
+assert.strictEqual(escapable[0].name, "Grappled");
+assert.strictEqual(escapable[0].inflictorId, "grappler-1");
+assert.deepStrictEqual(escapable[0].escape.stat, ["Strength", "Dexterity"]);
+console.log("  ✓ escape config + inflictor surfaced via getEscapableConditions");
 
 console.log("condition-registry: all assertions passed");

@@ -28,10 +28,18 @@ export const CONDITIONS = {
     Silenced: { noVerbal: true }, // prevents spoken/verbal actions — situational legality
     // Combat grapples/knockdowns — each imposes disadvantage on the held/downed
     // combatant's attack and defence rolls (one Risk die via conditionCombatDisadvantage).
-    Locked: { combat: true },
-    Prone: { combat: true },
-    Grappled: { combat: true },
-    "Choking Hold": { combat: true, blocksAdvantage: true } // severe: also cancels advantage
+    // `escape` describes how the held combatant breaks free: an opposed roll of one
+    // of `stat` (their pick) vs the inflictor's `vs` stat, optionally at disadvantage;
+    // `manual: true` is a no-roll "stand up". Escape is a free reaction (one per round).
+    Locked: { combat: true, escape: { stat: ["Strength"], vs: "Strength" } },
+    Prone: { combat: true, attackersAdvantage: 1, escape: { manual: true, note: "Stand up — forgo your movement this turn." } },
+    Grappled: { combat: true, escape: { stat: ["Strength", "Dexterity"], vs: "Strength" } },
+    "Choking Hold": {
+        combat: true,
+        blocksAdvantage: true, // severe: also cancels advantage
+        inflictorAttackEachRound: "unarmed", // the choker gets a free unarmed attack each round
+        escape: { stat: ["Strength"], vs: "Strength", disadvantage: true }
+    }
 };
 
 function slug(name) { return String(name ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""); }
@@ -99,21 +107,45 @@ export function applyConditionDiceModifier(actor, statLabel, baseDice, advantage
     return dice;
 }
 
-/** Apply a named condition as an ActiveEffect (idempotent). */
-export async function applyCondition(actor, name, { durationType = "", durationValue = "" } = {}) {
+/** Apply a named condition as an ActiveEffect (idempotent). `inflictorId` records
+ *  who applied it (the grappler/choker) so an opposed escape can roll against them. */
+export async function applyCondition(actor, name, { durationType = "", durationValue = "", inflictorId = "" } = {}) {
     const target = actor?.actor ?? actor;
     if (!target?.createEmbeddedDocuments || !name) return null;
-    if (effectList(target).some((e) => e?.name === name)) return null;
+    if (effectList(target).some((e) => slug(e?.name) === slug(name))) return null;
     const data = {
         name,
         img: "icons/svg/aura.svg",
         statuses: [slug(name)],
         changes: [],
         disabled: false,
-        flags: { [MODULE_ID]: { condition: name, durationType, durationValue } }
+        flags: { [MODULE_ID]: { condition: name, durationType, durationValue, inflictorId } }
     };
     const [created] = await target.createEmbeddedDocuments("ActiveEffect", [data]);
     return created ?? null;
+}
+
+/**
+ * Escapable conditions currently on the actor, with the canonical rule + who
+ * applied each. The HUD shows an "Escape" reaction per entry; the opposed roll
+ * uses `escape.stat` (held) vs the inflictor's `escape.vs` stat.
+ */
+export function getEscapableConditions(actor) {
+    const target = actor?.actor ?? actor;
+    const out = [];
+    for (const ef of effectList(target)) {
+        if (ef?.disabled) continue;
+        const canonical = ef?.name ? CONDITION_BY_SLUG[slug(ef.name)] : null;
+        const escape = canonical ? CONDITIONS[canonical]?.escape : null;
+        if (!escape) continue;
+        out.push({
+            name: canonical,
+            effectId: ef.id ?? null,
+            escape,
+            inflictorId: ef.flags?.[MODULE_ID]?.inflictorId ?? null,
+        });
+    }
+    return out;
 }
 
 /** Remove a named condition if present. */
@@ -129,7 +161,8 @@ export function registerConditionRegistry() {
         coreModule.api = coreModule.api ?? {};
         coreModule.api.condition = {
             CONDITIONS, getActiveConditions, conditionDisadvantage, conditionBlocksAdvantage,
-            conditionCombatDisadvantage, applyConditionDiceModifier, applyCondition, removeCondition
+            conditionCombatDisadvantage, applyConditionDiceModifier, applyCondition, removeCondition,
+            getEscapableConditions
         };
     }
 }
