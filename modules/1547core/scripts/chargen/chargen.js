@@ -704,8 +704,16 @@ export class SkillTreeChargenApp extends FormApplication {
             "character";
 
         // Put new characters in a "Players" actor folder (created once if absent).
-        const playersFolder = game.folders?.find((f) => f.type === "Actor" && f.name === "Players")
-            ?? await Folder.create({ name: "Players", type: "Actor" });
+        // A player may lack folder-create permission; if so, fall back to the root
+        // (the folder is reused once a GM has created it).
+        let playersFolder = game.folders?.find((f) => f.type === "Actor" && f.name === "Players") ?? null;
+        if (!playersFolder) {
+            try {
+                playersFolder = await Folder.create({ name: "Players", type: "Actor" });
+            } catch {
+                playersFolder = null;
+            }
+        }
 
         const actor = await Actor.create({
             name,
@@ -4397,7 +4405,7 @@ export class SkillTreeChargenApp extends FormApplication {
         });
 
         html.find("[data-action='settings']").on("click", () => this._onOpenSettings());
-        html.find("[data-action='finish']").on("click", () => this._onFinish());
+        html.find("[data-action='cancel-chargen']").on("click", () => this._onCancelChargen());
         html.find("[data-action='continue']").on("click", () => this._onContinue());
 
         this._bindInlinePrompt(html);
@@ -4481,35 +4489,20 @@ export class SkillTreeChargenApp extends FormApplication {
             });
         }
 
-        // Row-select mode (advancement): each row is a button. Clicking a row
-        // activates it and reveals an inline Accept button (moved from any
-        // previously-active row); Accept confirms that row's value.
+        // Row-select mode (advancement): each row is a button and clicking it
+        // immediately adds that choice (no separate Accept step). The clicked row
+        // is marked active so _resolvePendingFromDom reads its value.
         if (this._pendingPrompt.rowSelect) {
             const rows = Array.from(panel.querySelectorAll(".chargen-dialog__choice"));
-            const activate = (row) => {
-                for (const r of rows) {
-                    r.classList.remove("is-active");
-                    r.querySelector("[data-action='row-accept']")?.remove();
-                }
+            const choose = (row) => {
+                for (const r of rows) r.classList.remove("is-active");
                 row.classList.add("is-active");
-                const accept = document.createElement("button");
-                accept.type = "button";
-                accept.className = "chargen-row-accept";
-                accept.dataset.action = "row-accept";
-                accept.textContent = "Add";
-                accept.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    if (live()) this._resolvePendingFromDom(panel);
-                });
-                row.insertBefore(accept, row.firstChild);
+                if (live()) this._resolvePendingFromDom(panel);
             };
             for (const row of rows) {
-                row.addEventListener("click", (ev) => {
-                    if (ev.target.closest("[data-action='row-accept']")) return;
-                    activate(row);
-                });
+                row.addEventListener("click", () => choose(row));
                 row.addEventListener("keydown", (ev) => {
-                    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); activate(row); }
+                    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); choose(row); }
                 });
             }
             if (this._lastFocusedPromptId !== pid) {
@@ -5024,10 +5017,27 @@ export class SkillTreeChargenApp extends FormApplication {
         }
     }
 
-    async _onFinish() {
-        const state = this._getState();
-        if (!state.run) return;
-        await this._finishWithSummary(state.run);
+    async _onCancelChargen() {
+        const confirmed = await Dialog.confirm({
+            title: "Cancel Character Generation",
+            content: "<p>Stop character generation and <b>permanently delete</b> this character? This cannot be undone.</p>",
+            defaultYes: false,
+        });
+        if (!confirmed) return;
+
+        const actor = this.actor;
+        // Drop any pending inline prompt WITHOUT resuming the awaiting flow (a
+        // finish/advancement may be suspended on it); resolving it would race the
+        // actor delete. Orphaning the promise is harmless — the app is closing.
+        this._pendingPrompt = null;
+        this._pendingResolve = null;
+        await this.close();
+        try {
+            await actor?.delete();
+        } catch (error) {
+            console.error("SkillTreeChargen | cancel/delete failed", error);
+            ui.notifications?.warn?.("Could not delete the character — remove it manually.");
+        }
     }
 }
 

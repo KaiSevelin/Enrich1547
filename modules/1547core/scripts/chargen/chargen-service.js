@@ -189,6 +189,32 @@ function installChargenApi() {
     return api;
 }
 
+/**
+ * Let players run the character generator: chargen's first act is `Actor.create`,
+ * which the PLAYER/TRUSTED roles can't do by default. Grant the core ACTOR_CREATE
+ * permission to those roles (GM-authoritative, idempotent — only writes when a
+ * role is missing). Foundry auto-grants the creating player OWNER on the new
+ * actor, so the rest of chargen runs under ownership permissions.
+ */
+async function ensurePlayerActorCreatePermission() {
+    if (!game.user?.isGM) return;
+    try {
+        const permissions = foundry.utils.deepClone(game.settings.get("core", "permissions") ?? {});
+        const roles = Array.isArray(permissions.ACTOR_CREATE) ? [...permissions.ACTOR_CREATE] : [];
+        const wanted = [CONST.USER_ROLES.PLAYER, CONST.USER_ROLES.TRUSTED];
+        let changed = false;
+        for (const role of wanted) {
+            if (!roles.includes(role)) { roles.push(role); changed = true; }
+        }
+        if (!changed) return;
+        permissions.ACTOR_CREATE = roles;
+        await game.settings.set("core", "permissions", permissions);
+        console.log("1547core | granted PLAYER/TRUSTED the ACTOR_CREATE permission for the character generator.");
+    } catch (error) {
+        console.error("1547core | failed to grant ACTOR_CREATE permission", error);
+    }
+}
+
 function injectDirectoryButton(html) {
     const root = html?.[0] ?? html;
     if (!root) return;
@@ -220,5 +246,6 @@ export function registerChargenService() {
 /** Called from 1547core/scripts/main.js during ready. */
 export function refreshChargenApi() {
     installChargenApi();
+    void ensurePlayerActorCreatePermission();
     console.log("1547core | SkillTreeChargen registered:", globalThis.SkillTreeChargen);
 }
