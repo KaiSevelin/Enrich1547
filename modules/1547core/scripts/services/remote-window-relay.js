@@ -155,15 +155,21 @@ async function onRemoteRequest(msg) {
     if (!Array.isArray(msg.toUserIds) || !msg.toUserIds.includes(game.user.id)) return;
     const present = presenters.get(msg.kind);
     if (!present) return;
+    // `respond` lets a presenter emit answers. A "sustained" (multi) window sends
+    // one non-final response per pick (the acting side commits each, window stays
+    // open) and a final response when it closes (Done / timeout / exhausted).
+    const respond = (candidateId, { final = false } = {}) => {
+        try { game.socket?.emit(SOCKET_CHANNEL, { type: RESPONSE_TYPE, windowId: msg.windowId, candidateId: candidateId ?? null, final }); } catch { /* noop */ }
+    };
     let result = null;
-    try { result = present(msg); } catch { result = null; }
+    try { result = present(msg, { respond }); } catch { result = null; }
     if (!result || typeof result.promise?.then !== "function") return; // informational — no response
     openResponses.set(msg.windowId, typeof result.close === "function" ? result.close : () => {});
     let candidateId = null;
     try { candidateId = await result.promise; } catch { candidateId = null; }
     openResponses.delete(msg.windowId);
     if (msg.expectsResponse !== false) {
-        try { game.socket?.emit(SOCKET_CHANNEL, { type: RESPONSE_TYPE, windowId: msg.windowId, candidateId: candidateId ?? null }); } catch { /* noop */ }
+        respond(candidateId, { final: true });
     }
 }
 
@@ -172,6 +178,12 @@ async function onRemoteRequest(msg) {
 function onRemoteResponse(msg) {
     const entry = pendingWindows.get(msg.windowId);
     if (!entry) return;
+    // Sustained window: a non-final response is one pick — commit it and keep the
+    // window open for more. Only a final response (or the timeout) settles it.
+    if (entry.multi && msg.final !== true) {
+        try { entry.onCommit?.(msg.candidateId ?? null); } catch { /* noop */ }
+        return;
+    }
     pendingWindows.delete(msg.windowId);
     if (entry.timer) clearTimeout(entry.timer);
     clearWaitingIndicator(entry);
@@ -229,7 +241,7 @@ export function bindRemoteWindowRelay() {
  * @param {Function} [opts.onResolve]     (candidateId|null) => void  (interactive only)
  * @param {boolean}  [opts.expectsResponse=true]  false for informational windows
  */
-export function relayRemoteWindow({ kind, windowId, responderActor, request = {}, timeoutMs = 0, onResolve = null, expectsResponse = true }) {
+export function relayRemoteWindow({ kind, windowId, responderActor, request = {}, timeoutMs = 0, onResolve = null, onCommit = null, multi = false, expectsResponse = true }) {
     const responders = pickResponders(responderActor);
     if (!responders.length) return false;
     const payload = {
@@ -247,7 +259,7 @@ export function relayRemoteWindow({ kind, windowId, responderActor, request = {}
         try { game.socket?.emit(SOCKET_CHANNEL, payload); } catch { /* noop */ }
         return true;
     }
-    const entry = { onResolve, notificationId: null, request: payload, timer: null };
+    const entry = { onResolve, onCommit, multi, notificationId: null, request: payload, timer: null };
     pendingWindows.set(windowId, entry);
     try { game.socket?.emit(SOCKET_CHANNEL, payload); } catch { /* noop */ }
     showWaitingIndicator(entry, responders.map((u) => u.name));

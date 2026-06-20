@@ -328,8 +328,20 @@ export function bindHudInteractions(root, token, deps = {}) {
                 if (typeof postWindow.commitPostManeuver === "function") {
                     await postWindow.commitPostManeuver(selection);
                 }
-                advancePostManeuverWindow();
-                ui.notifications?.info?.(`Committed ${selection.name ?? "post maneuver"}.`);
+                // Sustained window: stay open to spend more critical points. Drop
+                // the used maneuver, deduct its cost, and re-filter to what's still
+                // affordable; close only when nothing affordable remains.
+                const cost = Number(selection.cost ?? selection.costAmount ?? selection.CostAmount ?? 0) || 0;
+                postWindow.currentCriticalPoints = Math.max(0, (Number(postWindow.currentCriticalPoints ?? 0) || 0) - cost);
+                postWindow.legalPostManeuvers = (postWindow.legalPostManeuvers ?? []).filter((candidate) => {
+                    if (normalizePostManeuverChoiceId(candidate) === selectedId) return false;
+                    const candidateCost = Number(candidate.cost ?? candidate.costAmount ?? candidate.CostAmount ?? 0) || 0;
+                    return candidateCost <= postWindow.currentCriticalPoints;
+                });
+                ui.notifications?.info?.(`Committed ${selection.name ?? "critical maneuver"}.`);
+                if (!postWindow.legalPostManeuvers.length) {
+                    advancePostManeuverWindow();
+                }
             } catch (error) {
                 ui.notifications?.warn?.(error?.message || "Could not commit the post maneuver.");
                 return;

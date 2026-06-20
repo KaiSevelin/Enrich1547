@@ -86,7 +86,7 @@ _Current target: 1547core 0.3.117._
 - [ ] **Movement offer is per-opponent:** **passing** a movement reaction on opponent A still lets the token react to opponent B's movement, or to an incoming attack, later that round (the pass didn't spend the reaction).
 - [ ] You are **not** offered a reaction on **your own** side's turn, and a reaction-generated free attack does **not** itself open a reaction window (no react-to-a-reaction).
 - [ ] **No-op reactions hidden (Regression):** **Evade** (and any reaction whose only effect is removing incoming multiplier dice) is **not offered** when the incoming attack has **no multiplier dice**; it still appears against an attack that has them.
-- [ ] **Critical window (post-attack):** when an actor earns critical points and has critical (post) maneuvers, a window listing them + Pass opens after the attack, **relayed to the owner's browser** (player) like the reaction window; auto-passes on timeout. The timeout is the **Critical Window Seconds** setting (default **30**).
+- [ ] **Critical window (post-attack, sustained):** when an actor earns critical points and has critical (post) maneuvers, a window opens after the attack **relayed to the owner's browser** (and shown locally for a self-owned actor). It **stays open** so the actor can spend on **several** critical maneuvers — each pick deducts its cost and the list re-filters to what's still affordable. It closes on **Done**, when **no affordable maneuver remains**, or on **timeout** (the **Critical Window Seconds** setting, default **30**).
 - [ ] **Social Battle** / **Disease -> Treat** vs a **monster** read stat dice/mods correctly (not 0).
 - [ ] Boosting a monster with a natural weapon/armor applies the weapon-die/armor-die boost.
 
