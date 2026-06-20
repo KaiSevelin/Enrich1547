@@ -1746,9 +1746,12 @@ function createModuleSetupFormApplicationClass() {
                 templateId: requirementTemplate._id,
                 folderHint: "Requirements"
             });
+            // Monster bases are now compendium-only — prune ALL previously-seeded
+            // (managed) base actors from the world. User/wizard-made monsters in the
+            // folder lack the managed source flag and are left untouched.
             await pruneManagedFolderActors({
                 folderId: folders.monstersFolder.id,
-                validIds: new Set(monsterDocs.map((doc) => doc._id)),
+                validIds: new Set(),
                 folderHint: "Monsters"
             });
 
@@ -1778,34 +1781,22 @@ function createModuleSetupFormApplicationClass() {
                 upsertWorldRollTables(spellSupportRollTableDocs),
                 upsertWorldRollTables(boostRollTableDocs),
                 upsertWorldRollTables(pactRollTableDocs),
+                // Monster bases are NOT seeded into the world — they live in the
+                // `1547core.monsters` compendium and the base chassis auto-applies
+                // (from the world Base ChangeSets) when one is imported/created. Only
+                // the CSB Actor Template stays world-resident.
                 upsertWorldActors([
                     makeActorDoc(actorTemplate, null, "Actor Template"),
-                    ...monsterDocs
                 ])
             ]);
 
-            // Base ChangeSets and monster actors above are imported concurrently,
-            // so a monster's TypeDropdown can fire ensureBaseChangeSetForActor
-            // before its Base ChangeSet has finished importing — leaving the
-            // monster without a chassis (base monsters ship with no embedded
-            // base). Now that every ChangeSet is in the world, reconcile each
-            // imported monster's base deterministically.
-            const ensureBase = game.modules.get(MODULE_ID)?.api?.ensureBaseChangeSetForActor;
-            if (typeof ensureBase === "function") {
-                for (const monsterDoc of monsterDocs) {
-                    const actor = game.actors.get(monsterDoc._id);
-                    if (!actor) continue;
-                    try {
-                        await ensureBase(actor);
-                    } catch (err) {
-                        console.error(`${MODULE_ID} | Base ChangeSet reconcile failed for "${actor.name}"`, err);
-                    }
-                }
-            }
+            // (Monster bases are no longer seeded into the world; their chassis
+            // auto-applies on import/creation via ensureBaseChangeSetForActor, which
+            // reads the world Base ChangeSets. Nothing to reconcile here.)
 
             return {
                 totalItems: docs.length,
-                totalActors: monsterDocs.length,
+                totalActors: actorResult.created + actorResult.updated,
                 totalRollTables: ritualStepRollTableDocs.length + spellFailureRollTableDocs.length + spellSupportRollTableDocs.length + boostRollTableDocs.length + pactRollTableDocs.length,
                 createdItems: itemResult.created,
                 updatedItems: itemResult.updated,

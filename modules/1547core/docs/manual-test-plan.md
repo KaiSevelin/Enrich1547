@@ -17,7 +17,7 @@ _Current target: 1547core 0.3.117._
 - [ ] World loads with no `1547core | ... failed` errors; exactly **one** `CHARGEN.JS LOADED FROM ...` line.
 - [ ] Setup Data reports counts and finishes without uncaught errors.
 - [ ] No `No Base ChangeSet found for type "..."` warnings for **any** wired type — including the renamed **Spirit** (was NatureSpirit). **Regression.**
-- [ ] A wired base monster (Beast/Undead) has a **Base**-group ChangeSet and derived stats.
+- [ ] **Monster bases are compendium-only (Regression):** Setup Data does **not** create monster base actors in the world (only the **Actor Template**); re-running it **removes** previously-seeded world bases (user/wizard monsters in the Monsters folder are kept). The bases are in the **`1547core.monsters` compendium**; importing one (or setting a monster's type) auto-applies the **Base**-group ChangeSet + derived stats.
 
 ---
 
