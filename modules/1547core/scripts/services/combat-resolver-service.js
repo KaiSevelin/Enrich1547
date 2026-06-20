@@ -163,7 +163,67 @@ export async function commitPostManeuver(options = {}) {
     for (const evt of events) {
         commitEvent = await emitCombatEvent(evt.type, evt.payload);
     }
+    // planCommitPostManeuver only spends the critical cost + logs the commit — the
+    // maneuver's actual effect runs here, or it would silently do nothing.
+    await applyPostManeuverEffect(options);
     return { ...result, commitEvent };
+}
+
+function describePostManeuverEffect(effect = {}) {
+    const parts = [];
+    if (effect.createSecondSafeAttack || effect.createFreeSafeAttack) parts.push("Follow-up safe attack");
+    if (Number(effect.addDisadvantage ?? 0) > 0) parts.push(`+${effect.addDisadvantage} disadvantage`);
+    if (Number(effect.addMainDice ?? 0) > 0) parts.push(`+${effect.addMainDice} main die`);
+    if (Number(effect.addMultiplierDice ?? 0) > 0) parts.push(`+${effect.addMultiplierDice} multiplier die`);
+    if (Number(effect.reduceDamageTaken ?? 0) > 0) parts.push(`Reduce damage by ${effect.reduceDamageTaken}`);
+    const status = String(effect.applyStatus ?? effect.status ?? "").trim();
+    if (status) parts.push(`Apply status: ${status}`);
+    const tag = String(effect.applyTag ?? effect.tag ?? "").trim();
+    if (tag) parts.push(`Apply tag: ${tag}`);
+    if (Number(effect.damageAmount ?? 0) > 0) parts.push(`${effect.damageAmount} damage`);
+    return parts.join("; ");
+}
+
+// Run a committed post-maneuver's effect. A follow-up "safe attack" maneuver
+// (e.g. Redouble) declares a fresh safe attack; every commit posts a chat card so
+// the table sees it landed. Effects we don't auto-apply (statuses/tags) are named
+// in the card for the GM to apply — manual economy.
+async function applyPostManeuverEffect(options = {}) {
+    const maneuver = options.maneuver ?? null;
+    const effect = maneuver?.effectData ?? {};
+    const actor = options.actor ?? null;
+    const pendingAttack = options.pendingAttack ?? null;
+    const target = options.target ?? pendingAttack?.target ?? null;
+    const esc = (value) => foundry.utils.escapeHTML(String(value ?? ""));
+
+    try {
+        const ChatMessageCls = globalThis.ChatMessage;
+        const detail = describePostManeuverEffect(effect);
+        await ChatMessageCls?.create?.({
+            speaker: ChatMessageCls.getSpeaker({ actor }),
+            content: `<strong>Critical Maneuver — ${esc(maneuver?.name ?? "Maneuver")}</strong>`
+                + `<br>${esc(actor?.name ?? "Combatant")}${target ? ` &rarr; ${esc(target.name ?? "target")}` : ""}`
+                + (detail ? `<br>${esc(detail)}` : ""),
+        });
+    } catch (_err) { /* non-fatal */ }
+
+    if ((effect.createSecondSafeAttack || effect.createFreeSafeAttack) && actor && target && pendingAttack?.profile) {
+        try {
+            await declareAttack({
+                actor,
+                target,
+                targets: [target],
+                weapon: pendingAttack.weapon?.itemDocument ?? pendingAttack.weapon,
+                profile: pendingAttack.profile,
+                forceSafeAttack: true,
+                extraEffectData: effect,
+                // Mark it generated so it doesn't itself open a reaction window.
+                generatedByReaction: maneuver?.name ?? "post-maneuver",
+            });
+        } catch (err) {
+            console.error("1547core | post-maneuver follow-up attack failed", err);
+        }
+    }
 }
 
 // ─── Effect runner per ADR-0003 ────────────────────────────────────────────
