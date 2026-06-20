@@ -910,6 +910,20 @@ export function register1547ModuleSettings() {
         default: 10
     });
 
+    game.settings.register(MODULE_ID, "criticalWindowSeconds", {
+        name: "Critical Window Seconds",
+        hint: "How many seconds a post-attack critical-maneuver window stays open before it automatically passes.",
+        scope: "world",
+        config: true,
+        type: Number,
+        range: {
+            min: 0,
+            max: 120,
+            step: 5
+        },
+        default: 30
+    });
+
     game.settings.register(MODULE_ID, "showSideReadyConfirmation", {
         name: "Show Side Ready Confirmation",
         hint: "Show a confirmation dialog before Side Ready ends the turn for the whole active side.",

@@ -18,10 +18,13 @@ import {
 /*  the combat writes). Built on the generic remote-window-relay.       */
 /* ------------------------------------------------------------------ */
 
-const DEFAULT_POST_MANEUVER_SECONDS = 15;
+const DEFAULT_POST_MANEUVER_SECONDS = 30;
 
 function getPostManeuverTimeoutMs() {
-    return DEFAULT_POST_MANEUVER_SECONDS * 1000;
+    const moduleId = "1547core";
+    const configured = Number(globalThis.game?.settings?.get?.(moduleId, "criticalWindowSeconds"));
+    const seconds = Number.isFinite(configured) && configured >= 0 ? configured : DEFAULT_POST_MANEUVER_SECONDS;
+    return seconds * 1000;
 }
 
 // Serialise a post-maneuver candidate for the wire (id + label only).
