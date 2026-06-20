@@ -692,14 +692,17 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                 // The actor's known critical (post) maneuvers, for the "Criticals"
                 // filter — minus any already surfaced by an open post window.
                 const knownPost = (data.postManeuvers ?? []).filter((pm) => !postList.some((pl) => pl.id === pm.id));
-                const allManeuvers = [...(data.maneuvers ?? []), ...(data.fullTurnManeuvers ?? []), ...knownPost, ...postList, ...reactionList];
+                // Escape maneuvers sort FIRST and bypass the filter/usable gate (they
+                // only appear while you hold the matching condition).
+                const escapeList = data.escapeManeuvers ?? [];
+                const allManeuvers = [...escapeList, ...(data.maneuvers ?? []), ...(data.fullTurnManeuvers ?? []), ...knownPost, ...postList, ...reactionList];
                 // Default behaviour hides anything not currently usable so the
                 // list stays short; the "View all" checkbox below relaxes the
                 // gate when the player wants the full menu (browse mode).
                 const showAll = HUD_STATE?.maneuverShowAll === true;
                 const filtered = allManeuvers
-                    .filter((maneuver) => deps.matchesManeuverFilter ? deps.matchesManeuverFilter(maneuver, activeFilter) : true)
-                    .filter((maneuver) => showAll || maneuver?.usable === true);
+                    .filter((maneuver) => maneuver?.isEscape || (deps.matchesManeuverFilter ? deps.matchesManeuverFilter(maneuver, activeFilter) : true))
+                    .filter((maneuver) => maneuver?.isEscape || showAll || maneuver?.usable === true);
                 const rows = buildTreeList(filtered, (maneuver) => {
                     const title = escapeHtml(maneuver.tooltip || "");
                     const subtitle = maneuver.reason || maneuver.summaryLine || maneuver.costSummary || "";
@@ -711,6 +714,20 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                         ${detail ? `<span class="hud-row-sub">${escapeHtml(detail)}</span>` : ""}
                         <span class="hud-tree-value">${escapeHtml(maneuver.selected ? "Selected" : (maneuver.costSummary || timingLabel))}</span>
                     `;
+                    if (maneuver.isEscape) {
+                        return `
+                            <li class="hud-tree-item is-escape" title="${title}">
+                                <button
+                                    type="button"
+                                    class="hud-action-row is-escape${maneuver.usable ? "" : " is-muted"}"
+                                    data-hud-escape-commit="${escapeHtml(maneuver.id)}"
+                                    ${maneuver.usable ? "" : "disabled"}
+                                >
+                                    ${content}
+                                </button>
+                            </li>
+                        `;
+                    }
                     if (maneuver.selectable) {
                         return `
                             <li class="hud-tree-item" title="${title}">
@@ -808,24 +825,6 @@ export function buildHudHtml(data, deps = {}) {
             <span>Side Ready</span>
         </button>
     ` : "";
-    // Escape buttons: one per condition the actor can break free of. Prone is a
-    // no-roll "Stand up"; the grapples spend the reaction on an opposed roll.
-    const escapeButtons = (data.isCombatActive ? (data.escapableConditions ?? []) : []).map((condition) => {
-        const manual = condition.escape?.manual === true;
-        const label = manual ? `Stand up` : `Escape ${condition.name}`;
-        const title = manual
-            ? "Stand up — forgo your movement this turn"
-            : "Spend your reaction to break free (opposed roll vs the grappler)";
-        return `
-        <button
-            type="button"
-            class="hud-category-tab hud-escape-btn"
-            data-hud-escape="${escapeHtml(condition.name)}"
-            title="${escapeHtml(title)}"
-        >
-            <i class="fa-solid fa-person-running"></i><span>${escapeHtml(label)}</span>
-        </button>`;
-    }).join("");
     const categoryTabs = categories.map((category) => `
         <button
             type="button"
@@ -869,7 +868,7 @@ export function buildHudHtml(data, deps = {}) {
 
             ${HUD_STATE.collapsed ? "" : `
             <section class="hud-section">
-                <div class="hud-category-row">${sideReadyButton}${escapeButtons}${categoryTabs}</div>
+                <div class="hud-category-row">${sideReadyButton}${categoryTabs}</div>
             </section>
 
             <section class="hud-section hud-tree-panel">

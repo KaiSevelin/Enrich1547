@@ -43,10 +43,10 @@ for (const name of ["Locked", "Prone", "Grappled", "Choking Hold"]) {
 console.log("  ✓ Locked/Prone/Grappled/Choking Hold are registered combat conditions");
 
 console.log("escape config + inflictor...");
-// Each grapple/knockdown declares an escape rule.
-assert.deepStrictEqual(CONDITIONS.Grappled.escape.stat, ["Strength", "Dexterity"]);
-assert.strictEqual(CONDITIONS.Locked.escape.vs, "Strength");
-assert.strictEqual(CONDITIONS["Choking Hold"].escape.disadvantage, true);
+// Each grapple/knockdown declares a deterministic stat-point escape cost.
+assert.deepStrictEqual(CONDITIONS.Grappled.escape, { cost: "DexterityPoints", amount: 1 });
+assert.deepStrictEqual(CONDITIONS.Locked.escape, { cost: "StrengthPoints", amount: 1 });
+assert.deepStrictEqual(CONDITIONS["Choking Hold"].escape, { cost: "StrengthPoints", amount: 1 });
 assert.strictEqual(CONDITIONS.Prone.escape.manual, true);
 assert.strictEqual(CONDITIONS.Prone.attackersAdvantage, 1);
 assert.strictEqual(CONDITIONS["Choking Hold"].inflictorAttackEachRound, "unarmed");
@@ -63,7 +63,7 @@ const escapable = getEscapableConditions(held);
 assert.strictEqual(escapable.length, 1, "only the active escapable condition");
 assert.strictEqual(escapable[0].name, "Grappled");
 assert.strictEqual(escapable[0].inflictorId, "grappler-1");
-assert.deepStrictEqual(escapable[0].escape.stat, ["Strength", "Dexterity"]);
+assert.deepStrictEqual(escapable[0].escape, { cost: "DexterityPoints", amount: 1 });
 console.log("  ✓ escape config + inflictor surfaced via getEscapableConditions");
 
 console.log("condition-registry: all assertions passed");

@@ -11,88 +11,25 @@ function resolveRollModifier(event) {
 
 const ESCAPE_MODULE_ID = "1547core";
 
-function resolveActorByAnyId(id) {
-    if (!id) return null;
-    const fromCanvas = globalThis.canvas?.tokens?.placeables?.find?.((t) => t?.actor?.id === id)?.actor;
-    return fromCanvas ?? globalThis.game?.actors?.get?.(id) ?? null;
-}
-
-function readActorStat(actor, label) {
-    const props = actor?.system?.props ?? {};
-    const dice = Number(props[`Stats_${label}Dice`] ?? props[`${label}Dice`] ?? 0) || 0;
-    const mod = Number(props[`Stats_${label}Mod`] ?? props[`${label}Mod`] ?? 0) || 0;
-    return { dice: Math.max(0, dice), mod: Math.max(0, mod) };
-}
-
-// The actor's strongest stat among the allowed escape stats (expected die count).
-function pickBestEscapeStat(actor, labels = ["Strength"]) {
-    let best = labels[0] ?? "Strength";
-    let bestVal = -Infinity;
-    for (const label of labels) {
-        const { dice, mod } = readActorStat(actor, label);
-        const value = dice * 3.5 + mod;
-        if (value > bestVal) { bestVal = value; best = label; }
-    }
-    return best;
-}
-
-async function rollActorStat(actor, label, { disadvantage = false } = {}) {
-    const { dice, mod } = readActorStat(actor, label);
-    const n = Math.max(1, disadvantage ? dice - 1 : dice); // disadvantage drops a die; always ≥1
-    const formula = mod ? `${n}d6 + ${mod}` : `${n}d6`;
-    const roll = await new globalThis.Roll(formula).evaluate();
-    return { total: Number(roll.total) || 0, formula };
-}
-
-// Resolve an escape attempt for a held condition. Prone is a no-roll stand-up;
-// the grapples spend the reaction on an opposed roll (held stat vs inflictor STR).
-async function runEscapeAttempt(heldActor, conditionName, { ui, renderHudForSelection } = {}) {
-    if (!heldActor || !conditionName) return;
-    const api = globalThis.game?.modules?.get?.(ESCAPE_MODULE_ID)?.api ?? {};
-    const conditionApi = api.condition ?? {};
-    const combatApi = api.combat ?? {};
-    const entry = (conditionApi.getEscapableConditions?.(heldActor) ?? []).find((c) => c.name === conditionName);
-    if (!entry) return;
-    const escape = entry.escape ?? {};
-
-    if (escape.manual === true) {
-        const ok = await Dialog.confirm({
-            title: "Stand Up",
-            content: `<p>Stand up from <b>${conditionName}</b>? You <b>forgo your movement</b> this turn.</p>`,
-            defaultYes: false,
-        });
-        if (!ok) return;
-        await conditionApi.removeCondition?.(heldActor, conditionName);
-        ui?.notifications?.info?.(`${heldActor.name} stands up — movement forgone this turn.`);
-        void renderHudForSelection?.();
-        return;
-    }
-
-    if (typeof combatApi.isReactionAvailable === "function" && !combatApi.isReactionAvailable(heldActor)) {
-        ui?.notifications?.warn?.("No reaction left this round — can't attempt to escape.");
-        return;
-    }
-
-    const inflictor = resolveActorByAnyId(entry.inflictorId);
-    const heldStat = pickBestEscapeStat(heldActor, escape.stat ?? ["Strength"]);
-    const vsStat = escape.vs ?? "Strength";
-    const heldRoll = await rollActorStat(heldActor, heldStat, { disadvantage: escape.disadvantage === true });
-    const infRoll = inflictor ? await rollActorStat(inflictor, vsStat) : { total: 0, formula: "—" };
-    const escaped = heldRoll.total > infRoll.total; // the grappler wins ties
-
+// Commit a self-initiated escape maneuver from its HUD row: re-read the actor+s
+// escape entries, find the clicked one, and (if usable) spend its cost + remove
+// the condition via the combat API.
+async function runEscapeCommit(token, maneuverId, { summarizeActor, ui, renderHudForSelection } = {}) {
+    const actor = token?.actor;
+    if (!actor || !maneuverId) return;
+    let entry = null;
     try {
-        const ChatMessageCls = globalThis.ChatMessage;
-        await ChatMessageCls?.create?.({
-            speaker: ChatMessageCls.getSpeaker({ actor: heldActor }),
-            content: `<strong>Escape ${conditionName}</strong><br>`
-                + `${heldActor.name} — ${heldStat}${escape.disadvantage ? " (disadvantage)" : ""}: <b>${heldRoll.total}</b>`
-                + ` vs ${inflictor?.name ?? "grappler"} ${vsStat}: <b>${infRoll.total}</b><br>`
-                + (escaped ? "<b>Broke free!</b>" : "Still held."),
-        });
-    } catch (_err) { /* non-fatal */ }
-
-    if (typeof combatApi.markReactionUsed === "function") await combatApi.markReactionUsed(heldActor);
-    if (escaped) await conditionApi.removeCondition?.(heldActor, conditionName);
+        const summary = typeof summarizeActor === "function" ? summarizeActor(actor, token) : null;
+        entry = (summary?.escapeManeuvers ?? []).find((e) => e.id === maneuverId) ?? null;
+    } catch { entry = null; }
+    if (!entry?.usable || !entry.source) {
+        ui?.notifications?.warn?.("Can+t escape right now.");
+        return;
+    }
+    const combatApi = globalThis.game?.modules?.get?.(ESCAPE_MODULE_ID)?.api?.combat ?? {};
+    if (typeof combatApi.commitConditionEscapeManeuver === "function") {
+        await combatApi.commitConditionEscapeManeuver(actor, entry.source);
+    }
     void renderHudForSelection?.();
 }
 
@@ -337,9 +274,9 @@ export function bindHudInteractions(root, token, deps = {}) {
             await announceSideReady(token?.actor, token);
         });
     }
-    for (const button of root.querySelectorAll("[data-hud-escape]")) {
+    for (const button of root.querySelectorAll("[data-hud-escape-commit]")) {
         button.addEventListener("click", async () => {
-            await runEscapeAttempt(token?.actor, button.dataset.hudEscape, { ui, renderHudForSelection });
+            await runEscapeCommit(token, button.dataset.hudEscapeCommit, { summarizeActor, ui, renderHudForSelection });
         });
     }
     for (const button of root.querySelectorAll("[data-hud-reaction-choice]")) {

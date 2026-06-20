@@ -1,5 +1,5 @@
 ﻿import { COMBAT_EVENTS, emitCombatEvent, onCombatEvent } from "./combat-events.js";
-import { applyCondition } from "./condition-registry.js";
+import { applyCondition, removeCondition } from "./condition-registry.js";
 import { evaluateManeuverLegality, getLegalManeuvers } from "../combat/maneuver-legality.mjs";
 import { buildDefenderPool, toFoundryFormula } from "../combat/pool-builder.mjs";
 import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
@@ -36,6 +36,7 @@ import {
     planCommitFullTurnManeuver,
 } from "../combat/attack-lifecycle.mjs";
 import { planMarkReactionUsed, planMarkMovementReacted, isReactionAvailable } from "../combat/activation-state.mjs";
+import { planSpendActorManeuverCost } from "../combat/maneuver-state.mjs";
 
 // PENDING_ATTACK_KIND now lives in combat/attack-lifecycle.mjs and is re-imported above.
 const DEFAULT_UNARMED_WEAPON_SOURCE = {
@@ -109,6 +110,7 @@ export function registerCombatResolverService() {
             swapLoadedAmmo,
             commitFullTurnManeuver,
             commitPostManeuver,
+            commitConditionEscapeManeuver,
             getActivePersistentEffects,
             consumePersistentEffect,
         },
@@ -156,6 +158,26 @@ export async function commitFullTurnManeuver(options = {}) {
         commitEvent = await emitCombatEvent(evt.type, evt.payload);
     }
     return { ...result, commitEvent };
+}
+
+// Commit a self-initiated escape maneuver: spend its stat-point cost and remove
+// the condition it targets. The actor owns its own condition/pool, so writes apply
+// locally (the dispatcher routes them to the GM otherwise).
+export async function commitConditionEscapeManeuver(actor, maneuverSource) {
+    if (!actor || !maneuverSource) return { ok: false };
+    const { patches } = planSpendActorManeuverCost(actor, maneuverSource);
+    if (patches.length) await applyPatches(patches);
+    const removes = maneuverSource?.effectData?.removesCondition;
+    if (removes) await removeCondition(actor, removes);
+    try {
+        const ChatMessageCls = globalThis.ChatMessage;
+        await ChatMessageCls?.create?.({
+            speaker: ChatMessageCls.getSpeaker({ actor }),
+            content: `<strong>${foundry.utils.escapeHTML(String(maneuverSource.name ?? "Escape"))}</strong>`
+                + `<br>${foundry.utils.escapeHTML(String(actor.name ?? "Combatant"))} breaks free of ${foundry.utils.escapeHTML(String(removes ?? "the hold"))}.`,
+        });
+    } catch (_err) { /* non-fatal */ }
+    return { ok: true };
 }
 
 export async function commitPostManeuver(options = {}) {

@@ -94,5 +94,29 @@
         "uuid": "Item.4DkWGQOP1z9hLWHb",
         "folder": "Maneuvers",
         "skillRequirement": ""
+    },
+    {
+        "name": "Break Grapple",
+        "uuid": "Item.EscBreakGrappl01",
+        "folder": "Maneuvers",
+        "skillRequirement": ""
+    },
+    {
+        "name": "Slip The Lock",
+        "uuid": "Item.EscSlipLock00001",
+        "folder": "Maneuvers",
+        "skillRequirement": ""
+    },
+    {
+        "name": "Break The Choke",
+        "uuid": "Item.EscBreakChoke001",
+        "folder": "Maneuvers",
+        "skillRequirement": ""
+    },
+    {
+        "name": "Stand Up",
+        "uuid": "Item.EscStandUp000001",
+        "folder": "Maneuvers",
+        "skillRequirement": ""
     }
 ]

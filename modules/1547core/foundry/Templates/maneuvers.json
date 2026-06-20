@@ -2297,5 +2297,125 @@
       ]
     },
     "description": "A lobbed, indirect shot that arcs over anything in the way to fall on the target. It is declared before an attack is resolved. In play, it adds a risk die (a lobbed shot is a gamble: it can go awry or land true), ignores intervening obstacles (no cover interception), and cannot exploit an exposed back (no rear bonus). It requires Combat Ranged 1 or Combat Thrown 1, and an arc-capable weapon (a bow, sling, or thrown weapon, never a firearm) with overhead clearance for the arc; the GM may forbid it indoors or under cover."
+  },
+  {
+    "_id": "EscBreakGrappl01",
+    "id": "EscBreakGrappl01",
+    "name": "Break Grapple",
+    "uuid": "Item.EscBreakGrappl01",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "escape",
+    "CostType": "DexterityPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "removesCondition": "Grappled"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "escape"
+    ],
+    "enabled": false,
+    "requirements": {
+      "requiredActorConditions": [
+        "grappled"
+      ]
+    },
+    "description": "Twist and slip free of a grapple. Spend one Dexterity point to remove the Grappled condition."
+  },
+  {
+    "_id": "EscSlipLock00001",
+    "id": "EscSlipLock00001",
+    "name": "Slip The Lock",
+    "uuid": "Item.EscSlipLock00001",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "escape",
+    "CostType": "StrengthPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "removesCondition": "Locked"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "escape"
+    ],
+    "enabled": false,
+    "requirements": {
+      "requiredActorConditions": [
+        "locked"
+      ]
+    },
+    "description": "Force a limb free of a joint-lock. Spend one Strength point to remove the Locked condition."
+  },
+  {
+    "_id": "EscBreakChoke001",
+    "id": "EscBreakChoke001",
+    "name": "Break The Choke",
+    "uuid": "Item.EscBreakChoke001",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "escape",
+    "CostType": "StrengthPoints",
+    "CostAmount": 1,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "removesCondition": "Choking Hold"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "escape"
+    ],
+    "enabled": false,
+    "requirements": {
+      "requiredActorConditions": [
+        "choking-hold"
+      ]
+    },
+    "description": "Wrench the hold off your throat. Spend one Strength point to remove the Choking Hold condition."
+  },
+  {
+    "_id": "EscStandUp000001",
+    "id": "EscStandUp000001",
+    "name": "Stand Up",
+    "uuid": "Item.EscStandUp000001",
+    "folder": "Maneuvers",
+    "type": "pre",
+    "triggerType": "escape",
+    "CostType": null,
+    "CostAmount": 0,
+    "automated": false,
+    "handlerId": null,
+    "effectData": {
+      "removesCondition": "Prone"
+    },
+    "usageLimit": {
+      "scope": "side-based-turn",
+      "maxUses": 1
+    },
+    "tags": [
+      "escape"
+    ],
+    "enabled": false,
+    "requirements": {
+      "requiredActorConditions": [
+        "prone"
+      ]
+    },
+    "description": "Rise from prone. Free, but you forgo all movement this turn (not automated)."
   }
 ]

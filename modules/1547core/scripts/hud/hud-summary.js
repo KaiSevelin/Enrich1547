@@ -1,5 +1,5 @@
 import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
-﻿import { conditionCombatDisadvantage, getEscapableConditions } from "../services/condition-registry.js";
+﻿import { conditionCombatDisadvantage } from "../services/condition-registry.js";
 
 
 function parseManeuverJson(value, fallback = null) {
@@ -682,6 +682,56 @@ export function summarizeActor(actor, token, deps = {}) {
             item: entry.item
         };
     });
+    // Self-initiated escape maneuvers (tag "escape"): granted items that only
+    // become usable while the actor holds the matching condition. Shown first in
+    // the HUD, red-bordered, greyed when the actor can't afford the cost.
+    const conditionSlug = (value) => String(value ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    const actorConditionSlugs = new Set((actor.effects?.contents ?? []).map((ef) => conditionSlug(ef?.name)).filter(Boolean));
+    const escapeContext = {
+        actor,
+        timingType: "pre",
+        triggerType: "escape",
+        actorConditions: [...actorConditionSlugs],
+        attacksRemaining,
+        fullTurnAvailable: isCombatActive ? isTruthyLike(fullTurnAvailable) : true,
+        reservedResources,
+        usedManeuvers,
+        currentCriticalPoints,
+    };
+    const escapeManeuvers = maneuverEntries
+        .filter((entry) => Array.isArray(entry.source?.tags) && entry.source.tags.includes("escape"))
+        .map((entry) => {
+            const required = Array.isArray(entry.source?.requirements?.requiredActorConditions)
+                ? entry.source.requirements.requiredActorConditions : [];
+            const conditioned = required.length > 0 && required.every((c) => actorConditionSlugs.has(conditionSlug(c)));
+            if (!conditioned) return null; // only offered while you hold the condition
+            const evaluation = typeof evaluateManeuverLegality === "function"
+                ? evaluateManeuverLegality(entry.source, escapeContext)
+                : { legal: true, reasons: [] };
+            const reason = getPlayerFacingManeuverReason(evaluation.reasons?.[0] ?? "", entry.source, escapeContext);
+            return {
+                id: entry.itemId,
+                sourceId: entry.sourceId,
+                name: entry.name,
+                timingKey: "escape",
+                type: "escape",
+                isEscape: true,
+                usable: evaluation.legal,
+                disabled: !evaluation.legal,
+                selectable: evaluation.legal,
+                removesCondition: entry.source.effectData?.removesCondition ?? null,
+                tooltip: buildManeuverTooltip(entry.source, reason),
+                reason: evaluation.legal ? "" : (reason || "Cannot escape right now."),
+                costSummary: getManeuverCostSummary(entry.source),
+                effectSummary: getManeuverEffectSummary(entry.source),
+                summaryLine: buildManeuverSummaryLine(entry.source),
+                detailLine: buildManeuverDetailLine(entry.source),
+                source: entry.source,
+                item: entry.item,
+            };
+        })
+        .filter(Boolean);
+
     const selectedPreManeuvers = maneuvers.filter((maneuver) => maneuver.selected).map((maneuver) => maneuver.source);
     const selectedFullTurnManeuver = fullTurnManeuvers.find((maneuver) => maneuver.selected) ?? null;
     const inventory = inventoryItems.map((item) => {
@@ -885,6 +935,7 @@ export function summarizeActor(actor, token, deps = {}) {
         maneuvers,
         fullTurnManeuvers,
         postManeuvers,
+        escapeManeuvers,
         criticalPoints: currentCriticalPoints,
         selectedPreManeuvers,
         selectedFullTurnManeuver,
@@ -899,10 +950,6 @@ export function summarizeActor(actor, token, deps = {}) {
         equippedInventory,
         maneuverCount: maneuvers.length + fullTurnManeuvers.length,
         isCombatActive,
-        // Conditions the selected actor can break free of (Grappled/Locked/Choke
-        // via an opposed reaction; Prone by standing up). Consumed by the HUD's
-        // escape buttons. Reaction availability is re-checked at click time.
-        escapableConditions: isCombatActive ? getEscapableConditions(actor) : [],
         round: game.combat?.round ?? null,
         checkTarget: buildCheckTargetSnapshot({
             targetedTokens,

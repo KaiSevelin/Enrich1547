@@ -28,17 +28,17 @@ export const CONDITIONS = {
     Silenced: { noVerbal: true }, // prevents spoken/verbal actions — situational legality
     // Combat grapples/knockdowns — each imposes disadvantage on the held/downed
     // combatant's attack and defence rolls (one Risk die via conditionCombatDisadvantage).
-    // `escape` describes how the held combatant breaks free: an opposed roll of one
-    // of `stat` (their pick) vs the inflictor's `vs` stat, optionally at disadvantage;
-    // `manual: true` is a no-roll "stand up". Escape is a free reaction (one per round).
-    Locked: { combat: true, escape: { stat: ["Strength"], vs: "Strength" } },
-    Prone: { combat: true, attackersAdvantage: 1, escape: { manual: true, note: "Stand up — forgo your movement this turn." } },
-    Grappled: { combat: true, escape: { stat: ["Strength", "Dexterity"], vs: "Strength" } },
+    // `escape` is how you break free, deterministically (no roll): spend `amount`
+    // of the `cost` stat-point pool to clear it. `manual: true` is a free "stand up"
+    // that instead forgoes all movement for the turn (not engine-enforced).
+    Locked: { combat: true, escape: { cost: "StrengthPoints", amount: 1 } },
+    Prone: { combat: true, attackersAdvantage: 1, escape: { manual: true, note: "Stand up — forgo all movement this turn." } },
+    Grappled: { combat: true, escape: { cost: "DexterityPoints", amount: 1 } },
     "Choking Hold": {
         combat: true,
         blocksAdvantage: true, // severe: also cancels advantage
         inflictorAttackEachRound: "unarmed", // the choker gets a free unarmed attack each round
-        escape: { stat: ["Strength"], vs: "Strength", disadvantage: true }
+        escape: { cost: "StrengthPoints", amount: 1 }
     }
 };
 
@@ -151,7 +151,7 @@ export function getEscapableConditions(actor) {
 /** Remove a named condition if present. */
 export async function removeCondition(actor, name) {
     const target = actor?.actor ?? actor;
-    const ef = effectList(target).find((e) => e?.name === name);
+    const ef = effectList(target).find((e) => slug(e?.name) === slug(name));
     if (ef) await ef.delete();
 }
 
