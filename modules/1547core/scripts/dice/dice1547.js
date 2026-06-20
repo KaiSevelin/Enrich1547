@@ -1,4 +1,3 @@
-import {DiceSystem} from '../../../dice-so-nice/api.js';
 import {DieArmor} from './armor.js';
 import {DieBalanced} from './balanced.js';
 import {DieControl} from './control.js';
@@ -490,9 +489,22 @@ Hooks.on('diceSoNiceRollComplete', async (chatMessageID) => {
 });
 
 let diceSoNicePresetsApplied = false;
-function applyDiceSoNicePresets(dice3d) {
+async function applyDiceSoNicePresets(dice3d) {
     if (diceSoNicePresetsApplied || !dice3d) return;
     diceSoNicePresetsApplied = true;
+    // Lazy-load the Dice So Nice API only once DSN is actually present (this runs
+    // from the diceSoNiceReady hook). Keeping it out of the module's top-level
+    // imports means our custom dice TERMS register even when DSN is absent or slow
+    // to load — a static import there delayed/blocked register1547Dice, which left
+    // formulas with our denominations unparseable (ChatMessage.prepareDerivedData
+    // -> DiceTerm.fromParseNode crash).
+    let DiceSystem;
+    try {
+        ({ DiceSystem } = await import('../../../dice-so-nice/api.js'));
+    } catch (err) {
+        console.warn("1547core | Dice So Nice API unavailable; skipping 3D dice presets", err);
+        return;
+    }
     const system = new DiceSystem("dice1547", "dice1547", "dice1547", "default");
     dice3d.addSystem(system);
     dice3d.addDicePreset({

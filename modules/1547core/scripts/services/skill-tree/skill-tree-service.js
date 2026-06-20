@@ -118,6 +118,11 @@ export function registerSkillTreeService() {
     Hooks.on("createItem", async (item) => {
         try {
             if (!item?.parent || item.parent.documentName !== "Actor") return;
+            // The hook fires on every client, but ensureActorItemNodeRef WRITES the
+            // item — only the owner may. A non-owner (e.g. a player when a GM-owned
+            // token gains an item mid-combat) must skip, or the write throws a
+            // permission error. The owner's client does it.
+            if (!item.isOwner) return;
             // Read directly: getFlag throws when the legacy "skilltreehelper"
             // module isn't active in this world (see node-logic flag helpers).
             if (foundry.utils.getProperty(item.flags ?? {}, `${LEGACY_NAMESPACE}.nodeId`)) return;
