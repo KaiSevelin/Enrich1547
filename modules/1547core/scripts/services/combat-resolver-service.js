@@ -1,4 +1,5 @@
 ﻿import { COMBAT_EVENTS, emitCombatEvent, onCombatEvent } from "./combat-events.js";
+import { applyCondition } from "./condition-registry.js";
 import { evaluateManeuverLegality, getLegalManeuvers } from "../combat/maneuver-legality.mjs";
 import { buildDefenderPool, toFoundryFormula } from "../combat/pool-builder.mjs";
 import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
@@ -169,18 +170,28 @@ export async function commitPostManeuver(options = {}) {
     return { ...result, commitEvent };
 }
 
+function postManeuverConditionName(effect = {}) {
+    return String(effect.applyCondition ?? effect.upgradeCondition ?? "").trim();
+}
+
 function describePostManeuverEffect(effect = {}) {
     const parts = [];
     if (effect.createSecondSafeAttack || effect.createFreeSafeAttack) parts.push("Follow-up safe attack");
+    const condition = postManeuverConditionName(effect);
+    if (condition) parts.push(`Applies condition: <strong>${condition}</strong>`);
     if (Number(effect.addDisadvantage ?? 0) > 0) parts.push(`+${effect.addDisadvantage} disadvantage`);
+    if (Number(effect.addDisadvantageToTargetAttack ?? 0) > 0) parts.push(`+${effect.addDisadvantageToTargetAttack} disadvantage to target's attacks`);
+    if (Number(effect.addDisadvantageToTargetDefense ?? 0) > 0) parts.push(`+${effect.addDisadvantageToTargetDefense} disadvantage to target's defence`);
     if (Number(effect.addMainDice ?? 0) > 0) parts.push(`+${effect.addMainDice} main die`);
-    if (Number(effect.addMultiplierDice ?? 0) > 0) parts.push(`+${effect.addMultiplierDice} multiplier die`);
-    if (Number(effect.reduceDamageTaken ?? 0) > 0) parts.push(`Reduce damage by ${effect.reduceDamageTaken}`);
-    const status = String(effect.applyStatus ?? effect.status ?? "").trim();
-    if (status) parts.push(`Apply status: ${status}`);
-    const tag = String(effect.applyTag ?? effect.tag ?? "").trim();
-    if (tag) parts.push(`Apply tag: ${tag}`);
-    if (Number(effect.damageAmount ?? 0) > 0) parts.push(`${effect.damageAmount} damage`);
+    if (Number(effect.addDamage ?? 0) > 0) parts.push(`+${effect.addDamage} damage`);
+    const ongoing = String(effect.ongoingDamagePerTurn ?? "").trim();
+    if (ongoing) parts.push(`Ongoing damage: ${ongoing}/turn (GM applies)`);
+    if (effect.disarmWeapon) parts.push(`Disarm — drop ${Number(effect.placeDroppedWeaponSquares ?? 0) || 0} sq away (GM applies)`);
+    if (Number(effect.pushTargetSquares ?? 0) > 0) parts.push(`Push ${effect.pushTargetSquares} sq ${String(effect.direction ?? "").replace(/-/g, " ")} (GM applies)`);
+    if (effect.placeTargetAdjacent) parts.push("Place target adjacent (GM applies)");
+    if (Number(effect.rotateTargetFacingSteps ?? 0) > 0) parts.push(`Rotate target facing ${effect.rotateTargetFacingSteps} step (GM applies)`);
+    if (Array.isArray(effect.chooseOne) && effect.chooseOne.length) parts.push(`Choose one: ${effect.chooseOne.map((c) => String(c).replace(/-/g, " ")).join(" / ")} (GM applies)`);
+    if (effect.swallowTarget) parts.push("Swallow target (GM applies)");
     return parts.join("; ");
 }
 
@@ -198,14 +209,28 @@ async function applyPostManeuverEffect(options = {}) {
 
     try {
         const ChatMessageCls = globalThis.ChatMessage;
+        // detail is built from trusted maneuver effectData (not user input) and
+        // contains light markup (<strong>), so it is intentionally not escaped.
         const detail = describePostManeuverEffect(effect);
         await ChatMessageCls?.create?.({
             speaker: ChatMessageCls.getSpeaker({ actor }),
             content: `<strong>Critical Maneuver — ${esc(maneuver?.name ?? "Maneuver")}</strong>`
                 + `<br>${esc(actor?.name ?? "Combatant")}${target ? ` &rarr; ${esc(target.name ?? "target")}` : ""}`
-                + (detail ? `<br>${esc(detail)}` : ""),
+                + (detail ? `<br>${detail}` : ""),
         });
     } catch (_err) { /* non-fatal */ }
+
+    // Auto-apply the condition to the target (Lock -> locked, Throw -> prone,
+    // Constrict -> grappled, Choke -> choking-hold). Routed through the patch
+    // dispatcher so it lands even when the acting client can't write the target.
+    const conditionName = postManeuverConditionName(effect);
+    if (conditionName && target?.id) {
+        try {
+            await applyPatches([{ kind: "actor.applyCondition", actorId: target.id, name: conditionName }]);
+        } catch (err) {
+            console.error("1547core | post-maneuver condition apply failed", err);
+        }
+    }
 
     if ((effect.createSecondSafeAttack || effect.createFreeSafeAttack) && actor && target && pendingAttack?.profile) {
         try {
@@ -558,6 +583,11 @@ async function applyPatch(patch) {
         case "actor.statusEffect": {
             const actor = resolveActorById(patch.actorId);
             if (actor) await setActorStatusEffect(actor, patch.keyword, patch.active);
+            return;
+        }
+        case "actor.applyCondition": {
+            const actor = resolveActorById(patch.actorId);
+            if (actor && patch.name) await applyCondition(actor, patch.name, patch.options ?? {});
             return;
         }
         case "token.update": {

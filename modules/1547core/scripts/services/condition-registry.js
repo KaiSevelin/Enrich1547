@@ -26,17 +26,28 @@ export const CONDITIONS = {
     Restless: {},   // blocks rest/recovery — handled outside the dice
     Marked: {},      // grants trackers advantage against the actor — not a self-modifier
     Silenced: { noVerbal: true }, // prevents spoken/verbal actions — situational legality
-    Locked: { combat: true }      // combat grapple — disadvantage on attack and defense
+    // Combat grapples/knockdowns — each imposes disadvantage on the held/downed
+    // combatant's attack and defence rolls (one Risk die via conditionCombatDisadvantage).
+    Locked: { combat: true },
+    Prone: { combat: true },
+    Grappled: { combat: true },
+    "Choking Hold": { combat: true, blocksAdvantage: true } // severe: also cancels advantage
 };
 
 function slug(name) { return String(name ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""); }
 function effectList(actor) { return actor?.effects?.contents ?? actor?.effects ?? []; }
 
+// Match conditions by slug so casing/spacing differences (the maneuvers emit
+// "locked"/"choking-hold", the registry keys are "Locked"/"Choking Hold") still
+// resolve to the canonical rule.
+const CONDITION_BY_SLUG = Object.fromEntries(Object.keys(CONDITIONS).map((key) => [slug(key), key]));
+
 /** Active condition names the registry knows about, with supersession resolved. */
 export function getActiveConditions(actor) {
     const names = new Set();
     for (const ef of effectList(actor)) {
-        if (ef?.name && CONDITIONS[ef.name] && !ef.disabled) names.add(ef.name);
+        const canonical = ef?.name ? CONDITION_BY_SLUG[slug(ef.name)] : null;
+        if (canonical && !ef.disabled) names.add(canonical);
     }
     for (const n of [...names]) {
         for (const s of (CONDITIONS[n]?.supersedes ?? [])) names.delete(s);
