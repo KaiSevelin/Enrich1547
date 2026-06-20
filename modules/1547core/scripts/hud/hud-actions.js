@@ -1,5 +1,15 @@
 ﻿import { buildDefenderPool, toFoundryFormula } from "../combat/pool-builder.mjs";
-import { conditionCombatDisadvantage, conditionAttackersAdvantage } from "../services/condition-registry.js";
+import { conditionCombatDisadvantage, conditionAttackersAdvantage, conditionDisadvantageSources, conditionAttackersAdvantageSources } from "../services/condition-registry.js";
+
+// Itemised advantage/disadvantage breakdown for a roll's chat flavor — names each
+// source (Prone, Locked, …) so extra Risk/advantage dice aren't a mystery.
+function formatRollModifiers({ advantage = [], disadvantage = [] } = {}) {
+    const fmt = (list) => list.map((s) => `${s.name} (+${s.dice})`).join(", ");
+    const parts = [];
+    if (disadvantage.length) parts.push(`Disadvantage: ${fmt(disadvantage)}`);
+    if (advantage.length) parts.push(`Advantage: ${fmt(advantage)}`);
+    return parts.join(" · ");
+}
 import { autoFaceAttacker, getAttackPositioning, positioningNote, positionalAdvantageToApply } from "../combat/facing.mjs";
 import { showDefenseSummary } from "../combat/defense-summary.js";
 import { relayRemoteWindow, presentCandidateDialog, escapeRelayHtml } from "../services/remote-window-relay.js";
@@ -479,14 +489,16 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
         const facedThisAttack = result.reactionResolution?.reaction?.effectData?.facingFace === true;
         const appliedPositionAdvantage = (facedThisAttack || isIndirect) ? 0 : positionalAdvantageToApply(positioning);
         // A prone (or otherwise vulnerable) target grants the attacker advantage dice.
-        const targetConditionAdvantage = targetActor ? conditionAttackersAdvantage(targetActor) : 0;
-        const bonusAdvantage = appliedPositionAdvantage + targetConditionAdvantage;
-        const positionNote = [
-            facedThisAttack
-                ? "Defender faced the attacker — rear advantage cancelled."
-                : (isIndirect ? "Arced shot — rear advantage forfeited." : positioningNote(positioning)),
-            targetConditionAdvantage > 0 ? `Target is vulnerable: +${targetConditionAdvantage} advantage.` : "",
-        ].filter(Boolean).join(" ");
+        const targetAdvSources = targetActor ? conditionAttackersAdvantageSources(targetActor) : [];
+        const bonusAdvantage = appliedPositionAdvantage + targetAdvSources.reduce((sum, s) => sum + s.dice, 0);
+        const positionNote = facedThisAttack
+            ? "Defender faced the attacker — rear advantage cancelled."
+            : (isIndirect ? "Arced shot — rear advantage forfeited." : positioningNote(positioning));
+        // Itemised condition modifiers (the positional +1 is named in positionNote above).
+        const modifierNote = formatRollModifiers({
+            advantage: targetAdvSources.map((s) => ({ name: `${s.name} target`, dice: s.dice })),
+            disadvantage: conditionDisadvantageSources(context.actor, "attack"),
+        });
         const finalAttackFormula = bonusAdvantage > 0
             ? (buildFoundryAttackRollFormula(
                 currentWeapon?.activeAttackProfileData,
@@ -504,7 +516,9 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
             Roll,
             speaker,
             formula: applyRollClickModifier(finalAttackFormula, context.rollModifier),
-            flavor: `${descriptor.label}<br>Target: ${escapeHtml(targetActor?.name ?? "Target")}${positionNote ? `<br><em>${escapeHtml(positionNote)}</em>` : ""}`,
+            flavor: `${descriptor.label}<br>Target: ${escapeHtml(targetActor?.name ?? "Target")}`
+                + (positionNote ? `<br><em>${escapeHtml(positionNote)}</em>` : "")
+                + (modifierNote ? `<br><em>${escapeHtml(modifierNote)}</em>` : ""),
             game,
         });
         if (!attackRollSummary) {
@@ -538,12 +552,16 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
 
         const defenseFormula = buildDefenseRollFormula(defenderArmor, targetActor);
         const defenderSpeaker = ChatMessage.getSpeaker({ actor: targetActor, token: context.primaryTarget?.document });
+        const defenseModifierNote = targetActor
+            ? formatRollModifiers({ disadvantage: conditionDisadvantageSources(targetActor, "defense") })
+            : "";
         const defenseRollSummary = defenseFormula
             ? await rollFormulaToChatAndSummarize({
                 Roll,
                 speaker: defenderSpeaker,
                 formula: defenseFormula,
-                flavor: `Defense Roll<br>Defender: ${escapeHtml(targetActor?.name ?? "Target")}`,
+                flavor: `Defense Roll<br>Defender: ${escapeHtml(targetActor?.name ?? "Target")}`
+                    + (defenseModifierNote ? `<br><em>${escapeHtml(defenseModifierNote)}</em>` : ""),
                 game,
             })
             : null;

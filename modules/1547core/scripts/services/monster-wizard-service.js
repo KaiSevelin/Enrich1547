@@ -322,7 +322,15 @@ class MonsterWizard extends Application {
             return;
         }
         try {
-            const actorFolder = game.folders?.find((f) => f.type === "Actor" && f.name === "Monsters") ?? null;
+            // Put new monsters in a "Monsters" actor folder, created once if absent.
+            let actorFolder = game.folders?.find((f) => f.type === "Actor" && f.name === "Monsters") ?? null;
+            if (!actorFolder) {
+                try {
+                    actorFolder = await Folder.create({ name: "Monsters", type: "Actor" });
+                } catch {
+                    actorFolder = null;
+                }
+            }
 
             const actor = await Actor.create({
                 name: s.name,

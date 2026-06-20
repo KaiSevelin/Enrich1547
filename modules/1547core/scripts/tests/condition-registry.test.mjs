@@ -49,6 +49,15 @@ assert.strictEqual(conditionAttackersAdvantage(actorWith("prone")), 1);
 assert.strictEqual(conditionAttackersAdvantage(actorWith("grappled")), 0);
 console.log("  ✓ Prone = attack-only disadvantage + grants attackers advantage");
 
+console.log("itemised modifier sources...");
+const { conditionDisadvantageSources, conditionAttackersAdvantageSources } =
+    await import("../services/condition-registry.js");
+assert.deepStrictEqual(conditionDisadvantageSources(actorWith("prone"), "attack"), [{ name: "Prone", dice: 1 }]);
+assert.deepStrictEqual(conditionDisadvantageSources(actorWith("prone"), "defense"), []);
+assert.deepStrictEqual(conditionAttackersAdvantageSources(actorWith("prone")), [{ name: "Prone", dice: 1 }]);
+assert.deepStrictEqual(conditionAttackersAdvantageSources(actorWith("locked")), []);
+console.log("  ✓ source helpers name each modifier for the chat breakdown");
+
 console.log("registry shape...");
 for (const name of ["Locked", "Prone", "Grappled", "Choking Hold"]) {
     assert.strictEqual(CONDITIONS[name]?.combat, true, `${name} is a combat condition`);

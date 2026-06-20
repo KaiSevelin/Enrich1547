@@ -94,30 +94,42 @@ export function conditionBlocksAdvantage(actor) {
  * a physical domain, so "physical" and "all" disadvantage apply, plus combat-only
  * conditions (Locked). Returns a count of disadvantage/Risk dice.
  */
-export function conditionCombatDisadvantage(actor, rollType = "both") {
-    let d = 0;
+/** Per-condition combat disadvantage contributions [{ name, dice }] for a roll type. */
+export function conditionDisadvantageSources(actor, rollType = "both") {
+    const out = [];
     for (const n of getActiveConditions(actor)) {
         const r = CONDITIONS[n];
         if (!r) continue;
+        let applies = false;
         // General afflictions (Weakened/Cursed/Exhausted) hit every combat roll.
-        if (r.disadvantage === "all" || r.disadvantage === "physical") { d += 1; continue; }
+        if (r.disadvantage === "all" || r.disadvantage === "physical") applies = true;
         // Combat grapples/knockdowns: `combatDisadvantage` ("attack"|"defense"|"both",
         // default "both") scopes which rolls they hit — e.g. Prone hits attacks only.
-        if (r.combat) {
+        else if (r.combat) {
             const scope = r.combatDisadvantage ?? "both";
-            if (rollType === "both" || scope === "both" || scope === rollType) d += 1;
+            applies = rollType === "both" || scope === "both" || scope === rollType;
         }
+        if (applies) out.push({ name: n, dice: 1 });
     }
-    return d;
+    return out;
 }
 
-/** Advantage dice anyone attacking this actor gains from its conditions (e.g. Prone). */
-export function conditionAttackersAdvantage(actor) {
-    let a = 0;
+export function conditionCombatDisadvantage(actor, rollType = "both") {
+    return conditionDisadvantageSources(actor, rollType).reduce((sum, s) => sum + s.dice, 0);
+}
+
+/** Per-condition advantage [{ name, dice }] anyone attacking this actor gains (e.g. Prone). */
+export function conditionAttackersAdvantageSources(actor) {
+    const out = [];
     for (const n of getActiveConditions(actor)) {
-        a += Number(CONDITIONS[n]?.attackersAdvantage ?? 0) || 0;
+        const dice = Number(CONDITIONS[n]?.attackersAdvantage ?? 0) || 0;
+        if (dice > 0) out.push({ name: n, dice });
     }
-    return a;
+    return out;
+}
+
+export function conditionAttackersAdvantage(actor) {
+    return conditionAttackersAdvantageSources(actor).reduce((sum, s) => sum + s.dice, 0);
 }
 
 /**
@@ -188,8 +200,9 @@ export function registerConditionRegistry() {
         coreModule.api = coreModule.api ?? {};
         coreModule.api.condition = {
             CONDITIONS, getActiveConditions, conditionDisadvantage, conditionBlocksAdvantage,
-            conditionCombatDisadvantage, conditionAttackersAdvantage, applyConditionDiceModifier,
-            applyCondition, removeCondition, registerConditionStatusEffects
+            conditionCombatDisadvantage, conditionDisadvantageSources,
+            conditionAttackersAdvantage, conditionAttackersAdvantageSources,
+            applyConditionDiceModifier, applyCondition, removeCondition, registerConditionStatusEffects
         };
     }
 }

@@ -54,7 +54,7 @@ _Current target: 1547core 0.3.117._
 
 ## 4. Actor sheets & monster wizard
 - [ ] **Composition gating:** a **player character** sheet shows **no** Composition panel; a **typed monster** sheet **does**. _(Requires Setup Data.)_
-- [ ] **Monster wizard:** creates a **real monster** (`character` actor in Monsters), **not** a `_template`, with its Base chassis auto-applied.
+- [ ] **Monster wizard:** creates a **real monster** (`character` actor in a **Monsters** folder — created if absent), **not** a `_template`, with its Base chassis auto-applied.
 - [ ] **Spirit type (Regression — renamed from NatureSpirit):** the monster wizard lists **Spirit**; creating one applies the **Spirit Base** chassis; the actor sheet's **Actor Type** dropdown offers **Spirit**.
 
 ---
@@ -89,6 +89,7 @@ _Current target: 1547core 0.3.117._
 - [ ] **Critical window (post-attack, sustained):** when an actor earns critical points and has critical (post) maneuvers, a window opens after the attack **relayed to the owner's browser** (and shown locally for a self-owned actor). It **stays open** so the actor can spend on **several** critical maneuvers — each pick deducts its cost and the list re-filters to what's still affordable. It closes on **Done**, when **no affordable maneuver remains**, or on **timeout** (the **Critical Window Seconds** setting, default **30**).
 - [ ] **GM mirror (Regression):** when the critical window belongs to a **player-controlled** token, the **GM also sees a read-only "watching" copy** that updates as the player spends (and closes with it). A **GM/NPC** actor's window shows only on the GM (no duplicate). The mirror never lets the GM commit (no double-spend).
 - [ ] **Critical maneuver effect (Regression):** committing a critical maneuver now **does something** — every commit posts a chat card naming the maneuver + effect, and a **follow-up maneuver** (e.g. **Redouble** = `createSecondSafeAttack`) **declares a fresh safe attack**. Previously the point was spent silently with no effect.
+- [ ] **Itemized roll modifiers (Regression):** attack/defence chat names each condition advantage/disadvantage source — e.g. *"Disadvantage: Prone (+1) · Advantage: Prone target (+1)"* on an attack, *"Disadvantage: Locked (+1)"* on a defence — so extra Risk/advantage dice aren't a mystery (positional advantage stays in its own note).
 - [ ] **Prone scoping (Regression):** a **prone** attacker rolls **attacks** with disadvantage but **defends normally** (no Risk die added to its defence); attacking a **prone target** gives the attacker **+1 advantage** die (chat/preview note "Target is vulnerable"). Locked/Grappled still hit both attack and defence.
 - [ ] **Choking Hold per-round attack (Regression):** while a token holds **Choking Hold**, at the **start of each new round** the **choker** (who applied it) automatically makes a **free unarmed attack** on the victim (rolls resolve in chat); it stops once the victim escapes (Break The Choke) or the condition is removed.
 - [ ] **Conditions in the token status menu (Regression):** the 1547 conditions (**Grappled / Locked / Prone / Choking Hold**, plus Weakened/Exhausted/Cursed/…) appear in the **token HUD's status‑effect toggle** with icons; toggling one on imposes its combat effect (e.g. Grappled → +1 disadvantage) — same as a maneuver‑applied one (the names canonicalise/slug‑match).
