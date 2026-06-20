@@ -167,6 +167,16 @@
                                 </div>
                                 {{/if}}
 
+                                {{#if pendingPrompt.isSelect}}
+                                <div class="chargen-dialog__field">
+                                    <select name="cg-inline-select" class="chargen-dialog__select">
+                                        {{#each pendingPrompt.options}}
+                                        <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.title}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                {{/if}}
+
                                 {{#if pendingPrompt.confirmButton}}
                                 <div class="chargen-inline-prompt__actions">
                                     <button type="button" class="primary-action" data-action="inline-prompt-confirm">{{pendingPrompt.confirmButton}}</button>

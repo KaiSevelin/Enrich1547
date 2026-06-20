@@ -1978,7 +1978,8 @@ export class SkillTreeChargenApp extends FormApplication {
             const kind = descriptor.kind ?? "choice";
             const isText = kind === "text";
             const isSummary = kind === "summary";
-            const isRadio = !isText && !isSummary;
+            const isSelect = kind === "select";
+            const isRadio = !isText && !isSummary && !isSelect;
             const SKIP = SkillTreeChargenApp._INLINE_SKIP;
             const CONFIRM = SkillTreeChargenApp._INLINE_CONFIRM;
             const CANCEL = SkillTreeChargenApp._INLINE_CANCEL;
@@ -1989,31 +1990,34 @@ export class SkillTreeChargenApp extends FormApplication {
                     { value: CONFIRM, title: descriptor.confirmLabel ?? "Confirm", meta: "", checked: true },
                     { value: CANCEL, title: descriptor.cancelLabel ?? "Cancel", meta: "", checked: false },
                 ];
-            } else if (isRadio) {
+            } else if (isRadio || isSelect) {
                 const dv = descriptor.defaultValue ?? null;
                 options = (descriptor.options ?? []).map((opt) => ({
                     value: String(opt.value),
                     title: opt.title ?? String(opt.value),
                     meta: opt.meta ?? "",
                     checked: false,
+                    selected: false,
                 }));
                 if (descriptor.skippable) {
-                    options.push({ value: SKIP, title: descriptor.skipLabel ?? "— Skip —", meta: "", checked: false });
+                    options.push({ value: SKIP, title: descriptor.skipLabel ?? "— Skip —", meta: "", checked: false, selected: false });
                 }
                 let defaulted = false;
                 for (const o of options) {
                     o.checked = (dv != null && o.value === String(dv));
+                    o.selected = o.checked;
                     if (o.checked) defaulted = true;
                 }
-                if (!defaulted && options.length) options[0].checked = true;
+                if (!defaulted && options.length) { options[0].checked = true; options[0].selected = true; }
             }
 
             this._pendingPrompt = {
                 id,
-                inputType: isText ? "text" : (isSummary ? "none" : "radio"),
+                inputType: isText ? "text" : (isSummary ? "none" : (isSelect ? "select" : "radio")),
                 isText,
                 isRadio,
                 isSummary,
+                isSelect,
                 eyebrow: descriptor.eyebrow ?? "",
                 title: descriptor.title ?? "",
                 copy: descriptor.copy ?? "",
@@ -2064,6 +2068,11 @@ export class SkillTreeChargenApp extends FormApplication {
         } else if (p.inputType === "text") {
             value = String(panel?.querySelector("[name='cg-inline-text']")?.value ?? "").trim() || null;
             if (value == null) value = p.cancelValue ?? null; // empty text == skip
+        } else if (p.inputType === "select") {
+            const raw = String(panel?.querySelector("select[name='cg-inline-select']")?.value ?? "");
+            if (raw === SKIP || raw === CANCEL) value = p.cancelValue ?? null;
+            else if (raw === CONFIRM) value = p.confirmValue ?? true;
+            else value = raw || (p.cancelValue ?? null);
         } else {
             const raw = String(panel?.querySelector("input[name='cg-inline-choice']:checked")?.value ?? "");
             if (raw === SKIP || raw === CANCEL) value = p.cancelValue ?? null;
@@ -3695,27 +3704,57 @@ export class SkillTreeChargenApp extends FormApplication {
         return granted;
     }
 
-    async _promptLanguageAwardAction({ canUpgrade = false } = {}) {
+    /**
+     * Single combined language-award dropdown: learn a new tongue (one entry per
+     * suggested language the character doesn't already speak, plus a free-text
+     * "another language…" escape hatch) OR gain literacy in a known language that
+     * still lacks read/write — the read/write entries appear ONLY when such a
+     * language exists. Defaults to the first suggested tongue the character
+     * doesn't know. Resolves to { kind:"learn", name?|custom } | { kind:"literacy", name } | null.
+     */
+    async _promptLanguageAward({ known = [], knownSet = new Set(), illiterate = [] } = {}) {
+        const unknownSuggested = SkillTreeChargenApp.SUGGESTED_LANGUAGES
+            .filter((l) => !knownSet.has(l.toLowerCase()));
+
         if (this._simulationEnabled()) {
-            return canUpgrade && Math.random() < 0.35 ? "upgrade" : "add";
+            if (illiterate.length && Math.random() < 0.35) {
+                return { kind: "literacy", name: this._randomChoice(illiterate).name };
+            }
+            if (unknownSuggested.length) {
+                return { kind: "learn", name: this._randomChoice(unknownSuggested) };
+            }
+            const index = Number(this._simulationOption("runIndex", 0)) + known.length + 1;
+            return { kind: "learn", name: `SimLanguage${index}` };
         }
-        const options = [
-            { value: "add", title: "Add New Language", meta: "Add a new spoken language to the character." },
-        ];
-        if (canUpgrade) {
-            options.unshift({ value: "upgrade", title: "Upgrade Read/Write", meta: "Improve literacy in a language the character already knows." });
+
+        const options = [];
+        // Learn a new tongue — one option per suggested language not yet spoken.
+        for (const lang of unknownSuggested) {
+            options.push({ value: `learn:${lang}`, title: `Learn ${lang}`, meta: "Speak a new tongue." });
         }
-        return this._inlinePrompt({
-            kind: "choice",
+        options.push({ value: "learn:__custom__", title: "Learn another language…", meta: "Type a tongue not listed." });
+        // Read/write — only offered for known languages that still lack literacy.
+        for (const lang of illiterate) {
+            options.push({ value: `literacy:${lang.name}`, title: `Read & write ${lang.name}`, meta: "Gain literacy in a known tongue." });
+        }
+
+        const raw = await this._inlinePrompt({
+            kind: "select",
             eyebrow: "Tongues",
             title: "Language Award",
-            copy: "Choose how this language gain should shape the character.",
+            copy: "Learn a new language, or gain literacy in one the character already speaks.",
             options,
             defaultValue: options[0].value,
             skippable: true,
             skipLabel: "— Don't gain a language —",
             cancelValue: null,
         });
+
+        if (raw == null) return null;
+        if (raw.startsWith("literacy:")) return { kind: "literacy", name: raw.slice("literacy:".length) };
+        if (raw === "learn:__custom__") return { kind: "learn", custom: true };
+        if (raw.startsWith("learn:")) return { kind: "learn", name: raw.slice("learn:".length) };
+        return null;
     }
 
     async _promptNewLanguageName() {
@@ -3741,32 +3780,6 @@ export class SkillTreeChargenApp extends FormApplication {
         });
     }
 
-    async _promptLanguageUpgradeChoice(upgradable) {
-        if (this._simulationEnabled()) {
-            return this._randomChoice(upgradable);
-        }
-        // The panel can only carry a string, so options encode the index; map the
-        // returned index back to the language object to preserve the contract.
-        const raw = await this._inlinePrompt({
-            kind: "choice",
-            eyebrow: "Tongues",
-            title: "Upgrade Language Read/Write",
-            copy: "Choose which known language should become fully literate.",
-            options: upgradable.map((l, i) => ({
-                value: String(i),
-                title: l.name,
-                meta: "Known language, upgrade to read and write.",
-            })),
-            defaultValue: "0",
-            skippable: true,
-            skipLabel: "— Don't upgrade —",
-            cancelValue: null,
-        });
-        if (raw == null) return null;
-        const idx = Number(raw);
-        if (!Number.isInteger(idx) || idx < 0 || idx >= upgradable.length) return null;
-        return upgradable[idx];
-    }
 
     async _promptOptionalTransition({ fromName = "", toUuid = "", prompt = "" } = {}) {
         const targetRef = String(toUuid ?? "").trim();
@@ -3803,36 +3816,30 @@ export class SkillTreeChargenApp extends FormApplication {
         const tableRef = this._resolveLanguageTable(ch?.tableKey);
         const rows = Array.isArray(tableRef.rows) ? tableRef.rows : [];
         const known = this._getKnownLanguages(rows);
-        const upgradable = known.filter(l => !l.readWrite);
+        const knownSet = new Set(known.map((l) => l.name.toLowerCase()));
+        const illiterate = known.filter((l) => !l.readWrite);
 
-        const action = await this._promptLanguageAwardAction({ canUpgrade: upgradable.length > 0 });
-        if (!action) {
+        const choice = await this._promptLanguageAward({ known, knownSet, illiterate });
+        if (!choice) {
             await this._addBio(run, "Language award canceled.");
             return;
         }
 
-        if (action === "upgrade") {
-            if (!upgradable.length) {
-                ui.notifications.info("No known language can be upgraded to read/write.");
-                await this._addBio(run, "Language award: no eligible language for read/write upgrade.");
-                return;
-            }
-
-            const chosen = await this._promptLanguageUpgradeChoice(upgradable);
-            if (!chosen) {
-                await this._addBio(run, "Language award canceled.");
-                return;
-            }
-
-            await this._ensureLanguage(chosen.name, {
+        // Gain literacy in a language the character already speaks.
+        if (choice.kind === "literacy") {
+            await this._ensureLanguage(choice.name, {
                 readWrite: true,
                 tableKeyHint: tableRef.tableKey
             });
-            await this._addBio(run, `Language literacy gained: ${chosen.name} (read/write).`);
+            await this._addBio(run, `Language literacy gained: ${choice.name} (read/write).`);
             return;
         }
 
-        const newLanguage = await this._promptNewLanguageName();
+        // Learn a new tongue — either a picked suggestion or a typed custom name.
+        let newLanguage = choice.name;
+        if (choice.custom) {
+            newLanguage = await this._promptNewLanguageName();
+        }
         if (!newLanguage) {
             await this._addBio(run, "Language award canceled.");
             return;
@@ -4547,10 +4554,21 @@ export class SkillTreeChargenApp extends FormApplication {
             });
         });
 
-        // Focus the field / checked radio once per prompt id.
+        // Keep the chosen dropdown option across an incidental re-render.
+        const select = panel.querySelector("select[name='cg-inline-select']");
+        if (select) {
+            select.addEventListener("change", () => {
+                const p = live();
+                if (!p) return;
+                for (const o of p.options) o.selected = (o.value === select.value);
+            });
+        }
+
+        // Focus the field / dropdown / checked radio once per prompt id.
         if (this._lastFocusedPromptId !== pid) {
             this._lastFocusedPromptId = pid;
             const focusTarget = field
+                ?? select
                 ?? panel.querySelector("input[name='cg-inline-choice']:checked")
                 ?? panel.querySelector("input[name='cg-inline-choice']");
             requestAnimationFrame(() => { try { focusTarget?.focus(); } catch { /* noop */ } });
