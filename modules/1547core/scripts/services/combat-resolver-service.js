@@ -1,5 +1,5 @@
 ﻿import { COMBAT_EVENTS, emitCombatEvent, onCombatEvent } from "./combat-events.js";
-import { applyCondition, removeCondition } from "./condition-registry.js";
+import { applyCondition, removeCondition, getActiveConditions, CONDITIONS } from "./condition-registry.js";
 import { evaluateManeuverLegality, getLegalManeuvers } from "../combat/maneuver-legality.mjs";
 import { buildDefenderPool, toFoundryFormula } from "../combat/pool-builder.mjs";
 import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
@@ -84,6 +84,7 @@ export function registerCombatResolverService() {
     if (!module) return;
 
     bindPatchSocket();
+    bindChokeHoldRoundAttacks();
 
     if (!combatResolverDisposers.length) {
         combatResolverDisposers = [
@@ -673,6 +674,57 @@ function bindPatchSocket() {
             }
         })();
     });
+}
+
+// ── Choking Hold per-round attack ────────────────────────────────────────────
+// While an actor is choked, the choker (the condition's inflictorId) makes a free
+// unarmed attack on them at the start of each new round. GM-authoritative.
+const CHOKE_SLUG = (value) => String(value ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+let chokeRoundHookBound = false;
+
+function bindChokeHoldRoundAttacks() {
+    if (chokeRoundHookBound || !globalThis.Hooks) return;
+    chokeRoundHookBound = true;
+    Hooks.on("updateCombat", (combat, changed) => {
+        if (typeof changed?.round !== "number") return; // only on a round change
+        if (!isDesignatedPatchGM()) return;             // one GM resolves it
+        void runChokeHoldRoundAttacks(combat).catch((err) => console.error(`${MODULE_ID} | choke round attacks failed`, err));
+    });
+}
+
+async function runChokeHoldRoundAttacks(combat) {
+    const chokeNames = new Set(Object.keys(CONDITIONS).filter((n) => CONDITIONS[n]?.inflictorAttackEachRound).map(CHOKE_SLUG));
+    if (!chokeNames.size) return;
+    const combatants = combat?.combatants?.contents ?? combat?.turns ?? [];
+    for (const combatant of combatants) {
+        const victim = combatant?.actor;
+        if (!victim || combatant?.defeated) continue;
+        if (!getActiveConditions(victim).some((n) => CONDITIONS[n]?.inflictorAttackEachRound)) continue;
+        const ae = (victim.effects?.contents ?? []).find((e) => !e.disabled && chokeNames.has(CHOKE_SLUG(e?.name)));
+        const inflictor = resolveActorById(ae?.flags?.[MODULE_ID]?.inflictorId);
+        if (!inflictor) continue;
+        await declareChokeAttack(inflictor, victim);
+    }
+}
+
+async function declareChokeAttack(inflictor, victim) {
+    const weapon = normalizeWeapon(null, inflictor); // unarmed default
+    const profile = (Array.isArray(weapon?.attackProfiles) ? weapon.attackProfiles[0] : null)
+        ?? weapon?.activeAttackProfileData ?? null;
+    if (!profile) return;
+    try {
+        await declareAttack({
+            actor: inflictor,
+            target: victim,
+            targets: [victim],
+            weapon,
+            profile,
+            forceSafeAttack: true,         // free, no reaction window
+            generatedByReaction: "choking-hold",
+        });
+    } catch (err) {
+        console.error(`${MODULE_ID} | choke round attack failed`, err);
+    }
 }
 
 async function applyPatches(patches = []) {
