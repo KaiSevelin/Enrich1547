@@ -2,7 +2,7 @@
     "id":  "1547core",
     "title":  "1547 Core",
     "description":  "Core rules and shared runtime for 1547",
-    "version":  "0.3.160",
+    "version":  "0.3.161",
     "compatibility":  {
                           "minimum":  "11",
                           "verified":  "13.350"
@@ -41,6 +41,7 @@
                             "packs":  [
                                           "rulebook",
                                           "maneuvers",
+                                          "skills",
                                           "spells",
                                           "diseases",
                                           "monster-magic",

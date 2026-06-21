@@ -26,6 +26,9 @@ import { deepClone, ACTOR_TYPES, isValidFoundryId, deriveFoundryIdFromText, norm
 import { buildAmmoProps, buildArmorProps, buildChangeProps, buildChangeSetProps, buildDiseaseProps, buildMonsterMagicProps, buildPactProps, buildRequirementProps, buildSpellProps, buildSupernaturalMarkProps, buildWeaponModifierProps, buildWeaponProps, buildManeuverProps } from "../lib/prop-builders.mjs";
 import { buildBoostResults, ritualStepFormula, ritualStepDescription, buildRitualStepResults, buildBellCurveResults, buildPactResults } from "../lib/rolltable-results.mjs";
 import { csbItemBody, mergeActorParts } from "../lib/doc-builders.mjs";
+import { STAT_INFO } from "../hud/stat-info.js";
+import { HUMOUR_INFO } from "../services/humour-info.js";
+import { CONDITIONS } from "../services/condition-registry.js";
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -701,8 +704,48 @@ function generateMonsterReferenceChapter() {
     };
 }
 
+function generateStatReferenceChapter() {
+    const order = ["Strength", "Stamina", "Dexterity", "Intelligence", "Faith", "Charisma", "Power"];
+    const body = order.filter((s) => STAT_INFO[s])
+        .map((s) => `<h2>${htmlEscape(s)}</h2>${descBlock(STAT_INFO[s])}`).join("\n");
+    return {
+        title: "Primary Stats",
+        content: generatedIntro("scripts/hud/stat-info.js")
+            + "<p>The seven primary stats, each rolled as Xd6 + modifier on a ladder (1d6, 1d6+1, … 2d6 …).</p>"
+            + body,
+        generated: true
+    };
+}
+
+function generateHumourReferenceChapter() {
+    const order = ["Blood", "Yellow Bile", "Black Bile", "Phlegm"];
+    const body = order.filter((h) => HUMOUR_INFO[h])
+        .map((h) => `<h2>${htmlEscape(h)}</h2>${descBlock(HUMOUR_INFO[h])}`).join("\n");
+    return {
+        title: "The Humours",
+        content: generatedIntro("scripts/services/humour-info.js")
+            + "<p>The four humours of temperament, set at birth and shifted by life. They drive disease, Your Nature, and how a character meets the world.</p>"
+            + body,
+        generated: true
+    };
+}
+
+function generateConditionReferenceChapter() {
+    const body = Object.entries(CONDITIONS)
+        .filter(([, rule]) => rule?.description)
+        .map(([name, rule]) => `<h3>${htmlEscape(name)}</h3>${descBlock(rule.description)}`).join("\n");
+    return {
+        title: "Conditions",
+        content: generatedIntro("scripts/services/condition-registry.js") + body,
+        generated: true
+    };
+}
+
 function buildReferenceChapters() {
     return [
+        generateStatReferenceChapter(),
+        generateHumourReferenceChapter(),
+        generateConditionReferenceChapter(),
         generateSpellChapter(),
         generateManeuverChapter(),
         generateMonsterPowerChapter(),
