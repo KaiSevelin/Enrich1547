@@ -2065,7 +2065,10 @@ a.enricher-1547::before {
 }
 
 .chargen-dialog__field select option {
-	background: #f3e7c9;
+	/* Solid background-color, not a gradient: Chromium/Electron (Foundry)
+	   ignores gradient backgrounds on <option>, which left the selected
+	   option's light text on a default light background — i.e. invisible. */
+	background-color: #f3e7c9;
 	color: #23180f;
 	font-weight: 700;
 }
@@ -2073,7 +2076,7 @@ a.enricher-1547::before {
 .chargen-dialog__field select option:checked,
 .chargen-dialog__field select option:hover,
 .chargen-dialog__field select option:focus {
-	background: linear-gradient(180deg, #82501f, #5d3715);
+	background-color: #6b4119;
 	color: #fff4d6;
 }
 

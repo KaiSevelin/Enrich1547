@@ -108,7 +108,7 @@ This is intentionally sparse. Not every latent tendency flowers into a defining 
 For each life step from **adolescence** through **retirement**:
 
 1. Roll `1d6`.
-2. On a result of `5` or `6`, make a `Your Nature` draw.
+2. On a result of `4`, `5`, or `6`, make a `Your Nature` draw.
 3. Roll on the **balanced selector** `3d6` table.
 4. The selector points to one of the stat or humour tables.
 5. Check whether the character qualifies for that table.

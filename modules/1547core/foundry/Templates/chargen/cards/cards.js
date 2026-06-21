@@ -231,7 +231,7 @@ export const CARD_IMAGES = [
     },
     {
         "name":  "Meeting",
-        "path":  "media/home/games/1547/Cards/General Meeting.webp",
+        "path":  "media/home/games/1547/Cards/General Assembly.webp",
         "category":  "General"
     },
     {

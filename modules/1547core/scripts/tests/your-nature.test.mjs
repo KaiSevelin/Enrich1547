@@ -30,14 +30,15 @@ console.log("stats: steps ladder (calculated stat value)...");
     console.log("  ✓ statSteps / statFromSteps round-trip the d6 ladder");
 }
 
-console.log("your-nature: trigger gate (1d6, 5-6 fires)...");
+console.log("your-nature: trigger gate (1d6, 4-6 fires)...");
 {
-    assert.strictEqual(yn.shouldTriggerYourNature(4), false);
+    assert.strictEqual(yn.shouldTriggerYourNature(3), false);
+    assert.strictEqual(yn.shouldTriggerYourNature(4), true);
     assert.strictEqual(yn.shouldTriggerYourNature(5), true);
     assert.strictEqual(yn.shouldTriggerYourNature(6), true);
     assert.strictEqual(yn.shouldTriggerYourNature(0), false, "no roll / 0 never fires");
-    assert.strictEqual(yn.shouldTriggerYourNature("5"), true, "string totals coerce");
-    console.log("  ✓ only 5 and 6 trigger a draw");
+    assert.strictEqual(yn.shouldTriggerYourNature("4"), true, "string totals coerce");
+    console.log("  ✓ 4, 5 and 6 trigger a draw");
 }
 
 console.log("\nyour-nature: stage eligibility (adolescence → retirement)...");

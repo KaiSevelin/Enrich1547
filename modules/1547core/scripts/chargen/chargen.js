@@ -4089,17 +4089,34 @@ export class SkillTreeChargenApp extends FormApplication {
         const tableRef = String(YOUR_NATURE_TABLE_REFS[selectedKey] ?? "").trim();
         if (!tableRef) return null;
 
-        const rollResult = await this._rollOnce(tableRef);
-        const parsed = await this.constructor.parseRollTableResult(
-            rollResult.result,
-            `Your Nature - ${selectedKey}`
-        );
+        // The destination table may be absent if Your Nature content was never
+        // imported into this world. The spec says an unfulfilled draw "fails
+        // quietly and nothing happens" — so swallow any lookup/roll failure and
+        // return null instead of throwing, which would otherwise break the pick.
+        let rollResult;
+        let parsed;
+        let sourceTable;
+        try {
+            rollResult = await this._rollOnce(tableRef);
+            parsed = await this.constructor.parseRollTableResult(
+                rollResult.result,
+                `Your Nature - ${selectedKey}`
+            );
+            sourceTable = await this._getRollTable(tableRef);
+        } catch (err) {
+            console.warn(
+                `Chargen: Your Nature draw for "${selectedKey}" failed quietly `
+                + `(table ${tableRef} unavailable — is the Your Nature content imported?).`,
+                err
+            );
+            return null;
+        }
+
         const reward = Array.isArray(parsed?.effectTables) && parsed.effectTables.length
             ? this._resolveRewardFromEffectTables(parsed.effectTables)
             : this._pickWeightedReward(Array.isArray(parsed?.rewards) ? parsed.rewards : []);
         if (!reward) return null;
 
-        const sourceTable = await this._getRollTable(tableRef);
         const stage = this._getBioStageFromTable(table);
         return {
             isDeferred: true,

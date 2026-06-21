@@ -60,10 +60,11 @@ export const YOUR_NATURE_ELIGIBLE_STAGES = ["adolescence", "career", "advanced"]
 export const YOUR_NATURE_STAT_MIN_STEPS = 2;
 
 /**
- * Whether a 1d6 trigger result makes a Your Nature draw. Spec: 5 or 6 triggers.
+ * Whether a 1d6 trigger result makes a Your Nature draw. Spec: 4, 5, or 6
+ * triggers (a 1-in-2 chance per eligible step).
  */
 export function shouldTriggerYourNature(triggerTotal) {
-    return Number(triggerTotal) >= 5;
+    return Number(triggerTotal) >= 4;
 }
 
 /**
