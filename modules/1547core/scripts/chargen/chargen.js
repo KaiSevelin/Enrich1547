@@ -4109,6 +4109,16 @@ export class SkillTreeChargenApp extends FormApplication {
                 + `(table ${tableRef} unavailable — is the Your Nature content imported?).`,
                 err
             );
+            // Surface this once so a missing import doesn't look like the feature
+            // is simply never firing. A qualified draw reached the table and found
+            // nothing — almost always because Setup Data was not (re-)run.
+            if (!this._yourNatureMissingWarned) {
+                this._yourNatureMissingWarned = true;
+                ui.notifications?.warn?.(
+                    "Your Nature triggered but its content isn't imported into this world. "
+                    + "Run the chargen Setup Data import (Configure Settings → 1547 Core) to enable it."
+                );
+            }
             return null;
         }
 
@@ -4400,6 +4410,12 @@ export class SkillTreeChargenApp extends FormApplication {
         const chosenIndex = reveal ? reveal.chosenIndex : promptChosenIndex;
         const hasChosen = chosenIndex != null;
 
+        // During the career-advancement wizard (stat/skill/maneuver picks), the
+        // cards are decorative — choices are made in the side panel — so show
+        // both face-down to keep the focus there.
+        const inAdvancement = Boolean(this._pendingPrompt)
+            && String(this._pendingPrompt.eyebrow ?? "").trim().toLowerCase() === "advancement";
+
         return {
             revealDeferredLines,
             revealDeferredHtml,
@@ -4412,6 +4428,17 @@ export class SkillTreeChargenApp extends FormApplication {
             backImg,
             reveal,
             cards: (run?.cards ?? []).map((c, idx) => {
+                if (inAdvancement) {
+                    return {
+                        title: "",
+                        text: "",
+                        img: backImg,
+                        masked: false,
+                        badges: [],
+                        cardClass: "is-flipped",
+                        tooltip: "Make your advancement choices in the panel."
+                    };
+                }
                 const badges = c.masked ? [] : this._inferChoiceHintBadges(c.data, table);
                 const badgeTip = badges.length
                     ? ` Hints: ${badges.map(entry => entry.detail).join(" ")}`
