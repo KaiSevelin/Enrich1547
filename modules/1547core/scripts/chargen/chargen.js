@@ -4489,10 +4489,12 @@ export class SkillTreeChargenApp extends FormApplication {
                             : `Click to choose this option. The reward is rolled immediately.${badgeTip}`)
                 };
             }),
-            bio: run?.bio ?? [],
-            // Enrich each Life Summary line so inline @info/@stat/@condition chips
-            // render (and other Foundry enrichers too). Plain prose passes through
-            // unchanged.
+            // Enrich Life Summary + Chronicle lines so inline @info/@stat/@condition
+            // chips render (and other Foundry enrichers too). Plain prose passes
+            // through unchanged.
+            bio: await Promise.all(
+                (run?.bio ?? []).map((line) => TextEditor.enrichHTML(String(line), { async: true }))
+            ),
             compiledBio: await Promise.all(
                 this._buildCompiledBiography(run?.bioEvents ?? [])
                     .map((line) => TextEditor.enrichHTML(String(line), { async: true }))

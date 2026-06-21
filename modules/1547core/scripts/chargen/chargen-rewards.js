@@ -1,3 +1,5 @@
+import { statRef } from "../enrichers/info-enricher.js";
+
 export async function parseRewardResult({
     result,
     tableName = "RollTable",
@@ -438,7 +440,7 @@ export async function applyRewardChanges(app, run, changes = [], deps = {}) {
 
             const { dice, mod } = await advanceStat(app.actor, characteristic, steps);
             const verb = steps > 0 ? "Improved" : "Reduced";
-            await app._addBio(run, `${verb} ${characteristic} (${before} -> ${dice}d6+${mod})`, {
+            await app._addBio(run, `${verb} ${statRef(characteristic)} (${before} -> ${dice}d6+${mod})`, {
                 kind: "stat",
                 memorable: false
             });

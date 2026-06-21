@@ -58,4 +58,15 @@ console.log("\ninfo-enricher: resolveInfo...");
     console.log("  ✓ stat/condition resolve; custom label; unknown type/key degrade");
 }
 
+console.log("\ninfo-enricher: emit helpers (statRef/conditionRef)...");
+{
+    const { statRef, conditionRef } = await import("../enrichers/info-enricher.js");
+    assert.strictEqual(statRef("Strength"), "@stat[Strength]{Strength}");
+    assert.strictEqual(statRef("Power", "the uncanny"), "@stat[Power]{the uncanny}");
+    assert.strictEqual(conditionRef("Choking Hold"), "@condition[Choking Hold]{Choking Hold}");
+    // Keys that can't be expressed in the bracket syntax degrade to plain text.
+    assert.strictEqual(statRef("a]b"), "a]b", "key with ] is left plain");
+    console.log("  ✓ helpers emit matching @stat/@condition source text");
+}
+
 console.log("\nAll hud-info-tooltip tests passed.");

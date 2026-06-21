@@ -39,6 +39,20 @@ export function resolveInfo(type, key, label) {
     };
 }
 
+/**
+ * Emit the enricher source text for a reference, for writing into bio lines,
+ * chat, etc. e.g. statRef("Strength") -> "@stat[Strength]{Strength}". Keys with
+ * a `]` or `}` are left as plain text (they can't be expressed safely).
+ */
+function infoRef(type, key, label) {
+    const k = String(key ?? "").trim();
+    const shown = String(label ?? k).trim() || k;
+    if (!k || /[\]}]/.test(k) || /[}]/.test(shown)) return shown;
+    return `@${type}[${k}]{${shown}}`;
+}
+export const statRef = (name, label) => infoRef("stat", name, label);
+export const conditionRef = (name, label) => infoRef("condition", name, label);
+
 function buildInfoElement(type, key, label) {
     const info = resolveInfo(type, key, label);
     const span = document.createElement("span");
