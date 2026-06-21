@@ -4055,16 +4055,15 @@ export class SkillTreeChargenApp extends FormApplication {
     }
 
     // Surface (once per app instance) that the Your Nature roll tables are not in
-    // the world — almost always because the *Character Generator* content import
-    // wasn't run. This is a different menu from "1547 Core" Setup Data: it lives
-    // under the Character Generator module settings (chargen1547_v2).
+    // the world — almost always because Setup Data hasn't been (re-)run since the
+    // content was added. As of 0.3.144, 1547 Core's Setup Data imports it.
     _warnYourNatureContentMissing() {
         if (this._yourNatureMissingWarned) return;
         this._yourNatureMissingWarned = true;
         ui.notifications?.warn?.(
             "Your Nature content isn't imported into this world. Open Configure Settings → "
-            + "Character Generator (chargen1547_v2) → \"Setup Character Generator Content\" and run it. "
-            + "(This is NOT the \"1547 Core\" Setup Data button.)"
+            + "1547 Core → \"Open Setup\" → \"Setup Data\" and run it (this imports the chargen "
+            + "tables too). If it still doesn't appear, your installed 1547 Core may be out of date."
         );
     }
 

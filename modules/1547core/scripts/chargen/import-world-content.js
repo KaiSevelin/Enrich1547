@@ -181,8 +181,19 @@ async function buildImportEntries(files) {
         .sort((a, b) => a.localeCompare(b));
 
     const entries = [];
+    const skipped = [];
     for (const file of importFiles) {
-        const data = await loadImportJSON(file);
+        let data;
+        try {
+            data = await loadImportJSON(file);
+        } catch (err) {
+            // A single unreadable file must NOT abort the whole import — otherwise
+            // a problem early in the alphabet (e.g. an "advanced-*" card) would
+            // stop everything after it from importing, including "your-nature-*".
+            console.error(`[1547core] chargen import: skipping unreadable ${file}`, err);
+            skipped.push(file);
+            continue;
+        }
         const documentType = isItemImportFile(file) ? "Item" : "RollTable";
         const oldId = String(data?._id ?? "").trim();
         const seed = `${documentType}:${oldId || data?.uniqueId || file}`;
@@ -196,6 +207,7 @@ async function buildImportEntries(files) {
         });
     }
 
+    entries.skipped = skipped;
     return entries;
 }
 
@@ -304,8 +316,15 @@ export async function importWorldContent(opts = {}) {
 
     const files = await browseRecursive(rootPath);
     const entries = await buildImportEntries(files);
+    const skipped = Array.isArray(entries.skipped) ? entries.skipped : [];
     const itemEntries = entries.filter(entry => entry.documentType === "Item");
     const tableEntries = entries.filter(entry => entry.documentType === "RollTable");
+
+    // Discoverability check: did the file walk even see the Your Nature content?
+    // If not, the deployed module is missing those files (stale/incomplete
+    // update) rather than the import logic being at fault.
+    const sawYourNature = tableEntries.some(e => String(e.newId) === "RollTablYnNatr00")
+        || files.some(f => /your-nature-selector\//i.test(String(f)));
 
     if (!itemEntries.length && !tableEntries.length) {
         throw new Error(`No importable JSON files found under ${rootPath}.`);
@@ -351,6 +370,8 @@ export async function importWorldContent(opts = {}) {
             packages: packageReport.fileCount
         },
         idMapSize: Object.keys(refMap).length,
+        skipped,
+        sawYourNature,
         items: itemReport,
         rolltables: rollTableReport,
         packages: {

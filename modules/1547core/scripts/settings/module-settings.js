@@ -1146,6 +1146,23 @@ function createModuleSetupFormApplicationClass() {
                 ui.notifications.info(
                     `1547 Core: imported character-generator content — ${cg.items.created + cg.items.updated} items, ${cg.rolltables.created + cg.rolltables.updated} rolltables.`
                 );
+                if (Array.isArray(cg.skipped) && cg.skipped.length) {
+                    console.warn(`${MODULE_ID} | chargen import skipped ${cg.skipped.length} unreadable file(s):`, cg.skipped);
+                }
+                // Verify Your Nature actually landed; if not, say why precisely.
+                const hasYourNature = Boolean(game.tables?.get("RollTablYnNatr00"));
+                if (!hasYourNature) {
+                    if (!cg.sawYourNature) {
+                        ui.notifications.warn(
+                            "1547 Core: the Your Nature content files were not found in the installed module. "
+                            + "Your copy of 1547 Core is missing or out of date — update/reinstall the module (need >= 0.3.137), then re-run Setup Data."
+                        );
+                    } else {
+                        ui.notifications.warn(
+                            "1547 Core: Your Nature files were found but did not import. Check the console (F12) for skipped files, then re-run Setup Data."
+                        );
+                    }
+                }
             } catch (cgErr) {
                 console.error(`${MODULE_ID} | Failed to import character-generator content`, cgErr);
                 ui.notifications.warn(`1547 Core: character-generator content import failed. ${cgErr.message}`);
