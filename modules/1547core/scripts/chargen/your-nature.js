@@ -41,6 +41,31 @@ export const YOUR_NATURE_SELECTOR_KEYS = [
     "Phlegm"
 ];
 
+/**
+ * Flavorful "why this surfaced" line shown above a Your Nature reveal, keyed by
+ * the selected domain. Frames the result as the character's own aptitude or
+ * temperament shaping their life again.
+ */
+export const YOUR_NATURE_CAUSE_LINES = {
+    Strength: "Your strength kept deciding what life asked of you.",
+    Dexterity: "Your quick, sure hands kept finding their own openings.",
+    Stamina: "Your endurance kept setting the limits of what you could survive.",
+    Intelligence: "Your sharp mind kept pulling you toward what others overlooked.",
+    Faith: "Your faith kept rising to the surface when life pressed hardest.",
+    Charisma: "Your presence kept changing how the world chose to answer you.",
+    Power: "Something uncanny in you kept brushing up against the world.",
+    Blood: "Your sanguine blood ran too warm to leave you still.",
+    "Yellow bile": "Your yellow bile would not be governed for long.",
+    "Black bile": "Your black bile kept colouring the world in its own shades.",
+    Phlegm: "Your phlegmatic calm shaped your life as surely as any storm."
+};
+
+/** The cause line for a selected domain, with a safe generic fallback. */
+export function yourNatureCauseLine(key) {
+    const domain = String(key ?? "").trim();
+    return YOUR_NATURE_CAUSE_LINES[domain] || (domain ? `${domain} rose to the surface again.` : "");
+}
+
 /** Humour selector keys mapped to the actor prop that proves the humour. */
 export const YOUR_NATURE_HUMOUR_PROPS = {
     Blood: "Humour_Blood",

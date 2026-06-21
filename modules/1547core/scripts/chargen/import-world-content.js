@@ -211,25 +211,6 @@ async function buildImportEntries(files) {
     return entries;
 }
 
-async function upsertWorldDocument(documentClass, data, folder) {
-    const payload = foundry.utils.deepClone(data);
-    payload.folder = folder?.id ?? null;
-
-    const collection = documentClass.metadata.collection;
-    const existing = game[collection]?.get(payload._id) ?? null;
-
-    if (existing) {
-        const existingId = existing.id;
-        await existing.delete();
-        payload._id = existingId;
-        const recreated = await documentClass.create(payload, { keepId: true });
-        return { action: "updated", document: recreated };
-    }
-
-    const created = await documentClass.create(payload, { keepId: true });
-    return { action: "created", document: created };
-}
-
 async function importEntriesOfType({
     rootPath,
     entries,
@@ -241,24 +222,60 @@ async function importEntriesOfType({
     const folderCache = new Map();
     const rootFolder = await ensureFolderPath(documentType, [folderRootName], folderCache);
     const nestedUsedIds = new Set();
-    let created = 0;
-    let updated = 0;
+    const collection = documentClass.metadata.collection;
 
     const selected = entries.filter(entry => entry.documentType === documentType);
+
+    // Build every payload first (folders are ensured + cached along the way).
+    const payloads = [];
     for (const entry of selected) {
         const dirParts = relativeDirParts(rootPath, entry.file);
         const folder = await ensureFolderPath(documentType, [folderRootName, ...dirParts], folderCache) ?? rootFolder;
         const payload = rewriteDataRefs(foundry.utils.deepClone(entry.data), refMap, nestedUsedIds, entry.file);
         payload._id = entry.newId;
+        payload.folder = folder?.id ?? null;
         if (documentType === "Item" && payload.system && typeof payload.system === "object") {
             const sourceUniqueId = String(payload.system.uniqueId ?? "").trim();
             if (sourceUniqueId === entry.oldId || !isValidFoundryId(sourceUniqueId)) {
                 payload.system.uniqueId = entry.newId;
             }
         }
-        const result = await upsertWorldDocument(documentClass, payload, folder);
-        if (result.action === "created") created += 1;
-        else updated += 1;
+        payloads.push(payload);
+    }
+
+    const existingIds = payloads.map(p => p._id).filter(id => game[collection]?.get(id));
+
+    // Bulk delete-then-create: two transactions instead of ~2 DB writes per
+    // document, which turns a multi-minute import into seconds. Fall back to
+    // per-document on a batch error so one bad payload can't drop the whole set.
+    try {
+        if (existingIds.length) await documentClass.deleteDocuments(existingIds);
+        if (payloads.length) await documentClass.createDocuments(payloads, { keepId: true });
+        return {
+            fileCount: selected.length,
+            created: payloads.length - existingIds.length,
+            updated: existingIds.length
+        };
+    } catch (err) {
+        console.warn(`[${MODULE_ID}] bulk ${documentType} import failed; falling back to per-document.`, err);
+    }
+
+    let created = 0;
+    let updated = 0;
+    for (const payload of payloads) {
+        try {
+            const existing = game[collection]?.get(payload._id);
+            if (existing) {
+                await existing.delete();
+                await documentClass.create(payload, { keepId: true });
+                updated += 1;
+            } else {
+                await documentClass.create(payload, { keepId: true });
+                created += 1;
+            }
+        } catch (e2) {
+            console.error(`[${MODULE_ID}] failed to import ${documentType} ${payload._id}`, e2);
+        }
     }
 
     return {

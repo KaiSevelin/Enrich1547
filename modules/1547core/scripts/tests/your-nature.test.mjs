@@ -117,6 +117,20 @@ console.log("\nyour-nature: selector-bucket fallback...");
     console.log("  ✓ endpoints, full 216-combo coverage, monotonic, ~uniform, clamps");
 }
 
+console.log("\nyour-nature: cause lines...");
+{
+    // Every selector domain has an authored, non-empty cause line.
+    for (const key of yn.YOUR_NATURE_SELECTOR_KEYS) {
+        const line = yn.yourNatureCauseLine(key);
+        assert.ok(line && line.length > 0, `${key} has a cause line`);
+        assert.strictEqual(line, yn.YOUR_NATURE_CAUSE_LINES[key], `${key} cause line matches the map`);
+    }
+    // Unknown/empty inputs degrade gracefully.
+    assert.ok(yn.yourNatureCauseLine("Charm").includes("Charm"), "unknown domain falls back generically");
+    assert.strictEqual(yn.yourNatureCauseLine(""), "", "empty domain yields empty line");
+    console.log("  ✓ all 11 domains have cause lines; graceful fallback");
+}
+
 console.log("\nyour-nature: ref table integrity...");
 {
     // Every selector key has a destination ref, and every ref is a 16-char id.

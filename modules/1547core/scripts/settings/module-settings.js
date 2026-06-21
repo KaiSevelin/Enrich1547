@@ -880,6 +880,14 @@ export function register1547ModuleSettings() {
         default: ""
     });
 
+    game.settings.register(MODULE_ID, "chargenContentStats", {
+        name: "Character Generator Content Stats",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: { items: 0, rolltables: 0 }
+    });
+
     game.settings.register(MODULE_ID, "reachMigrationVersion", {
         name: "Reach Migration Version",
         scope: "world",
@@ -997,9 +1005,12 @@ function createModuleSetupFormApplicationClass() {
             const storedChanges = game.settings.get(MODULE_ID, "changeData") ?? [];
             const storedRequirements = game.settings.get(MODULE_ID, "requirementData") ?? [];
             const lastDataSetupAt = game.settings.get(MODULE_ID, "lastDataSetupAt") || "";
+            const chargenStats = game.settings.get(MODULE_ID, "chargenContentStats") ?? { items: 0, rolltables: 0 };
 
             return {
                 moduleVersion: game.modules.get(MODULE_ID)?.version ?? "unknown",
+                storedChargenItemCount: Number(chargenStats?.items ?? 0),
+                storedChargenRollTableCount: Number(chargenStats?.rolltables ?? 0),
                 storedManeuverCount: Array.isArray(storedManeuvers) ? storedManeuvers.length : 0,
                 storedWeaponCount: Array.isArray(storedWeapons) ? storedWeapons.length : 0,
                 storedArmorCount: Array.isArray(storedArmors) ? storedArmors.length : 0,
@@ -1029,11 +1040,10 @@ function createModuleSetupFormApplicationClass() {
                 const originalText = button?.textContent ?? "";
                 if (button) {
                     button.disabled = true;
-                    button.textContent = "Setting up… (this can take a minute)";
+                    button.textContent = "Setting up… (this can take some minutes)";
                     button.style.opacity = "0.7";
                     button.style.cursor = "wait";
                 }
-                ui.notifications.info("1547 Core: setup started — loading datasets, building items, upserting documents…");
                 try {
                     await this.#setupData();
                 } finally {
@@ -1100,10 +1110,6 @@ function createModuleSetupFormApplicationClass() {
                     diseases
                 });
 
-                ui.notifications.info(
-                `1547 Core: stored and synced ${maneuvers.length} maneuvers, ${weapons.length} weapons, ${armors.length} armors, ${ammunition.length} ammunition items, ${weaponModifiers.length} weapon modifiers, ${spells.length} spells, ${ritualStepRollTables.length} ritual step roll tables, ${spellFailureRollTables.length} spell failure roll tables, ${spellSupportRollTables.length} spell support roll tables, ${boostRollTables.length} boost roll tables, ${pacts.length} pacts, ${(supernaturalMarks ?? []).length} supernatural marks, ${(diseases ?? []).length} diseases, ${monsters.length} monsters, ${changeSets.length} change sets, ${changes.length} changes, and ${requirements.length} requirements from source data.`
-                );
-
                 // Point the Boost Roll Table setting at the freshly-seeded
                 // "Standard Boost" table if the GM hasn't configured one, so the
                 // field isn't left blank after setup.
@@ -1122,7 +1128,18 @@ function createModuleSetupFormApplicationClass() {
                 // world RollTables/Items by a separate routine. Run it here so this
                 // single Setup Data imports everything the system needs — there is no
                 // hidden second importer to hunt for.
-                await this.#setupChargenContent();
+                const cg = await this.#setupChargenContent();
+
+                // One completion toast for the whole pass; full counts live on the panel.
+                const cgItems = cg ? (cg.items.created + cg.items.updated) : 0;
+                const cgTables = cg ? (cg.rolltables.created + cg.rolltables.updated) : 0;
+                const systemRecords = maneuvers.length + weapons.length + armors.length + ammunition.length
+                    + weaponModifiers.length + spells.length + monsters.length + changeSets.length
+                    + changes.length + pacts.length + (supernaturalMarks ?? []).length + (diseases ?? []).length
+                    + requirements.length;
+                ui.notifications.info(
+                    `1547 Core: setup complete — ${systemRecords} system records seeded and ${cgItems} chargen items + ${cgTables} chargen rolltables imported. See the panel for full counts.`
+                );
 
                 this.render(false);
             } catch (error) {
@@ -1143,12 +1160,15 @@ function createModuleSetupFormApplicationClass() {
                 } catch (_) { /* setting not registered yet — fall back to default folder */ }
 
                 const cg = await importWorldContent({ rootFolderName: folderName });
-                ui.notifications.info(
-                    `1547 Core: imported character-generator content — ${cg.items.created + cg.items.updated} items, ${cg.rolltables.created + cg.rolltables.updated} rolltables.`
-                );
                 if (Array.isArray(cg.skipped) && cg.skipped.length) {
                     console.warn(`${MODULE_ID} | chargen import skipped ${cg.skipped.length} unreadable file(s):`, cg.skipped);
                 }
+                try {
+                    await game.settings.set(MODULE_ID, "chargenContentStats", {
+                        items: cg.items.created + cg.items.updated,
+                        rolltables: cg.rolltables.created + cg.rolltables.updated
+                    });
+                } catch (_) { /* non-fatal: stats are display-only */ }
                 // Verify Your Nature actually landed; if not, say why precisely.
                 const hasYourNature = Boolean(game.tables?.get("RollTablYnNatr00"));
                 if (!hasYourNature) {
@@ -1163,9 +1183,11 @@ function createModuleSetupFormApplicationClass() {
                         );
                     }
                 }
+                return cg;
             } catch (cgErr) {
                 console.error(`${MODULE_ID} | Failed to import character-generator content`, cgErr);
                 ui.notifications.warn(`1547 Core: character-generator content import failed. ${cgErr.message}`);
+                return null;
             }
         }
 

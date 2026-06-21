@@ -34,7 +34,8 @@ import {
     hasYourNatureRequirement,
     isYourNatureEligibleStage,
     shouldTriggerYourNature,
-    yourNatureSelectorBucket
+    yourNatureSelectorBucket,
+    yourNatureCauseLine
 } from "./your-nature.js";
 import * as TemplateParse from "./chargen-template-parse.js";
 import * as Validation from "./chargen-validation.js";
@@ -4148,7 +4149,7 @@ export class SkillTreeChargenApp extends FormApplication {
             isDeferred: true,
             deferredKind: "your-nature",
             title: "Your Nature",
-            originLine: selectedKey ? `${selectedKey} rose to the surface.` : "",
+            originLine: yourNatureCauseLine(selectedKey),
             sourceTitle: String(parsed?.choice?.title ?? "").trim(),
             text: String(parsed?.choice?.text ?? "").trim(),
             image: String(parsed?.choice?.icon ?? sourceTable?.img ?? "").trim(),

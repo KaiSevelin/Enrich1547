@@ -66,6 +66,16 @@
     </div>
 
     <div class="form-group">
+      <label>Chargen Items</label>
+      <div>{{storedChargenItemCount}}</div>
+    </div>
+
+    <div class="form-group">
+      <label>Chargen Roll Tables</label>
+      <div>{{storedChargenRollTableCount}}</div>
+    </div>
+
+    <div class="form-group">
       <label>Last Setup</label>
       <div>{{#if lastDataSetupAt}}{{lastDataSetupAt}}{{else}}Not run yet{{/if}}</div>
     </div>
@@ -74,8 +84,11 @@
       Setup Data loads the module's maneuver, weapon, armor, ammunition,
       spell, ritual-step roll table, spell-failure roll table, spell-support roll table, monster, change set, change, and
       requirement datasets into world settings, writes the live templates,
-      creates the managed Actor, Item, and RollTable folder structure, and
-      immediately syncs matching world documents from that source data.
+      creates the managed Actor, Item, and RollTable folder structure,
+      immediately syncs matching world documents from that source data, and
+      imports the character-generator content (life-path tables, Your Nature,
+      body tables). One pass sets up everything the system needs; it can take
+      some minutes.
     </p>
   </section>
 
