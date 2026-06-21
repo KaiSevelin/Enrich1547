@@ -2,7 +2,7 @@ import { MODULE_ID } from "../lib/constants.mjs";
 import { renderDriveHintHtml, getDriveHintData } from "./drive-prompts.js";
 import { PRIMARY_STATS, statSteps, statFromSteps } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
 import { getStatTooltip } from "../hud/stat-info.js";
-import { humourRef } from "../enrichers/info-enricher.js";
+import { statRef, humourRef, maneuverRef, itemRef, skillRef, infoTooltip } from "../enrichers/info-enricher.js";
 import { canonicalHumour } from "../services/humour-info.js";
 import {
     advanceDeferredQueue,
@@ -2938,12 +2938,16 @@ export class SkillTreeChargenApp extends FormApplication {
             ];
             return this._randomChoice(options);
         }
+        const entryOptions = await Promise.all(entries.map(async (entry) => ({
+            value: entry.nodeId,
+            title: entry.name,
+            meta: `${String(entry.kind ?? "skill")} • ${entry.currentLevel} -> ${entry.nextLevel}`,
+            // Hover info: maneuvers show their rules text; skills show their item
+            // description (or level + prerequisites).
+            tooltip: await infoTooltip(entry.kind === "maneuver" ? "maneuver" : "skill", entry.name),
+        })));
         const options = [
-            ...entries.map((entry) => ({
-                value: entry.nodeId,
-                title: entry.name,
-                meta: `${String(entry.kind ?? "skill")} • ${entry.currentLevel} -> ${entry.nextLevel}`,
-            })),
+            ...entryOptions,
             ...alternativeOptions.map((option) => ({
                 value: option.value,
                 title: option.label,
@@ -3313,7 +3317,8 @@ export class SkillTreeChargenApp extends FormApplication {
             );
             const showLevel = grantedType !== "maneuver" && Number.isFinite(grantedLevel);
             if (!silent) {
-                await this._addBio(run, showLevel ? `Learned ${grantedName} ${grantedLevel}` : `Learned ${grantedName}`);
+                const ref = grantedType === "maneuver" ? maneuverRef(grantedName) : skillRef(grantedName);
+                await this._addBio(run, showLevel ? `Learned ${ref} ${grantedLevel}` : `Learned ${ref}`);
             }
             return {
                 ok: true,
@@ -3344,7 +3349,7 @@ export class SkillTreeChargenApp extends FormApplication {
         await this._ensureSkillTreeActorRefs(graphData);
         if (!silent) {
             const learnedName = await this._resolveLearnedLabel(targetKey, step.nodeName);
-            await this._addBio(run, `Learned ${learnedName} ${next}`);
+            await this._addBio(run, `Learned ${skillRef(learnedName)} ${next}`);
         }
         return {
             ok: true,
@@ -4304,14 +4309,21 @@ export class SkillTreeChargenApp extends FormApplication {
     async _summarizeChange(ch) {
         if (!ch || typeof ch !== "object") return null;
 
+        if (ch.type === "stat") {
+            const c = String(ch.characteristic ?? "").trim();
+            const steps = Number(ch.steps ?? 0);
+            if (c) return `${statRef(c)} ${steps >= 0 ? "+" : ""}${steps}`;
+        }
+
         if (ch.type === "skill" || ch.type === "maneuver") {
             const kind = ch.type === "maneuver" ? "Maneuver" : "Skill";
             const label = await this._resolveSummaryLabelForItemSpec(ch.targetKey ?? ch.skill ?? ch.maneuver ?? "");
+            const ref = ch.type === "maneuver" ? maneuverRef(label) : skillRef(label);
             const level = Number(ch.targetLevel);
             if (Number.isFinite(level) && level !== 0) {
-                return `${kind}: ${label} ${level > 0 ? "+" : ""}${level}`;
+                return `${kind}: ${ref} ${level > 0 ? "+" : ""}${level}`;
             }
-            return `${kind}: ${label}`;
+            return `${kind}: ${ref}`;
         }
 
         if (ch.type === "bio") {
@@ -4324,10 +4336,10 @@ export class SkillTreeChargenApp extends FormApplication {
         }
 
         if (ch.type === "item") {
-            if (ch.name) return `Item: ${ch.name}`;
+            if (ch.name) return `Item: ${itemRef(ch.name)}`;
             if (ch.itemUuid) {
                 const itemName = await this._resolveSummaryLabelForItemSpec(ch.itemUuid);
-                return itemName ? `Item: ${itemName}` : "Item reward";
+                return itemName ? `Item: ${itemRef(itemName)}` : "Item reward";
             }
             if (ch.tableUuid) {
                 const tableName = await this._resolveSummaryLabelForTableRef(ch.tableUuid);
@@ -4339,11 +4351,16 @@ export class SkillTreeChargenApp extends FormApplication {
     }
 
     async _buildRevealSummary(run, reward, nextUuid, transitionState = "", fromName = "") {
-        const lines = [];
+        const rawLines = [];
         for (const ch of reward?.changes ?? []) {
             const line = await this._summarizeChange(ch);
-            if (line) lines.push(line);
+            if (line) rawLines.push(line);
         }
+        // Enrich so @stat/@skill/@maneuver/@item refs render as chips in the
+        // transition interstitial (rendered raw in the template).
+        const lines = await Promise.all(
+            rawLines.map(line => TextEditor.enrichHTML(String(line), { async: true }))
+        );
 
         const nextName = nextUuid ? await this._getTableName(nextUuid) : "";
         const transitionKind = String(transitionState ?? "").trim().toLowerCase();
@@ -4405,7 +4422,12 @@ export class SkillTreeChargenApp extends FormApplication {
         const unknownImg = resolveImgPath(UNKNOWN_CARD_IMAGE);
 
         const revealDeferredLines = reveal?.isDeferred
-            ? (await Promise.all((reveal.payload?.changes ?? []).map(ch => this._summarizeChange(ch)))).filter(Boolean)
+            ? await Promise.all(
+                (await Promise.all((reveal.payload?.changes ?? []).map(ch => this._summarizeChange(ch))))
+                    .filter(Boolean)
+                    // Enrich so the @stat/@skill/@maneuver/@item refs render as chips.
+                    .map(line => TextEditor.enrichHTML(String(line), { async: true }))
+            )
             : [];
         const revealDeferredHtml = reveal?.isDeferred && reveal?.text
             ? this._formatDeferredBiographyText(reveal.text, reveal.sourceTitle)
@@ -5222,7 +5244,7 @@ export class SkillTreeChargenApp extends FormApplication {
                 const cur = Number(foundry.utils.getProperty(existing, qtyPath) ?? 1);
                 const next = Math.max(0, cur + qty);
                 await existing.update({ [qtyPath]: next });
-                await this._addBio(run, `Item: ${name} (${cur} â†’ ${next})`);
+                await this._addBio(run, `Item: ${itemRef(name)} (${cur} â†’ ${next})`);
                 return;
             }
         }
@@ -5233,7 +5255,7 @@ export class SkillTreeChargenApp extends FormApplication {
         foundry.utils.setProperty(data, "system.props.Quantity", Number.isFinite(qty) ? qty : 1);
 
         await this.actor.createEmbeddedDocuments("Item", [data]);
-        await this._addBio(run, `Item: ${name}${qty !== 1 ? ` Ã—${qty}` : ""}`);
+        await this._addBio(run, `Item: ${itemRef(name)}${qty !== 1 ? ` Ã—${qty}` : ""}`);
     }
 
     async _finishWithSummary(run) {

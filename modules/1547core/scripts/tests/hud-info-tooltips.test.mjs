@@ -82,9 +82,12 @@ console.log("\ninfo-enricher: emit helpers (statRef/conditionRef)...");
     assert.strictEqual(statRef("Strength"), "@stat[Strength]{Strength}");
     assert.strictEqual(statRef("Power", "the uncanny"), "@stat[Power]{the uncanny}");
     assert.strictEqual(conditionRef("Choking Hold"), "@condition[Choking Hold]{Choking Hold}");
-    const { humourRef, powerRef } = await import("../enrichers/info-enricher.js");
+    const { humourRef, powerRef, maneuverRef, itemRef, skillRef } = await import("../enrichers/info-enricher.js");
     assert.strictEqual(humourRef("YellowBile", "Yellow Bile"), "@humour[YellowBile]{Yellow Bile}");
     assert.strictEqual(powerRef("Animal familiarity"), "@power[Animal familiarity]{Animal familiarity}");
+    assert.strictEqual(maneuverRef("Shield Bash"), "@maneuver[Shield Bash]{Shield Bash}");
+    assert.strictEqual(itemRef("Longbow"), "@item[Longbow]{Longbow}");
+    assert.strictEqual(skillRef("Athletics"), "@skill[Athletics]{Athletics}");
     // Keys that can't be expressed in the bracket syntax degrade to plain text.
     assert.strictEqual(statRef("a]b"), "a]b", "key with ] is left plain");
     console.log("  ✓ helpers emit matching @stat/@condition source text");
