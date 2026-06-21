@@ -155,34 +155,46 @@ let skillMapPromise = null;
 
 async function loadSkillMap() {
     const map = new Map();
-    let graph = {};
-    try {
-        const route = (typeof foundry !== "undefined" && foundry?.utils?.getRoute)
-            ? foundry.utils.getRoute(SKILL_GRAPH_PATH) : SKILL_GRAPH_PATH;
-        const res = await fetch(route, { cache: "no-store" });
-        if (res.ok) {
-            let text = await res.text();
-            if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
-            graph = JSON.parse(text);
+
+    // The node id IS the skill item's UUID (often a compendium UUID), so resolve
+    // each via fromUuid — the same way the skill-tree service does. Prefer the
+    // live SkillTree.NODES graph (matches the world); fall back to the shipped
+    // default graph file when the service isn't available.
+    let entries = [];
+    const liveNodes = (typeof globalThis !== "undefined") ? globalThis.SkillTree?.NODES : null;
+    if (liveNodes instanceof Map) {
+        entries = [...liveNodes.entries()];
+    } else {
+        try {
+            const route = (typeof foundry !== "undefined" && foundry?.utils?.getRoute)
+                ? foundry.utils.getRoute(SKILL_GRAPH_PATH) : SKILL_GRAPH_PATH;
+            const res = await fetch(route, { cache: "no-store" });
+            if (res.ok) {
+                let text = await res.text();
+                if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+                entries = Object.entries(JSON.parse(text));
+            }
+        } catch (err) {
+            console.warn("[1547core] info-enricher: could not load skill graph", err);
+            return map;
         }
-    } catch (err) {
-        console.warn("[1547core] info-enricher: could not load skill graph", err);
-        return map;
     }
 
-    const idToName = new Map(Object.entries(graph).map(([id, n]) => [id, n?.name ?? id]));
-    const worldItems = (typeof game !== "undefined" && game?.items) ? game.items : null;
-    for (const [nodeId, node] of Object.entries(graph)) {
-        if (!node || node.kind !== "skill") continue;
+    const idToName = new Map(entries.map(([id, n]) => [id, n?.name ?? id]));
+    const canResolve = typeof fromUuid === "function";
+    await Promise.all(entries.map(async ([nodeId, node]) => {
+        if (!node || node.kind !== "skill") return;
         const name = String(node.name ?? "").trim();
-        if (!name) continue;
+        if (!name) return;
 
         let desc = "";
-        const item = worldItems ? worldItems.get(String(nodeId).replace(/^Item\./, "")) : null;
-        if (item) {
-            const props = item.system?.props ?? {};
-            const src = item.flags?.["1547Core"]?.sourceData ?? {};
-            desc = String(props.Description ?? src.description ?? src.Description ?? "").trim();
+        if (canResolve) {
+            try {
+                const item = await fromUuid(nodeId);
+                const props = item?.system?.props ?? {};
+                const src = item?.flags?.["1547Core"]?.sourceData ?? {};
+                desc = String(props.Description ?? src.description ?? src.Description ?? "").trim();
+            } catch { /* unresolvable — fall back to the level/prereq summary */ }
         }
         if (!desc) {
             const fmt = (list) => (list ?? []).map((r) => `${idToName.get(r.nodeId) ?? r.nodeId} ${r.minLevel}+`);
@@ -194,7 +206,7 @@ async function loadSkillMap() {
             ].filter(Boolean).join(" · ");
         }
         map.set(name.toLowerCase(), { name, description: desc });
-    }
+    }));
     return map;
 }
 
