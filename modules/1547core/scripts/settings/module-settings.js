@@ -935,11 +935,13 @@ export function register1547ModuleSettings() {
 
     game.settings.register(MODULE_ID, "boostRollTableUuid", {
         name: "Boost Roll Table UUID",
-        hint: "Foundry UUID of the Roll Table used to randomly pick boost ChangeSets when a monster's Boost button is pressed. Example: RollTable.abc1234567890def or worlds/<world>/<id>.",
+        hint: "Foundry UUID of the Roll Table used to randomly pick boost ChangeSets when a monster's Boost button is pressed. Defaults to the seeded \"Standard Boost\" table; clear or override to use your own. Example: RollTable.abc1234567890def or worlds/<world>/<id>.",
         scope: "world",
         config: true,
         type: String,
-        default: ""
+        // Deterministic id of the seeded "Standard Boost" table (derived from its
+        // source id "BoostStandard"). Setup Data also auto-fills this if empty.
+        default: "RollTable.HdpHjbloGiGMUK89"
     });
 
     const moduleSetupFormType = createModuleSetupFormApplicationClass();
@@ -1101,10 +1103,52 @@ function createModuleSetupFormApplicationClass() {
                 ui.notifications.info(
                 `1547 Core: stored and synced ${maneuvers.length} maneuvers, ${weapons.length} weapons, ${armors.length} armors, ${ammunition.length} ammunition items, ${weaponModifiers.length} weapon modifiers, ${spells.length} spells, ${ritualStepRollTables.length} ritual step roll tables, ${spellFailureRollTables.length} spell failure roll tables, ${spellSupportRollTables.length} spell support roll tables, ${boostRollTables.length} boost roll tables, ${pacts.length} pacts, ${(supernaturalMarks ?? []).length} supernatural marks, ${(diseases ?? []).length} diseases, ${monsters.length} monsters, ${changeSets.length} change sets, ${changes.length} changes, and ${requirements.length} requirements from source data.`
                 );
+
+                // Point the Boost Roll Table setting at the freshly-seeded
+                // "Standard Boost" table if the GM hasn't configured one, so the
+                // field isn't left blank after setup.
+                try {
+                    const currentBoost = String(game.settings.get(MODULE_ID, "boostRollTableUuid") ?? "").trim();
+                    if (!currentBoost) {
+                        const boostTable = game.tables?.find((t) => t.name === "Standard Boost");
+                        if (boostTable?.uuid) await game.settings.set(MODULE_ID, "boostRollTableUuid", boostTable.uuid);
+                    }
+                } catch (boostErr) {
+                    console.warn(`${MODULE_ID} | Could not auto-set boostRollTableUuid`, boostErr);
+                }
+
+                // Character-generator content (life-path tables, Your Nature, body
+                // tables) lives under foundry/Templates/chargen and is imported as
+                // world RollTables/Items by a separate routine. Run it here so this
+                // single Setup Data imports everything the system needs — there is no
+                // hidden second importer to hunt for.
+                await this.#setupChargenContent();
+
                 this.render(false);
             } catch (error) {
                 console.error(`${MODULE_ID} | Failed to setup data`, error);
                 ui.notifications.error(`1547 Core: failed to setup data. ${error.message}`);
+            }
+        }
+
+        async #setupChargenContent() {
+            try {
+                const [{ importWorldContent }, chargenSettings] = await Promise.all([
+                    import("../chargen/import-world-content.js"),
+                    import("../chargen/settings.js")
+                ]);
+                let folderName = "Character generator";
+                try {
+                    folderName = String(chargenSettings.getChargenSetting("contentFolderName") ?? "").trim() || folderName;
+                } catch (_) { /* setting not registered yet — fall back to default folder */ }
+
+                const cg = await importWorldContent({ rootFolderName: folderName });
+                ui.notifications.info(
+                    `1547 Core: imported character-generator content — ${cg.items.created + cg.items.updated} items, ${cg.rolltables.created + cg.rolltables.updated} rolltables.`
+                );
+            } catch (cgErr) {
+                console.error(`${MODULE_ID} | Failed to import character-generator content`, cgErr);
+                ui.notifications.warn(`1547 Core: character-generator content import failed. ${cgErr.message}`);
             }
         }
 
