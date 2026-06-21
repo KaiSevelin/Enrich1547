@@ -58,9 +58,62 @@ function infoRef(type, key, label) {
 export const statRef = (name, label) => infoRef("stat", name, label);
 export const conditionRef = (name, label) => infoRef("condition", name, label);
 export const humourRef = (name, label) => infoRef("humour", name, label);
+export const powerRef = (name, label) => infoRef("power", name, label);
 
-function buildInfoElement(type, key, label) {
-    const info = resolveInfo(type, key, label);
+// Powers are items, not a small in-memory catalog, so @power[Name] resolves by
+// name against the two compendium packs. Indexed once and cached for the session.
+const POWER_PACKS = ["1547core.supernatural-marks", "1547core.monster-magic"];
+let powerMapPromise = null;
+
+async function loadPowerMap() {
+    const map = new Map();
+    const packs = (typeof game !== "undefined" && game?.packs) ? game.packs : null;
+    if (!packs) return map;
+    for (const packId of POWER_PACKS) {
+        const pack = packs.get(packId);
+        if (!pack) continue;
+        try {
+            const index = await pack.getIndex({
+                fields: ["system.props.Description", "flags.1547Core.sourceData.description"]
+            });
+            for (const entry of index) {
+                const name = String(entry?.name ?? "").trim();
+                if (!name) continue;
+                const desc = String(
+                    foundry.utils.getProperty(entry, "system.props.Description")
+                    || foundry.utils.getProperty(entry, "flags.1547Core.sourceData.description")
+                    || ""
+                ).trim();
+                map.set(name.toLowerCase(), { name, description: desc });
+            }
+        } catch (err) {
+            console.warn(`[1547core] info-enricher: could not index powers from ${packId}`, err);
+        }
+    }
+    return map;
+}
+
+function ensurePowerMap() {
+    if (!powerMapPromise) powerMapPromise = loadPowerMap();
+    return powerMapPromise;
+}
+
+async function resolvePowerInfo(key, label) {
+    const k = String(key ?? "").trim();
+    const found = (await ensurePowerMap()).get(k.toLowerCase());
+    const tooltip = found?.description ? `${found.name} — ${found.description}` : "";
+    return {
+        type: "power",
+        key: k,
+        label: String(label ?? "").trim() || found?.name || k,
+        tooltip,
+        known: Boolean(tooltip)
+    };
+}
+
+async function buildInfoElement(type, key, label) {
+    const t = String(type ?? "").trim().toLowerCase();
+    const info = t === "power" ? await resolvePowerInfo(key, label) : resolveInfo(t, key, label);
     const span = document.createElement("span");
     span.classList.add("enricher-1547-info");
     span.textContent = info.label;
@@ -100,6 +153,11 @@ export function register1547InfoEnricher() {
     enrichers.push({
         pattern: /@humou?r\[\s*([^\]]+?)\s*\](?:\{([^}]+)\})?/g,
         enricher: async (match) => buildInfoElement("humour", match[1], match[2]),
+        replaceParent: false
+    });
+    enrichers.push({
+        pattern: /@power\[\s*([^\]]+?)\s*\](?:\{([^}]+)\})?/g,
+        enricher: async (match) => buildInfoElement("power", match[1], match[2]),
         replaceParent: false
     });
 }
