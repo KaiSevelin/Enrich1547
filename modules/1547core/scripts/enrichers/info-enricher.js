@@ -91,6 +91,7 @@ export const luckRef = (name, label) => infoRef("luck", name, label);
 const PACK_SETS = {
     power: ["1547core.supernatural-marks", "1547core.monster-magic"],
     maneuver: ["1547core.maneuvers"],
+    skill: ["1547core.skills"],
     item: [
         "1547core.equipment", "1547core.weapons", "1547core.armors", "1547core.ammunition",
         "1547core.weapon-modifiers", "1547core.pacts", "1547core.spells", "1547core.diseases",
@@ -217,15 +218,18 @@ function ensureSkillMap() {
 
 async function resolveSkillInfo(key, label) {
     const k = String(key ?? "").trim();
+    const pick = (name) => String(label ?? "").trim() || name || k;
+
+    // Prefer the authored skills compendium description.
+    const fromPack = (await ensurePackMap("skill")).get(k.toLowerCase());
+    if (fromPack?.description) {
+        return { type: "skill", key: k, label: pick(fromPack.name), tooltip: `${fromPack.name} — ${fromPack.description}`, known: true };
+    }
+
+    // Fall back to the live skill graph (level range + prerequisites).
     const found = (await ensureSkillMap()).get(k.toLowerCase());
     const tooltip = found?.description ? `${found.name} — ${found.description}` : "";
-    return {
-        type: "skill",
-        key: k,
-        label: String(label ?? "").trim() || found?.name || k,
-        tooltip,
-        known: Boolean(tooltip)
-    };
+    return { type: "skill", key: k, label: pick(found?.name), tooltip, known: Boolean(tooltip) };
 }
 
 const ASYNC_PACK_TYPES = new Set(["power", "maneuver", "item"]);

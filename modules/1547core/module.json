@@ -2,7 +2,7 @@
     "id":  "1547core",
     "title":  "1547 Core",
     "description":  "Core rules and shared runtime for 1547",
-    "version":  "0.3.159",
+    "version":  "0.3.160",
     "compatibility":  {
                           "minimum":  "11",
                           "verified":  "13.350"
@@ -73,6 +73,17 @@
                       "name":  "maneuvers",
                       "label":  "1547 Maneuvers",
                       "path":  "packs/maneuvers",
+                      "type":  "Item",
+                      "system":  "custom-system-builder",
+                      "ownership":  {
+                                        "PLAYER":  "OBSERVER",
+                                        "ASSISTANT":  "OWNER"
+                                    }
+                  },
+                  {
+                      "name":  "skills",
+                      "label":  "1547 Skills",
+                      "path":  "packs/skills",
                       "type":  "Item",
                       "system":  "custom-system-builder",
                       "ownership":  {

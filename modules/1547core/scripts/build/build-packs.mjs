@@ -49,8 +49,20 @@ const TEMPLATE_FILES = {
     requirement: "fvtt-Item-requirementtemplate-L4ujYgqhGBGcoo2P.json",
     changeSet: "fvtt-Item-changesettemplate-b7A1z6cSZO4dYTKT.json",
     change: "fvtt-Item-changetemplate-WsrkfjBmudnIhvEK.json",
+    skill: "fvtt-Item-skilltemplate-BbwVnEJobtCR5oOf.json",
     actor: "fvtt-Actor-1547-Tgs09eTiTp63Cp7u.json"
 };
+
+// Skills are reference items keyed by name; the skill-tree graph drives the
+// mechanics, so the pack just carries the authored description + grouping.
+function buildSkillProps(source) {
+    return {
+        Description: String(source.description ?? ""),
+        Group: String(source.group ?? ""),
+        MinLevel: String(source.minLevel ?? ""),
+        MaxLevel: String(source.maxLevel ?? "")
+    };
+}
 
 
 const CHANGE_FOLDER_LABELS = {
@@ -141,6 +153,15 @@ async function buildManeuversPack() {
 // --- Spells --------------------------------------------------------------
 
 
+
+async function buildSkillsPack() {
+    const skills = loadJson(path.join(TEMPLATES_DIR, "skills.json"));
+    const template = loadJson(path.join(TEMPLATES_DIR, TEMPLATE_FILES.skill));
+    const docs = skills.map((src) =>
+        makeItemDoc(src, template, src.img ?? template.img ?? "icons/svg/upgrade.svg", buildSkillProps, src.group ?? "Skills")
+    );
+    await compilePackFromDocs("skills", docs);
+}
 
 async function buildSpellsPack() {
     const spells = loadJson(path.join(TEMPLATES_DIR, "spells.json"));
@@ -1006,6 +1027,7 @@ async function main() {
     console.log("  refreshed ritual step table pick ranges");
     await buildRulebookPack();
     await buildManeuversPack();
+    await buildSkillsPack();
     await buildSpellsPack();
     await buildDiseasesPack();
     await buildMonsterMagicPack();

@@ -1,0 +1,402 @@
+[
+ {
+  "_id": "3ssOYdjj50y5HMlZ",
+  "name": "Art Creative",
+  "description": "Creative artistry — making beautiful or expressive work by hand and eye.",
+  "group": "Art",
+  "minLevel": 1,
+  "maxLevel": 1
+ },
+ {
+  "_id": "ZZ12L5yJNKZswgkF",
+  "name": "Art Expertise Dance",
+  "description": "Expertise in dance — formal figures, courtly steps, and grace before an audience.",
+  "group": "Art",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "Ttqs89del0HbbZSR",
+  "name": "Art Expertise Music",
+  "description": "Expertise in music — singing and the playing of instruments.",
+  "group": "Art",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "gvI6WmGXC2iTYYQz",
+  "name": "Art Expertise Painting",
+  "description": "Expertise in painting and drawing — pigment, line, and likeness.",
+  "group": "Art",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "lciQamwqcsqekGRF",
+  "name": "Art Expertise Writing",
+  "description": "Expertise in writing — verse, prose, and the shaping of words on the page.",
+  "group": "Art",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "WVdJOfiwZCSPrOHE",
+  "name": "Learning Scholar",
+  "description": "Booklearning and study — letters, reasoning, and the disciplines of the educated.",
+  "group": "Learning",
+  "minLevel": 1,
+  "maxLevel": 1
+ },
+ {
+  "_id": "7VoeHrMi683vwBeS",
+  "name": "Learning Expertise Religion",
+  "description": "Expertise in religion — doctrine, scripture, rite, and the affairs of the Church.",
+  "group": "Learning",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "WjngVZIgku8cBETw",
+  "name": "Learning Expertise Occult",
+  "description": "Expertise in the occult — forbidden lore, spirits, and the hidden order of things.",
+  "group": "Learning",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "yRsiAyzSCh6v6wMm",
+  "name": "Learning Expertise Nobility",
+  "description": "Expertise in nobility — heraldry, lineage, precedence, and courtly conduct.",
+  "group": "Learning",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "rA14pwn4o08IusWY",
+  "name": "Learning Expertise Medicine",
+  "description": "Expertise in medicine — diagnosis, the humours, and the physician's learned care.",
+  "group": "Learning",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "3rONx9nVxk10fyZ4",
+  "name": "Learning Expertise Lore",
+  "description": "Expertise in lore — history, legend, and the memory of places and peoples.",
+  "group": "Learning",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "00wKdoVpnYkW0LUk",
+  "name": "Learning Expertise Law",
+  "description": "Expertise in law — statute, custom, courts, and the working of justice.",
+  "group": "Learning",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "DGOKXfiahX4RZhJL",
+  "name": "Learning Expertise Astrology",
+  "description": "Expertise in astrology — the stars, their houses, and the reading of fate.",
+  "group": "Learning",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "jFRLqzcUavG6hsUM",
+  "name": "Learning Expertise Art",
+  "description": "Expertise in the theory and history of art — schools, masters, and judging work.",
+  "group": "Learning",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "I28pxbqeoKMdNgxr",
+  "name": "Learning Expertise Apothecary",
+  "description": "Expertise in the apothecary's art — remedies, doses, and preparing medicines.",
+  "group": "Learning",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "pQ1qZGqEvNCun2pc",
+  "name": "Learning Expertise Alchemy",
+  "description": "Expertise in alchemy — distillation, transmutation, and the secret operations of matter.",
+  "group": "Learning",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "l3euj72k8YDI7WFv",
+  "name": "Manufacturing Craft",
+  "description": "Skilled making — shaping raw material into finished, useful goods.",
+  "group": "Manufacturing",
+  "minLevel": 1,
+  "maxLevel": 1
+ },
+ {
+  "_id": "WfmlOA5KomA8Wfnw",
+  "name": "Manufacturing Expertise Food",
+  "description": "Expertise in food — cooking, baking, brewing, and preserving.",
+  "group": "Manufacturing",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "1IK3By3aRaQTkvdU",
+  "name": "Manufacturing Expertise Glass",
+  "description": "Expertise in glasswork — blowing, shaping, and setting glass.",
+  "group": "Manufacturing",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "uvM0DC5zg0gEavyb",
+  "name": "Manufacturing Expertise Jewelry",
+  "description": "Expertise in jewellery — gems, fine metal, and ornament.",
+  "group": "Manufacturing",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "cR0l72jFwycnWamb",
+  "name": "Manufacturing Expertise Mechanics",
+  "description": "Expertise in mechanics — gears, locks, clocks, and contrivances.",
+  "group": "Manufacturing",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "U8Re3snZayr53CyN",
+  "name": "Manufacturing Expertise Metal",
+  "description": "Expertise in metalwork — forging, casting, and the smith's craft.",
+  "group": "Manufacturing",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "BzXKFA8YPCex5Gsz",
+  "name": "Manufacturing Expertise Paper",
+  "description": "Expertise in paper and books — milling, binding, and printing.",
+  "group": "Manufacturing",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "cXG8MEvoZlFeiU3t",
+  "name": "Manufacturing Expertise Soft",
+  "description": "Expertise in soft crafts — cloth, leather, and the needle trades.",
+  "group": "Manufacturing",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "ie2GIgz9WXiRPyFt",
+  "name": "Manufacturing Expertise Stone",
+  "description": "Expertise in stonework — cutting, carving, and building in stone.",
+  "group": "Manufacturing",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "AtpamHqzRTgSqaSR",
+  "name": "Manufacturing Expertise Wood",
+  "description": "Expertise in woodwork — joinery, carving, and the carpenter's craft.",
+  "group": "Manufacturing",
+  "minLevel": 1,
+  "maxLevel": 2
+ },
+ {
+  "_id": "jSmkCryle69Qvw6j",
+  "name": "Pagan Low Magic",
+  "description": "Folk magic and old craft — charms, signs, and the half-forbidden arts of the cunning.",
+  "group": "Pagan",
+  "minLevel": 1,
+  "maxLevel": 1
+ },
+ {
+  "_id": "hQfvmQ10qHxVY3ni",
+  "name": "Pagan Expertise Amulet",
+  "description": "Expertise in amulets — charms and tokens made to ward or bless.",
+  "group": "Pagan",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "2vTglrIXgGVEisl6",
+  "name": "Pagan Expertise Divination",
+  "description": "Expertise in divination — omens, lots, and the reading of signs.",
+  "group": "Pagan",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "lPAQTWr30t44JFeJ",
+  "name": "Pagan Expertise Herbalism",
+  "description": "Expertise in herbalism — gathering and using plants for healing and harm.",
+  "group": "Pagan",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "QeV7gHxmUVJWyBlC",
+  "name": "Pagan Expertise Knot",
+  "description": "Expertise in knot-magic — bindings, cords, and the craft of tying fate.",
+  "group": "Pagan",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "ivrUWUcZCZHVlGCe",
+  "name": "Pagan Expertise Necromancy",
+  "description": "Expertise in necromancy — the dead, their rest, and their disturbance.",
+  "group": "Pagan",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "2QFZcbgsyvU6kYcO",
+  "name": "Pagan Expertise Potion",
+  "description": "Expertise in potions — brewed draughts of effect, for good or ill.",
+  "group": "Pagan",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "YYw6eQCJIWhyroR9",
+  "name": "Pagan Expertise Warding",
+  "description": "Expertise in warding — protective signs and barriers against the unseen.",
+  "group": "Pagan",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "UhhJ9dc4uPNpGp7r",
+  "name": "Services Barber",
+  "description": "The barber-surgeon's trade — shaving, tooth-pulling, bleeding, and minor cures.",
+  "group": "Services",
+  "minLevel": 1,
+  "maxLevel": 1
+ },
+ {
+  "_id": "65Rf3FrHzu6XwOfd",
+  "name": "Services Expertise Surgeon",
+  "description": "Expertise as a surgeon — wounds, the knife, setting bone, and cutting cures.",
+  "group": "Services",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "PmNFvXH9Emt3hIMg",
+  "name": "Subterfuge Criminal",
+  "description": "The criminal trades — deceit, stealth, and skills that thrive out of the law's sight.",
+  "group": "Subterfuge",
+  "minLevel": 0,
+  "maxLevel": 1
+ },
+ {
+  "_id": "RvWnsh13xndC3BDJ",
+  "name": "Subterfuge Expertise Locks",
+  "description": "Expertise with locks — picking, forcing, and defeating them.",
+  "group": "Subterfuge",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "F0NfycHV3L1nXozL",
+  "name": "Subterfuge Expertise Procuring",
+  "description": "Expertise in procuring — obtaining what is scarce, illicit, or guarded.",
+  "group": "Subterfuge",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "38r2fiOwNtIlpoMe",
+  "name": "Subterfuge Expertise Spying",
+  "description": "Expertise in spying — watching, listening, and gathering secrets unseen.",
+  "group": "Subterfuge",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "fmgOxAd61kbBC3oF",
+  "name": "Subterfuge Expertise Stealth",
+  "description": "Expertise in stealth — moving unseen and unheard.",
+  "group": "Subterfuge",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "0k3dXTEU5oN3rHSs",
+  "name": "Subterfuge Expertise Thieving",
+  "description": "Expertise in thieving — picking pockets, lifting goods, and light-fingered arts.",
+  "group": "Subterfuge",
+  "minLevel": 1,
+  "maxLevel": 3
+ },
+ {
+  "_id": "6W0w1AV1grz8V6Z7",
+  "name": "Combat Melee",
+  "description": "Fighting hand-to-hand with blades, hafts, and close steel.",
+  "group": "Combat",
+  "minLevel": 0,
+  "maxLevel": 3
+ },
+ {
+  "_id": "3rmcikTMMXLQyzfb",
+  "name": "Combat Firearm",
+  "description": "Handling and firing gunpowder weapons.",
+  "group": "Combat",
+  "minLevel": 0,
+  "maxLevel": 3
+ },
+ {
+  "_id": "Y0SfW0f3l5E5JHd5",
+  "name": "Combat Ranged",
+  "description": "Shooting with bow and crossbow at distance.",
+  "group": "Combat",
+  "minLevel": 0,
+  "maxLevel": 3
+ },
+ {
+  "_id": "fLIefMop44DdTwzl",
+  "name": "Combat Thrown",
+  "description": "Hurling weapons — knives, axes, javelins — with accuracy.",
+  "group": "Combat",
+  "minLevel": 0,
+  "maxLevel": 3
+ },
+ {
+  "_id": "UU75zjUE8ySUKzoC",
+  "name": "Combat Unarmed",
+  "description": "Fighting with fists, grapples, and the unarmed body.",
+  "group": "Combat",
+  "minLevel": 0,
+  "maxLevel": 3
+ },
+ {
+  "_id": "X7zC0glgUPw5qOiU",
+  "name": "Outdoor Riding",
+  "description": "Horsemanship — the handling, riding, and control of mounts.",
+  "group": "Outdoor",
+  "minLevel": 0,
+  "maxLevel": 2
+ },
+ {
+  "_id": "yK8twhFqVhpXoqgU",
+  "name": "Charisma Perform",
+  "description": "Performance — holding a crowd through voice, music, or presence.",
+  "group": "Charisma",
+  "minLevel": 0,
+  "maxLevel": 2
+ },
+ {
+  "_id": "zXuCnw9eUnBOb1Vp",
+  "name": "Strength Athletics",
+  "description": "Bodily prowess — running, climbing, swimming, leaping, and feats of stamina.",
+  "group": "Strength",
+  "minLevel": 0,
+  "maxLevel": 2
+ }
+]
