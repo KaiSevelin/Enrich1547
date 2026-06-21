@@ -27,6 +27,11 @@ Hooks.once("init", () => {
         (module) => module.register1547Enricher()
     );
     void runImportedModuleStep(
+        "register1547InfoEnricher",
+        () => import("./enrichers/info-enricher.js"),
+        (module) => module.register1547InfoEnricher()
+    );
+    void runImportedModuleStep(
         "registerReactionService",
         () => import("./services/reaction-service.js"),
         (module) => module.registerReactionService()

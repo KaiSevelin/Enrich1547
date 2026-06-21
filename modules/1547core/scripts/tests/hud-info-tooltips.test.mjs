@@ -32,4 +32,30 @@ console.log("\ncondition-registry: every condition has a description...");
     console.log("  ✓ all conditions described; lookup by name and slug");
 }
 
+console.log("\ninfo-enricher: resolveInfo...");
+{
+    const { resolveInfo } = await import("../enrichers/info-enricher.js");
+
+    const str = resolveInfo("stat", "Strength");
+    assert.strictEqual(str.type, "stat");
+    assert.strictEqual(str.label, "Strength", "label defaults to the key");
+    assert.ok(str.tooltip.includes(STAT_INFO.Strength), "stat tooltip resolved");
+    assert.ok(str.known);
+
+    const cond = resolveInfo("condition", "choking-hold", "the hold");
+    assert.strictEqual(cond.label, "the hold", "custom label honoured");
+    assert.ok(cond.tooltip.startsWith("choking-hold —"), "condition tooltip resolved by slug");
+    assert.ok(cond.known);
+
+    const unknownType = resolveInfo("widget", "Foo");
+    assert.strictEqual(unknownType.label, "Foo");
+    assert.strictEqual(unknownType.tooltip, "", "unknown type -> no tooltip");
+    assert.strictEqual(unknownType.known, false);
+
+    const unknownKey = resolveInfo("condition", "not-real");
+    assert.strictEqual(unknownKey.tooltip, "", "unknown condition -> no tooltip");
+    assert.strictEqual(unknownKey.known, false);
+    console.log("  ✓ stat/condition resolve; custom label; unknown type/key degrade");
+}
+
 console.log("\nAll hud-info-tooltip tests passed.");

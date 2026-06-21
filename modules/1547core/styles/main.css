@@ -39,6 +39,19 @@ a.enricher-1547::before {
   line-height: 1;
 }
 
+/* Inline info chip (@info / @stat / @condition). Subtle, hoverable, not a link. */
+.enricher-1547-info {
+  font-weight: 600;
+  color: inherit;
+  border-bottom: 1px dotted var(--color-border-highlight, rgba(195, 128, 44, 0.7));
+}
+.enricher-1547-info.is-known {
+  cursor: help;
+}
+.enricher-1547-info.is-known:hover {
+  color: var(--color-text-hyperlink, #c3802c);
+}
+
 /* ----------------------------- */
 /* Dialog styling                */
 /* ----------------------------- */

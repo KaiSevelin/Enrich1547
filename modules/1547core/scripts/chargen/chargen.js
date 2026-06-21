@@ -4490,7 +4490,13 @@ export class SkillTreeChargenApp extends FormApplication {
                 };
             }),
             bio: run?.bio ?? [],
-            compiledBio: this._buildCompiledBiography(run?.bioEvents ?? []),
+            // Enrich each Life Summary line so inline @info/@stat/@condition chips
+            // render (and other Foundry enrichers too). Plain prose passes through
+            // unchanged.
+            compiledBio: await Promise.all(
+                this._buildCompiledBiography(run?.bioEvents ?? [])
+                    .map((line) => TextEditor.enrichHTML(String(line), { async: true }))
+            ),
             workHistory: await this._buildWorkHistory(run),
             pendingPrompt: this._pendingPrompt
         };
