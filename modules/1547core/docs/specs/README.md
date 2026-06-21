@@ -14,6 +14,9 @@ Current documents:
 - `combat-spec-v2.md`
 - `combat-state-machine-v1.md`
 - `cover-spec-v1.md`
+- `chargen-spec-v1.md`
+- `chargen-dexterity-your-nature-table-draft-v1.md`
+- `chargen-strength-your-nature-table-draft-v1.md`
 - `cross-client-reaction-spec-v1.md`
 - `facing-and-positioning-spec-v1.md`
 - `facing-implementation-spec-v1.md`

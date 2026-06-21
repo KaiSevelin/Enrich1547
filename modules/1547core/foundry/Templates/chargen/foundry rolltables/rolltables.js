@@ -234,6 +234,78 @@ export const FOUNDRY_ROLLTABLES = [
         "folder": "CharacterGeneration",
         "tableType": "Result item"
     },
+    {
+        "name": "Your Nature - Strength",
+        "uuid": "RollTable.RollTablYnStrg00",
+        "folder": "CharacterGeneration",
+        "tableType": "Result item"
+    },
+    {
+        "name": "Your Nature - Dexterity",
+        "uuid": "RollTable.RollTablYnDext00",
+        "folder": "CharacterGeneration",
+        "tableType": "Result item"
+    },
+    {
+        "name": "Your Nature - Intelligence",
+        "uuid": "RollTable.RollTablYnIntl00",
+        "folder": "CharacterGeneration",
+        "tableType": "Result item"
+    },
+    {
+        "name": "Your Nature - Stamina",
+        "uuid": "RollTable.RollTablYnStam00",
+        "folder": "CharacterGeneration",
+        "tableType": "Result item"
+    },
+    {
+        "name": "Your Nature - Faith",
+        "uuid": "RollTable.RollTablYnFath00",
+        "folder": "CharacterGeneration",
+        "tableType": "Result item"
+    },
+    {
+        "name": "Your Nature - Charisma",
+        "uuid": "RollTable.RollTablYnChar00",
+        "folder": "CharacterGeneration",
+        "tableType": "Result item"
+    },
+    {
+        "name": "Your Nature - Power",
+        "uuid": "RollTable.RollTablYnPowr00",
+        "folder": "CharacterGeneration",
+        "tableType": "Result item"
+    },
+    {
+        "name": "Your Nature - Yellow bile",
+        "uuid": "RollTable.RollTablYnYBil00",
+        "folder": "CharacterGeneration",
+        "tableType": "Result item"
+    },
+    {
+        "name": "Your Nature - Black bile",
+        "uuid": "RollTable.RollTablYnBBil00",
+        "folder": "CharacterGeneration",
+        "tableType": "Result item"
+    },
+    {
+        "name": "Your Nature - Blood",
+        "uuid": "RollTable.RollTablYnBloo00",
+        "folder": "CharacterGeneration",
+        "tableType": "Result item"
+    },
+    {
+        "name": "Your Nature - Phlegm",
+        "uuid": "RollTable.RollTablYnPhlg00",
+        "folder": "CharacterGeneration",
+        "tableType": "Result item"
+    },
+    {
+        "name": "Your Nature - Selector",
+        "uuid": "RollTable.RollTablYnNatr00",
+        "folder": "CharacterGeneration",
+        "tableType": "Text"
+    },
 
     // Biography and narrative text tables
     {

@@ -7,6 +7,14 @@ const DRIVE_HINTS = {
             "I will not let pride make me rigid."
         ]
     },
+    Affection: {
+        prompt: "What tenderness now pulls you toward others?",
+        examples: [
+            "I keep those I love closer than is wise.",
+            "Warmth given freely is its own reward.",
+            "I cannot harden my heart to the people I hold dear."
+        ]
+    },
     Ambition: {
         prompt: "What greater place do you mean to claim?",
         examples: [
@@ -53,6 +61,14 @@ const DRIVE_HINTS = {
             "I have work in this world that I cannot ignore.",
             "I was led here for a reason.",
             "I must answer what keeps calling me forward."
+        ]
+    },
+    Care: {
+        prompt: "Who or what have you taken it upon yourself to tend?",
+        examples: [
+            "Some things break unless a careful hand keeps them.",
+            "I notice what others let fall, and I see to it.",
+            "Gentleness is not weakness when something fragile depends on it."
         ]
     },
     Caution: {
@@ -279,12 +295,28 @@ const DRIVE_HINTS = {
             "There are moments when mercy must step aside."
         ]
     },
+    Foreboding: {
+        prompt: "What coming darkness do you feel before others do?",
+        examples: [
+            "I sense the turn before the weather shows it.",
+            "Something is wrong, and I will not pretend otherwise.",
+            "I would rather dread the truth than be surprised by it."
+        ]
+    },
     Freedom: {
         prompt: "What makes constraint unbearable to you now?",
         examples: [
             "No one owns my path but me.",
             "I will pay dearly rather than live in chains.",
             "Space to choose matters more than comfort."
+        ]
+    },
+    Generosity: {
+        prompt: "What do you give away more freely than you should?",
+        examples: [
+            "A full hand is meant to be opened.",
+            "I would rather share and want than hoard and prosper.",
+            "What I have means little if no one is better for it."
         ]
     },
     Glory: {
@@ -389,6 +421,30 @@ const DRIVE_HINTS = {
             "If I lose my honesty, I lose the best part of myself.",
             "I must be able to trust the person I am becoming.",
             "What I claim to value must show in what I do."
+        ]
+    },
+    Irritability: {
+        prompt: "What now lights your temper faster than it should?",
+        examples: [
+            "I have little patience left for fools and delay.",
+            "My anger comes quickly, and I have stopped apologizing for it.",
+            "Push me and you will find the edge sooner than you expected."
+        ]
+    },
+    Isolation: {
+        prompt: "What drove you to keep apart from others?",
+        examples: [
+            "I am steadier when no one is close enough to disturb me.",
+            "People cost more than they give, so I keep my distance.",
+            "Solitude is not loneliness when you have chosen it."
+        ]
+    },
+    Joy: {
+        prompt: "What delight refuses to leave you, even now?",
+        examples: [
+            "I take my pleasures where the day offers them.",
+            "Life is too short to meet it grimly.",
+            "I would rather laugh first and reckon the cost later."
         ]
     },
     Legacy: {
@@ -511,6 +567,14 @@ const DRIVE_HINTS = {
             "I do not settle when excellence is possible."
         ]
     },
+    Pleasure: {
+        prompt: "What comfort or appetite now guides your hand?",
+        examples: [
+            "I see no virtue in denying myself what feels good.",
+            "A warm meal and good company answer most of life's questions.",
+            "I have earned my comforts and I mean to enjoy them."
+        ]
+    },
     Polish: {
         prompt: "What refinement or presentation now matters to you?",
         examples: [
@@ -549,6 +613,14 @@ const DRIVE_HINTS = {
             "I know what I am, and I will not live beneath it.",
             "I have earned the right to stand taller than shame would like.",
             "I will not let others define my value cheaply."
+        ]
+    },
+    Protectiveness: {
+        prompt: "Who do you stand between and harm?",
+        examples: [
+            "Those under my care do not come to grief while I stand.",
+            "I put myself in the way of what would hurt them.",
+            "I will answer for the safety of my own."
         ]
     },
     Prudence: {
@@ -687,6 +759,14 @@ const DRIVE_HINTS = {
             "I carry the memory of my own failure like a hidden scar."
         ]
     },
+    Sorrow: {
+        prompt: "What grief has settled into the shape of who you are?",
+        examples: [
+            "I carry a loss that time has not lifted.",
+            "Some sadness becomes a companion rather than a wound.",
+            "I do not hide my mourning to make others comfortable."
+        ]
+    },
     Stature: {
         prompt: "What standing or dignity do you now seek to maintain?",
         examples: [
@@ -701,6 +781,14 @@ const DRIVE_HINTS = {
             "I mean to be the one others can lean on.",
             "A steady hand matters when bright talent fails.",
             "I prefer constancy to spectacle."
+        ]
+    },
+    Stubbornness: {
+        prompt: "What will you not yield, however the world pushes?",
+        examples: [
+            "Once I have set my heel, I do not move.",
+            "I would rather break than bend to what I judge wrong.",
+            "Persuasion wastes its breath on me when my mind is made."
         ]
     },
     Survival: {

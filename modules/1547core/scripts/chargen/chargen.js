@@ -27,6 +27,15 @@ import {
 } from "./interface-registry.js";
 import * as ChargenUtils from "./chargen-utils.js";
 import { normalizeTableKey } from "./chargen-utils.js";
+import {
+    YOUR_NATURE_TABLE_REFS,
+    YOUR_NATURE_SELECTOR_TABLE_REF,
+    YOUR_NATURE_SELECTOR_KEYS,
+    hasYourNatureRequirement,
+    isYourNatureEligibleStage,
+    shouldTriggerYourNature,
+    yourNatureSelectorBucket
+} from "./your-nature.js";
 import * as TemplateParse from "./chargen-template-parse.js";
 import * as Validation from "./chargen-validation.js";
 import * as Simulation from "./chargen-simulation.js";
@@ -760,6 +769,7 @@ export class SkillTreeChargenApp extends FormApplication {
             cards: [],
             deferredQueue: [],
             deferredReady: [],
+            yourNatureReady: [],
             packageProgress: {}
         };
         if (!actor.getFlag("world", "baselineStatsApplied")) {
@@ -4027,6 +4037,89 @@ export class SkillTreeChargenApp extends FormApplication {
         const luckOutcome = SkillTreeChargenApp._resultRawJSON(rollResult.result).trim();
         return `Fortune turned: ${luckOutcome}`;
     }
+
+    _isYourNatureEligibleStage(table = null) {
+        return isYourNatureEligibleStage(this._getBioStageFromTable(table));
+    }
+
+    _hasYourNatureRequirement(key = "") {
+        return hasYourNatureRequirement(this.actor.system?.props ?? {}, key);
+    }
+
+    async _rollYourNatureSelector() {
+        try {
+            const rolled = await this._rollOnce(YOUR_NATURE_SELECTOR_TABLE_REF);
+            const raw = String(rolled?.raw ?? "").trim();
+            if (YOUR_NATURE_SELECTOR_KEYS.includes(raw)) {
+                return { key: raw, total: null, dice: [] };
+            }
+        } catch (err) {
+            console.warn("Chargen: Your Nature selector table unavailable, using computed fallback.", err);
+        }
+
+        const roll = await (new Roll("3d6")).evaluate();
+        const dieResults = Array.isArray(roll?.dice?.[0]?.results)
+            ? roll.dice[0].results.map(entry => Number(entry?.result ?? 0))
+            : [];
+        const rawDice = dieResults.length >= 3
+            ? dieResults.slice(0, 3)
+            : [
+                1 + Math.floor(Math.random() * 6),
+                1 + Math.floor(Math.random() * 6),
+                1 + Math.floor(Math.random() * 6)
+            ];
+        const { key, dice } = yourNatureSelectorBucket(rawDice);
+        return {
+            key,
+            total: Number(roll?.total ?? dice.reduce((sum, value) => sum + value, 0)),
+            dice
+        };
+    }
+
+    async _buildYourNatureReveal(run, table = null) {
+        if (!this._isYourNatureEligibleStage(table)) return null;
+
+        const triggerRoll = await (new Roll("1d6")).evaluate();
+        if (!shouldTriggerYourNature(triggerRoll?.total ?? 0)) return null;
+
+        const selection = await this._rollYourNatureSelector();
+        const selectedKey = String(selection?.key ?? "").trim();
+        if (!selectedKey || !this._hasYourNatureRequirement(selectedKey)) return null;
+
+        const tableRef = String(YOUR_NATURE_TABLE_REFS[selectedKey] ?? "").trim();
+        if (!tableRef) return null;
+
+        const rollResult = await this._rollOnce(tableRef);
+        const parsed = await this.constructor.parseRollTableResult(
+            rollResult.result,
+            `Your Nature - ${selectedKey}`
+        );
+        const reward = Array.isArray(parsed?.effectTables) && parsed.effectTables.length
+            ? this._resolveRewardFromEffectTables(parsed.effectTables)
+            : this._pickWeightedReward(Array.isArray(parsed?.rewards) ? parsed.rewards : []);
+        if (!reward) return null;
+
+        const sourceTable = await this._getRollTable(tableRef);
+        const stage = this._getBioStageFromTable(table);
+        return {
+            isDeferred: true,
+            deferredKind: "your-nature",
+            title: "Your Nature",
+            originLine: selectedKey ? `${selectedKey} rose to the surface.` : "",
+            sourceTitle: String(parsed?.choice?.title ?? "").trim(),
+            text: String(parsed?.choice?.text ?? "").trim(),
+            image: String(parsed?.choice?.icon ?? sourceTable?.img ?? "").trim(),
+            stage,
+            stageLabel: this._getStageLabelFromContext({ stage }),
+            payload: {
+                selectedKey,
+                changes: reward?.changes ?? [],
+                enqueue: []
+            },
+            summaryText: String(parsed?.choice?.title ?? parsed?.choice?.text ?? "").trim(),
+            bioLine: String(parsed?.choice?.text ?? "").trim()
+        };
+    }
     /* ---------------- Flow ---------------- */
 
     async _rollCards(run) {
@@ -4773,6 +4866,11 @@ export class SkillTreeChargenApp extends FormApplication {
             if (deferred) {
                 await enqueueDeferred(run, deferred);
             }
+            const yourNatureReveal = await this._buildYourNatureReveal(run, fromTable);
+            if (yourNatureReveal) {
+                run.yourNatureReady ??= [];
+                run.yourNatureReady.push(yourNatureReveal);
+            }
 
             const rewardNextUuid = String(reward?.next?.tableUuid ?? "").trim();
             let nextUuid = rewardNextUuid;
@@ -4884,21 +4982,49 @@ export class SkillTreeChargenApp extends FormApplication {
         try {
             if (reveal.isDeferred) {
                 const payload = reveal.payload ?? {};
+                const isYourNature = String(reveal.deferredKind ?? "").trim().toLowerCase() === "your-nature";
                 if (Array.isArray(payload.changes) && payload.changes.length) {
                     await this._applyChanges(run, payload.changes);
                 }
                 if (reveal.text) {
-                    const line = `The past returns: ${reveal.text}`;
+                    const line = isYourNature
+                        ? `Your nature: ${reveal.text}`
+                        : `The past returns: ${reveal.text}`;
                     await this._addBio(run, line, {
-                        kind: "deferred",
+                        kind: isYourNature ? "your-nature" : "deferred",
+                        stage: isYourNature ? String(reveal.stage ?? "").trim() : "deferred",
                         memorable: true,
-                        priority: 3,
-                        summaryText: line
+                        priority: isYourNature ? 2 : 3,
+                        summaryText: String(reveal.summaryText ?? "").trim() || line
                     });
                 }
                 if (Array.isArray(payload.enqueue)) {
                     for (const entry of payload.enqueue) {
                         await enqueueDeferred(run, entry);
+                    }
+                }
+
+                if (isYourNature) {
+                    const chainedYourNature = Array.isArray(run?.yourNatureReady) ? run.yourNatureReady.shift() : null;
+                    if (chainedYourNature) {
+                        run.reveal = {
+                            ...reveal,
+                            ...chainedYourNature
+                        };
+                        await this._setState({ ...state, run });
+                        if (this._shouldRenderInteractiveUi()) this.render(true);
+                        return;
+                    }
+
+                    const deferredReveal = await buildDeferredReveal(this, run);
+                    if (deferredReveal) {
+                        run.reveal = {
+                            ...reveal,
+                            ...deferredReveal
+                        };
+                        await this._setState({ ...state, run });
+                        if (this._shouldRenderInteractiveUi()) this.render(true);
+                        return;
                     }
                 }
 
@@ -4918,6 +5044,17 @@ export class SkillTreeChargenApp extends FormApplication {
                 await this._maybeGrantCareerLiteracy(run, run.tableUuid);
                 run.reveal = null;
                 run.cards = await this._rollCards(run);
+                await this._setState({ ...state, run });
+                if (this._shouldRenderInteractiveUi()) this.render(true);
+                return;
+            }
+
+            const yourNatureReveal = Array.isArray(run?.yourNatureReady) ? run.yourNatureReady.shift() : null;
+            if (yourNatureReveal) {
+                run.reveal = {
+                    ...reveal,
+                    ...yourNatureReveal
+                };
                 await this._setState({ ...state, run });
                 if (this._shouldRenderInteractiveUi()) this.render(true);
                 return;

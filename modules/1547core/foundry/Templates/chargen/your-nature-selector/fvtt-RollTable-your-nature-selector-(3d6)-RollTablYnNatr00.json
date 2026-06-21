@@ -1,0 +1,2829 @@
+{
+  "folder": "dA5kRoToREvCP9hn",
+  "name": "Your Nature - Selector",
+  "img": "icons/svg/d20-black.svg",
+  "description": "<p>A balanced 3d6 selector that chooses which Your Nature domain attempts to surface when the phase triggers.</p>",
+  "results": [
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        3,
+        3
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000001",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        4,
+        4
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000002",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        5,
+        5
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000003",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        6,
+        6
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000004",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000005",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000006",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        4,
+        4
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000007",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        5,
+        5
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000008",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        6,
+        6
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000009",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000010",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000011",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000012",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        5,
+        5
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000013",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        6,
+        6
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000014",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000015",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000016",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000017",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000018",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        6,
+        6
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000019",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Strength",
+      "_id": "YnNsSel00000020",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000021",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000022",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000023",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000024",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000025",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000026",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000027",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000028",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000029",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000030",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000031",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000032",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000033",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000034",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000035",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000036",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        4,
+        4
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000037",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        5,
+        5
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000038",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        6,
+        6
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000039",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Dexterity",
+      "_id": "YnNsSel00000040",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000041",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000042",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        5,
+        5
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000043",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        6,
+        6
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000044",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000045",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000046",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000047",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000048",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        6,
+        6
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000049",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000050",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000051",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000052",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000053",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000054",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000055",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000056",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000057",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000058",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Stamina",
+      "_id": "YnNsSel00000059",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000060",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000061",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000062",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000063",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000064",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000065",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000066",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000067",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000068",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000069",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000070",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000071",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000072",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        5,
+        5
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000073",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        6,
+        6
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000074",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000075",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000076",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000077",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000078",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        6,
+        6
+      ],
+      "description": "Intelligence",
+      "_id": "YnNsSel00000079",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000080",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000081",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000082",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000083",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000084",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000085",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000086",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000087",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000088",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000089",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000090",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000091",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000092",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000093",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000094",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000095",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000096",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000097",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000098",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Faith",
+      "_id": "YnNsSel00000099",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000100",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000101",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000102",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000103",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000104",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000105",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000106",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000107",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        15,
+        15
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000108",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        6,
+        6
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000109",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000110",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000111",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000112",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000113",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000114",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000115",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000116",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000117",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Charisma",
+      "_id": "YnNsSel00000118",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000119",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000120",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000121",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000122",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000123",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000124",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000125",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000126",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000127",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000128",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000129",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000130",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000131",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000132",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000133",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000134",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000135",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000136",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000137",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        15,
+        15
+      ],
+      "description": "Power",
+      "_id": "YnNsSel00000138",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000139",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000140",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000141",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000142",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        15,
+        15
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000143",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        16,
+        16
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000144",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000145",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000146",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000147",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000148",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000149",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000150",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000151",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000152",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000153",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000154",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000155",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000156",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000157",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Yellow bile",
+      "_id": "YnNsSel00000158",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000159",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000160",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000161",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000162",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000163",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000164",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000165",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000166",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000167",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        15,
+        15
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000168",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000169",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000170",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000171",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000172",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        15,
+        15
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000173",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        16,
+        16
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000174",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000175",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000176",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Black bile",
+      "_id": "YnNsSel00000177",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        15,
+        15
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000178",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        16,
+        16
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000179",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        17,
+        17
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000180",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000181",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000182",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000183",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000184",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000185",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000186",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000187",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000188",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000189",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000190",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000191",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000192",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000193",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000194",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000195",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000196",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Blood",
+      "_id": "YnNsSel00000197",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        15,
+        15
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000198",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000199",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000200",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000201",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000202",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        15,
+        15
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000203",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        16,
+        16
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000204",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000205",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000206",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000207",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        15,
+        15
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000208",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        16,
+        16
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000209",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        17,
+        17
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000210",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        13,
+        13
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000211",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        14,
+        14
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000212",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        15,
+        15
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000213",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        16,
+        16
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000214",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        17,
+        17
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000215",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    },
+    {
+      "type": "text",
+      "weight": 1,
+      "range": [
+        18,
+        18
+      ],
+      "description": "Phlegm",
+      "_id": "YnNsSel00000216",
+      "name": "your-nature-selector",
+      "img": "icons/svg/d20-black.svg",
+      "flags": {}
+    }
+  ],
+  "replacement": true,
+  "displayRoll": true,
+  "flags": {
+    "chargen1547_v2": {
+      "stageType": "your-nature-selector",
+      "entryKey": "your-nature-selector"
+    }
+  },
+  "formula": "3d6",
+  "ownership": {
+    "default": 0
+  },
+  "_id": "RollTablYnNatr00"
+}
