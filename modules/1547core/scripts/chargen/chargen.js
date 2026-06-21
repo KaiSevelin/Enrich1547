@@ -2,7 +2,7 @@ import { MODULE_ID } from "../lib/constants.mjs";
 import { renderDriveHintHtml, getDriveHintData } from "./drive-prompts.js";
 import { PRIMARY_STATS, statSteps, statFromSteps } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
 import { getStatTooltip } from "../hud/stat-info.js";
-import { statRef, humourRef, maneuverRef, itemRef, skillRef, infoTooltip } from "../enrichers/info-enricher.js";
+import { statRef, humourRef, maneuverRef, itemRef, skillRef, socialRef, luckRef, infoTooltip, stripInfoRefs } from "../enrichers/info-enricher.js";
 import { canonicalHumour } from "../services/humour-info.js";
 import {
     advanceDeferredQueue,
@@ -2567,7 +2567,10 @@ export class SkillTreeChargenApp extends FormApplication {
     }
 
     _isBioMechanicalLine(text) {
-        const t = String(text ?? "").trim();
+        // Reduce inline @info refs to their labels first, so a line that starts
+        // with a tagged term (e.g. "@social[Social Status]{Social Status} …")
+        // still matches its mechanical prefix and stays out of the narrative bio.
+        const t = stripInfoRefs(String(text ?? "").trim());
         return /^(Baseline:|Improved |Reduced |Learned |Received |Language |Social Status |Item:|Appearance:|Gained a contact:|Lucky streak:|Missed:|Language award|Language already known;|Career ended|Birth humour set:|Humour change:)/.test(t);
     }
 
@@ -3944,8 +3947,21 @@ export class SkillTreeChargenApp extends FormApplication {
             Humour_BlackBile: "Black Bile",
             Humour_Phlegm: "Phlegm"
         };
-        const detail = dominant.length ? dominant.map(k => humourRef(LABELS[k])).join(", ") : "balanced";
-        await this._addBio(run, `Birth humour set: ${data.choice.title} (${detail}).`);
+        // If the card title is itself a humour (Blood / Phlegm / …), chip the
+        // title and skip the redundant parenthetical; otherwise (Mixed/Unbalanced)
+        // chip the listed humours in the detail.
+        const displayTitle = String(data.choice.title ?? "").trim();
+        const titleHumour = canonicalHumour(displayTitle);
+        const names = dominant.map(k => LABELS[k]);
+        let body;
+        if (titleHumour) {
+            body = humourRef(displayTitle);
+        } else if (names.length) {
+            body = `${displayTitle} (${names.map(n => humourRef(n)).join(", ")})`;
+        } else {
+            body = displayTitle;
+        }
+        await this._addBio(run, `Birth humour set: ${body}.`);
     }
 
     // Life-event humour change: add or remove specific humour checks on the
@@ -4313,6 +4329,15 @@ export class SkillTreeChargenApp extends FormApplication {
             const c = String(ch.characteristic ?? "").trim();
             const steps = Number(ch.steps ?? 0);
             if (c) return `${statRef(c)} ${steps >= 0 ? "+" : ""}${steps}`;
+        }
+
+        if (ch.type === "social") {
+            const amt = Number(ch.amount ?? 0);
+            return `${socialRef("Social Status")} ${amt >= 0 ? "+" : ""}${amt}`;
+        }
+
+        if (ch.type === "luck") {
+            return `${luckRef("Lucky streak")}: ${ch.on ? "ON" : "OFF"}`;
         }
 
         if (ch.type === "skill" || ch.type === "maneuver") {

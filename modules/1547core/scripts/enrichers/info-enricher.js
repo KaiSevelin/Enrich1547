@@ -11,6 +11,8 @@
 import { getStatTooltip } from "../hud/stat-info.js";
 import { getConditionDescription } from "../services/condition-registry.js";
 import { getHumourTooltip, canonicalHumour } from "../services/humour-info.js";
+import { getSocialStatusTooltip } from "../services/social-info.js";
+import { getLuckTooltip } from "../services/luck-info.js";
 
 // type -> (key) => { label, tooltip, known }. Add drive/power/etc. here later.
 const INFO_RESOLVERS = {
@@ -22,8 +24,26 @@ const INFO_RESOLVERS = {
     humour: (key) => {
         const tip = getHumourTooltip(key);
         return { label: canonicalHumour(key) || key, tooltip: tip, known: Boolean(tip) };
-    }
+    },
+    social: (key) => {
+        const n = Number(key);
+        const tip = getSocialStatusTooltip(Number.isFinite(n) ? n : undefined);
+        const label = Number.isFinite(n) ? `Social Status ${n >= 0 ? "+" : ""}${n}` : "Social Status";
+        return { label, tooltip: tip, known: Boolean(tip) };
+    },
+    luck: (key) => ({ label: "Lucky streak", tooltip: getLuckTooltip(key), known: true })
 };
+
+/**
+ * Reduce inline info refs to their visible labels — @t[key]{label} -> label,
+ * @t[key] -> key. Lets prefix checks (e.g. the bio mechanical-line filter) work
+ * on lines that begin with a tagged term.
+ */
+export function stripInfoRefs(text) {
+    return String(text ?? "")
+        .replace(/@[a-z]+\[[^\]]+\]\{([^}]*)\}/gi, "$1")
+        .replace(/@[a-z]+\[([^\]]+)\]/gi, "$1");
+}
 
 /**
  * Pure resolution of an info reference to display fields. Exported for tests and
@@ -62,6 +82,8 @@ export const powerRef = (name, label) => infoRef("power", name, label);
 export const maneuverRef = (name, label) => infoRef("maneuver", name, label);
 export const itemRef = (name, label) => infoRef("item", name, label);
 export const skillRef = (name, label) => infoRef("skill", name, label);
+export const socialRef = (name, label) => infoRef("social", name, label);
+export const luckRef = (name, label) => infoRef("luck", name, label);
 
 // Powers, maneuvers, and items are documents, not small in-memory catalogs — so
 // @power / @maneuver / @item resolve by name against compendium packs, indexed
@@ -270,6 +292,16 @@ export function register1547InfoEnricher() {
     enrichers.push({
         pattern: /@skill\[\s*([^\]]+?)\s*\](?:\{([^}]+)\})?/g,
         enricher: async (match) => buildInfoElement("skill", match[1], match[2]),
+        replaceParent: false
+    });
+    enrichers.push({
+        pattern: /@social\[\s*([^\]]+?)\s*\](?:\{([^}]+)\})?/g,
+        enricher: async (match) => buildInfoElement("social", match[1], match[2]),
+        replaceParent: false
+    });
+    enrichers.push({
+        pattern: /@luck\[\s*([^\]]+?)\s*\](?:\{([^}]+)\})?/g,
+        enricher: async (match) => buildInfoElement("luck", match[1], match[2]),
         replaceParent: false
     });
 }

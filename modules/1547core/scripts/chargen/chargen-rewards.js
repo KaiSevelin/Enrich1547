@@ -1,4 +1,4 @@
-import { statRef } from "../enrichers/info-enricher.js";
+import { statRef, socialRef, luckRef } from "../enrichers/info-enricher.js";
 
 export async function parseRewardResult({
     result,
@@ -290,7 +290,7 @@ export async function applyRewardChanges(app, run, changes = [], deps = {}) {
         if (ch.type === "luck") {
             run.luckyStreak = Boolean(ch.on);
             const reason = ch.reason ? ` (${String(ch.reason)})` : "";
-            await app._addBio(run, `Lucky streak: ${run.luckyStreak ? "ON" : "OFF"}${reason}`);
+            await app._addBio(run, `${luckRef("Lucky streak")}: ${run.luckyStreak ? "ON" : "OFF"}${reason}`);
 
             if (run.luckyStreak) {
                 const luckResult = await app._rollLuckTable(run);
@@ -390,7 +390,7 @@ export async function applyRewardChanges(app, run, changes = [], deps = {}) {
             await app.actor.update({ [`system.props.${key}`]: String(after) });
 
             const reason = ch.reason ? ` (${String(ch.reason)})` : "";
-            await app._addBio(run, `Social Status ${before} -> ${after}${reason}`, {
+            await app._addBio(run, `${socialRef("Social Status")} ${before} -> ${after}${reason}`, {
                 kind: "social",
                 amount: amt,
                 memorable: Math.abs(amt) >= 2,

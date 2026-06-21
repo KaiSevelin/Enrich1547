@@ -50,6 +50,31 @@ console.log("\nhumour-info: authored texts + name normalisation...");
     console.log("  ✓ 4 humours authored; all spellings normalise");
 }
 
+console.log("\nsocial + luck: authored tooltips...");
+{
+    const { SOCIAL_STATUS_INFO, getSocialStatusTooltip } = await import("../services/social-info.js");
+    const { LUCK_INFO, getLuckTooltip } = await import("../services/luck-info.js");
+    assert.ok(SOCIAL_STATUS_INFO.length > 30 && LUCK_INFO.length > 30, "both authored");
+    assert.ok(getSocialStatusTooltip(2).startsWith("Social Status +2:"), "level tooltip");
+    assert.ok(getSocialStatusTooltip(-2).startsWith("Social Status -2:"), "negative level");
+    assert.strictEqual(getSocialStatusTooltip(), `Social Status — ${SOCIAL_STATUS_INFO}`, "general");
+    assert.ok(getLuckTooltip("on").startsWith("Lucky streak (on) —"));
+    assert.ok(getLuckTooltip("off").includes("run its course"));
+    assert.strictEqual(getLuckTooltip(), `Lucky streak — ${LUCK_INFO}`);
+    console.log("  ✓ social status (per-level + general) and lucky streak authored");
+}
+
+console.log("\ninfo-enricher: stripInfoRefs keeps tagged lines filterable...");
+{
+    const { stripInfoRefs, socialRef, luckRef } = await import("../enrichers/info-enricher.js");
+    assert.strictEqual(stripInfoRefs(`${socialRef("Social Status")} 0 -> 1`), "Social Status 0 -> 1");
+    assert.strictEqual(stripInfoRefs(`${luckRef("Lucky streak")}: ON`), "Lucky streak: ON");
+    assert.strictEqual(stripInfoRefs("Birth humour set: @humour[Phlegm]{Phlegm}."), "Birth humour set: Phlegm.");
+    assert.strictEqual(stripInfoRefs("@stat[Strength]"), "Strength", "bare ref -> key");
+    assert.strictEqual(stripInfoRefs("plain text"), "plain text");
+    console.log("  ✓ refs reduce to labels so mechanical prefixes still match");
+}
+
 console.log("\ninfo-enricher: resolveInfo...");
 {
     const { resolveInfo } = await import("../enrichers/info-enricher.js");
