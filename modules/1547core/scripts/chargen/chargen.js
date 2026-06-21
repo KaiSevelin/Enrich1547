@@ -4054,6 +4054,20 @@ export class SkillTreeChargenApp extends FormApplication {
         return hasYourNatureRequirement(this.actor.system?.props ?? {}, key);
     }
 
+    // Surface (once per app instance) that the Your Nature roll tables are not in
+    // the world — almost always because the *Character Generator* content import
+    // wasn't run. This is a different menu from "1547 Core" Setup Data: it lives
+    // under the Character Generator module settings (chargen1547_v2).
+    _warnYourNatureContentMissing() {
+        if (this._yourNatureMissingWarned) return;
+        this._yourNatureMissingWarned = true;
+        ui.notifications?.warn?.(
+            "Your Nature content isn't imported into this world. Open Configure Settings → "
+            + "Character Generator (chargen1547_v2) → \"Setup Character Generator Content\" and run it. "
+            + "(This is NOT the \"1547 Core\" Setup Data button.)"
+        );
+    }
+
     async _rollYourNatureSelector() {
         try {
             const rolled = await this._rollOnce(YOUR_NATURE_SELECTOR_TABLE_REF);
@@ -4063,6 +4077,7 @@ export class SkillTreeChargenApp extends FormApplication {
             }
         } catch (err) {
             console.warn("Chargen: Your Nature selector table unavailable, using computed fallback.", err);
+            this._warnYourNatureContentMissing();
         }
 
         const roll = await (new Roll("3d6")).evaluate();
@@ -4119,14 +4134,8 @@ export class SkillTreeChargenApp extends FormApplication {
             );
             // Surface this once so a missing import doesn't look like the feature
             // is simply never firing. A qualified draw reached the table and found
-            // nothing — almost always because Setup Data was not (re-)run.
-            if (!this._yourNatureMissingWarned) {
-                this._yourNatureMissingWarned = true;
-                ui.notifications?.warn?.(
-                    "Your Nature triggered but its content isn't imported into this world. "
-                    + "Run the chargen Setup Data import (Configure Settings → 1547 Core) to enable it."
-                );
-            }
+            // nothing — almost always because the chargen content was not imported.
+            this._warnYourNatureContentMissing();
             return null;
         }
 

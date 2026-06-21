@@ -74,7 +74,7 @@ async function confirmDataSetup(folderName) {
     `;
 
     return await Dialog.confirm({
-        title: "Setup Character Generator Data",
+        title: "Setup Character Generator Content",
         content,
         yes: () => true,
         no: () => false,
@@ -86,7 +86,7 @@ export class ChargenSetupDataMenu extends FormApplication {
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
             id: "chargen1547-setup-data",
-            title: "Setup Character Generator Data",
+            title: "Setup Character Generator Content",
             template: "modules/1547core/templates/chargen/setup-data.hbs",
             width: 520,
             height: "auto",
@@ -223,9 +223,11 @@ export function registerChargenSettings() {
     });
 
     game.settings.registerMenu(CHARGEN_MODULE_ID, "setupData", {
-        name: "Setup Data",
-        label: "Setup Data",
-        hint: "Create or update the managed Character Generator items and rolltables in the world.",
+        name: "Setup Character Generator Content",
+        label: "Setup Character Generator Content",
+        hint: "Import or update the managed Character Generator items and rolltables in the world "
+            + "(life-path tables, Your Nature, body tables, etc.). Run this after updating the module. "
+            + "This is separate from the \"1547 Core\" Setup Data, which seeds combat/spell/monster data.",
         icon: "fas fa-database",
         type: ChargenSetupDataMenu,
         restricted: true
