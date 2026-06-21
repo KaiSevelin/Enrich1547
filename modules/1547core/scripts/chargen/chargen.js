@@ -1,6 +1,7 @@
 import { MODULE_ID } from "../lib/constants.mjs";
 import { renderDriveHintHtml, getDriveHintData } from "./drive-prompts.js";
 import { PRIMARY_STATS, statSteps, statFromSteps } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
+import { getStatTooltip } from "../hud/stat-info.js";
 import {
     advanceDeferredQueue,
     buildDeferredReveal,
@@ -2007,6 +2008,7 @@ export class SkillTreeChargenApp extends FormApplication {
                     value: String(opt.value),
                     title: opt.title ?? String(opt.value),
                     meta: opt.meta ?? "",
+                    tooltip: String(opt.tooltip ?? "").trim(),
                     checked: false,
                     selected: false,
                 }));
@@ -2916,6 +2918,7 @@ export class SkillTreeChargenApp extends FormApplication {
                 value: stat,
                 title: stat,
                 meta: `Increase ${stat} by one step.`,
+                tooltip: getStatTooltip(stat),
             })),
             defaultValue: PRIMARY_STATS[0],
             skippable: true,
