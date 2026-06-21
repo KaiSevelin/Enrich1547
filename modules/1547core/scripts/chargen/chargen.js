@@ -2,6 +2,8 @@ import { MODULE_ID } from "../lib/constants.mjs";
 import { renderDriveHintHtml, getDriveHintData } from "./drive-prompts.js";
 import { PRIMARY_STATS, statSteps, statFromSteps } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
 import { getStatTooltip } from "../hud/stat-info.js";
+import { humourRef } from "../enrichers/info-enricher.js";
+import { canonicalHumour } from "../services/humour-info.js";
 import {
     advanceDeferredQueue,
     buildDeferredReveal,
@@ -2566,7 +2568,7 @@ export class SkillTreeChargenApp extends FormApplication {
 
     _isBioMechanicalLine(text) {
         const t = String(text ?? "").trim();
-        return /^(Baseline:|Improved |Learned |Received |Language |Social Status |Item:|Appearance:|Gained a contact:|Lucky streak:|Missed:|Language award|Language already known;|Career ended)/.test(t);
+        return /^(Baseline:|Improved |Reduced |Learned |Received |Language |Social Status |Item:|Appearance:|Gained a contact:|Lucky streak:|Missed:|Language award|Language already known;|Career ended|Birth humour set:|Humour change:)/.test(t);
     }
 
     _escapeRegex(text) {
@@ -3937,7 +3939,7 @@ export class SkillTreeChargenApp extends FormApplication {
             Humour_BlackBile: "Black Bile",
             Humour_Phlegm: "Phlegm"
         };
-        const detail = dominant.length ? dominant.map(k => LABELS[k]).join(", ") : "balanced";
+        const detail = dominant.length ? dominant.map(k => humourRef(LABELS[k])).join(", ") : "balanced";
         await this._addBio(run, `Birth humour set: ${data.choice.title} (${detail}).`);
     }
 
@@ -3954,12 +3956,12 @@ export class SkillTreeChargenApp extends FormApplication {
         for (const h of hc.add ?? []) {
             if (!VALID.has(h)) continue;
             const key = `Humour_${h}`;
-            if (props[key] !== true) { update[`system.props.${key}`] = true; changed.push(`+${h}`); }
+            if (props[key] !== true) { update[`system.props.${key}`] = true; changed.push(`+${humourRef(h, canonicalHumour(h) || h)}`); }
         }
         for (const h of hc.remove ?? []) {
             if (!VALID.has(h)) continue;
             const key = `Humour_${h}`;
-            if (props[key] === true) { update[`system.props.${key}`] = false; changed.push(`-${h}`); }
+            if (props[key] === true) { update[`system.props.${key}`] = false; changed.push(`-${humourRef(h, canonicalHumour(h) || h)}`); }
         }
         if (!Object.keys(update).length) return;
         await this.actor.update(update);

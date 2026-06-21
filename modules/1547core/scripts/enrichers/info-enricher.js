@@ -10,13 +10,18 @@
 
 import { getStatTooltip } from "../hud/stat-info.js";
 import { getConditionDescription } from "../services/condition-registry.js";
+import { getHumourTooltip, canonicalHumour } from "../services/humour-info.js";
 
-// type -> (key) => { label, tooltip, known }. Add humour/drive/etc. here later.
+// type -> (key) => { label, tooltip, known }. Add drive/power/etc. here later.
 const INFO_RESOLVERS = {
     stat: (key) => ({ label: key, tooltip: getStatTooltip(key), known: true }),
     condition: (key) => {
         const desc = getConditionDescription(key);
         return { label: key, tooltip: desc ? `${key} — ${desc}` : "", known: Boolean(desc) };
+    },
+    humour: (key) => {
+        const tip = getHumourTooltip(key);
+        return { label: canonicalHumour(key) || key, tooltip: tip, known: Boolean(tip) };
     }
 };
 
@@ -52,6 +57,7 @@ function infoRef(type, key, label) {
 }
 export const statRef = (name, label) => infoRef("stat", name, label);
 export const conditionRef = (name, label) => infoRef("condition", name, label);
+export const humourRef = (name, label) => infoRef("humour", name, label);
 
 function buildInfoElement(type, key, label) {
     const info = resolveInfo(type, key, label);
@@ -89,6 +95,11 @@ export function register1547InfoEnricher() {
     enrichers.push({
         pattern: /@condition\[\s*([^\]]+?)\s*\](?:\{([^}]+)\})?/g,
         enricher: async (match) => buildInfoElement("condition", match[1], match[2]),
+        replaceParent: false
+    });
+    enrichers.push({
+        pattern: /@humou?r\[\s*([^\]]+?)\s*\](?:\{([^}]+)\})?/g,
+        enricher: async (match) => buildInfoElement("humour", match[1], match[2]),
         replaceParent: false
     });
 }

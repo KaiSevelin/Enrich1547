@@ -32,6 +32,24 @@ console.log("\ncondition-registry: every condition has a description...");
     console.log("  ✓ all conditions described; lookup by name and slug");
 }
 
+console.log("\nhumour-info: authored texts + name normalisation...");
+{
+    const { HUMOUR_INFO, canonicalHumour, getHumourTooltip, getHumourDescription } =
+        await import("../services/humour-info.js");
+    for (const h of ["Blood", "Yellow Bile", "Black Bile", "Phlegm"]) {
+        assert.ok(HUMOUR_INFO[h] && HUMOUR_INFO[h].length > 20, `${h} authored`);
+    }
+    // Every spelling resolves to the canonical name.
+    for (const spelling of ["Yellow Bile", "YellowBile", "yellow bile", "yellow-bile", "Humour_YellowBile"]) {
+        assert.strictEqual(canonicalHumour(spelling), "Yellow Bile", `${spelling} -> Yellow Bile`);
+    }
+    assert.strictEqual(canonicalHumour("blood"), "Blood");
+    assert.strictEqual(canonicalHumour("nonsense"), "", "unknown -> empty");
+    assert.ok(getHumourTooltip("BlackBile").startsWith("Black Bile —"));
+    assert.strictEqual(getHumourDescription("phlegm"), HUMOUR_INFO.Phlegm);
+    console.log("  ✓ 4 humours authored; all spellings normalise");
+}
+
 console.log("\ninfo-enricher: resolveInfo...");
 {
     const { resolveInfo } = await import("../enrichers/info-enricher.js");
@@ -64,6 +82,8 @@ console.log("\ninfo-enricher: emit helpers (statRef/conditionRef)...");
     assert.strictEqual(statRef("Strength"), "@stat[Strength]{Strength}");
     assert.strictEqual(statRef("Power", "the uncanny"), "@stat[Power]{the uncanny}");
     assert.strictEqual(conditionRef("Choking Hold"), "@condition[Choking Hold]{Choking Hold}");
+    const { humourRef } = await import("../enrichers/info-enricher.js");
+    assert.strictEqual(humourRef("YellowBile", "Yellow Bile"), "@humour[YellowBile]{Yellow Bile}");
     // Keys that can't be expressed in the bracket syntax degrade to plain text.
     assert.strictEqual(statRef("a]b"), "a]b", "key with ] is left plain");
     console.log("  ✓ helpers emit matching @stat/@condition source text");
