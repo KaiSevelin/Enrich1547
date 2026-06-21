@@ -2065,11 +2065,13 @@ a.enricher-1547::before {
 }
 
 .chargen-dialog__field select option {
-	/* Solid background-color, not a gradient: Chromium/Electron (Foundry)
-	   ignores gradient backgrounds on <option>, which left the selected
-	   option's light text on a default light background — i.e. invisible. */
-	background-color: #f3e7c9;
-	color: #23180f;
+	/* Dark field, light text — matching the closed <select>. Chromium/Electron
+	   renders the CLOSED select's displayed value using the selected option's
+	   own color, so a dark option color (for a light "parchment" list) showed
+	   dark-on-dark — i.e. the selected value looked blank. Keeping the option
+	   light-on-dark makes both the closed value and the open list readable. */
+	background-color: #161b27;
+	color: #fff3d9;
 	font-weight: 700;
 }
 
