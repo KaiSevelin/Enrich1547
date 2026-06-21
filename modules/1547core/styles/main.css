@@ -1852,7 +1852,9 @@ a.enricher-1547::before {
 }
 
 .skilltree-chargen .chargen-prompt-body {
-	padding: 0;
+	/* Inner padding so the title and content sit inside this panel's border
+	   instead of flush against its left/right edge. */
+	padding: 0.85rem 1rem;
 }
 
 .skilltree-chargen .chargen-prompt-continue {
@@ -1898,16 +1900,18 @@ a.enricher-1547::before {
 	gap: 0.6rem;
 	border: 1px solid rgba(234, 214, 176, 0.28);
 	border-radius: 12px;
-	padding: 0.6rem 0.8rem;
+	padding: 0.3rem 0.8rem;
 	background: rgba(7, 13, 23, 0.3);
 	transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 /* The Add button sits on the left and claims a small fixed slice; the row's
-   content shrinks into the rest (min-width:0) so total row width never changes. */
+   content shrinks into the rest (min-width:0) so total row width never changes.
+   Override the base choice-body padding so the row isn't double-padded (tall). */
 .skilltree-chargen .chargen-dialog__choice-list.is-row-select .chargen-dialog__choice-body {
 	flex: 1 1 auto;
 	min-width: 0;
+	padding: 0.25rem 0;
 }
 
 .skilltree-chargen .chargen-dialog__choice-list.is-row-select .chargen-dialog__choice:hover {
@@ -1956,6 +1960,18 @@ a.enricher-1547::before {
 
 .skilltree-chargen .chargen-main-cards.is-awaiting-prompt .chargen-card {
 	cursor: pointer;
+}
+
+/* While a side-panel prompt is open (e.g. the advancement wizard) the prompt
+   makes the right column tall; keep the cards pinned to the top at their natural
+   height instead of stretching/centering, so there's no empty gap above them. */
+.skilltree-chargen .chargen-main-cards.is-awaiting-prompt {
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+.skilltree-chargen .chargen-main-cards.is-awaiting-prompt .chargen-cards {
+	align-self: start;
+	height: auto;
 }
 
 .chargen-dialog {

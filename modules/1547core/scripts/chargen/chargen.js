@@ -3758,7 +3758,10 @@ export class SkillTreeChargenApp extends FormApplication {
         }
 
         const raw = await this._inlinePrompt({
-            kind: "select",
+            // A visible radio list, not a native <select>: Foundry's Electron
+            // build intermittently fails to paint a styled select's chosen value,
+            // leaving the combo looking empty. Radio rows always render.
+            kind: "choice",
             eyebrow: "Tongues",
             title: "Language Award",
             copy: "Learn a new language, or gain literacy in one the character already speaks.",
@@ -5047,20 +5050,31 @@ export class SkillTreeChargenApp extends FormApplication {
             if (reveal.isDeferred) {
                 const payload = reveal.payload ?? {};
                 const isYourNature = String(reveal.deferredKind ?? "").trim().toLowerCase() === "your-nature";
-                if (Array.isArray(payload.changes) && payload.changes.length) {
-                    // Applying a change can open an inline prompt in the bio panel
-                    // (defining a drive, choosing a language). The full-window reveal
-                    // overlay would cover that prompt and leave the UI stuck waiting
-                    // on input the player can't reach — so drop the overlay first
-                    // whenever a prompt is coming.
-                    const PROMPTING = new Set(["drive", "language"]);
-                    const willPrompt = !this._simulationEnabled()
-                        && payload.changes.some(ch => PROMPTING.has(String(ch?.type ?? "").trim().toLowerCase()));
-                    if (willPrompt) {
-                        run.reveal = null;
-                        await this._setState({ ...state, run });
-                        if (this._shouldRenderInteractiveUi()) this.render(true);
-                    }
+
+                // Applying a change can open an inline prompt in the bio panel
+                // (defining a drive, choosing a language). The full-window reveal
+                // overlay would cover that prompt and leave the UI stuck. So on the
+                // first Continue: drop the overlay, apply the changes (prompt now
+                // reachable), then re-show this reveal so there's a clear "Click to
+                // continue" to advance. The second Continue (_changesApplied) skips
+                // re-applying and proceeds with the bio + chaining below.
+                const PROMPTING = new Set(["drive", "language"]);
+                const willPrompt = !reveal._changesApplied
+                    && !this._simulationEnabled()
+                    && Array.isArray(payload.changes)
+                    && payload.changes.some(ch => PROMPTING.has(String(ch?.type ?? "").trim().toLowerCase()));
+                if (willPrompt) {
+                    run.reveal = null;
+                    await this._setState({ ...state, run });
+                    if (this._shouldRenderInteractiveUi()) this.render(true);
+                    await this._applyChanges(run, payload.changes);
+                    run.reveal = { ...reveal, _changesApplied: true };
+                    await this._setState({ ...state, run });
+                    if (this._shouldRenderInteractiveUi()) this.render(true);
+                    return;
+                }
+
+                if (!reveal._changesApplied && Array.isArray(payload.changes) && payload.changes.length) {
                     await this._applyChanges(run, payload.changes);
                 }
                 if (reveal.text) {
@@ -5236,13 +5250,23 @@ export class SkillTreeChargenApp extends FormApplication {
         const workHistory = await this._buildWorkHistory(run);
         const workHistoryText = workHistory.join("\n");
 
-        // CurrentHitPoints defaults to ${MaxHitPoints} at actor creation, but
-        // MaxHitPoints is derived from stats and is 0 before chargen grants them
-        // — so a freshly generated character is left at 0 HP. Now that stats are
-        // final, sync current HP up to max. Guarded so we never write 0/NaN.
-        const maxHitPoints = Number(actor.system?.props?.MaxHitPoints);
-        const hpUpdate = Number.isFinite(maxHitPoints) && maxHitPoints > 0
-            ? { "system.props.CurrentHitPoints": maxHitPoints }
+        // A freshly generated character is otherwise left at 0 current HP. Now that
+        // stats are final, set both Max and Current HP. Use the stored MaxHitPoints
+        // when present, else the value derived from stats (STR+STA+DEX dice) — the
+        // raw MaxHitPoints prop is often still unset here, which previously left the
+        // guard failing and HP at 0 even though the sheet showed a derived max.
+        const hpProps = actor.system?.props ?? {};
+        const storedMax = Number(hpProps.MaxHitPoints);
+        const derivedMax = Math.max(0,
+            Number(hpProps.Stats_StrengthDice ?? 1)
+            + Number(hpProps.Stats_StaminaDice ?? 1)
+            + Number(hpProps.Stats_DexterityDice ?? 1));
+        const maxHitPoints = Number.isFinite(storedMax) && storedMax > 0 ? storedMax : derivedMax;
+        const hpUpdate = maxHitPoints > 0
+            ? {
+                "system.props.MaxHitPoints": maxHitPoints,
+                "system.props.CurrentHitPoints": maxHitPoints
+            }
             : {};
 
         await actor.update({
