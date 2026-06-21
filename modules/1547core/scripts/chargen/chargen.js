@@ -5048,6 +5048,19 @@ export class SkillTreeChargenApp extends FormApplication {
                 const payload = reveal.payload ?? {};
                 const isYourNature = String(reveal.deferredKind ?? "").trim().toLowerCase() === "your-nature";
                 if (Array.isArray(payload.changes) && payload.changes.length) {
+                    // Applying a change can open an inline prompt in the bio panel
+                    // (defining a drive, choosing a language). The full-window reveal
+                    // overlay would cover that prompt and leave the UI stuck waiting
+                    // on input the player can't reach — so drop the overlay first
+                    // whenever a prompt is coming.
+                    const PROMPTING = new Set(["drive", "language"]);
+                    const willPrompt = !this._simulationEnabled()
+                        && payload.changes.some(ch => PROMPTING.has(String(ch?.type ?? "").trim().toLowerCase()));
+                    if (willPrompt) {
+                        run.reveal = null;
+                        await this._setState({ ...state, run });
+                        if (this._shouldRenderInteractiveUi()) this.render(true);
+                    }
                     await this._applyChanges(run, payload.changes);
                 }
                 if (reveal.text) {
