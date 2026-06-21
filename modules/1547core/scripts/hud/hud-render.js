@@ -1,4 +1,7 @@
-﻿function renderPills(entries, deps = {}) {
+﻿import { getStatTooltip } from "./stat-info.js";
+import { getConditionDescription } from "../services/condition-registry.js";
+
+function renderPills(entries, deps = {}) {
     const { escapeHtml } = deps;
     if (!entries.length) return `<span class="hud-empty-pill">None</span>`;
     return entries.map((entry) => `
@@ -43,7 +46,7 @@ function buildGroupedTree(groups, formatter, deps = {}, options = {}) {
 
 function buildStatsTree(data, deps = {}) {
     const { escapeHtml } = deps;
-    const statRows = data.stats.map((stat) => `<li><span class="hud-tree-key">${escapeHtml(stat.label)}</span><span class="hud-tree-value">${escapeHtml(stat.formula)}</span></li>`).join("");
+    const statRows = data.stats.map((stat) => `<li title="${escapeHtml(getStatTooltip(stat.label, stat.formula))}"><span class="hud-tree-key">${escapeHtml(stat.label)}</span><span class="hud-tree-value">${escapeHtml(stat.formula)}</span></li>`).join("");
     const resourceRows = data.pointPools.map((resource) => `<li><span class="hud-tree-key">${escapeHtml(resource.label)}</span><span class="hud-tree-value">${escapeHtml(resource.display)}</span></li>`).join("");
     return `
         <div class="hud-tree-block">
@@ -208,7 +211,7 @@ function buildEquippedTree(data, deps = {}) {
     const equippedItemRows = buildGroupedTree(equippedItemGroups, (item) => {
         const status = [item.type, item.equipped ? "Equipped" : "", item.consumable ? "Usable" : ""].filter(Boolean);
         return `
-            <li class="hud-tree-item">
+            <li class="hud-tree-item" title="${escapeHtml(item.tooltip || item.name)}">
                 <div class="hud-row-main">${escapeHtml(item.name)}</div>
                 ${status.length ? `<ul class="hud-tree-children"><li>${escapeHtml(status.join(" - "))}</li></ul>` : ""}
                 <div class="hud-weapon-action-strip">
@@ -279,7 +282,7 @@ function buildInventoryTree(data, deps = {}) {
             : "";
 
         return `
-            <li class="hud-tree-item">
+            <li class="hud-tree-item" title="${escapeHtml(item.tooltip || item.name)}">
                 <div class="hud-row-main">${escapeHtml(item.name)}</div>
                 ${status.length ? `<ul class="hud-tree-children"><li>${escapeHtml(status.join(" - "))}</li></ul>` : ""}
                 ${equipButton}
@@ -298,11 +301,15 @@ function buildInventoryTree(data, deps = {}) {
 
 function buildConditionTree(data, deps = {}) {
     const { escapeHtml } = deps;
-    return buildTreeList(data.conditions, (condition) => `
-        <li class="hud-tree-item">
+    return buildTreeList(data.conditions, (condition) => {
+        const desc = getConditionDescription(condition);
+        return `
+        <li class="hud-tree-item"${desc ? ` title="${escapeHtml(`${condition} — ${desc}`)}"` : ""}>
             <div class="hud-row-main">${escapeHtml(condition)}</div>
+            ${desc ? `<div class="hud-row-sub">${escapeHtml(desc)}</div>` : ""}
         </li>
-    `);
+    `;
+    });
 }
 
 function buildOverviewTree(data, deps = {}) {
@@ -608,7 +615,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                 const markRows = data.supernaturalMarks.length
                     ? buildTreeList(data.supernaturalMarks, (mark) => `
                         <li class="hud-tree-item">
-                            <button type="button" class="hud-action-row" data-hud-open-item="${escapeHtml(mark.id)}">
+                            <button type="button" class="hud-action-row" data-hud-open-item="${escapeHtml(mark.id)}" title="${escapeHtml(mark.tooltip || mark.name)}">
                                 <span class="hud-row-main">${escapeHtml(mark.name)}</span>
                                 ${mark.description ? `<span class="hud-row-sub">${escapeHtml(mark.description)}</span>` : ""}
                                 <span class="hud-tree-value">Open</span>
@@ -618,7 +625,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                     : `<li class="hud-empty-row">No supernatural marks</li>`;
                 const monsterMagicRows = data.monsterMagic.length
                     ? buildTreeList(data.monsterMagic, (magic) => `
-                        <li class="hud-tree-item hud-weapon-card">
+                        <li class="hud-tree-item hud-weapon-card" title="${escapeHtml(magic.tooltip || magic.name)}">
                             <div class="hud-row-main">${escapeHtml(magic.name)}</div>
                             ${magic.description ? `<div class="hud-row-sub">${escapeHtml(magic.description)}</div>` : ""}
                             <div class="hud-weapon-action-strip">
@@ -793,7 +800,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
             return `${buildChecksHeader(data, deps)}<ul class="hud-list hud-tree-list hud-list-scroll hud-skill-scroll">
                 ${buildTreeList(data.skills, (skill) => `
                     <li class="hud-tree-item">
-                        <button type="button" class="hud-action-row" data-hud-skill="${escapeHtml(skill.name)}">
+                        <button type="button" class="hud-action-row" data-hud-skill="${escapeHtml(skill.name)}" title="${escapeHtml(skill.tooltip || skill.name)}">
                             <span class="hud-row-main">${escapeHtml(skill.name)}</span>
                             <span class="hud-row-sub">${escapeHtml([skill.group, skill.linkedStat, `L${skill.currentLevel}`].filter(Boolean).join(" - "))}</span>
                             ${skill.formula ? `<span class="hud-tree-value">${escapeHtml(skill.formula)}</span>` : ""}

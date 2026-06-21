@@ -737,15 +737,23 @@ export function summarizeActor(actor, token, deps = {}) {
     const inventory = inventoryItems.map((item) => {
         const sourceData = item.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item.flags?.[MODULE_ID]?.sourceData ?? {};
         const itemProps = item.system?.props ?? {};
+        const group = getPlayerFacingItemGroup(item);
+        const equipped = Boolean(itemProps.Equipped);
+        const consumable = isConsumableItem(item);
+        const type = itemProps.WeaponType ?? itemProps.ArmorType ?? sourceData.category ?? sourceData.armorClass ?? sourceData.type ?? "";
+        const description = String(itemProps.Description ?? sourceData.description ?? sourceData.Description ?? sourceData.notes ?? "").trim();
+        const mech = [type, group, equipped ? "Equipped" : "", consumable ? "Usable" : ""].filter(Boolean).join(" · ");
         return {
             id: item.id,
             name: item.name,
-            group: getPlayerFacingItemGroup(item),
-            equipped: Boolean(itemProps.Equipped),
-            consumable: isConsumableItem(item),
+            group,
+            equipped,
+            consumable,
             itemKind: getCsbItemKind(item),
             templateId: item.system?.template ?? "",
-            type: itemProps.WeaponType ?? itemProps.ArmorType ?? sourceData.category ?? sourceData.armorClass ?? sourceData.type ?? ""
+            type,
+            description,
+            tooltip: [mech, description].filter(Boolean).join(" — ")
         };
     });
 
@@ -758,11 +766,14 @@ export function summarizeActor(actor, token, deps = {}) {
         const description = rawDescription
             ? rawDescription.split(/\r?\n/).map((line) => line.trim()).filter(Boolean)[0] ?? ""
             : "";
+        const kindLabel = itemKind === "supernatural-mark" ? "Supernatural Mark" : "Power";
         return {
             id: item.id,
             name: item.name,
             description,
-            itemKind
+            itemKind,
+            // Full (untruncated) description for the hover tooltip.
+            tooltip: [kindLabel, rawDescription].filter(Boolean).join(" — ")
         };
     };
     const supernaturalMarks = supernaturalMarkItems.map((item) => summarizeMagicCarrier(item, "supernatural-mark"));
@@ -839,19 +850,30 @@ export function summarizeActor(actor, token, deps = {}) {
         const currentLevel = getNumericProp(itemProps, ["CurrentLevel"]) ?? 0;
         const diceShift = getSkillDiceShift(itemProps);
         const rollData = buildSkillRollData(baseStat, diceShift, 0, 0);
+        const group = sourceData.group ?? itemProps.Group ?? "";
+        const formula = baseStat ? rollData.formula : "";
+        const description = String(itemProps.Description ?? sourceData.description ?? sourceData.Description ?? "").trim();
+        const mech = [
+            group,
+            statLabel ? `Linked to ${statLabel}` : "",
+            `Level ${currentLevel}`,
+            formula ? `Rolls ${formula}` : ""
+        ].filter(Boolean).join(" · ");
         return {
             id: item.id,
             name: item.name,
-            group: sourceData.group ?? itemProps.Group ?? "",
+            group,
             linkedStat: statLabel,
             currentLevel,
             diceShift,
             canRoll: Boolean(itemProps.CanRoll),
-            formula: baseStat ? rollData.formula : "",
+            formula,
             baseFormula: baseStat?.formula ?? "",
             finalDice: rollData.dice,
             finalMod: rollData.mod,
-            usedFallback: rollData.usedFallback
+            usedFallback: rollData.usedFallback,
+            description,
+            tooltip: [mech, description].filter(Boolean).join(" — ")
         };
     });
 

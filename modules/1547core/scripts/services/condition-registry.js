@@ -19,25 +19,34 @@ import { MODULE_ID } from "../lib/constants.mjs";
 const PHYSICAL = ["Strength", "Stamina", "Dexterity"];
 
 export const CONDITIONS = {
-    Weakened: { disadvantage: "physical" },
-    Exhausted: { disadvantage: "all", blocksAdvantage: true, supersedes: ["Weakened"] },
-    Cursed: { disadvantage: "all" },
-    Doomed: { blocksAdvantage: true },
-    Restless: {},   // blocks rest/recovery — handled outside the dice
-    Marked: {},      // grants trackers advantage against the actor — not a self-modifier
-    Silenced: { noVerbal: true }, // prevents spoken/verbal actions — situational legality
+    Weakened: { disadvantage: "physical", description: "Your body is sapped — disadvantage (one fewer die) on physical rolls: Strength, Stamina, and Dexterity." },
+    Exhausted: { disadvantage: "all", blocksAdvantage: true, supersedes: ["Weakened"], description: "Worn to the bone — disadvantage on every roll, and your advantage dice are ignored. Replaces Weakened." },
+    Cursed: { disadvantage: "all", description: "A malign influence dogs you — disadvantage on all rolls until the curse is lifted." },
+    Doomed: { blocksAdvantage: true, description: "Ill-fated — your advantage dice are ignored; fortune will not favour you." },
+    Restless: { description: "Sleep and ease will not come — you cannot rest or recover while this lingers." },   // blocks rest/recovery — handled outside the dice
+    Marked: { description: "You are being hunted — those tracking you gain advantage on rolls against you." },      // grants trackers advantage against the actor — not a self-modifier
+    Silenced: { noVerbal: true, description: "You cannot make a sound — spoken and verbal actions (including spoken magic) are unavailable." }, // prevents spoken/verbal actions — situational legality
     // Combat grapples/knockdowns — each imposes disadvantage on the held/downed
     // combatant's attack and defence rolls (one Risk die via conditionCombatDisadvantage).
     // Escaping them is its own granted maneuver (see foundry/Templates/maneuvers.json).
-    Locked: { combat: true, img: "icons/svg/net.svg" },
+    Locked: { combat: true, img: "icons/svg/net.svg", description: "Held fast — disadvantage on your attack and defence rolls until you break the hold." },
     // Prone: disadvantage on your ATTACKS only (you can still defend normally), and
     // anyone attacking you gets one advantage die.
-    Prone: { combat: true, combatDisadvantage: "attack", attackersAdvantage: 1, img: "icons/svg/falling.svg" },
-    Grappled: { combat: true, img: "icons/svg/trap.svg" },
+    Prone: { combat: true, combatDisadvantage: "attack", attackersAdvantage: 1, img: "icons/svg/falling.svg", description: "Knocked down — disadvantage on your attacks (you still defend normally), and attackers gain one advantage die against you. Stand up to clear it." },
+    Grappled: { combat: true, img: "icons/svg/trap.svg", description: "Seized in a grapple — disadvantage on your attack and defence rolls until you escape." },
     // Choking Hold is severe: also cancels advantage, and the choker gets a free
     // unarmed attack each round (inflictorAttackEachRound).
-    "Choking Hold": { combat: true, blocksAdvantage: true, inflictorAttackEachRound: "unarmed", img: "icons/svg/terror.svg" }
+    "Choking Hold": { combat: true, blocksAdvantage: true, inflictorAttackEachRound: "unarmed", img: "icons/svg/terror.svg", description: "A crushing hold — disadvantage on your rolls, your advantage dice are ignored, and your attacker lands a free unarmed strike each round until you break free." }
 };
+
+/**
+ * Human-readable description for a condition by name or slug (e.g. "Choking Hold"
+ * or "choking-hold"). Returns "" when the name isn't a known registry condition.
+ */
+export function getConditionDescription(name) {
+    const canonical = CONDITION_BY_SLUG[slug(name)];
+    return canonical ? String(CONDITIONS[canonical]?.description ?? "").trim() : "";
+}
 
 // Default icons for the registry's afflictions so they read clearly in the token
 // status menu (see registerConditionStatusEffects). Combat conditions carry their
