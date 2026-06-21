@@ -3135,7 +3135,15 @@ export class SkillTreeChargenApp extends FormApplication {
     }
 
     async _applyCareerAdvancementBundle(run, reveal) {
-        return await this._runCareerAdvancementWizard(run, reveal);
+        // Mark the whole wizard so getData keeps both cards face-down for its
+        // entire duration — including the brief gaps between prompts where
+        // _pendingPrompt is null, which otherwise flashed the old card fronts.
+        this._inAdvancementWizard = true;
+        try {
+            return await this._runCareerAdvancementWizard(run, reveal);
+        } finally {
+            this._inAdvancementWizard = false;
+        }
     }
 
     async _maybeApplyCareerAdvancementBundle(state, run, reveal = null) {
@@ -4412,9 +4420,12 @@ export class SkillTreeChargenApp extends FormApplication {
 
         // During the career-advancement wizard (stat/skill/maneuver picks), the
         // cards are decorative — choices are made in the side panel — so show
-        // both face-down to keep the focus there.
-        const inAdvancement = Boolean(this._pendingPrompt)
-            && String(this._pendingPrompt.eyebrow ?? "").trim().toLowerCase() === "advancement";
+        // both face-down to keep the focus there. The flag spans the whole
+        // wizard (incl. the bio refresh between prompts, where _pendingPrompt is
+        // momentarily null and the old fronts used to flash back into view).
+        const inAdvancement = this._inAdvancementWizard === true
+            || (Boolean(this._pendingPrompt)
+                && String(this._pendingPrompt.eyebrow ?? "").trim().toLowerCase() === "advancement");
 
         return {
             revealDeferredLines,
