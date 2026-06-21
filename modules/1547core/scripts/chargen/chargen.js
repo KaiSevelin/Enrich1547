@@ -1,6 +1,6 @@
 import { MODULE_ID } from "../lib/constants.mjs";
 import { renderDriveHintHtml, getDriveHintData } from "./drive-prompts.js";
-import { PRIMARY_STATS } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
+import { PRIMARY_STATS, statSteps, statFromSteps } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
 import {
     advanceDeferredQueue,
     buildDeferredReveal,
@@ -5243,17 +5243,6 @@ function getNumberProp(props, key, fallback = 0) {
     const n = Number(v);
     return Number.isFinite(n) ? n : fallback;
 }
-function statIndex(dice, mod) {
-    return (dice - 1) * 4 + mod;
-}
-
-function indexToStat(index) {
-    const clamped = Math.max(0, index);
-    return {
-        dice: Math.floor(clamped / 4) + 1,
-        mod: clamped % 4
-    };
-}
 export async function advanceStat(actor, characteristic, steps) {
     const dKey = `Stats_${characteristic}Dice`;
     const mKey = `Stats_${characteristic}Mod`;
@@ -5262,12 +5251,12 @@ export async function advanceStat(actor, characteristic, steps) {
     const beforeDice = Number(props[dKey] ?? 1);
     const beforeMod = Number(props[mKey] ?? 0);
 
-    const beforeIndex = statIndex(beforeDice, beforeMod);
+    const beforeSteps = statSteps(beforeDice, beforeMod);
 
     // âœ… allow negative steps, but clamp to minimum
-    const afterIndex = Math.max(0, beforeIndex + Number(steps ?? 0));
+    const afterSteps = Math.max(0, beforeSteps + Number(steps ?? 0));
 
-    const { dice, mod } = indexToStat(afterIndex);
+    const { dice, mod } = statFromSteps(afterSteps);
 
     await actor.update({
         [`system.props.${dKey}`]: dice,

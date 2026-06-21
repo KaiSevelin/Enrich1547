@@ -6,7 +6,7 @@
 // (rolling tables, building reveals) stays on SkillTreeChargenApp, which
 // delegates the decisions below to keep behaviour identical.
 
-import { PRIMARY_STATS } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
+import { PRIMARY_STATS, statSteps } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
 
 /** Destination-table refs keyed by selector domain. IDs are kept on import. */
 export const YOUR_NATURE_TABLE_REFS = {
@@ -53,6 +53,13 @@ export const YOUR_NATURE_HUMOUR_PROPS = {
 export const YOUR_NATURE_ELIGIBLE_STAGES = ["adolescence", "career", "advanced"];
 
 /**
+ * Minimum stat value (in steps; see statSteps) to qualify for a stat table.
+ * 2 == "1d6+2 or better". Lowered from 4 ("2d6") so modest aptitudes can still
+ * surface a Your Nature mark.
+ */
+export const YOUR_NATURE_STAT_MIN_STEPS = 2;
+
+/**
  * Whether a 1d6 trigger result makes a Your Nature draw. Spec: 5 or 6 triggers.
  */
 export function shouldTriggerYourNature(triggerTotal) {
@@ -78,7 +85,9 @@ export function hasYourNatureRequirement(props, key) {
 
     if (PRIMARY_STATS.includes(domain)) {
         const dice = Number(props?.[`Stats_${domain}Dice`] ?? 1);
-        return Number.isFinite(dice) && dice >= 2;
+        const mod = Number(props?.[`Stats_${domain}Mod`] ?? 0);
+        if (!Number.isFinite(dice) || !Number.isFinite(mod)) return false;
+        return statSteps(dice, mod) >= YOUR_NATURE_STAT_MIN_STEPS;
     }
 
     const humourProp = YOUR_NATURE_HUMOUR_PROPS[domain];

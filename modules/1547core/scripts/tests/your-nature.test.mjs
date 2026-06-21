@@ -10,6 +10,25 @@ import assert from "assert";
  */
 
 const yn = await import("../chargen/your-nature.js");
+const { statSteps, statFromSteps } = await import("../../foundry/Templates/chargen/foundry-primary-stats/stats.js");
+
+console.log("stats: steps ladder (calculated stat value)...");
+{
+    // The exact mapping: 0=1d6, 1=1d6+1, 2=1d6+2, 3=1d6+3, 4=2d6, ...
+    const ladder = [
+        [1, 0, 0], [1, 1, 1], [1, 2, 2], [1, 3, 3],
+        [2, 0, 4], [2, 1, 5], [2, 2, 6], [2, 3, 7],
+        [3, 0, 8], [3, 3, 11], [4, 0, 12]
+    ];
+    for (const [dice, mod, steps] of ladder) {
+        assert.strictEqual(statSteps(dice, mod), steps, `${dice}d6+${mod} = ${steps} steps`);
+        assert.deepStrictEqual(statFromSteps(steps), { dice, mod }, `${steps} steps -> ${dice}d6+${mod}`);
+    }
+    // statFromSteps clamps below zero and floors fractional input.
+    assert.deepStrictEqual(statFromSteps(-5), { dice: 1, mod: 0 }, "negative steps clamp to 1d6");
+    assert.strictEqual(statSteps("2", "1"), 5, "string dice/mod coerce");
+    console.log("  ✓ statSteps / statFromSteps round-trip the d6 ladder");
+}
 
 console.log("your-nature: trigger gate (1d6, 5-6 fires)...");
 {
@@ -35,12 +54,16 @@ console.log("\nyour-nature: stage eligibility (adolescence → retirement)...");
 
 console.log("\nyour-nature: domain qualification...");
 {
-    // Stat domains need at least 2d6; the prop defaults to 1d6 when absent.
-    assert.strictEqual(yn.hasYourNatureRequirement({ Stats_DexterityDice: 2 }, "Dexterity"), true);
-    assert.strictEqual(yn.hasYourNatureRequirement({ Stats_DexterityDice: 3 }, "Dexterity"), true);
-    assert.strictEqual(yn.hasYourNatureRequirement({ Stats_DexterityDice: 1 }, "Dexterity"), false);
-    assert.strictEqual(yn.hasYourNatureRequirement({}, "Dexterity"), false, "absent stat → 1d6 → fails");
-    assert.strictEqual(yn.hasYourNatureRequirement({ Stats_DexterityDice: "2" }, "Dexterity"), true, "string dice coerce");
+    // Stat domains qualify at 1d6+2 or better (statSteps >= 2). Both the
+    // die count and the modifier count; props default to 1d6+0 when absent.
+    assert.strictEqual(yn.hasYourNatureRequirement({ Stats_DexterityDice: 2 }, "Dexterity"), true, "2d6 qualifies");
+    assert.strictEqual(yn.hasYourNatureRequirement({ Stats_DexterityDice: 3 }, "Dexterity"), true, "3d6 qualifies");
+    assert.strictEqual(yn.hasYourNatureRequirement({ Stats_DexterityDice: 1, Stats_DexterityMod: 2 }, "Dexterity"), true, "1d6+2 qualifies (the new floor)");
+    assert.strictEqual(yn.hasYourNatureRequirement({ Stats_DexterityDice: 1, Stats_DexterityMod: 3 }, "Dexterity"), true, "1d6+3 qualifies");
+    assert.strictEqual(yn.hasYourNatureRequirement({ Stats_DexterityDice: 1, Stats_DexterityMod: 1 }, "Dexterity"), false, "1d6+1 is below the floor");
+    assert.strictEqual(yn.hasYourNatureRequirement({ Stats_DexterityDice: 1 }, "Dexterity"), false, "1d6+0 fails");
+    assert.strictEqual(yn.hasYourNatureRequirement({}, "Dexterity"), false, "absent stat → 1d6+0 → fails");
+    assert.strictEqual(yn.hasYourNatureRequirement({ Stats_DexterityDice: "1", Stats_DexterityMod: "2" }, "Dexterity"), true, "string dice/mod coerce");
 
     // Humour domains need the corresponding Humour_* flag to be truthy.
     assert.strictEqual(yn.hasYourNatureRequirement({ Humour_Blood: true }, "Blood"), true);
@@ -52,7 +75,7 @@ console.log("\nyour-nature: domain qualification...");
     assert.strictEqual(yn.hasYourNatureRequirement({ Stats_DexterityDice: 6 }, "Charm"), false, "unknown domain");
     assert.strictEqual(yn.hasYourNatureRequirement({}, ""), false);
     assert.strictEqual(yn.hasYourNatureRequirement(null, "Dexterity"), false, "null props tolerated");
-    console.log("  ✓ stat 2d6 gate, humour-flag gate, unknown/empty rejected");
+    console.log("  ✓ stat 1d6+2 gate (mod-aware), humour-flag gate, unknown/empty rejected");
 }
 
 console.log("\nyour-nature: selector-bucket fallback...");

@@ -128,8 +128,11 @@ There are **twelve** authored `Your Nature` tables:
 
 #### Stat-table requirement
 
-A character may use a stat table only if they have at least **`2d6`** in that stat at the
-time the draw is checked.
+A character may use a stat table only if they have at least **`1d6+2`** in that stat at the
+time the draw is checked. Both the die count and the modifier count toward this threshold.
+Stats are measured in **steps** up the d6 ladder from `1d6` = 0 (`0 = 1d6`, `1 = 1d6+1`,
+`2 = 1d6+2`, `3 = 1d6+3`, `4 = 2d6`, ...), and any stat at **2 steps** (`1d6+2`) or above
+qualifies.
 
 The seven stat tables are:
 
@@ -244,6 +247,8 @@ inventing a separate persistence mechanism.
   history, not campaign advancement.
 - Qualification for a stat table is checked against the actor state **as it exists when that
   life step is processed**, not against the actor's initial state.
+- The stat-table threshold is **`1d6+2`** (2 steps, counting both dice and modifier), not a
+  raw die count, so a character with one die but a built-up modifier can still qualify.
 - Qualification for a humour table is based on whether the actor currently has that humour's
   flag.
 - A trigger that fails qualification produces **no compensation** and **no substitute roll**.
