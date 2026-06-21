@@ -186,6 +186,7 @@ function buildDefaultUnarmedWeaponSummary(game, MODULE_ID, getWeaponAttackState,
         canTargetMultiple: false,
         compatibleAmmo: [],
         traits: Array.isArray(source.traits) ? [...source.traits] : [],
+        tooltip: ["Unarmed", activeAttackProfile?.formula ? `Attack ${activeAttackProfile.formula}` : ""].filter(Boolean).join(" · "),
     };
     weaponSummary.attackState = getWeaponAttackState(weaponSummary, {
         token,
@@ -216,6 +217,7 @@ function buildDefaultUnprotectedArmorSummary(game, MODULE_ID) {
         defenseDice,
         type: source.armorClass ?? "Unprotected",
         traits: Array.isArray(source.traits) ? [...source.traits] : [],
+        tooltip: ["Unprotected", defenseDice.length ? `Defense ${defenseDice.join(", ")}` : ""].filter(Boolean).join(" · "),
     };
 }
 
@@ -382,9 +384,21 @@ export function summarizeActor(actor, token, deps = {}) {
         const selectedAmmo = selectedAmmoId ? ammoItems.find((ammo) => ammo.id === selectedAmmoId) ?? null : null;
         const weaponModifierNames = getAttachedModifierNames(item, items);
         const ammoModifierNames = selectedAmmo ? getAttachedModifierNames(selectedAmmo, items) : [];
+        const weaponDescription = String(itemProps.Description ?? sourceData.description ?? sourceData.Description ?? "").trim();
+        const weaponTooltip = [
+            [
+                itemProps.WeaponType ?? sourceData.category ?? sourceData.type ?? "",
+                activeAttackProfile?.formula ? `Attack ${activeAttackProfile.formula}` : "",
+                formatRangeSummary(rangeBands),
+                weaponModifierNames.length ? `Mods: ${weaponModifierNames.join(", ")}` : ""
+            ].filter(Boolean).join(" · "),
+            weaponDescription
+        ].filter(Boolean).join(" — ");
         const weaponSummary = {
             id: item.id,
             name: item.name,
+            description: weaponDescription,
+            tooltip: weaponTooltip,
             equipped: Boolean(itemProps.Equipped),
             type: itemProps.WeaponType ?? sourceData.category ?? sourceData.type ?? "",
             minReach: reach.minReach,
@@ -439,12 +453,20 @@ export function summarizeActor(actor, token, deps = {}) {
     let equippedArmor = armorItems.map((item) => {
         const itemProps = item.system?.props ?? {};
         const sourceData = item.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item.flags?.[MODULE_ID]?.sourceData ?? {};
+        const armorType = itemProps.ArmorType ?? sourceData.armorClass ?? sourceData.type ?? "armor";
+        const defense = itemProps.Defense ?? "";
+        const armorDescription = String(itemProps.Description ?? sourceData.description ?? sourceData.Description ?? "").trim();
         return {
             id: item.id,
             name: item.name,
             equipped: Boolean(itemProps.Equipped),
-            defense: itemProps.Defense ?? "",
-            type: itemProps.ArmorType ?? sourceData.armorClass ?? sourceData.type ?? "armor"
+            defense,
+            type: armorType,
+            description: armorDescription,
+            tooltip: [
+                [armorType, defense ? `Defense ${defense}` : ""].filter(Boolean).join(" · "),
+                armorDescription
+            ].filter(Boolean).join(" — ")
         };
     }).filter((item) => item.equipped);
 

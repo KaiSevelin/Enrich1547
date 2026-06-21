@@ -121,7 +121,7 @@ function buildEquippedTree(data, deps = {}) {
                 return parts.join("");
             })();
             return `
-                <li class="hud-tree-item hud-weapon-card">
+                <li class="hud-tree-item hud-weapon-card" title="${escapeHtml(weapon.tooltip || weapon.name)}">
                     <div class="hud-weapon-title-row">
                         <div class="hud-row-main">${escapeHtml(`${weapon.name}${ammoSuffix}`)}</div>
                         ${inlineProfilePicker}
@@ -186,7 +186,7 @@ function buildEquippedTree(data, deps = {}) {
 
     const equippedArmorRows = data.equippedArmor.length
         ? buildTreeList(data.equippedArmor, (armor) => `
-            <li class="hud-tree-item">
+            <li class="hud-tree-item" title="${escapeHtml(armor.tooltip || armor.name)}">
                 <div class="hud-row-main">${escapeHtml(armor.name)}</div>
                 <div class="hud-row-sub">${escapeHtml(armor.defense || armor.type || "Equipped")}</div>
                 <div class="hud-weapon-action-strip">

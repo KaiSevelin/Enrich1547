@@ -8,15 +8,13 @@
  *   Stats_{Name}Dice  (number, default 1)
  *   Stats_{Name}Mod   (number, default 0, range 0-3)
  *
- * Ladder index <-> (dice, mod):
- *   index = (dice - 1) * 4 + mod
- *   dice  = floor(index / 4) + 1
- *   mod   = index % 4
- *
- * TODO: chargen1547_v2 currently holds its own copy of these helpers
- *       (foundry-primary-stats/stats.js + chargen.js lines 5279-5311).
- *       Refactor chargen to import from this file and delete its local copy.
+ * The ladder math (a stat's "steps") is the single source of truth in
+ * foundry-primary-stats/stats.js. statIndex/indexToStat are kept here as the
+ * combat-layer's names for statSteps/statFromSteps so existing callers don't
+ * change, but they no longer carry a second copy of the formula.
  */
+
+import { statSteps, statFromSteps } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
 
 export const PRIMARY_STATS = [
     "Strength",
@@ -34,17 +32,9 @@ export const HIT_POINT_DRIVING_STATS = [
     "Dexterity"
 ];
 
-export function statIndex(dice, mod) {
-    return (dice - 1) * 4 + mod;
-}
-
-export function indexToStat(index) {
-    const clamped = Math.max(0, index);
-    return {
-        dice: Math.floor(clamped / 4) + 1,
-        mod: clamped % 4
-    };
-}
+// Unified onto the canonical ladder math (statSteps / statFromSteps).
+export const statIndex = statSteps;
+export const indexToStat = statFromSteps;
 
 export function getStatRating(actor, characteristic) {
     const props = actor?.system?.props ?? {};
