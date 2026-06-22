@@ -180,9 +180,9 @@ async function handleReactionTrigger(sourceEvent, trigger) {
     const windowId = foundry.utils.randomID();
     // The reactor is whoever may react: for an attack that's the *defender*
     // (reactionWindow.actor is the attacker here), for a threat zone it's the
-    // zone owner. Most legal-maneuver candidates carry no `.actor`, so without
-    // this trigger-aware fallback the relay would target the attacker and the
-    // defending player would never get the prompt.
+    // zone owner. Candidate builders now stamp `.actor` (the reactor) on every
+    // candidate, so this resolves deterministically; the trigger-aware fallback
+    // remains only as a safety net for any externally-supplied candidate list.
     const reactorActor = candidates.find((c) => c?.actor)?.actor
         ?? (trigger === "attack" ? reactionWindow.target : reactionWindow.actor)
         ?? reactionWindow.actor

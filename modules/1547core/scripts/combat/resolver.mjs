@@ -1,3 +1,9 @@
+// ⚠ Standalone pure damage-math module (pre-carve-up), kept for resolution.test.mjs.
+// It is NOT wired into the live attack lifecycle, which applies the face-driven
+// `applyMultiplier` (base × multiplier) in combat/attack-lifecycle.mjs. This file
+// uses a DIFFERENT model — base × (1 + multiplierCount). Do not import it into the
+// lifecycle; the two multiplier semantics are intentionally separate.
+
 export function sumRolls(rolls) {
   return Array.isArray(rolls) ? rolls.reduce((s, v) => s + Number(v || 0), 0) : 0;
 }

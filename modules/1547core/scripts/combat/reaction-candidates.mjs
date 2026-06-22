@@ -154,9 +154,14 @@ export function buildAttackReactionCandidates({
         },
     });
 
-    return candidates.filter((candidate) => !reactionWouldDoNothing(candidate, {
-        incomingMultiplierDice: context.incomingMultiplierDice,
-    }));
+    // Stamp the reactor (defender) and its target (attacker) on every candidate so
+    // the relay can route the prompt to the reactor's owner deterministically,
+    // rather than inferring it from whichever candidate happens to carry an actor.
+    return candidates
+        .filter((candidate) => !reactionWouldDoNothing(candidate, {
+            incomingMultiplierDice: context.incomingMultiplierDice,
+        }))
+        .map((candidate) => ({ ...candidate, actor: defender, target: attacker }));
 }
 
 /**
@@ -176,6 +181,9 @@ export function buildThreatReactionCandidates({
     const mover = threatPayload.mover ?? null;
     const distanceSquares = Number(threatPayload.distanceSquares ?? threatPayload.rangeSquares);
 
+    // Stamp the reactor (zone owner) and its target (mover) on every candidate so
+    // the relay routes deterministically to the reactor's owner (the overwatch
+    // candidate already carries these).
     const candidates = getLegalManeuvers({
         actor: reactor,
         weapon: reactionWeapon,
@@ -188,7 +196,7 @@ export function buildThreatReactionCandidates({
         rangeSquares: distanceSquares,
         actorConditions: threatPayload.actorConditions,
         targetConditions: threatPayload.targetConditions,
-    });
+    }).map((candidate) => ({ ...candidate, actor: reactor, target: mover }));
 
     const overwatchCandidate = buildOverwatchReactionCandidate({
         reactor,

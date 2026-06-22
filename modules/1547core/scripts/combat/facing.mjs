@@ -66,15 +66,21 @@ async function rotateTokenTagged(tokenDoc, rotation) {
     } catch (_err) { /* non-fatal */ }
 }
 
+// The single "turn this token to face that token" primitive: derive the facing
+// rotation from the two footprints and route it through the tagged authoritative
+// rotation. Used by both the attack-time auto-face and the Face reaction.
+async function faceTokenToward(token, targetToken) {
+    const from = tokenDescriptor(token);
+    const to = tokenDescriptor(targetToken);
+    if (!from || !to) return;
+    const { rotation } = facingToward(from, to);
+    await rotateTokenTagged(token?.document ?? token, rotation);
+}
+
 // Rotate the attacker to face its target (the one auto-applied facing action).
 export async function autoFaceAttacker(attackerToken, defenderToken) {
-    const doc = attackerToken?.document ?? attackerToken;
-    if (!doc || !defenderToken || !isSquareGridded()) return;
-    const attacker = tokenDescriptor(attackerToken);
-    const defender = tokenDescriptor(defenderToken);
-    if (!attacker || !defender) return;
-    const { rotation } = facingToward(attacker, defender);
-    await rotateTokenTagged(doc, rotation);
+    if (!attackerToken || !defenderToken || !isSquareGridded()) return;
+    await faceTokenToward(attackerToken, defenderToken);
 }
 
 // The positional advantage applied to the attack pool. Applied up-front in all
@@ -130,12 +136,14 @@ function activeToken(actor) {
     return toks?.[0] ?? null;
 }
 
-// Off-turn facing lock (facing spec rule 1 / Move 3): a token's rotation may
-// change only on its own side's activation. Vetoes a player's rotation of an
-// in-combat token when it isn't that token's side's turn. Bypasses: the GM, the
-// auto-face / Face-reaction updates (tagged `facingAutoFace`), tagged forced
-// updates, and any token not in the active combat. preUpdateToken fires only on
-// the client making the change, so the veto is local and never desyncs.
+// Off-turn facing lock (facing spec rule 1 / Move 3): a token's facing *rotation*
+// may change only on its own side's activation. Vetoes a player's rotation of an
+// in-combat token when it isn't that token's side's turn. By design this locks
+// ROTATION ONLY — off-turn *movement* (x/y) stays free, so the GM and players
+// keep room for unusual repositioning (rules are not an exact science). Bypasses:
+// the GM, the auto-face / Face-reaction updates (tagged `facingAutoFace`), tagged
+// forced updates, and any token not in the active combat. preUpdateToken fires
+// only on the client making the change, so the veto is local and never desyncs.
 export function registerFacingLock() {
     globalThis.Hooks?.on?.("preUpdateToken", (tokenDoc, changes, options, userId) => {
         try {
@@ -166,8 +174,7 @@ export function registerFacingService() {
             const defToken = activeToken(reaction.actor);
             const attToken = activeToken(reaction.target);
             if (!defToken || !attToken) return null;
-            const { rotation } = facingToward(tokenDescriptor(defToken), tokenDescriptor(attToken));
-            await rotateTokenTagged(defToken.document ?? defToken, rotation);
+            await faceTokenToward(defToken, attToken);
         } catch (_err) { /* non-fatal */ }
         return null;
     });

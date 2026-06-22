@@ -87,58 +87,37 @@ export function getLegalManeuvers({
     return evaluations.filter((entry) => entry.legal).map((entry) => entry.maneuver);
 }
 
+// The legality gate set, in evaluation order, declared in one place. Each gate is
+// `(maneuver, context) => reason | null` — return a reason string to block, or
+// null to pass. To add or reorder a gate, edit this table; the runner below is
+// generic. Philosophy: gates GUIDE rather than FORCE — when an input needed to
+// evaluate a gate is absent/unknown (a "grey area"), the gate PASSES and leaves
+// the call to the table; it only blocks on a positively-known violation. (Rules
+// are not an exact science — the GM may always allow an edge case.)
+const LEGALITY_GATES = [
+    (m, c) => { const t = normalizeTimingContext(c); return (t && m.type !== t) ? `Timing mismatch: expected ${m.type}, got ${t}.` : null; },
+    (m, c) => matchesTrigger(m, c.triggerType) ? null : `Trigger mismatch: ${c.triggerType ?? "none"}.`,
+    (m, c) => passesUsageLimit(m, c) ? null : "Usage limit reached.",
+    (m, c) => passesActionEconomyGate(m, c) ? null : "Action economy does not allow this maneuver.",
+    (m, c) => passesActorStateGate(m, c) ? null : "Actor state does not allow this maneuver.",
+    (m, c) => getDefenseFollowUpBlockReason(m, c) || null,
+    (m, c) => passesWeaponGate(m, c) ? null : "Current weapon does not allow this maneuver.",
+    (m, c) => passesProfileGate(m, c) ? null : "Current weapon profile does not satisfy maneuver requirements.",
+    (m, c) => passesRangeGate(m, c) ? null : "Current range does not satisfy maneuver requirements.",
+    (m, c) => passesTargetStateGate(m, c) ? null : "Target state does not satisfy maneuver requirements.",
+    (m, c) => passesResourceGate(m, c) ? null : "Required resources are not available.",
+];
+
 export function evaluateManeuverLegality(maneuverInput, context = {}) {
     const maneuver = normalizeManeuver(maneuverInput);
-    const reasons = [];
-
     if (!maneuver) {
         return { legal: false, maneuver: null, reasons: ["Missing maneuver."] };
     }
 
-    const timing = normalizeTimingContext(context);
-    if (timing && maneuver.type !== timing) {
-        reasons.push(`Timing mismatch: expected ${maneuver.type}, got ${timing}.`);
-    }
-
-    if (!matchesTrigger(maneuver, context.triggerType)) {
-        reasons.push(`Trigger mismatch: ${context.triggerType ?? "none"}.`);
-    }
-
-    if (!passesUsageLimit(maneuver, context)) {
-        reasons.push("Usage limit reached.");
-    }
-
-    if (!passesActionEconomyGate(maneuver, context)) {
-        reasons.push("Action economy does not allow this maneuver.");
-    }
-
-    if (!passesActorStateGate(maneuver, context)) {
-        reasons.push("Actor state does not allow this maneuver.");
-    }
-
-    const defenseStateReason = getDefenseFollowUpBlockReason(maneuver, context);
-    if (defenseStateReason) {
-        reasons.push(defenseStateReason);
-    }
-
-    if (!passesWeaponGate(maneuver, context)) {
-        reasons.push("Current weapon does not allow this maneuver.");
-    }
-
-    if (!passesProfileGate(maneuver, context)) {
-        reasons.push("Current weapon profile does not satisfy maneuver requirements.");
-    }
-
-    if (!passesRangeGate(maneuver, context)) {
-        reasons.push("Current range does not satisfy maneuver requirements.");
-    }
-
-    if (!passesTargetStateGate(maneuver, context)) {
-        reasons.push("Target state does not satisfy maneuver requirements.");
-    }
-
-    if (!passesResourceGate(maneuver, context)) {
-        reasons.push("Required resources are not available.");
+    const reasons = [];
+    for (const gate of LEGALITY_GATES) {
+        const reason = gate(maneuver, context);
+        if (reason) reasons.push(reason);
     }
 
     return {
@@ -211,16 +190,15 @@ function passesActionEconomyGate(maneuver, context) {
     return true;
 }
 
+// All actor-state requirements are read from STRUCTURED fields (schema-spec:
+// structured fields are canonical; `requirements.text` is display-only). Geometry
+// flags (hasVisibleAlly, …) block only when the caller positively computed them
+// false — an absent flag is a grey area and passes (guide, don't force).
 function passesActorStateGate(maneuver, context) {
     const actorConditions = toNameSet(context.actorConditions);
-    const armorState = getEquippedArmorState(context);
-    const requirementText = String(maneuver.requirements?.text ?? "");
-    const requiredActorConditions = toNameSet(maneuver.requirements?.requiredActorConditions);
-    const prohibitedActorConditions = toNameSet(maneuver.requirements?.prohibitedActorConditions);
-    const requiresHidden = Boolean(maneuver.requirements?.requiresHidden);
-    const requiresMounted = Boolean(maneuver.requirements?.requiresMounted);
-    const requiresUnmounted = Boolean(maneuver.requirements?.requiresUnmounted);
-    const requiresVisibleAlly = Boolean(maneuver.requirements?.requiresVisibleAlly);
+    const req = maneuver.requirements ?? {};
+    const requiredActorConditions = toNameSet(req.requiredActorConditions);
+    const prohibitedActorConditions = toNameSet(req.prohibitedActorConditions);
 
     if (requiredActorConditions.size && ![...requiredActorConditions].every((condition) => actorConditions.has(condition))) {
         return false;
@@ -230,45 +208,16 @@ function passesActorStateGate(maneuver, context) {
         return false;
     }
 
-    if (requiresHidden && !actorConditions.has("hidden")) {
-        return false;
-    }
+    if (req.requiresHidden && !actorConditions.has("hidden")) return false;
+    if (req.requiresMounted && !actorConditions.has("mounted")) return false;
+    if (req.requiresUnmounted && actorConditions.has("mounted")) return false;
+    if (req.requiresVisibleAlly && context.hasVisibleAlly === false) return false;
 
-    if (requiresMounted && !actorConditions.has("mounted")) {
-        return false;
-    }
-
-    if (requiresUnmounted && actorConditions.has("mounted")) {
-        return false;
-    }
-
-    if (requiresVisibleAlly && context.hasVisibleAlly !== true) {
-        return false;
-    }
-
-    if (maneuver.name === "Evade") {
-        if (["Medium", "Heavy", "Very Heavy", "VeryHeavy"].includes(armorState.armorClass)) {
-            return false;
-        }
-        if (actorConditions.has("locked") || actorConditions.has("prone")) {
-            return false;
-        }
-    }
-
-    if (/\bhidden\b/i.test(requirementText) && !actorConditions.has("hidden")) {
-        return false;
-    }
-
-    if (/\bmounted\b/i.test(requirementText) && !/\bunmounted\b/i.test(requirementText) && !actorConditions.has("mounted")) {
-        return false;
-    }
-
-    if (/\bunmounted\b/i.test(requirementText) && actorConditions.has("mounted")) {
-        return false;
-    }
-
-    if (/visible ally/i.test(requirementText) && context.hasVisibleAlly !== true) {
-        return false;
+    // Armor-class exclusion (e.g. Evade is barred in medium+ armour).
+    const prohibitedArmorClasses = toNameSet(req.prohibitedArmorClasses);
+    if (prohibitedArmorClasses.size) {
+        const armorClass = getEquippedArmorState(context).armorClass;
+        if (armorClass && prohibitedArmorClasses.has(normalizeName(armorClass))) return false;
     }
 
     return true;
@@ -360,7 +309,9 @@ function passesProfileGate(maneuver, context) {
     const profile = context.profile ?? null;
     const appliesTo = maneuver.effectData?.appliesTo ?? null;
     if (!appliesTo) return true;
-    if (!profile) return false;
+    // No profile to check against is a grey area — guide, don't force. (Matches the
+    // weapon/range gates, which also pass when their input is absent.)
+    if (!profile) return true;
 
     if (appliesTo === "melee-attack") {
         return profile.attackType === "melee";
@@ -373,62 +324,24 @@ function passesProfileGate(maneuver, context) {
     return true;
 }
 
+// Target-state requirements from STRUCTURED fields only. Conditions (locked, …)
+// block when positively absent; ally-geometry flags block only when the caller
+// computed them false (an absent flag is a grey area → pass and let the GM
+// adjudicate the positioning).
 function passesTargetStateGate(maneuver, context) {
     const targetConditions = toNameSet(context.targetConditions);
-    const requirementText = String(maneuver.requirements?.text ?? "");
-    const requiredTargetConditions = toNameSet(maneuver.requirements?.requiredTargetConditions);
-    const requiresTargetLocked = Boolean(maneuver.requirements?.requiresTargetLocked);
-    const requiresAdjacentAllyTarget = Boolean(maneuver.requirements?.requiresAdjacentAllyTarget);
-    const requiresFormationPartner = Boolean(maneuver.requirements?.requiresFormationPartner);
-    const requiresFlankingAlly = Boolean(maneuver.requirements?.requiresFlankingAlly);
-    const requiresPolearmAlly = Boolean(maneuver.requirements?.requiresPolearmAlly);
+    const req = maneuver.requirements ?? {};
+    const requiredTargetConditions = toNameSet(req.requiredTargetConditions);
 
     if (requiredTargetConditions.size && ![...requiredTargetConditions].every((condition) => targetConditions.has(condition))) {
         return false;
     }
 
-    if (requiresTargetLocked && !targetConditions.has("locked")) {
-        return false;
-    }
-
-    if (requiresAdjacentAllyTarget && context.hasAdjacentAllyTarget !== true) {
-        return false;
-    }
-
-    if (requiresFormationPartner && context.hasFormationPartner !== true) {
-        return false;
-    }
-
-    if (requiresFlankingAlly && context.hasFlankingAlly !== true) {
-        return false;
-    }
-
-    if (requiresPolearmAlly && context.hasPolearmAlly !== true) {
-        return false;
-    }
-
-    if (
-        (maneuver.name === "Choke" || /target already locked/i.test(requirementText)) &&
-        !targetConditions.has("locked")
-    ) {
-        return false;
-    }
-
-    if (/adjacent ally is the target/i.test(requirementText) && context.hasAdjacentAllyTarget !== true) {
-        return false;
-    }
-
-    if (/adjacent ally also has access to formation/i.test(requirementText) && context.hasFormationPartner !== true) {
-        return false;
-    }
-
-    if (/one ally also threatens the target from another side/i.test(requirementText) && context.hasFlankingAlly !== true) {
-        return false;
-    }
-
-    if (/adjacent ally also wields a polearm or spear/i.test(requirementText) && context.hasPolearmAlly !== true) {
-        return false;
-    }
+    if (req.requiresTargetLocked && !targetConditions.has("locked")) return false;
+    if (req.requiresAdjacentAllyTarget && context.hasAdjacentAllyTarget === false) return false;
+    if (req.requiresFormationPartner && context.hasFormationPartner === false) return false;
+    if (req.requiresFlankingAlly && context.hasFlankingAlly === false) return false;
+    if (req.requiresPolearmAlly && context.hasPolearmAlly === false) return false;
 
     return true;
 }

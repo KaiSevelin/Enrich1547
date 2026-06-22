@@ -137,4 +137,49 @@ console.log("\nmaneuver-legality: range + action economy + filtering...");
     console.log("  ✓ range bands, melee skip, move/attack economy, getLegalManeuvers filter + includeReasons");
 }
 
+/* ── Structured requirements + "guide on grey areas" convention ───────── */
+console.log("\nmaneuver-legality: structured requirements + guiding gates...");
+{
+    const req = (requirements, extra = {}) => man({ requirements, ...extra });
+
+    // Actor conditions: required present / prohibited absent.
+    assert.strictEqual(legal(req({ requiresHidden: true }), { actorConditions: ["Hidden"] }), true, "hidden present → ok");
+    assert.strictEqual(legal(req({ requiresHidden: true }), { actorConditions: [] }), false, "hidden absent → blocked");
+    assert.strictEqual(legal(req({ requiresMounted: true }), { actorConditions: ["Mounted"] }), true);
+    assert.strictEqual(legal(req({ requiresUnmounted: true }), { actorConditions: ["Mounted"] }), false, "mounted → unmounted blocked");
+    assert.strictEqual(legal(req({ prohibitedActorConditions: ["locked", "prone"] }), { actorConditions: ["Prone"] }), false);
+    assert.strictEqual(legal(req({ prohibitedActorConditions: ["locked", "prone"] }), { actorConditions: [] }), true);
+
+    // Armor-class exclusion (Evade migrated to prohibitedArmorClasses).
+    const evadeLike = req({ prohibitedArmorClasses: ["Medium", "Heavy", "Very Heavy", "VeryHeavy"] });
+    assert.strictEqual(legal(evadeLike, { armors: [{ equipped: true, armorClass: "Heavy" }] }), false, "heavy armour bars it");
+    assert.strictEqual(legal(evadeLike, { armors: [{ equipped: true, armorClass: "Light" }] }), true, "light armour fine");
+    assert.strictEqual(legal(evadeLike, {}), true, "no armour info → grey → passes");
+
+    // Target locked (Choke/Lock And Strike migrated to requiresTargetLocked).
+    assert.strictEqual(legal(req({ requiresTargetLocked: true }), { targetConditions: ["Locked"] }), true);
+    assert.strictEqual(legal(req({ requiresTargetLocked: true }), { targetConditions: [] }), false);
+
+    // Guide-on-grey: ally-geometry requirements block only when the caller computed
+    // the flag FALSE; an absent (uncomputed) flag passes so the GM can adjudicate.
+    assert.strictEqual(legal(req({ requiresVisibleAlly: true }), {}), true, "visible-ally unknown → passes (guide)");
+    assert.strictEqual(legal(req({ requiresVisibleAlly: true }), { hasVisibleAlly: false }), false, "known-absent → blocked");
+    assert.strictEqual(legal(req({ requiresVisibleAlly: true }), { hasVisibleAlly: true }), true);
+    assert.strictEqual(legal(req({ requiresFlankingAlly: true }), {}), true, "flanking unknown → passes (guide)");
+    assert.strictEqual(legal(req({ requiresFlankingAlly: true }), { hasFlankingAlly: false }), false);
+    assert.strictEqual(legal(req({ requiresFormationPartner: true }), {}), true);
+    assert.strictEqual(legal(req({ requiresPolearmAlly: true }), {}), true);
+    assert.strictEqual(legal(req({ requiresAdjacentAllyTarget: true }), {}), true);
+
+    // Profile gate guides on absent profile (was a hard fail before).
+    const meleeOnly = man({ effectData: { appliesTo: "melee-attack" } });
+    assert.strictEqual(legal(meleeOnly, {}), true, "no profile → grey → passes");
+    assert.strictEqual(legal(meleeOnly, { profile: { attackType: "ranged" } }), false, "wrong profile still blocks");
+    assert.strictEqual(legal(meleeOnly, { profile: { attackType: "melee" } }), true);
+
+    // The free-text `requirements.text` is display-only — it no longer gates.
+    assert.strictEqual(legal(req({ text: "Hidden" }), { actorConditions: [] }), true, "text alone does not gate");
+    console.log("  ✓ structured actor/target gates, armour exclusion, guide-on-grey ally flags, profile guide, text non-gating");
+}
+
 console.log("\nmaneuver-legality.test.mjs — all assertions passed.");

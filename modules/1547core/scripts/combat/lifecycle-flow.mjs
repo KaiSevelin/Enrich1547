@@ -319,6 +319,41 @@ export async function declareMovementPhased({
     };
 }
 
+// Shared declaration path for the two reaction-generated free attacks (the safe
+// attack from a resolved reaction, and the safe counterattack). Both force a safe
+// attack, carry the reaction's effect data, name the source via
+// `generatedByReaction` (so the reaction service suppresses a nested window), and
+// swap the source attack's conditions onto the new attacker/target. Centralising
+// it keeps that generated-attack contract in one place.
+function declareGeneratedAttack({
+    actor,
+    target,
+    weapon,
+    profile,
+    effect = {},
+    generatedByReaction,
+    distanceSquares = null,
+    actorConditions,
+    targetConditions,
+    deps = {},
+}, run) {
+    return declareAttackPhased({
+        actor,
+        target,
+        targets: [target],
+        weapon: weapon?.itemDocument ?? weapon,
+        profile,
+        forceSafeAttack: true,
+        extraEffectData: effect,
+        generatedByReaction,
+        distanceSquares: Number.isFinite(distanceSquares) ? distanceSquares : null,
+        actorConditions,
+        targetConditions,
+        normalizeWeapon: deps.normalizeWeapon,
+        buildAttackReactionCandidates: deps.buildAttackReactionCandidates,
+    }, run);
+}
+
 // ───────────────────────────────────────── executeResolvedReactionPhased ──
 
 export async function executeResolvedReactionPhased(resolution, run, deps = {}) {
@@ -335,24 +370,21 @@ export async function executeResolvedReactionPhased(resolution, run, deps = {}) 
     const sourcePayload = resolution?.sourceEvent?.payload ?? {};
     const distanceSquares = Number(sourcePayload.distanceSquares ?? sourcePayload.rangeSquares);
 
-    return declareAttackPhased({
+    return declareGeneratedAttack({
         actor,
         target,
-        targets: [target],
-        weapon: weapon.itemDocument ?? weapon,
+        weapon,
         profile,
-        forceSafeAttack: true,
-        extraEffectData: effect,
+        effect,
         generatedByReaction:
             reaction.generatedByPersistentEffect
             ?? reaction.sourceManeuverName
             ?? reaction.name
             ?? "reaction",
-        distanceSquares: Number.isFinite(distanceSquares) ? distanceSquares : null,
+        distanceSquares,
         actorConditions: sourcePayload.actorConditions,
         targetConditions: sourcePayload.targetConditions,
-        normalizeWeapon: deps.normalizeWeapon,
-        buildAttackReactionCandidates: deps.buildAttackReactionCandidates,
+        deps,
     }, run);
 }
 
@@ -395,23 +427,20 @@ export async function executeSafeCounterattackPhased({
         ?? pendingAttack?.metadata?.rangeSquares
     );
 
-    return declareAttackPhased({
+    return declareGeneratedAttack({
         actor: defender,
         target: attacker,
-        targets: [attacker],
-        weapon: reactionWeapon.itemDocument ?? reactionWeapon,
+        weapon: reactionWeapon,
         profile: reactionProfile,
-        forceSafeAttack: true,
-        extraEffectData: { createFreeSafeCounterattack: true },
+        effect: { createFreeSafeCounterattack: true },
         generatedByReaction:
             currentDamageTakenReaction?.name
             ?? defenseReaction?.name
             ?? "safe-counterattack",
-        distanceSquares: Number.isFinite(distanceSquares) ? distanceSquares : null,
+        distanceSquares,
         actorConditions: pendingAttack?.metadata?.targetConditions,
         targetConditions: pendingAttack?.metadata?.actorConditions,
-        normalizeWeapon,
-        buildAttackReactionCandidates,
+        deps: { normalizeWeapon, buildAttackReactionCandidates },
     }, run);
 }
 

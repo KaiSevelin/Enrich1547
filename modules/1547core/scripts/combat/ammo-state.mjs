@@ -33,9 +33,8 @@ import {
     normalizeWeapon,
     normalizeAmmoItem,
     firstFiniteNumber,
+    resolveSelectedWeaponProfile,
 } from "./normalisation.mjs";
-
-const ACTIVE_ATTACK_PROFILE_KEYS = ["Attack", "AttackB", "AttackC"];
 
 // ───────────────────────────────────────────────────────────── Pure helpers ──
 
@@ -118,18 +117,6 @@ export function resolveLoadedAmmoForAttack({ actor, weapon, profile }) {
 }
 
 // ─────────────────────────────────────────────────────────── Patch-returners ──
-
-function resolveSelectedWeaponProfile(weapon, { profile = null, profileId = null } = {}) {
-    if (profile) return profile;
-    const attackProfiles = Array.isArray(weapon?.attackProfiles) ? weapon.attackProfiles : [];
-    if (!attackProfiles.length) return null;
-    if (profileId) {
-        const explicit = attackProfiles.find((entry) => entry?.id === profileId);
-        if (explicit) return explicit;
-    }
-    const idx = ACTIVE_ATTACK_PROFILE_KEYS.indexOf(String(weapon?.activeAttackProfileKey ?? "").trim());
-    return (idx >= 0 ? attackProfiles[idx] : null) ?? attackProfiles[0] ?? null;
-}
 
 /**
  * Compute the patches required to load `ammoItem` into `weapon`.

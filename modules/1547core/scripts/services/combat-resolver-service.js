@@ -284,8 +284,10 @@ async function applyPostManeuverEffect(options = {}) {
 // patches via the dispatcher, emits the event (if any), and returns
 // the response. Throws propagate unchanged.
 
-async function runPhases({ phase, patches = [], event = null } = {}) {
-    if (patches.length) await applyPatches(patches);
+async function runPhases({ phase, patches = [], event = null, awaitRemote = false } = {}) {
+    // A phase that reads document state back after this boundary passes
+    // `awaitRemote: true` so routed (GM-applied) writes are confirmed first.
+    if (patches.length) await applyPatches(patches, { awaitRemote });
     if (!event) return {};
     const response = await emitCombatEvent(event.type, event.payload);
     return { response };
@@ -638,7 +640,11 @@ async function applyPatch(patch) {
 // can't apply are routed to the designated GM over the socket, who applies them.
 const PATCH_CHANNEL = `module.${MODULE_ID}`;
 const PATCH_APPLY_TYPE = "patch-apply";
+const PATCH_ACK_TYPE = "patch-ack";
+const PATCH_ACK_TIMEOUT_MS = 5000;
 let patchSocketBound = false;
+// awaitRemote round-trips: ackId -> resolver that settles the awaiting promise.
+const pendingPatchAcks = new Map();
 
 // The single GM that applies routed patches (avoids double-apply with >1 GM).
 function isDesignatedPatchGM() {
@@ -666,11 +672,25 @@ function bindPatchSocket() {
     if (patchSocketBound || !game?.socket) return;
     patchSocketBound = true;
     game.socket.on(PATCH_CHANNEL, (msg) => {
-        if (msg?.type !== PATCH_APPLY_TYPE || !isDesignatedPatchGM()) return;
+        if (!msg || typeof msg !== "object") return;
+        // Requester side: the GM acked an awaited routed apply — settle the wait.
+        if (msg.type === PATCH_ACK_TYPE) {
+            if (msg.toUserId && msg.toUserId !== game.user?.id) return;
+            const settle = pendingPatchAcks.get(msg.ackId);
+            if (settle) settle();
+            return;
+        }
+        if (msg.type !== PATCH_APPLY_TYPE || !isDesignatedPatchGM()) return;
         void (async () => {
             for (const patch of Array.isArray(msg.patches) ? msg.patches : []) {
                 try { await applyPatch(patch); }
                 catch (err) { console.error(`${MODULE_ID} | routed patch failed`, patch, err); }
+            }
+            // Only the awaitRemote path stamps an ackId — ack it back once the
+            // routed writes have actually landed so the requester can read state.
+            if (msg.ackId && msg.fromUserId) {
+                try { game.socket?.emit(PATCH_CHANNEL, { type: PATCH_ACK_TYPE, ackId: msg.ackId, toUserId: msg.fromUserId }); }
+                catch (err) { console.error(`${MODULE_ID} | could not ack routed patches`, err); }
             }
         })();
     });
@@ -727,20 +747,37 @@ async function declareChokeAttack(inflictor, victim) {
     }
 }
 
-async function applyPatches(patches = []) {
+async function applyPatches(patches = [], { awaitRemote = false } = {}) {
     const list = Array.isArray(patches) ? patches.filter(Boolean) : [];
     const remote = [];
     for (const patch of list) {
         if (canApplyPatchLocally(patch)) await applyPatch(patch);
         else remote.push(patch); // preserves per-actor order (one actor's patches stay together)
     }
+    if (!remote.length) return;
     // A player can't write actors they don't own (e.g. attacking a GM NPC) — hand
-    // those patches to the GM. Fire-and-forget: combat reads outcomes from the
-    // rolls, not the written docs, so it needn't await the remote apply.
-    if (remote.length) {
-        try { game.socket?.emit(PATCH_CHANNEL, { type: PATCH_APPLY_TYPE, patches: remote }); }
+    // those patches to the designated GM. Default is fire-and-forget: combat reads
+    // outcomes from the rolls, not the written docs, so it needn't await the apply.
+    const message = { type: PATCH_APPLY_TYPE, patches: remote };
+    if (!awaitRemote) {
+        try { game.socket?.emit(PATCH_CHANNEL, message); }
         catch (err) { console.error(`${MODULE_ID} | could not route patches to GM`, err); }
+        return;
     }
+    // awaitRemote: a later phase reads back the written state, so wait for the GM
+    // to confirm the apply. A timeout backstop guarantees we never hang on an
+    // absent/asleep GM — the resolution then proceeds as it would fire-and-forget.
+    const ackId = foundry.utils.randomID();
+    message.ackId = ackId;
+    message.fromUserId = game.user?.id ?? null;
+    await new Promise((resolve) => {
+        let settled = false;
+        const settle = () => { if (settled) return; settled = true; pendingPatchAcks.delete(ackId); resolve(); };
+        pendingPatchAcks.set(ackId, settle);
+        try { game.socket?.emit(PATCH_CHANNEL, message); }
+        catch (err) { console.error(`${MODULE_ID} | could not route patches to GM`, err); settle(); return; }
+        setTimeout(settle, PATCH_ACK_TIMEOUT_MS);
+    });
 }
 
 // Thin wrappers around the patch-returners in combat/maneuver-state.mjs.

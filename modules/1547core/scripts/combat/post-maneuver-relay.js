@@ -146,11 +146,20 @@ export function relayPostManeuverWindow(windowPayload) {
             currentCriticalPoints: viewRemaining,
             candidates,
         },
-        // Each pick the responder makes commits one critical maneuver.
-        onCommit: (id) => {
+        // Each pick the responder makes commits one critical maneuver. Await the
+        // commit so `committedAny` and the GM mirror reflect what actually landed —
+        // a commit that throws/rejects must NOT report as spent (it would suppress
+        // the pass-fallback and decrement the GM's view for a write that never
+        // applied). commitPostManeuver is async; this handler owns its errors.
+        onCommit: async (id) => {
             const selection = id ? legal.find((c) => normalizePostManeuverChoiceId(c) === id) ?? null : null;
             if (!selection || typeof windowPayload.commitPostManeuver !== "function") return;
-            try { void windowPayload.commitPostManeuver(selection); committedAny = true; } catch (_err) { /* non-fatal */ }
+            try {
+                await windowPayload.commitPostManeuver(selection);
+            } catch (_err) {
+                return; // commit failed — leave committedAny/mirror untouched
+            }
+            committedAny = true;
             if (mirrorToGm) {
                 viewRemaining = Math.max(0, viewRemaining - (Number(serializePostManeuver(selection)?.cost) || 0));
                 notifyGmCritView(VIEW_UPDATE, { windowId, committedName: selection.name ?? "critical maneuver", remaining: viewRemaining });
