@@ -1484,8 +1484,13 @@ a.enricher-1547::before {
 
 	.skilltree-chargen .chargen-sidebar {
 		min-width: 0;
-		position: sticky;
-		top: 0;
+		/* NOT position: sticky. A sticky item always gets its own GPU layer, and
+		   Chromium then promotes adjacent content (the cards) to a composited layer
+		   that paints at a STALE position until any reflow (opening dev-tools)
+		   recomputes it — the cause of the gap above the cards even though their
+		   layout position is correct. The bio panel scrolls internally, so sticky
+		   wasn't needed. */
+		position: relative;
 		align-self: stretch;
 		display: flex;
 		flex-direction: column;
