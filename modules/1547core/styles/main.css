@@ -1751,51 +1751,47 @@ a.enricher-1547::before {
 			overflow: hidden;
 			padding: 0.7rem 0.7rem 0.35rem 0.7rem;
 			background: rgba(255, 250, 240, 0.98);
-			/* 3D settings */
-			perspective: 1000px;
-			transform-style: preserve-3d;
 			box-sizing: border-box;
 		}
 
-		/* Inner flipping layer */
+		/* Reveal is a flat opacity cross-fade — NOT a 3D flip. A 3D flip needs
+		   perspective + preserve-3d + rotateY, which builds a persistent GPU
+		   compositing layer that paints the card at a STALE position after the
+		   grid relayouts (a gap above the cards that only a recomposite cleared).
+		   Cross-fading the two faces gives the same "turn over" feel with no
+		   persistent layer. */
 		.skilltree-chargen .chargen-card .card-flip {
 			position: absolute;
 			inset: 0;
-			transform-style: preserve-3d;
-			transition: transform 520ms cubic-bezier(.2,.8,.2,1);
-			/* NOTE: do NOT add `will-change: transform` here. It promotes a permanent
-			   GPU layer that gets painted at a STALE position when the grid relayouts
-			   after the window settles — the cards stay visually low (a gap above them)
-			   even though their layout position is correct, and only a forced recomposite
-			   (opening dev-tools) clears it. The flip still composites during its
-			   transition without it. */
 		}
 
 		/* Faces */
 		.skilltree-chargen .chargen-card .card-face {
 			position: absolute;
 			inset: 0.7rem 0.7rem 0.35rem 0.7rem;
-			backface-visibility: hidden;
-			-webkit-backface-visibility: hidden;
-			transform-style: preserve-3d;
 			background-repeat: no-repeat;
 			background-position: center;
 			background-size: contain;
 			background-color: #e9dfcb;
 			border-radius: 10px 10px 0 0;
+			transition: opacity 360ms ease;
 		}
 
 		.skilltree-chargen .chargen-card .card-front {
 			background-image: var(--cg-cover);
 			background-size: contain;
+			opacity: 1;
 		}
 
-		/* Back face */
+		/* Back face — hidden until the card turns over. */
 		.skilltree-chargen .chargen-card .card-back {
 			background-image: var(--cg-back);
 			background-size: cover;
-			transform: rotateY(180deg);
+			opacity: 0;
 		}
+
+		.skilltree-chargen .chargen-card.is-flipped .card-front { opacity: 0; }
+		.skilltree-chargen .chargen-card.is-flipped .card-back { opacity: 1; }
 		.skilltree-chargen .chargen-card.is-flipped {
 			box-shadow: 0 0 0 1px rgba(212,175,55,0.4), 0 0 18px rgba(212,175,55,0.25);
 		}
@@ -2297,22 +2293,13 @@ a.enricher-1547::before {
 			pointer-events: none;
 			z-index: 4;
 		}
-		/* Flip when chosen */
-		.skilltree-chargen .chargen-card.is-flipped .card-flip {
-			transform: rotateY(180deg);
-		}
+		/* Reveal is now an opacity cross-fade (see .card-front/.card-back above);
+		   no rotateY flip and no 3D hover tilt — those rebuilt the persistent GPU
+		   layer that painted the cards stale. */
 		@media (prefers-reduced-motion: reduce) {
-		.skilltree-chargen .chargen-card .card-flip {
-			transition: none;
-		}
-}
-		/* Optional: tactile hover tilt (only if not picked) */
-		.skilltree-chargen .chargen-card:not(.is-flipped):hover .card-flip {
-			transform: rotateY(-8deg) rotateX(3deg);
-		}
-		/* Optional: disable your old hover translate while flipping (prevents weird combined transforms) */
-		.skilltree-chargen .chargen-card.is-flipped:hover {
-			transform: none;
+			.skilltree-chargen .chargen-card .card-face {
+				transition: none;
+			}
 		}
 
 		@keyframes chargenVeiledPulse {
