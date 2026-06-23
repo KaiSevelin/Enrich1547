@@ -4664,41 +4664,23 @@ export class SkillTreeChargenApp extends FormApplication {
             }
             this._lastBioScrollCount = bioCount;
 
-            // First-paint relayout. In the fixed-height app window the cards' flex/grid
-            // column can settle with a stale height, leaving a gap above the cards that
-            // any reflow clears (which is why opening dev-tools "fixes" it).
-            //
-            // DIAGNOSTIC (temporary): log the live geometry so the broken state can be
-            // captured even though opening dev-tools clears it — the log is buffered at
-            // render time and readable later in the console.
-            try {
-                const rect = (s) => {
-                    const el = html[0]?.querySelector(s);
-                    if (!el) return "none";
-                    const r = el.getBoundingClientRect();
-                    return `top=${Math.round(r.top)} h=${Math.round(r.height)}`;
-                };
-                console.log(
-                    "[1547 chargen layout]",
-                    "win=", `${Math.round(this.position?.width)}x${Math.round(this.position?.height)}`,
-                    "| header", rect(".chargen-header"),
-                    "| main", rect(".chargen-main"),
-                    "| cards-col", rect(".chargen-main-cards"),
-                    "| cards", rect(".chargen-cards"),
-                    "| sidebar", rect(".chargen-sidebar")
-                );
-            } catch (_e) { /* noop */ }
-
-            // Re-apply the window size + force one reflow of the main region so the
-            // layout settles on its own (mimics what opening dev-tools does for you).
-            try { this.setPosition(); } catch (_e) { /* noop */ }
-            const main = html[0]?.querySelector(".chargen-main");
-            if (main) {
-                const prevDisplay = main.style.display;
-                main.style.display = "none";
-                void main.offsetHeight; // force synchronous reflow while detached from layout
-                main.style.display = prevDisplay;
-            }
+            // First-paint relayout. The cards column can settle with a stale vertical
+            // position on the initial render (the grid places it before the sidebar's
+            // async-enriched content has set the row height), leaving a gap above the
+            // cards that any later reflow clears — which is why opening dev-tools fixed
+            // it. Re-lay-out just the cards column (display off→on forces the grid to
+            // re-place it at align-self:start) on the next frame AND after content has
+            // settled. Scoped to the cards column, so the sidebar's scroll is untouched.
+            const settleCards = () => {
+                const col = html[0]?.querySelector(".chargen-main-cards");
+                if (!col) return;
+                const prev = col.style.display;
+                col.style.display = "none";
+                void col.offsetHeight; // force the grid to drop + re-place the column
+                col.style.display = prev;
+            };
+            settleCards();
+            window.setTimeout(settleCards, 200);
         });
 
         html.find("[data-action='settings']").on("click", () => this._onOpenSettings());
