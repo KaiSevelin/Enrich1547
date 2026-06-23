@@ -641,25 +641,43 @@ async function dedupeManagedItemsByName(seededDocs) {
     const managedByName = new Map();
     for (const item of game.items) {
         if (!canonicalIdsByName.has(item.name)) continue;
+        // Skip CONTAINED children (system.container set) — they belong to a parent
+        // item and follow it. Deduping them independently is both wrong and unsafe:
+        // deleting a duplicate parent cascades to its children, so a child id in the
+        // same batch would already be gone.
+        if (item.system?.container) continue;
         const managed = !!item.flags?.[SOURCE_FLAG_SCOPE] || coreTemplateIds.has(item.system?.template);
         if (!managed) continue;
         if (!managedByName.has(item.name)) managedByName.set(item.name, []);
         managedByName.get(item.name).push(item);
     }
 
-    const staleIds = [];
+    const staleIds = new Set();
     for (const [name, items] of managedByName) {
         if (items.length < 2) continue;
         const canonicalIds = canonicalIdsByName.get(name);
         const keep = items.find((it) => canonicalIds.has(it.id)) ?? items[0];
-        for (const it of items) if (it.id !== keep.id) staleIds.push(it.id);
+        for (const it of items) if (it.id !== keep.id) staleIds.add(it.id);
     }
 
-    if (staleIds.length > 0) {
-        await Item.deleteDocuments(staleIds);
+    // Resilient delete: only ids that still exist, and never let a stale/cascaded
+    // id abort Setup Data (this is a best-effort safety net, not the critical path).
+    let removed = 0;
+    const toDelete = [...staleIds].filter((id) => game.items.has(id));
+    if (toDelete.length > 0) {
+        try {
+            await Item.deleteDocuments(toDelete);
+            removed = toDelete.length;
+        } catch (_batchErr) {
+            for (const id of toDelete) {
+                if (!game.items.has(id)) continue; // already gone (e.g. cascade)
+                try { await game.items.get(id)?.delete(); removed += 1; }
+                catch (err) { console.warn(`[1547core] dedupe: could not delete ${id}`, err); }
+            }
+        }
     }
 
-    return { removed: staleIds.length };
+    return { removed };
 }
 
 // CSB stores `system.body`/header/display/hidden on each instance item, cloned
@@ -1923,10 +1941,15 @@ function createModuleSetupFormApplicationClass() {
 
             // Belt-and-braces: collapse any managed duplicates that escaped the
             // per-folder prune (folder renames / legacy invalid-id seeds such as
-            // Unprotected, Silvered, Zone Base) down to one per name.
-            const dedupeResult = await dedupeManagedItemsByName(docs);
-            if (dedupeResult.removed > 0) {
-                console.log(`[1547core] Setup Data: removed ${dedupeResult.removed} duplicate managed item(s).`);
+            // Unprotected, Silvered, Zone Base) down to one per name. Never let this
+            // optional cleanup abort the seed.
+            try {
+                const dedupeResult = await dedupeManagedItemsByName(docs);
+                if (dedupeResult.removed > 0) {
+                    console.log(`[1547core] Setup Data: removed ${dedupeResult.removed} duplicate managed item(s).`);
+                }
+            } catch (err) {
+                console.warn("[1547core] Setup Data: duplicate cleanup skipped after error", err);
             }
 
             return {
