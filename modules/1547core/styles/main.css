@@ -1478,7 +1478,11 @@ a.enricher-1547::before {
 		justify-content: flex-start;
 	}
 	.skilltree-chargen .chargen-main-cards .chargen-cards {
-		flex: 1 1 auto; /* fill the column height — cards span top to bottom */
+		/* Sit at natural height pinned to the TOP; leftover space falls below.
+		   Filling the column (flex: 1 1 auto) made each card's height a function
+		   of the recomputed column height ÷ row count, which is what made the
+		   card block's top drift between renders. */
+		flex: 0 0 auto;
 	}
 
 	.skilltree-chargen .chargen-sidebar {
@@ -1615,14 +1619,15 @@ a.enricher-1547::before {
 		gap: 0.8rem;
 		grid-template-columns: repeat(2, minmax(220px, 260px));
 		justify-content: start;
-		align-items: stretch;
-		align-content: stretch;
-		grid-auto-rows: minmax(0, 1fr);   /* the card row fills the column height */
+		align-items: stretch;        /* cards in a row match the tallest -> tops align */
+		align-content: start;        /* rows packed at the top, not spread to fill */
+		grid-auto-rows: max-content; /* each row takes its natural height */
 	}
 
-	/* Card shell — fills the column height (anchored top and bottom). */
+	/* Card shell — natural height (driven by the cover's aspect-ratio); top-anchored
+	   by the grid above. No height:100%, so the card geometry no longer depends on a
+	   recomputed fill height. align-items:stretch still equalizes cards within a row. */
 	.skilltree-chargen .chargen-card {
-		height: 100%;
 		min-height: 0;
 		justify-self: center;
 		width: 100%;
