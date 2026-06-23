@@ -4666,9 +4666,32 @@ export class SkillTreeChargenApp extends FormApplication {
 
             // First-paint relayout. In the fixed-height app window the cards' flex/grid
             // column can settle with a stale height, leaving a gap above the cards that
-            // any reflow clears (which is why opening dev-tools "fixes" it). Force one
-            // reflow of the main region so it settles on its own. Hiding + reading
-            // offsetHeight + restoring within a single frame forces layout with no flicker.
+            // any reflow clears (which is why opening dev-tools "fixes" it).
+            //
+            // DIAGNOSTIC (temporary): log the live geometry so the broken state can be
+            // captured even though opening dev-tools clears it — the log is buffered at
+            // render time and readable later in the console.
+            try {
+                const rect = (s) => {
+                    const el = html[0]?.querySelector(s);
+                    if (!el) return "none";
+                    const r = el.getBoundingClientRect();
+                    return `top=${Math.round(r.top)} h=${Math.round(r.height)}`;
+                };
+                console.log(
+                    "[1547 chargen layout]",
+                    "win=", `${Math.round(this.position?.width)}x${Math.round(this.position?.height)}`,
+                    "| header", rect(".chargen-header"),
+                    "| main", rect(".chargen-main"),
+                    "| cards-col", rect(".chargen-main-cards"),
+                    "| cards", rect(".chargen-cards"),
+                    "| sidebar", rect(".chargen-sidebar")
+                );
+            } catch (_e) { /* noop */ }
+
+            // Re-apply the window size + force one reflow of the main region so the
+            // layout settles on its own (mimics what opening dev-tools does for you).
+            try { this.setPosition(); } catch (_e) { /* noop */ }
             const main = html[0]?.querySelector(".chargen-main");
             if (main) {
                 const prevDisplay = main.style.display;
