@@ -1451,6 +1451,12 @@ a.enricher-1547::before {
 	.skilltree-chargen .chargen-main {
 		display: grid;
 		grid-template-columns: max-content minmax(340px, 1fr);
+		/* Pin the single row to the TOP. The default placement let the whole row
+		   drift down on first paint (the gap above both the cards and the sidebar
+		   that any reflow cleared). An explicit full-height row + top alignment
+		   anchors it deterministically while still letting the sidebar fill+scroll. */
+		grid-template-rows: minmax(0, 1fr);
+		align-content: start;
 		gap: 0.2rem;
 		justify-content: space-between;
 		align-items: stretch;

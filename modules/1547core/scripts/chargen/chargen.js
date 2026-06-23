@@ -4663,24 +4663,6 @@ export class SkillTreeChargenApp extends FormApplication {
                 bioScroller.scrollTop = bioScroller.scrollHeight;
             }
             this._lastBioScrollCount = bioCount;
-
-            // First-paint relayout. The cards column can settle with a stale vertical
-            // position on the initial render (the grid places it before the sidebar's
-            // async-enriched content has set the row height), leaving a gap above the
-            // cards that any later reflow clears — which is why opening dev-tools fixed
-            // it. Re-lay-out just the cards column (display off→on forces the grid to
-            // re-place it at align-self:start) on the next frame AND after content has
-            // settled. Scoped to the cards column, so the sidebar's scroll is untouched.
-            const settleCards = () => {
-                const col = html[0]?.querySelector(".chargen-main-cards");
-                if (!col) return;
-                const prev = col.style.display;
-                col.style.display = "none";
-                void col.offsetHeight; // force the grid to drop + re-place the column
-                col.style.display = prev;
-            };
-            settleCards();
-            window.setTimeout(settleCards, 200);
         });
 
         html.find("[data-action='settings']").on("click", () => this._onOpenSettings());
