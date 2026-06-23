@@ -1606,7 +1606,8 @@ a.enricher-1547::before {
 		grid-template-columns: repeat(2, minmax(220px, 260px));
 		justify-content: start;
 		align-items: stretch;
-		grid-auto-rows: 1fr;
+		align-content: start;   /* pack the row to the top if the grid is ever taller than its content */
+		grid-auto-rows: max-content;
 	}
 
 	/* Card shell */
