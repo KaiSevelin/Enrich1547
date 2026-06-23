@@ -4663,6 +4663,19 @@ export class SkillTreeChargenApp extends FormApplication {
                 bioScroller.scrollTop = bioScroller.scrollHeight;
             }
             this._lastBioScrollCount = bioCount;
+
+            // First-paint relayout. In the fixed-height app window the cards' flex/grid
+            // column can settle with a stale height, leaving a gap above the cards that
+            // any reflow clears (which is why opening dev-tools "fixes" it). Force one
+            // reflow of the main region so it settles on its own. Hiding + reading
+            // offsetHeight + restoring within a single frame forces layout with no flicker.
+            const main = html[0]?.querySelector(".chargen-main");
+            if (main) {
+                const prevDisplay = main.style.display;
+                main.style.display = "none";
+                void main.offsetHeight; // force synchronous reflow while detached from layout
+                main.style.display = prevDisplay;
+            }
         });
 
         html.find("[data-action='settings']").on("click", () => this._onOpenSettings());
