@@ -1763,8 +1763,12 @@ a.enricher-1547::before {
 			inset: 0;
 			transform-style: preserve-3d;
 			transition: transform 520ms cubic-bezier(.2,.8,.2,1);
-			/* ensure faces render nicely */
-			will-change: transform;
+			/* NOTE: do NOT add `will-change: transform` here. It promotes a permanent
+			   GPU layer that gets painted at a STALE position when the grid relayouts
+			   after the window settles — the cards stay visually low (a gap above them)
+			   even though their layout position is correct, and only a forced recomposite
+			   (opening dev-tools) clears it. The flip still composites during its
+			   transition without it. */
 		}
 
 		/* Faces */
