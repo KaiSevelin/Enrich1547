@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl195ip9o0",
-                    "TransitionText": "Because returning with proof taught you that discovery is only half the work; surviving disbelief is the other half, distance and risk still felt more natural than home.",
+                    "TransitionText": "Returning with proof taught you that discovery is only half the work and surviving disbelief the other half, yet distance and risk still felt more natural than home.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Explorer, but you may remain on your current path instead."
                 },
@@ -59,7 +59,7 @@
                     "Amount": "120",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl13q1w6l0",
-                    "TransitionText": "Because returning with proof taught you that discovery is only half the work; surviving disbelief is the other half, routes and strange goods taught you to live by exchange.",
+                    "TransitionText": "Returning with proof taught you that discovery is only half the work and surviving disbelief the other half, and routes and strange goods taught you to live by exchange.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "Proof of what you found could turn your life toward trade and exchange, but you may remain on your current path instead."
                 }

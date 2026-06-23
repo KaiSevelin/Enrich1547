@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "A captain who still trusts your seamanship.",
                     "NextTable": "RollTable.RollTablep5odc00",
-                    "TransitionText": "Because a captain's trust taught you that rank at sea begins as confidence borrowed from someone else, life on the water opened another dangerous road.",
+                    "TransitionText": "Because a captain's trust taught you that rank at sea begins as confidence borrowed from another, life on the water opened another dangerous road.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "A captain's trust opens a more dangerous road at sea. Do you follow it, or remain on the life you already know?"
                 },
@@ -50,7 +50,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl1ny1ovz0",
-                    "TransitionText": "Because a captain's trust taught you that rank at sea begins as confidence borrowed from someone else, tide, weather, and hazard remained the terms of your life.",
+                    "TransitionText": "Because a captain's trust taught you that rank at sea begins as confidence borrowed from another, tide, weather, and hazard remained the terms of your life.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Sailor, but you may remain on your current path instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl13q1w6l0",
-                    "TransitionText": "Because a captain's trust taught you that rank at sea begins as confidence borrowed from someone else, cargo, ports, and bargaining mattered as much as seamanship.",
+                    "TransitionText": "Because a captain's trust taught you that rank at sea begins as confidence borrowed from another, cargo, ports, and bargaining came to matter as much as seamanship.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "That trust also opens a path toward cargo, ports, and bargaining. Do you take it, or remain on your current course?"
                 }

@@ -38,7 +38,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl4wbyzm00",
-                    "TransitionText": "Because a public hearing taught you that formality sharpens fear as effectively as chains, you were drawn deeper into the theater of judgment.",
+                    "TransitionText": "Because a public hearing showed you that formality can sharpen fear as keenly as chains, you were drawn deeper into the theater of judgment.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Inquisitioner, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablfpa34g00",
-                    "TransitionText": "Because a public hearing taught you that formality sharpens fear as effectively as chains, you learned how much authority depends on ceremony and audience.",
+                    "TransitionText": "Because a public hearing showed you that formality can sharpen fear as keenly as chains, you learned how much authority depends on ceremony and audience.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Courtier, but you may remain on your current path instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablh7tzz500",
-                    "TransitionText": "Because a public hearing taught you that formality sharpens fear as effectively as chains, ritual judgment turned your mind toward religious order.",
+                    "TransitionText": "Because a public hearing showed you that formality can sharpen fear as keenly as chains, ritual judgment turned your mind toward religious order.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Religious, but you may remain on your current path instead."
                 }

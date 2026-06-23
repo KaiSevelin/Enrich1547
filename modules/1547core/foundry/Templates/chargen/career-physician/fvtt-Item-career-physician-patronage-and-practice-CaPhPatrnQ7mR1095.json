@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablfpa34g00",
-                    "TransitionText": "Because patronage and practice made medicine feel as much like status-work as healing, healing important people taught you that access matters as much as skill.",
+                    "TransitionText": "Because patronage and practice made medicine feel as much a matter of standing as of healing, you learned that access to the great matters as much as skill.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This patronage could pull you toward courtly influence, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "95",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl15vpg4l0",
-                    "TransitionText": "Because patronage and practice made medicine feel as much like status-work as healing, you stayed with bodies, remedies, and the uneasy authority of healing.",
+                    "TransitionText": "Because patronage and practice made medicine feel as much a matter of standing as of healing, you stayed with bodies, remedies, and the uneasy authority of healing.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This patronage could open a path toward astrology, but you may remain on your current path instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabln2ef6p00",
-                    "TransitionText": "Because patronage and practice made medicine feel as much like status-work as healing, practice drove you back into study, comparison, and learned disputation.",
+                    "TransitionText": "Because patronage and practice made medicine feel as much a matter of standing as of healing, practice drove you back into study, comparison, and learned dispute.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Scholar, but you may remain on your current path instead."
                 }

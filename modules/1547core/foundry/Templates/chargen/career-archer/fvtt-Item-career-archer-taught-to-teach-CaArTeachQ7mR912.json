@@ -38,7 +38,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablofiy0f00",
-                    "TransitionText": "Because training other archers taught you that mastery in war includes discipline, repetition, and being answerable for weaker hands than your own, bow, distance, and patience remained the shape of your life.",
+                    "TransitionText": "Because teaching other archers showed you that mastery in war means discipline, repetition, and answering for hands weaker than your own, the bow, the distance, and the patience stayed the shape of your life.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Archer, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablep5odc00",
-                    "TransitionText": "Because training other archers taught you that mastery in war includes discipline, repetition, and being answerable for weaker hands than your own, skill and steadiness pushed you toward command over other fighting men.",
+                    "TransitionText": "Because teaching other archers showed you that mastery in war means discipline, repetition, and answering for hands weaker than your own, skill and steadiness pressed you toward command over other fighting men.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "You have begun to command attention as well as shots. Will you try to move from training bowmen to directing them?"
                 },
@@ -62,7 +62,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablofiy0f00",
-                    "TransitionText": "Because training other archers taught you that mastery in war includes discipline, repetition, and being answerable for weaker hands than your own, you stayed among the bowmen as a hardened example to those behind you.",
+                    "TransitionText": "Because teaching other archers showed you that mastery in war means discipline, repetition, and answering for hands weaker than your own, you stayed among the bowmen as a hardened example to those behind you.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Archer, but you may remain on your current path instead."
                 }

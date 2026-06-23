@@ -5143,11 +5143,11 @@ export class SkillTreeChargenApp extends FormApplication {
 
                 // Applying a change can open an inline prompt in the bio panel
                 // (defining a drive, choosing a language). The full-window reveal
-                // overlay would cover that prompt and leave the UI stuck. So on the
-                // first Continue: drop the overlay, apply the changes (prompt now
-                // reachable), then re-show this reveal so there's a clear "Click to
-                // continue" to advance. The second Continue (_changesApplied) skips
-                // re-applying and proceeds with the bio + chaining below.
+                // overlay would cover that prompt and leave the UI stuck — so drop
+                // the overlay first, then apply the changes (prompt now reachable),
+                // and fall straight through to the bio + chaining below. Previously
+                // this re-showed the SAME reveal for a second Continue, which read
+                // as the Your Nature / Past Returns card appearing a second time.
                 const PROMPTING = new Set(["drive", "language"]);
                 const willPrompt = !reveal._changesApplied
                     && !this._simulationEnabled()
@@ -5158,10 +5158,7 @@ export class SkillTreeChargenApp extends FormApplication {
                     await this._setState({ ...state, run });
                     if (this._shouldRenderInteractiveUi()) this.render(true);
                     await this._applyChanges(run, payload.changes);
-                    run.reveal = { ...reveal, _changesApplied: true };
-                    await this._setState({ ...state, run });
-                    if (this._shouldRenderInteractiveUi()) this.render(true);
-                    return;
+                    reveal._changesApplied = true; // mark applied; continue to bio + chaining
                 }
 
                 if (!reveal._changesApplied && Array.isArray(payload.changes) && payload.changes.length) {

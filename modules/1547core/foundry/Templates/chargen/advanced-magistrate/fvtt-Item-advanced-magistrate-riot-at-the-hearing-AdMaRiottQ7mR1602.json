@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTabl1magstr0",
-                    "TransitionText": "Because a riot at the hearing taught you that public order is only persuasive until bodies begin to move, office remained your daily craft.",
+                    "TransitionText": "Because the riot at the hearing taught you that public order persuades only until bodies begin to move, the office remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Magistrate, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTabl1magstr0",
-                    "TransitionText": "Because a riot at the hearing taught you that public order is only persuasive until bodies begin to move, office remained your daily craft.",
+                    "TransitionText": "Because the riot at the hearing taught you that public order persuades only until bodies begin to move, the office remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Magistrate, but you may remain on your current path instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTabl1magstr0",
-                    "TransitionText": "Because a riot at the hearing taught you that public order is only persuasive until bodies begin to move, office remained your daily craft.",
+                    "TransitionText": "Because the riot at the hearing taught you that public order persuades only until bodies begin to move, the office remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Magistrate, but you may remain on your current path instead."
                 }

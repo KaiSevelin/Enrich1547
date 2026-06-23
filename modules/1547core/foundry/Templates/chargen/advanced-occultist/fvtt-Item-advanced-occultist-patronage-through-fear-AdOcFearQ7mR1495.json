@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablfpa34g00",
-                    "TransitionText": "Because patronage through fear taught you that obscurity becomes fashionable once it can alarm important people, occult work became political and drew you toward court.",
+                    "TransitionText": "Because patronage won through fear taught you that obscurity grows fashionable once it can alarm great men, occult work turned political and drew you toward court.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Courtier, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "180",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl154wo5k0",
-                    "TransitionText": "Because patronage through fear taught you that obscurity becomes fashionable once it can alarm important people, fear itself financed a deeper descent into occult study.",
+                    "TransitionText": "Because patronage won through fear taught you that obscurity grows fashionable once it can alarm great men, that fear itself financed a deeper descent into occult study.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Occultist, but you may remain on your current path instead."
                 },

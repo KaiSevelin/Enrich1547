@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabllvhxuy00",
-                    "TransitionText": "Because local renown taught you that fear and respect make close neighbors, village need and fear kept you in cunning work.",
+                    "TransitionText": "Because local renown taught you that fear and respect make close neighbors, village need and dread kept you at cunning work.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Cunning Folk, but you may remain on your current path instead."
                 },
@@ -59,7 +59,7 @@
                     "Amount": "90",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl15vpg4l0",
-                    "TransitionText": "Because local renown taught you that fear and respect make close neighbors, your remedies won enough trust to carry you toward healing work.",
+                    "TransitionText": "Local renown taught you that fear and respect make close neighbors, and your remedies won trust enough to carry you toward healing work.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "Your renown could carry you toward more formal healing work, but you may remain on your current path instead."
                 }

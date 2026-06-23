@@ -50,7 +50,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabls9kwwo00",
-                    "TransitionText": "Because a duel for pay turned your violence into spectacle as well as trade, violence narrowed from battle into deliberate killing.",
+                    "TransitionText": "Because a duel for pay turned your violence into spectacle as well as trade, your violence narrowed from open battle into deliberate killing.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Assassin, but you may remain on your current path instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "70",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablep5odc00",
-                    "TransitionText": "Because a duel for pay turned your violence into spectacle as well as trade, command grew out of survival, reputation, and the obedience of armed men.",
+                    "TransitionText": "Because a duel for pay turned your violence into spectacle as well as trade, command grew out of your survival, reputation, and the obedience of armed men.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Officer, but you may remain on your current path instead."
                 }

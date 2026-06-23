@@ -38,7 +38,7 @@
                     "Amount": "130",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablfpa34g00",
-                    "TransitionText": "Because sold certainty taught you that confidence has a market price long before it has evidence, occult practice became inseparable from influence and patronage.",
+                    "TransitionText": "Because selling certainty taught you that confidence commands a market price long before it earns any evidence, your occult practice grew inseparable from influence and patronage.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "Selling certainty could pull you toward influence and patronage, but you may remain on your current path instead."
                 },
@@ -59,7 +59,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl13q1w6l0",
-                    "TransitionText": "Because sold certainty taught you that confidence has a market price long before it has evidence, selling conviction made trade feel closer to your real craft.",
+                    "TransitionText": "Because selling certainty taught you that confidence commands a market price long before it earns any evidence, peddling conviction made trade feel nearer your true craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "Selling certainty could turn your craft toward trade and bargaining, but you may remain on your current path instead."
                 }

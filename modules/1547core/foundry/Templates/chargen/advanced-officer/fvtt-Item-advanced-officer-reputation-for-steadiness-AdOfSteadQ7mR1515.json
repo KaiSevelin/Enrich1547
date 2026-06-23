@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablep5odc00",
-                    "TransitionText": "Because a reputation for steadiness made others trust you in moments when no one was steady, command accumulated around you.",
+                    "TransitionText": "Because a reputation for steadiness made men trust you in the moments when no one was steady, command gathered around you.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Officer, but you may remain on your current path instead."
                 },

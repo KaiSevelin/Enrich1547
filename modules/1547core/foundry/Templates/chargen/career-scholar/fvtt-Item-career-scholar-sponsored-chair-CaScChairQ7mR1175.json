@@ -50,7 +50,7 @@
                     "Amount": "95",
                     "TargetText": "",
                     "NextTable": "RollTabl1prelat0",
-                    "TransitionText": "Because a sponsored chair taught you that patronage multiplies expectation faster than comfort, learning and doctrine could carry you into senior church office.",
+                    "TransitionText": "Because a sponsored chair taught you that patronage multiplies expectation faster than comfort, learning and doctrine could carry you into high church office.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This sponsorship could raise you into senior church office as a prelate, but you may remain a scholar instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl1ecc6dw0",
-                    "TransitionText": "Because a sponsored chair taught you that patronage multiplies expectation faster than comfort, support and expectation pushed your scholarship toward alchemy.",
+                    "TransitionText": "Because a sponsored chair taught you that patronage multiplies expectation faster than comfort, its support and demands pressed your scholarship toward alchemy.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This sponsorship could push your work toward alchemy, but you may remain a scholar if you resist that turn."
                 }

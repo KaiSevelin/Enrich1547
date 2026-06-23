@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablfpa34g00",
-                    "TransitionText": "Because a patron of the holy house taught you how quickly devotion can become entangled with influence, piety near power taught you how much faith depends on influence and ceremony.",
+                    "TransitionText": "Because a patron of the holy house showed you how swiftly devotion grows entangled with influence, piety near power showed you how much faith leans on influence and ceremony.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This patronage could draw you into courtly service, but you may remain in religious life if you resist the pull of influence."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "75",
                     "TargetText": "",
                     "NextTable": "RollTabl1prelat0",
-                    "TransitionText": "Because a patron of the holy house taught you how quickly devotion can become entangled with influence, patronage and office drew you upward into senior church authority.",
+                    "TransitionText": "Because a patron of the holy house showed you how swiftly devotion grows entangled with influence, patronage and office drew you upward into senior church authority.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This patronage could raise you into senior church office as a prelate, but you may remain in religious life instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabln2ef6p00",
-                    "TransitionText": "Because a patron of the holy house taught you how quickly devotion can become entangled with influence, faith drove you into books, argument, and learned commentary.",
+                    "TransitionText": "Because a patron of the holy house showed you how swiftly devotion grows entangled with influence, faith drove you into books, argument, and learned commentary.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Scholar, but you may remain on your current path instead."
                 }

@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTabl1stewrd0",
-                    "TransitionText": "Because turning service into authority taught you that competence can become rank if enough people depend on it, household authority remained your daily craft.",
+                    "TransitionText": "Because turning service into authority taught you that competence becomes rank once enough people depend upon it, household authority remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Steward, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "",
                     "TargetText": "Servants, clerks, and even guests now treat your decisions as part of the house itself.",
                     "NextTable": "RollTabl1stewrd0",
-                    "TransitionText": "Because turning service into authority taught you that competence can become rank if enough people depend on it, household authority remained your daily craft.",
+                    "TransitionText": "Because turning service into authority taught you that competence becomes rank once enough people depend upon it, household authority remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Steward, but you may remain on your current path instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTabl1stewrd0",
-                    "TransitionText": "Because turning service into authority taught you that competence can become rank if enough people depend on it, household authority remained your daily craft.",
+                    "TransitionText": "Because turning service into authority taught you that competence becomes rank once enough people depend upon it, household authority remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Steward, but you may remain on your current path instead."
                 }

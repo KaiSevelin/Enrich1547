@@ -42,7 +42,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablkgc1up00",
-                    "TransitionText": "Because being accused anyway taught you how poverty can become evidence in the minds of others, hunger made honesty harder to afford than risk.",
+                    "TransitionText": "Because being accused all the same taught you how poverty becomes evidence in other men's eyes, hunger made honesty harder to afford than risk.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Criminal, but you may remain on your current path instead."
                 },
@@ -54,7 +54,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabls7rp7400",
-                    "TransitionText": "Because being accused anyway taught you how poverty can become evidence in the minds of others, misfortune and suspicion closed around you until they became captivity."
+                    "TransitionText": "Because being accused all the same taught you how poverty becomes evidence in other men's eyes, misfortune and suspicion closed around you until they became captivity."
                 },
                 "2": {
                     "$deleted": false,
@@ -64,7 +64,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl8063t100",
-                    "TransitionText": "Because being accused anyway taught you how poverty can become evidence in the minds of others, hardship remained your most constant companion."
+                    "TransitionText": "Because being accused all the same taught you how poverty becomes evidence in other men's eyes, hardship remained your most constant companion."
                 }
             },
             "Effects2": {

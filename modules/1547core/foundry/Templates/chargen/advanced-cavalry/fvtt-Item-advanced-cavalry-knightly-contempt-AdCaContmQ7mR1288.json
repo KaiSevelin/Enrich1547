@@ -50,7 +50,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl1w5dtto0",
-                    "TransitionText": "Because knightly contempt taught you how close cavalry stands to noble war while never quite belonging to it, martial prestige hardened into knightly standing.",
+                    "TransitionText": "Because knightly contempt taught you how close cavalry stands to noble war while never quite belonging to it, your martial prestige hardened into knightly standing.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Knight, but you may remain on your current path instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablep5odc00",
-                    "TransitionText": "Because knightly contempt taught you how close cavalry stands to noble war while never quite belonging to it, mounted reputation ripened into command.",
+                    "TransitionText": "Because knightly contempt taught you how close cavalry stands to noble war while never quite belonging to it, your mounted reputation ripened into command.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Officer, but you may remain on your current path instead."
                 }

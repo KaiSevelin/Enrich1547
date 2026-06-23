@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabls7rp7400",
-                    "TransitionText": "Because being wrongly blamed stripped away any faith you still had in innocence as a protection, prison became the truth power left you."
+                    "TransitionText": "Because being wrongly blamed stripped away whatever faith you still held that innocence could protect you, prison became the only truth power left you."
                 },
                 "1": {
                     "$deleted": false,
@@ -48,7 +48,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl8063t100",
-                    "TransitionText": "Because being wrongly blamed stripped away any faith you still had in innocence as a protection, innocence could not save you from hardship either."
+                    "TransitionText": "Because being wrongly blamed stripped away whatever faith you still held that innocence could protect you, innocence could not spare you from hardship either."
                 },
                 "2": {
                     "$deleted": false,
@@ -58,7 +58,7 @@
                     "Amount": "Bitterness",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablh7tzz500",
-                    "TransitionText": "Because being wrongly blamed stripped away any faith you still had in innocence as a protection, you turned toward religion as one of the few languages left for injustice.",
+                    "TransitionText": "Because being wrongly blamed stripped away whatever faith you still held that innocence could protect you, you turned to religion as one of the few languages left for injustice.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Religious, but you may remain on your current path instead."
                 }

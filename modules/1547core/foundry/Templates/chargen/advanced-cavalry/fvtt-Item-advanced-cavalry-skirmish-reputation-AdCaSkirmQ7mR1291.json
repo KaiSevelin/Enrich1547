@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl1l77bmw0",
-                    "TransitionText": "Because a skirmish reputation made your usefulness visible to men who decided who rose and who stayed mounted, horseflesh, speed, and shock remained your proper element.",
+                    "TransitionText": "Because a skirmish reputation made your usefulness plain to the men who decided who rose and who stayed in the saddle, horseflesh, speed, and shock remained your proper element.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Cavalry, but you may remain on your current path instead."
                 },
@@ -59,7 +59,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl1w5dtto0",
-                    "TransitionText": "Because a skirmish reputation made your usefulness visible to men who decided who rose and who stayed mounted, martial prestige hardened into knightly standing.",
+                    "TransitionText": "Because a skirmish reputation made your usefulness plain to the men who decided who rose and who stayed in the saddle, your martial prestige hardened into knightly standing.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Knight, but you may remain on your current path instead."
                 }

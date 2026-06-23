@@ -38,7 +38,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablp3hdnp00",
-                    "TransitionText": "Because being chosen as foreman taught you how authority can look like extra burden wearing a better coat, your life remained one of burden, wages, and endurance.",
+                    "TransitionText": "Because being chosen as foreman showed you how authority can be only heavier burden in a better coat, your life remained one of burden, wages, and endurance.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Laborer, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl13q1w6l0",
-                    "TransitionText": "Because being chosen as foreman taught you how authority can look like extra burden wearing a better coat, labor carried you onto another hard road.",
+                    "TransitionText": "Because being chosen as foreman showed you how authority can be only heavier burden in a better coat, your labor carried you onto another hard road.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Merchant, but you may remain on your current path instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl1ng4bd90",
-                    "TransitionText": "Because being chosen as foreman taught you how authority can look like extra burden wearing a better coat, rough work taught your hands enough to seek something more skilled.",
+                    "TransitionText": "Because being chosen as foreman showed you how authority can be only heavier burden in a better coat, rough work had taught your hands enough to seek something more skilled.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Craftsman, but you may remain on your current path instead."
                 }

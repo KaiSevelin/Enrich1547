@@ -1462,6 +1462,17 @@ a.enricher-1547::before {
 		min-width: 0;
 		width: max-content;
 		min-height: 0;
+		/* The grid row stretches this column to the (often tall) sidebar's height.
+		   Be a flex column pinned to the top so the cards sit directly under the
+		   header in EVERY phase — including when they are short face-down backs
+		   (advancement, between prompts) and would otherwise drift to the middle. */
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: flex-start;
+	}
+	.skilltree-chargen .chargen-main-cards .chargen-cards {
+		flex: 0 0 auto; /* natural height, pinned at the top — never grow to fill */
 	}
 
 	.skilltree-chargen .chargen-sidebar {

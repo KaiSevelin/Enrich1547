@@ -38,7 +38,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl1ng4bd90",
-                    "TransitionText": "Because a master's favor gave you better work and sharper expectations, your life stayed with tools, labor, and the discipline of making things well.",
+                    "TransitionText": "Because a master's favour brought you better work and sharper expectations, your life stayed with the tools, the labour, and the discipline of making things well.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Craftsman, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablcd362w00",
-                    "TransitionText": "Because a master's favor gave you better work and sharper expectations, skilled work hardened into authority over other working hands.",
+                    "TransitionText": "Because a master's favour brought you better work and sharper expectations, skilled work hardened into authority over other working hands.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Guildmaster, but you may remain on your current path instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl1ng4bd90",
-                    "TransitionText": "Because a master's favor gave you better work and sharper expectations, your life stayed with tools, labor, and the discipline of making things well.",
+                    "TransitionText": "Because a master's favour brought you better work and sharper expectations, your life stayed with the tools, the labour, and the discipline of making things well.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Craftsman, but you may remain on your current path instead."
                 }

@@ -47,7 +47,7 @@
                     "Amount": "100",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl104nzia0",
-                    "TransitionText": "Because a patron's smile taught you that favor changes the temperature of a room before it changes your fortune, display and patronage began to feel like a profession.",
+                    "TransitionText": "A patron's smile taught you that favor warms a room before it ever warms your fortune, until display and patronage began to feel like a profession.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "Your patron's favor could turn display and patronage into a new profession, but you may remain on your current path instead."
                 },
@@ -59,7 +59,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTabl1prelat0",
-                    "TransitionText": "Because a patron's smile taught you that favor changes the temperature of a room before it changes your fortune, ceremony and influence could widen into senior church office.",
+                    "TransitionText": "Because a patron's smile taught you that favor warms a room before your fortune, ceremony and influence could widen into senior office in the church.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This patronage could draw you into senior church office as a prelate, but you may remain on your current path instead."
                 }

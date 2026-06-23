@@ -47,7 +47,7 @@
                     "Amount": "110",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl104nzia0",
-                    "TransitionText": "Because becoming a patron's favorite made your reputation rise in the same moment your rivals hardened, beauty, patronage, and display remained your proper world.",
+                    "TransitionText": "Because becoming a patron's favorite raised your reputation in the same hour your rivals hardened against you, beauty, patronage, and display remained your proper world.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Artist, but you may remain on your current path instead."
                 },
@@ -59,7 +59,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablcd362w00",
-                    "TransitionText": "Because becoming a patron's favorite made your reputation rise in the same moment your rivals hardened, reputation matured into authority over craft and trade.",
+                    "TransitionText": "Because becoming a patron's favorite raised your reputation in the same hour your rivals hardened against you, your reputation matured into authority over craft and trade.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "A patron's favor could raise you into authority over craft and trade, but you may remain on your current path instead."
                 }

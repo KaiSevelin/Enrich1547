@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTabl1diplom0",
-                    "TransitionText": "Because a patron's desk taught you that powerful curiosity always comes with deadlines, research and letters could turn into negotiation and service between rival powers as a diplomat.",
+                    "TransitionText": "Because a patron's desk taught you that powerful curiosity always arrives with deadlines, your research and letters turned to negotiation and service between rival powers, the work of a diplomat.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This patronage could draw you into diplomacy, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "55",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablfpa34g00",
-                    "TransitionText": "Because a patron's desk taught you that powerful curiosity always comes with deadlines, you remained in scholarship, but now under the pressure of power.",
+                    "TransitionText": "Because a patron's desk taught you that powerful curiosity always arrives with deadlines, you remained in scholarship, though now under the steady pressure of power.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "Service under this patron could draw you into courtly life, but you may remain a scholar if you keep your distance from power."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl13q1w6l0",
-                    "TransitionText": "Because a patron's desk taught you that powerful curiosity always comes with deadlines, trade and practical negotiation no longer seemed far from learned work.",
+                    "TransitionText": "Because a patron's desk taught you that powerful curiosity always arrives with deadlines, trade and practical negotiation no longer seemed so far from learned work.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Merchant, but you may remain on your current path instead."
                 }

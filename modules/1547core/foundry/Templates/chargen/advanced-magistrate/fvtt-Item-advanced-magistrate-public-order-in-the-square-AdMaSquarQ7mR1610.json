@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTabl1magstr0",
-                    "TransitionText": "Because keeping order in the square taught you that civic peace is half theater and half nerve, office remained your daily craft.",
+                    "TransitionText": "Because keeping order in the square taught you that civic peace is half theatre and half nerve, the office remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Magistrate, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTabl1magstr0",
-                    "TransitionText": "Because keeping order in the square taught you that civic peace is half theater and half nerve, office remained your daily craft.",
+                    "TransitionText": "Because keeping order in the square taught you that civic peace is half theatre and half nerve, the office remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Magistrate, but you may remain on your current path instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTabl1magstr0",
-                    "TransitionText": "Because keeping order in the square taught you that civic peace is half theater and half nerve, office remained your daily craft.",
+                    "TransitionText": "Because keeping order in the square taught you that civic peace is half theatre and half nerve, the office remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Magistrate, but you may remain on your current path instead."
                 }

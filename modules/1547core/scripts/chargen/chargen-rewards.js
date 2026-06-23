@@ -331,7 +331,12 @@ export async function applyRewardChanges(app, run, changes = [], deps = {}) {
                     hooks.push(hook);
                 }
 
-        const clean = (text) => String(text ?? "").trim().replace(/\s+/g, " ");
+        // Strip the " (N)" disambiguation suffix the contact tables use to weight
+        // duplicate rows (e.g. "Neutral but reserved (13)." → "Neutral but reserved.").
+        const clean = (text) => String(text ?? "")
+            .trim()
+            .replace(/\s+/g, " ")
+            .replace(/\s*\(\d+\)(?=[.\s]*$)/, "");
         const isPlaceholder = (text) => /^(none|null|n\/a|nothing notable)\.?$/i.test(clean(text));
         const sentence = (text) => {
             const value = clean(text);

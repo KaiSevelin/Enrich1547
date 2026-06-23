@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTabl1stewrd0",
-                    "TransitionText": "Because a noble customer taught you that trade at high levels is as much about posture as price, service to a great household widened into trust, inventories, and private authority.",
+                    "TransitionText": "Because a noble customer taught you that great trade turns as much on posture as on price, service to a high household widened into trust, full inventories, and quiet authority.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This connection could draw you into household authority as a steward, but you may remain a merchant if you keep to trade."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablfpa34g00",
-                    "TransitionText": "Because a noble customer taught you that trade at high levels is as much about posture as price, bargaining with the powerful taught you influence can outrank goods.",
+                    "TransitionText": "Because a noble customer taught you that great trade turns as much on posture as on price, bargaining with the powerful showed you that influence can outrank any goods.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "Trade with the powerful could draw you into courtly life, but you may remain a merchant if you keep to business."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablcd362w00",
-                    "TransitionText": "Because a noble customer taught you that trade at high levels is as much about posture as price, profit turned into authority, and you began shaping trade.",
+                    "TransitionText": "Because a noble customer taught you that great trade turns as much on posture as on price, your profit ripened into authority, and you began to shape trade itself.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This success could raise you into guild leadership, but you may remain a merchant if authority does not tempt you."
                 }

@@ -42,7 +42,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl17cxuth0",
-                    "TransitionText": "Because a house rivalry taught you how quickly noble households turn pettiness into spectacle, you stayed close to service, where survival depended on reading rank correctly.",
+                    "TransitionText": "Because a house rivalry taught you how quickly noble households turn pettiness into spectacle, you stayed close to service, where survival depended on reading rank aright.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Squire, but you may remain on your current path instead."
                 },
@@ -54,7 +54,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablfpa34g00",
-                    "TransitionText": "Because a house rivalry taught you how quickly noble households turn pettiness into spectacle, you learned the instincts of courtly life.",
+                    "TransitionText": "Because a house rivalry taught you how quickly noble households turn pettiness into spectacle, you acquired the instincts of courtly life.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Courtier, but you may remain on your current path instead."
                 },
@@ -66,7 +66,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl18aof8z0",
-                    "TransitionText": "Because a house rivalry taught you how quickly noble households turn pettiness into spectacle, paid steel began to look more honest than household loyalty.",
+                    "TransitionText": "Because a house rivalry taught you how quickly noble households turn pettiness into spectacle, paid steel came to look more honest than household loyalty.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Mercenary, but you may remain on your current path instead."
                 }

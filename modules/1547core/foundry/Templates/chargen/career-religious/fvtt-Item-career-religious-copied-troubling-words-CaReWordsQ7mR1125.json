@@ -38,7 +38,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTabl1heretc0",
-                    "TransitionText": "Because copied troubling words taught you that sacred texts can unsettle as easily as they instruct, doctrine could turn from study into forbidden conviction as a heretic.",
+                    "TransitionText": "Because copying troubling words taught you that sacred texts can unsettle as readily as they instruct, your study hardened into the forbidden conviction of a heretic.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "These troubling words could carry you into heresy, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablh7tzz500",
-                    "TransitionText": "Because copied troubling words taught you that sacred texts can unsettle as easily as they instruct, duty and doctrine bound you more tightly to religious service.",
+                    "TransitionText": "Because copying troubling words taught you that sacred texts can unsettle as readily as they instruct, duty and doctrine bound you more tightly to religious service.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Religious, but you may remain on your current path instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl4wbyzm00",
-                    "TransitionText": "Because copied troubling words taught you that sacred texts can unsettle as easily as they instruct, judgment mattered more than mercy, drawing you toward the Inquisition.",
+                    "TransitionText": "Because copying troubling words taught you that sacred texts can unsettle as readily as they instruct, judgment came to matter more than mercy, drawing you toward the Inquisition.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Inquisitioner, but you may remain on your current path instead."
                 }

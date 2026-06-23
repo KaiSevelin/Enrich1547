@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl154wo5k0",
-                    "TransitionText": "Because a forbidden codex taught you that some books narrow the world only by revealing how much lies outside it, knowledge refused to remain academic and pulled you into occult study.",
+                    "TransitionText": "Because a forbidden codex taught you that some books narrow the world only by revealing how much lies beyond it, knowledge refused to stay academic and pulled you into occult study.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "The forbidden codex opens a path into occult study. Do you follow that knowledge, or remain within scholarship?"
                 },
@@ -50,7 +50,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl1ecc6dw0",
-                    "TransitionText": "Because a forbidden codex taught you how much lies outside ordinary learning, hidden principles led you toward alchemy.",
+                    "TransitionText": "Because a forbidden codex showed you how much lies beyond ordinary learning, its hidden principles led you, step by step, toward alchemy.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "The same text points toward alchemy. Do you pursue that craft, or remain on your current scholarly path?"
                 },

@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "Someone you raised into office still honors your hand in their beginning.",
                     "NextTable": "RollTabl1prelat0",
-                    "TransitionText": "Because ordaining the worthy taught you that succession is the longest reach of office, church office remained your daily craft.",
+                    "TransitionText": "Because ordaining the worthy taught you that succession is the longest reach of any office, the work of the church remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Prelate, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTabl1prelat0",
-                    "TransitionText": "Because ordaining the worthy taught you that succession is the longest reach of office, church office remained your daily craft.",
+                    "TransitionText": "Because ordaining the worthy taught you that succession is the longest reach of any office, the work of the church remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Prelate, but you may remain on your current path instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTabl1prelat0",
-                    "TransitionText": "Because ordaining the worthy taught you that succession is the longest reach of office, church office remained your daily craft.",
+                    "TransitionText": "Because ordaining the worthy taught you that succession is the longest reach of any office, the work of the church remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Prelate, but you may remain on your current path instead."
                 }

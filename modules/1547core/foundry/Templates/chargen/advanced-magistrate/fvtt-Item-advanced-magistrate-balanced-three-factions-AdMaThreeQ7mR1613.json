@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTabl1magstr0",
-                    "TransitionText": "Because balancing three factions taught you that civic peace is often an agreement to postpone anger, office remained your daily craft.",
+                    "TransitionText": "Because balancing three factions showed you that civic peace is often an agreement to postpone anger, office remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Magistrate, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "",
                     "TargetText": "Three different parties still think you understand them better than you truly do.",
                     "NextTable": "RollTabl1diplom0",
-                    "TransitionText": "Because balancing three factions taught you that civic peace is often an agreement to postpone anger, your skill at narrow peace could widen into diplomacy between greater powers.",
+                    "TransitionText": "Because balancing three factions showed you that civic peace is often an agreement to postpone anger, your skill at narrow peace could widen into diplomacy among greater powers.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This settlement work could carry you into diplomacy, but you may remain a magistrate instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTabl1magstr0",
-                    "TransitionText": "Because balancing three factions taught you that civic peace is often an agreement to postpone anger, office remained your daily craft.",
+                    "TransitionText": "Because balancing three factions showed you that civic peace is often an agreement to postpone anger, office remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Magistrate, but you may remain on your current path instead."
                 }

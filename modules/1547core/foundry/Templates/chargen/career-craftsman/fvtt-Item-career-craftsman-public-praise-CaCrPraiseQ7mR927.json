@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl1ng4bd90",
-                    "TransitionText": "Because public praise carried your name further than the workshop door, your life stayed with tools, labor, and the discipline of making things well.",
+                    "TransitionText": "Because public praise carried your name well past the workshop door, your life stayed with the tools, the labour, and the discipline of making things well.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Craftsman, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl104nzia0",
-                    "TransitionText": "Because public praise carried your name further than the workshop door, workmanship lifted into display, taste, and celebrated craft.",
+                    "TransitionText": "Because public praise carried your name well past the workshop door, your craft rose into display, taste, and celebrated art.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Artist, but you may remain on your current path instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTabl13q1w6l0",
-                    "TransitionText": "Because public praise carried your name further than the workshop door, your craft changed what sort of life remained possible.",
+                    "TransitionText": "Because public praise carried your name well past the workshop door, your craft altered what sort of life remained open to you.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Merchant, but you may remain on your current path instead."
                 }

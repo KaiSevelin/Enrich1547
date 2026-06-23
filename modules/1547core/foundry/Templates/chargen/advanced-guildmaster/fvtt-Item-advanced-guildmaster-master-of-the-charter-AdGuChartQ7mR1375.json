@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablcd362w00",
-                    "TransitionText": "Because mastering the charter taught you how office becomes habit, authority remained your daily craft.",
+                    "TransitionText": "Because mastering the charter taught you how readily office hardens into habit, authority became and remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Guildmaster, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "180",
                     "TargetText": "",
                     "NextTable": "RollTable.RollTablfpa34g00",
-                    "TransitionText": "Because mastering the charter taught you how office can become indistinguishable from personality if given enough ceremony, guild power drew you from workmanship into influence.",
+                    "TransitionText": "Because mastering the charter showed you how office, given ceremony enough, grows indistinguishable from the man, guild power drew you from workmanship into influence.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "Your mastery of office could draw you into courtly influence, but you may remain on your current path instead."
                 },

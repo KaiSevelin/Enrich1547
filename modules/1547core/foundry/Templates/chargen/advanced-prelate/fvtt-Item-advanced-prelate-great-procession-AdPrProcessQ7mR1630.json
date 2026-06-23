@@ -38,7 +38,7 @@
                     "Amount": "",
                     "TargetText": "",
                     "NextTable": "RollTabl1prelat0",
-                    "TransitionText": "Because a great procession taught you how effectively holiness can be staged without ceasing to matter, church office remained your daily craft.",
+                    "TransitionText": "Because a great procession showed you how holiness can be staged and lose none of its weight, the work of the church remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Prelate, but you may remain on your current path instead."
                 },
@@ -50,7 +50,7 @@
                     "Amount": "1",
                     "TargetText": "",
                     "NextTable": "RollTablfpa34g00",
-                    "TransitionText": "Because a great procession taught you how effectively holiness can be staged without ceasing to matter, ceremony and influence could widen into courtly life.",
+                    "TransitionText": "Because a great procession showed you how holiness can be staged and lose none of its weight, ceremony and influence widened into the life of the court.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This public mastery of ceremony could draw you into courtly influence, but you may remain a prelate instead."
                 },
@@ -62,7 +62,7 @@
                     "Amount": "",
                     "TargetText": "A patron, officer, or singer from the procession still recalls how the city looked under your direction.",
                     "NextTable": "RollTabl1prelat0",
-                    "TransitionText": "Because a great procession taught you how effectively holiness can be staged without ceasing to matter, church office remained your daily craft.",
+                    "TransitionText": "Because a great procession showed you how holiness can be staged and lose none of its weight, the work of the church remained your daily craft.",
                     "TransitionMode": "optional",
                     "TransitionPrompt": "This could carry you into Prelate, but you may remain on your current path instead."
                 }
