@@ -1468,18 +1468,17 @@ a.enricher-1547::before {
 		min-width: 0;
 		width: max-content;
 		min-height: 0;
-		/* The grid's `align-items: stretch` would stretch this column to the (tall)
-		   sidebar's height; short face-down cards then drift down inside it. Anchor
-		   the whole column to the TOP of its grid row at its own content height, so
-		   the cards always sit directly under the header in every phase. */
-		align-self: start;
+		/* Stretch the column to the full row height and let the cards FILL it
+		   (anchored top AND bottom). With no leftover empty space, there is nothing
+		   to render as a gap above the cards regardless of any stale paint. */
+		align-self: stretch;
 		display: flex;
 		flex-direction: column;
 		align-items: stretch;
 		justify-content: flex-start;
 	}
 	.skilltree-chargen .chargen-main-cards .chargen-cards {
-		flex: 0 0 auto; /* natural height, pinned at the top — never grow to fill */
+		flex: 1 1 auto; /* fill the column height — cards span top to bottom */
 	}
 
 	.skilltree-chargen .chargen-sidebar {
@@ -1617,17 +1616,14 @@ a.enricher-1547::before {
 		grid-template-columns: repeat(2, minmax(220px, 260px));
 		justify-content: start;
 		align-items: stretch;
-		align-content: start;   /* pack the row to the top if the grid is ever taller than its content */
-		grid-auto-rows: max-content;
+		align-content: stretch;
+		grid-auto-rows: minmax(0, 1fr);   /* the card row fills the column height */
 	}
 
-	/* Card shell */
+	/* Card shell — fills the column height (anchored top and bottom). */
 	.skilltree-chargen .chargen-card {
 		height: 100%;
-		/* Keep a consistent card size whatever the content. Face-down advancement
-		   cards carry no title/text, so without this they shrink and the short card
-		   block floats — leaving blank space above the cards. */
-		min-height: 26rem;
+		min-height: 0;
 		justify-self: center;
 		width: 100%;
 		max-width: 260px;
@@ -1750,7 +1746,8 @@ a.enricher-1547::before {
 	.skilltree-chargen .chargen-card .card-cover {
 			aspect-ratio: 2 / 2.72;
 			width: 100%;
-			flex: 0 0 auto;
+			flex: 1 1 auto;   /* grow to fill the card so the image panel reaches the bottom */
+			min-height: 0;
 			border-bottom: 1px solid rgba(0,0,0,0.12);
 			position: relative;
 			overflow: hidden;
