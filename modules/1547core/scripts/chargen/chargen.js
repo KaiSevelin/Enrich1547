@@ -2095,7 +2095,13 @@ export class SkillTreeChargenApp extends FormApplication {
             else value = raw || (p.cancelValue ?? null);
         }
         this._pendingResolve(value);
-        this.render(false);
+        // During the advancement wizard, prompts chain back-to-back. Rendering here
+        // (with _pendingPrompt now null) would repaint the panel with the biography
+        // for a frame before the next prompt's render — the "biography so far" blink.
+        // The next _inlinePrompt() render repaints the panel; the wizard's helpers
+        // never render in between, and the actor.update bio writes don't re-render
+        // this FormApplication. Outside the wizard, render normally to show the result.
+        if (!this._inAdvancementWizard) this.render(false);
     }
 
     /** Resolve any pending inline prompt to its cancel value, then close. */
