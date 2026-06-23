@@ -1977,13 +1977,19 @@ a.enricher-1547::before {
 
 /* While a side-panel prompt is open (e.g. the advancement wizard) the prompt
    makes the right column tall; keep the cards pinned to the top at their natural
-   height instead of stretching/centering, so there's no empty gap above them. */
+   height instead of stretching/centering, so there's no empty gap above them.
+   The column must be a flex box for the alignment below to take effect — without
+   `display: flex` these were inert on the default block container and the short
+   face-down cards drifted down inside the stretched column. */
 .skilltree-chargen .chargen-main-cards.is-awaiting-prompt {
+	display: flex;
+	flex-direction: column;
 	justify-content: flex-start;
-	align-items: flex-start;
+	align-items: stretch;
 }
 .skilltree-chargen .chargen-main-cards.is-awaiting-prompt .chargen-cards {
-	align-self: start;
+	align-self: stretch;
+	flex: 0 0 auto;
 	height: auto;
 }
 

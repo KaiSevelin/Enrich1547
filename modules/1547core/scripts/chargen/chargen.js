@@ -2657,7 +2657,8 @@ export class SkillTreeChargenApp extends FormApplication {
         const kind = String(event.kind ?? "").trim().toLowerCase();
         if (["body", "drive", "bio", "deferred", "rare-career", "transition"].includes(kind)) return true;
 
-        if (kind === "money" && Math.abs(Number(event.amount ?? 0)) >= 50) return true;
+        // Money is mechanical — it stays in the detailed/Chronicle bio but must not
+        // surface in the narrative prose (it read as "...defined by received 120 reales").
         if (kind === "social" && Math.abs(Number(event.amount ?? 0)) >= 2) return true;
         if (kind === "transition" && String(event.toStage ?? "").trim().toLowerCase() === "advanced") return true;
 
@@ -2676,13 +2677,17 @@ export class SkillTreeChargenApp extends FormApplication {
             grouped.get(label).push(event);
         }
 
+        // Lead-ins that grammatically accept a following CLAUSE. Comma lead-ins take
+        // a lower-cased continuation for the first sentence; the colon lead-in keeps
+        // its sentences capitalised. (The old "...marked by" / "...shaped by" frames
+        // wanted a noun phrase but received clauses — "shaped by because opening…".)
         const intros = {
-            "Birth and Upbringing": "Your earliest life was marked by",
+            "Birth and Upbringing": "In your earliest years,",
             Childhood: "In youth,",
             Adolescence: "As you came of age,",
-            Career: "Your working life was shaped by",
-            "Later Life": "Later, your path was defined by",
-            "What Returned": "What refused to stay buried was"
+            Career: "In your working life,",
+            "Later Life": "Later,",
+            "What Returned": "What you had buried did not stay down:"
         };
 
         const paragraphs = [];
@@ -2693,19 +2698,38 @@ export class SkillTreeChargenApp extends FormApplication {
                 .slice(0, 3);
             const intro = intros[label] ?? "In time,";
             const lines = chosen
-                .map(event => this._normalizeBioSentence(event.summaryText || event.text))
+                .map(event => this._cleanBioFragment(event.summaryText || event.text))
                 .filter(Boolean);
             if (!lines.length) continue;
 
-            if (lines.length === 1) {
-                paragraphs.push(`${intro} ${lines[0].charAt(0).toLowerCase()}${lines[0].slice(1)}`);
-            } else {
-                const [first, ...rest] = lines;
-                paragraphs.push(`${intro} ${first.charAt(0).toLowerCase()}${first.slice(1)} ${rest.join(" ")}`);
-            }
+            // A colon lead-in introduces full sentences (keep them capitalised); a
+            // comma lead-in continues into the first clause (drop a leading connective
+            // and lower-case it so "…, because X" reads as "…, X").
+            const colonIntro = /:$/.test(intro);
+            const first = colonIntro ? lines[0] : this._demoteBioConnective(lines[0]);
+            paragraphs.push([intro, first, ...lines.slice(1)].join(" "));
         }
 
         return paragraphs;
+    }
+
+    // Clean a stored bio line for narrative prose: strip inline @info refs, drop the
+    // reveal labels that prefix stored lines ("Your nature:", "The past returns:"),
+    // drop anything that is really a mechanical line, and ensure terminal punctuation.
+    _cleanBioFragment(text) {
+        let value = stripInfoRefs(String(text ?? "")).trim();
+        if (!value) return "";
+        value = value.replace(/^(your nature|the past returns)\s*:\s*/i, "").trim();
+        if (!value || this._isBioMechanicalLine(value)) return "";
+        return /[.!?]$/.test(value) ? value : `${value}.`;
+    }
+
+    // For a fragment spliced after a comma lead-in: drop a leading connective and
+    // lower-case the first word, so "because service shaped…" → "service shaped…".
+    _demoteBioConnective(sentence) {
+        const value = String(sentence ?? "")
+            .replace(/^(because|and|but|so|then|thus|therefore|yet)\b,?\s+/i, "");
+        return value ? `${value.charAt(0).toLowerCase()}${value.slice(1)}` : value;
     }
 
     _renderCompiledBiographyHtml(events = []) {

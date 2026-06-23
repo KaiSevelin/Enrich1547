@@ -340,10 +340,20 @@ export async function applyRewardChanges(app, run, changes = [], deps = {}) {
         };
 
                 const parts = [];
-                if (role && !isPlaceholder(role)) parts.push(clean(role));
-
-        const flavorLine = sentence(flavor);
-        if (flavorLine) parts.push(flavorLine);
+                // Lead with the role + relationship as one clause ("Refugee — a
+                // sibling who still knows your better nature."), instead of dropping a
+                // bare, unpunctuated role token in front of the next sentence (which
+                // read as "Refugee Appears more competent…").
+                const roleClean = (role && !isPlaceholder(role)) ? clean(role) : "";
+                const flavorClean = (flavor && !isPlaceholder(flavor)) ? clean(flavor) : "";
+                if (roleClean && flavorClean) {
+                    const f = flavorClean.replace(/[.!?]+$/, "");
+                    parts.push(`${roleClean} — ${f.charAt(0).toLowerCase()}${f.slice(1)}.`);
+                } else if (roleClean) {
+                    parts.push(sentence(roleClean));
+                } else if (flavorClean) {
+                    parts.push(sentence(flavorClean));
+                }
 
         const toneLine = sentence(tone);
         if (toneLine) parts.push(toneLine);
