@@ -1613,6 +1613,10 @@ a.enricher-1547::before {
 	/* Card shell */
 	.skilltree-chargen .chargen-card {
 		height: 100%;
+		/* Keep a consistent card size whatever the content. Face-down advancement
+		   cards carry no title/text, so without this they shrink and the short card
+		   block floats — leaving blank space above the cards. */
+		min-height: 26rem;
 		justify-self: center;
 		width: 100%;
 		max-width: 260px;
