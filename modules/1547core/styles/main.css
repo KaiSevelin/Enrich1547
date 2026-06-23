@@ -1462,10 +1462,11 @@ a.enricher-1547::before {
 		min-width: 0;
 		width: max-content;
 		min-height: 0;
-		/* The grid row stretches this column to the (often tall) sidebar's height.
-		   Be a flex column pinned to the top so the cards sit directly under the
-		   header in EVERY phase — including when they are short face-down backs
-		   (advancement, between prompts) and would otherwise drift to the middle. */
+		/* The grid's `align-items: stretch` would stretch this column to the (tall)
+		   sidebar's height; short face-down cards then drift down inside it. Anchor
+		   the whole column to the TOP of its grid row at its own content height, so
+		   the cards always sit directly under the header in every phase. */
+		align-self: start;
 		display: flex;
 		flex-direction: column;
 		align-items: stretch;

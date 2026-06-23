@@ -337,7 +337,10 @@ export async function applyRewardChanges(app, run, changes = [], deps = {}) {
             .trim()
             .replace(/\s+/g, " ")
             .replace(/\s*\(\d+\)(?=[.\s]*$)/, "");
-        const isPlaceholder = (text) => /^(none|null|n\/a|nothing notable)\.?$/i.test(clean(text));
+        // "Nothing remarkable / notable / of note / special" etc. are no-content
+        // placeholders the tables use for "this contact has no quirk/tone" — drop them
+        // (but keep real descriptors like "Nothing scares them").
+        const isPlaceholder = (text) => /^(none|null|n\/a|nothing (remarkable|notable|of note|special|unusual|to (note|report|tell)|here|much)|no (quirk|tell|note))\.?$/i.test(clean(text));
         const sentence = (text) => {
             const value = clean(text);
             if (!value || isPlaceholder(value)) return "";

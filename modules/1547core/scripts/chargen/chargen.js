@@ -3533,9 +3533,12 @@ export class SkillTreeChargenApp extends FormApplication {
 
     async _appendListProp(key, value) {
         const raw = String(this.actor.system?.props?.[key] ?? "");
-        const list = raw ? raw.split("\n").filter(Boolean) : [];
+        // These props (Contacts, Appearance) render as HTML (escapeHTML:false), so a
+        // plain "\n" collapses and the entries run together. Split on either an old
+        // newline or a <br> and re-join with <br> so each entry sits on its own line.
+        const list = raw ? raw.split(/\s*(?:<br\s*\/?>|\n)\s*/i).filter(Boolean) : [];
         list.push(String(value));
-        await this.actor.update({ [`system.props.${key}`]: list.join("\n") });
+        await this.actor.update({ [`system.props.${key}`]: list.join("<br>") });
     }
 
     async _addMoney(amount) {
