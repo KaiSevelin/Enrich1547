@@ -986,9 +986,10 @@ async function buildChangeSetsPack() {
         return doc;
     });
 
-    // 2. Build ChangeSet docs.
+    // 2. Build ChangeSet docs. Use the upgrade icon as the ChangeSet image — skip
+    // csTemplate.img (the CSB template logo) so ChangeSets get a meaningful icon.
     const changeSetDocs = changeSets.map((cs) =>
-        makeItemDoc(cs, csTemplate, cs.img ?? csTemplate.img ?? "icons/svg/upgrade.svg", buildChangeSetProps, "Change Sets")
+        makeItemDoc(cs, csTemplate, cs.img ?? "icons/svg/upgrade.svg", buildChangeSetProps, "Change Sets")
     );
 
     // 3. Wire each ChangeSet's ChangeDisplayer with refs to its children.

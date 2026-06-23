@@ -1972,7 +1972,7 @@
       "MeleeWeapon",
       "Sword"
     ],
-    "img": "media/home/games/1547/Items/ZweihÃƒÂ¤nder.webp",
+    "img": "media/home/games/1547/Items/Zweihänder.webp",
     "minReach": 2,
     "maxReach": 2,
     "usesAmmo": false,
@@ -2019,7 +2019,7 @@
       "NaturalWeapon",
       "Claws"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2067,7 +2067,7 @@
       "NaturalWeapon",
       "Claws"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2117,7 +2117,7 @@
       "NaturalWeapon",
       "Claws"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2167,7 +2167,7 @@
       "NaturalWeapon",
       "Claws"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2219,7 +2219,7 @@
       "NaturalWeapon",
       "Claws"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2266,7 +2266,7 @@
       "NaturalWeapon",
       "Bite"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2314,7 +2314,7 @@
       "NaturalWeapon",
       "Bite"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2364,7 +2364,7 @@
       "NaturalWeapon",
       "Bite"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2415,7 +2415,7 @@
       "NaturalWeapon",
       "Bite"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2466,7 +2466,7 @@
       "NaturalWeapon",
       "Bite"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2513,7 +2513,7 @@
       "NaturalWeapon",
       "Tusks"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2561,7 +2561,7 @@
       "NaturalWeapon",
       "Tusks"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2611,7 +2611,7 @@
       "NaturalWeapon",
       "Tusks"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2662,7 +2662,7 @@
       "NaturalWeapon",
       "Tusks"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2713,7 +2713,7 @@
       "NaturalWeapon",
       "Tusks"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2760,7 +2760,7 @@
       "NaturalWeapon",
       "Horn"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2808,7 +2808,7 @@
       "NaturalWeapon",
       "Horn"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2858,7 +2858,7 @@
       "NaturalWeapon",
       "Horn"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2909,7 +2909,7 @@
       "NaturalWeapon",
       "Horn"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -2960,7 +2960,7 @@
       "NaturalWeapon",
       "Horn"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 1,
     "usesAmmo": false,
@@ -3007,7 +3007,7 @@
       "NaturalWeapon",
       "Tentacle"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 2,
     "usesAmmo": false,
@@ -3056,7 +3056,7 @@
       "NaturalWeapon",
       "Tentacle"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 1,
     "maxReach": 3,
     "usesAmmo": false,
@@ -3106,7 +3106,7 @@
       "NaturalWeapon",
       "Tentacle"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 2,
     "maxReach": 3,
     "usesAmmo": false,
@@ -3158,7 +3158,7 @@
       "NaturalWeapon",
       "Tentacle"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 2,
     "maxReach": 4,
     "usesAmmo": false,
@@ -3210,7 +3210,7 @@
       "NaturalWeapon",
       "Tentacle"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "minReach": 3,
     "maxReach": 5,
     "usesAmmo": false,

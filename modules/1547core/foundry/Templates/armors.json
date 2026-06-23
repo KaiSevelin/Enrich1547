@@ -1,9 +1,9 @@
 [
   {
-    "_id": "default-unprotected",
-    "id": "default-unprotected",
+    "_id": "EWgyOYJEWCWSAqLk",
+    "id": "EWgyOYJEWCWSAqLk",
     "name": "Unprotected",
-    "uuid": "Item.default-unprotected",
+    "uuid": "Item.EWgyOYJEWCWSAqLk",
     "folder": "Armor",
     "itemType": "armor",
     "armorClass": "Unprotected",
@@ -16,7 +16,7 @@
       "Evade",
       "Evade"
     ],
-    "img": "icons/svg/item-bag.svg",
+    "img": "modules/1547core/images/misc/transparent.png",
     "description": "Unprotected means relying on clothing, movement, and luck alone rather than any true armor. It offers freedom of motion but no dedicated physical defense beyond what the body can avoid. In play, it offers @1547[3de]{Unprotected Defense}."
   },
   {
@@ -260,7 +260,7 @@
     "defenseDice": [
       "Evade"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "description": "This small natural armor is an inherent bodily defense of hide, scale, shell, thick skin, or occult resilience rather than crafted harness. In play, it offers @1547[1de]{Natural Armor (Small) Defense} while its traits emphasize natural armor."
   },
   {
@@ -281,7 +281,7 @@
       "Evade",
       "Armor"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "description": "This medium natural armor is an inherent bodily defense of hide, scale, shell, thick skin, or occult resilience rather than crafted harness. In play, it offers @1547[1de|1da]{Natural Armor (Medium) Defense} while its traits emphasize natural armor."
   },
   {
@@ -303,7 +303,7 @@
       "Armor",
       "Armor"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "description": "This large natural armor is an inherent bodily defense of hide, scale, shell, thick skin, or occult resilience rather than crafted harness. In play, it offers @1547[1de|2da]{Natural Armor (Large) Defense} while its traits emphasize natural armor."
   },
   {
@@ -326,7 +326,7 @@
       "Armor",
       "Armor"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "description": "This huge natural armor is an inherent bodily defense of hide, scale, shell, thick skin, or occult resilience rather than crafted harness. In play, it offers @1547[4da]{Natural Armor (Huge) Defense} while its traits emphasize natural armor."
   },
   {
@@ -350,7 +350,7 @@
       "Armor",
       "Armor"
     ],
-    "img": "icons/svg/mystery-man.svg",
+    "img": "modules/1547core/images/monsters/Natural.webp",
     "description": "This massive natural armor is an inherent bodily defense of hide, scale, shell, thick skin, or occult resilience rather than crafted harness. In play, it offers @1547[5da]{Natural Armor (Massive) Defense} while its traits emphasize natural armor."
   }
 ]

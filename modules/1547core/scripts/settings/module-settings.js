@@ -620,6 +620,48 @@ async function pruneDuplicateTemplates(canonicalDocs) {
     return { removed: staleIds.length };
 }
 
+// Folder-independent dedup safety net. The per-folder prune above only sees items
+// in the *current* managed folder, so duplicates orphaned by a folder rename, a
+// missing source flag, or a legacy invalid `_id` (which made Foundry mint a fresh
+// random id every Setup Data run instead of upserting — e.g. "Unprotected",
+// "Silvered") survive it and pile up. This collapses any MANAGED world item that
+// shares a name with a seeded doc down to a single survivor (preferring the one
+// whose id matches the seeded canonical id). Managed = carries the core source
+// flag OR uses a core CSB template, so user-authored items are never touched.
+async function dedupeManagedItemsByName(seededDocs) {
+    const canonicalIdsByName = new Map();
+    const coreTemplateIds = new Set();
+    for (const doc of seededDocs) {
+        if (doc?.system?.template) coreTemplateIds.add(doc.system.template);
+        if (!doc?.name) continue;
+        if (!canonicalIdsByName.has(doc.name)) canonicalIdsByName.set(doc.name, new Set());
+        canonicalIdsByName.get(doc.name).add(doc._id);
+    }
+
+    const managedByName = new Map();
+    for (const item of game.items) {
+        if (!canonicalIdsByName.has(item.name)) continue;
+        const managed = !!item.flags?.[SOURCE_FLAG_SCOPE] || coreTemplateIds.has(item.system?.template);
+        if (!managed) continue;
+        if (!managedByName.has(item.name)) managedByName.set(item.name, []);
+        managedByName.get(item.name).push(item);
+    }
+
+    const staleIds = [];
+    for (const [name, items] of managedByName) {
+        if (items.length < 2) continue;
+        const canonicalIds = canonicalIdsByName.get(name);
+        const keep = items.find((it) => canonicalIds.has(it.id)) ?? items[0];
+        for (const it of items) if (it.id !== keep.id) staleIds.push(it.id);
+    }
+
+    if (staleIds.length > 0) {
+        await Item.deleteDocuments(staleIds);
+    }
+
+    return { removed: staleIds.length };
+}
+
 // CSB stores `system.body`/header/display/hidden on each instance item, cloned
 // from the template at creation. Updating the template doc on Setup Data does
 // NOT propagate to actor-owned items, so existing actors keep the old sheet
@@ -1609,7 +1651,9 @@ function createModuleSetupFormApplicationClass() {
                 return makeItemDoc(
                     normalized,
                     changeSetTemplate,
-                    normalized.img ?? changeSetTemplate.img ?? "icons/svg/item-bag.svg",
+                    // Upgrade icon for ChangeSets — skip changeSetTemplate.img (CSB logo)
+                    // so they match the compiled compendium (build-packs).
+                    normalized.img ?? "icons/svg/upgrade.svg",
                     buildChangeSetProps,
                     folder.id,
                     group || "Change Sets"
@@ -1876,6 +1920,14 @@ function createModuleSetupFormApplicationClass() {
             // (Monster bases are no longer seeded into the world; their chassis
             // auto-applies on import/creation via ensureBaseChangeSetForActor, which
             // reads the world Base ChangeSets. Nothing to reconcile here.)
+
+            // Belt-and-braces: collapse any managed duplicates that escaped the
+            // per-folder prune (folder renames / legacy invalid-id seeds such as
+            // Unprotected, Silvered, Zone Base) down to one per name.
+            const dedupeResult = await dedupeManagedItemsByName(docs);
+            if (dedupeResult.removed > 0) {
+                console.log(`[1547core] Setup Data: removed ${dedupeResult.removed} duplicate managed item(s).`);
+            }
 
             return {
                 totalItems: docs.length,

@@ -1,8 +1,8 @@
 [
   {
-    "_id": "modSilvered01",
-    "id": "modSilvered01",
-    "uuid": "Item.modSilvered01",
+    "_id": "uqGmfsJlJ9PRELmy",
+    "id": "uqGmfsJlJ9PRELmy",
+    "uuid": "Item.uqGmfsJlJ9PRELmy",
     "name": "Silvered",
     "folder": "Weapon Modifiers",
     "itemType": "weaponModifier",
@@ -28,7 +28,7 @@
     "stackMode": "replace",
     "requirements": {},
     "description": "A silver treatment worked onto the striking edge, point, or head of the weapon. In play, it adds the Silver qualifier to attacks made with the modified weapon or ammunition, making it effective against beings that recoil from silver.",
-    "img": "icons/svg/item-bag.svg"
+    "img": "icons/svg/upgrade.svg"
   },
   {
     "_id": "modBlessed001",
@@ -59,7 +59,7 @@
     "stackMode": "replace",
     "requirements": {},
     "description": "A weapon or missile prepared through formal blessing, prayer, or consecration. In play, it adds the Blessed qualifier to attacks made with the modified item, making it more effective against unclean, accursed, or spiritually vulnerable beings.",
-    "img": "icons/svg/item-bag.svg"
+    "img": "icons/svg/upgrade.svg"
   },
   {
     "_id": "modColdIron01",
@@ -90,7 +90,7 @@
     "stackMode": "replace",
     "requirements": {},
     "description": "The striking surface is worked in cold iron, or fitted with a cold-iron head. In play, it adds the Cold Iron qualifier to attacks made with the modified weapon or ammunition, making it effective against beings that cannot abide iron.",
-    "img": "icons/svg/item-bag.svg"
+    "img": "icons/svg/upgrade.svg"
   },
   {
     "_id": "modPoisoned01",
@@ -135,7 +135,7 @@
     "stackMode": "replace",
     "requirements": {},
     "description": "The blade, point, or head is coated with a prepared venom or toxin. In play, it threatens a secondary poison effect on the next legal strike or shot that gets into the body, weakening the target beyond the initial wound.",
-    "img": "icons/svg/item-bag.svg"
+    "img": "icons/svg/upgrade.svg"
   },
   {
     "_id": "modBodkin001",
@@ -177,7 +177,7 @@
       ]
     },
     "description": "A narrow, hardened arrowhead built to press through mail, gaps, and layered protection. In play, it adds @1547[1dp]{Penetration} to the modified shot, favoring armor-breaking force over broad cutting injury.",
-    "img": "icons/svg/item-bag.svg"
+    "img": "icons/svg/upgrade.svg"
   },
   {
     "_id": "modBroadhead1",
@@ -212,6 +212,6 @@
       ]
     },
     "description": "A broad cutting head built to open flesh and worsen the wound. In play, it adds @1547[1dl]{Lethality} to the modified shot, favoring raw injury over narrow armor-piercing force.",
-    "img": "icons/svg/item-bag.svg"
+    "img": "icons/svg/upgrade.svg"
   }
 ]
