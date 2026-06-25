@@ -26,7 +26,8 @@ export const CHANGE_TYPES = new Set([
     "drive",
     "bio",
     "item",
-    "language"
+    "language",
+    "move"
 ]);
 
 export function _isObject(v) {
@@ -157,6 +158,17 @@ export function _validateChangeSchema(ch, tableName, rewardIdx, changeIdx) {
             ch.amount,
             `Social change requires numeric "amount" in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`
         );
+        return;
+    }
+
+    if (type === "move") {
+        _requireFiniteNumber(
+            ch.amount,
+            `Move change requires numeric "amount" in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`
+        );
+        if (ch.moveType != null && typeof ch.moveType !== "string") {
+            throw new Error(`Move change "moveType" must be a string in "${tableName}" (rewards[${rewardIdx}].changes[${changeIdx}]).`);
+        }
         return;
     }
 

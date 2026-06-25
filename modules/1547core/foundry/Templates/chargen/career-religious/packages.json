@@ -2,6 +2,12 @@
     "stageKey": "career-religious",
     "packages": [
         {
+            "label": "Liturgical tongue",
+            "gain": {
+                "type": "language"
+            }
+        },
+        {
             "label": "Devotional grounding",
             "gain": {
                 "type": "stat",

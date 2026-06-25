@@ -2,6 +2,12 @@
     "stageKey": "career-scholar",
     "packages": [
         {
+            "label": "Scholarly tongue",
+            "gain": {
+                "type": "language"
+            }
+        },
+        {
             "label": "Book learning",
             "gain": {
                 "type": "stat",

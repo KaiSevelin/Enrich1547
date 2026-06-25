@@ -1,4 +1,4 @@
-import { MODULE_ID } from "../lib/constants.mjs";
+import { MODULE_ID, ACTOR_TEMPLATE_ID } from "../lib/constants.mjs";
 import { renderDriveHintHtml, getDriveHintData } from "./drive-prompts.js";
 import { PRIMARY_STATS, statSteps, statFromSteps } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
 import { getStatTooltip } from "../hud/stat-info.js";
@@ -732,6 +732,9 @@ export class SkillTreeChargenApp extends FormApplication {
         const actor = await Actor.create({
             name,
             type,
+            // Bind to the current CSB sheet template so the created actor uses the
+            // up-to-date template (movement panel, etc.) rather than an inferred one.
+            system: { template: ACTOR_TEMPLATE_ID },
             folder: playersFolder?.id ?? null,
             ownership: {
                 default: 0,

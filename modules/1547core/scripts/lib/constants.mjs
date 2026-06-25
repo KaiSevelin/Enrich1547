@@ -20,5 +20,10 @@ export const USAGE_EFFECT_TEMPLATE_ID = "mwPqEYUoOfzXpyT9";
 export const UNEQUIPPABLE_TEMPLATE_ID = "woHyeHPKKdo4JDJd";
 export const ON_HIT_EFFECT_TEMPLATE_ID = "OnH1tEffectTmpl0";
 
+// CSB actor template document id — the value an actor's `system.template` points
+// at (the "1547" _template). Chargen sets this on the actors it creates so they
+// bind to the current sheet template instead of whatever CSB would infer.
+export const ACTOR_TEMPLATE_ID = "Tgs09eTiTp63Cp7u";
+
 // Compendium pack ids.
 export const SPELL_PACK = "1547core.spells";
