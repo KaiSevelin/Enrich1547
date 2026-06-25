@@ -15,6 +15,14 @@
                 "type": "item",
                 "tableUuid": "RollTable.GMW7FKtzQpNC8SZq"
             }
+        },
+        {
+            "label": "Mountaineer",
+            "gain": {
+                "type": "move",
+                "moveType": "climb",
+                "amount": 1
+            }
         }
     ]
 }

@@ -1,4 +1,5 @@
 ﻿import { assignSides, orderSidesByInitiative } from "../combat/side-assignment.mjs";
+import { getMovementBudget } from "../combat/movement-budget.mjs";
 import { ACTOR_TYPES } from "../lib/build-helpers.mjs";
 
 const MODULE_ID = "1547core";
@@ -199,6 +200,75 @@ export async function persistCombatSideState(combat) {
     await combat.setFlag(MODULE_ID, "activeSideId", sideState.activeSideId);
     await combat.setFlag(MODULE_ID, "roundNumber", sideState.roundNumber);
     await combat.setFlag(MODULE_ID, "sides", sideState.sides);
+}
+
+/**
+ * Restore the once-per-turn resources for every (non-defeated) member of a side
+ * when that side's window begins: refill `MovementRemaining` to the movement
+ * budget, and re-enable `FullTurnAvailable` (spent when a full-turn maneuver
+ * commits). GM-authoritative; each actor gets at most one update with only the
+ * fields that actually changed. No-ops gracefully for actors that don't define
+ * a movement budget. The per-move decrement lives in
+ * combat/movement-reactions.js.
+ */
+export async function resetSideTurnState(combat, sideId) {
+    if (!game.user?.isGM || !combat || !sideId) return;
+    for (const combatant of getOrderedCombatants(combat)) {
+        if (combatant?.defeated) continue;
+        if (resolveCombatantSideId(combatant) !== sideId) continue;
+        const actor = combatant.actor;
+        if (!actor) continue;
+        const props = actor.system?.props ?? {};
+        const update = {};
+
+        const budget = getMovementBudget(actor);
+        if (Number.isFinite(budget) && budget > 0 && Number(props.MovementRemaining) !== budget) {
+            update["system.props.MovementRemaining"] = budget;
+        }
+        // A fresh turn restores the full-turn action. Stored as a boolean
+        // (planCommitFullTurnManeuver writes `false`); only write when not already on.
+        if (props.FullTurnAvailable !== true) {
+            update["system.props.FullTurnAvailable"] = true;
+        }
+
+        if (Object.keys(update).length) await actor.update(update);
+    }
+}
+
+/**
+ * Zero every combatant's leftover RiskPoints when combat ends (battle-flow
+ * spec §"Crit and Fumble Rules": remaining RiskPoints are set to 0). GM
+ * only; skips actors that already read 0.
+ */
+async function clearCombatRiskPoints(combat) {
+    if (!game.user?.isGM || !combat) return;
+    for (const combatant of getOrderedCombatants(combat)) {
+        const actor = combatant?.actor;
+        if (!actor) continue;
+        if (!Number(actor.system?.props?.RiskPoints)) continue;
+        await actor.update({ "system.props.RiskPoints": 0 });
+    }
+}
+
+/**
+ * Realign the authoritative active-side flag with Foundry's combat cursor
+ * when native turn/round navigation (the tracker's Next/Previous arrows)
+ * moves the cursor onto a different side. Without this the highlighted side,
+ * the off-turn facing lock, and movement refill would desync from `combat.turn`.
+ * GM-authoritative; only writes when the cursor side actually differs from the
+ * stored flag (so it never fights the Side-Ready advance, which sets both).
+ */
+async function syncActiveSideToCursor(combat) {
+    if (!game.user?.isGM || !combat?.started) return;
+    const ordered = getOrderedCombatants(combat);
+    const cursor = ordered[Number(combat.turn) || 0] ?? ordered[0] ?? null;
+    if (!cursor) return;
+    const cursorSideId = resolveCombatantSideId(cursor);
+    if (!cursorSideId) return;
+    if (cursorSideId === combat.flags?.[MODULE_ID]?.activeSideId) return;
+    await combat.setFlag(MODULE_ID, "activeSideId", cursorSideId);
+    await persistCombatSideState(combat);
+    await resetSideTurnState(combat, cursorSideId);
 }
 
 function ensureCombatantSideChip(row, sideId) {
@@ -485,6 +555,15 @@ export function register1547CombatTrackerSideGroups() {
     });
     Hooks.on("updateCombatant", (combatant) => {
         if (combatant.combat) void persistCombatSideState(combatant.combat);
+    });
+    Hooks.on("updateCombat", (combat, changes) => {
+        // Native turn/round navigation only — flag-only updates (our own
+        // setFlag writes) carry no turn/round change, so this never loops.
+        if (!changes || !("turn" in changes || "round" in changes)) return;
+        void syncActiveSideToCursor(combat);
+    });
+    Hooks.on("deleteCombat", (combat) => {
+        void clearCombatRiskPoints(combat);
     });
     Hooks.on("renderCombatTracker", (app, html) => {
         try {

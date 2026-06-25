@@ -1450,7 +1450,7 @@ export class SkillTreeChargenApp extends FormApplication {
         }
 
         const packageRegistry = game.settings.get("chargen1547_v2", "packageRegistry") ?? {};
-        const KNOWN_PACKAGE_GAIN_TYPES = new Set(["stat", "skill", "maneuver", "money", "item", "luck", "contact", "body", "social", "drive", "bio", "language"]);
+        const KNOWN_PACKAGE_GAIN_TYPES = new Set(["stat", "skill", "maneuver", "money", "item", "luck", "contact", "body", "social", "drive", "bio", "language", "move"]);
         for (const stageKey of visitedCareerStageKeys) {
             const packages = Array.isArray(packageRegistry[stageKey]) ? packageRegistry[stageKey] : [];
             if (!packages.length) {

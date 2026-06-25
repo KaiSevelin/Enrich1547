@@ -106,6 +106,7 @@ export function registerCombatResolverService() {
             markReactionUsed,
             markMovementReacted,
             isReactionAvailable: (actor) => isReactionAvailable(actor, game.combat),
+            getActorReactionWeapon,
             rotateTokenAuthoritative,
             spendLoadedAmmo,
             swapLoadedAmmo,

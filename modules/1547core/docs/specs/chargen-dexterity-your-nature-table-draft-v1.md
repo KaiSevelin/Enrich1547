@@ -1,7 +1,11 @@
 # Chargen Dexterity "Your Nature" Table Draft v1
 
-**Status: Authoring draft.** This document proposes a complete `Dexterity` destination table
-for the `Your Nature` phase defined in [`chargen-spec-v1.md`](chargen-spec-v1.md).
+**Status: Implemented.** This document described a complete `Dexterity` destination table
+for the `Your Nature` phase defined in [`chargen-spec-v1.md`](chargen-spec-v1.md). It has since
+been authored as live Foundry content under
+[`foundry/Templates/chargen/your-nature-dexterity/`](../../foundry/Templates/chargen/your-nature-dexterity/)
+(16 chargen-template items plus roll table `RollTablYnDext00`). The live wording was lightly
+revised during conversion; where prose differs, treat the JSON as canonical.
 
 The draft is written in the same three-part outcome shape already used by life-path chargen
 items:
@@ -379,6 +383,7 @@ Results:
 - `Contact` text `A courtier from that supper still praises your hands in the same breath that he warns people about them.` weight `2`
 - `Drive` target `add` amount `Isolation` weight `2`
 - `Drive` target `add` amount `Pride` weight `2`
+- `Stat` target `Dexterity` amount `1` weight `2`
 
 `Effects3`
 - `Bio` amount `People began watching your hands even when they meant to praise them, and the feeling stayed with you.` weight `3`

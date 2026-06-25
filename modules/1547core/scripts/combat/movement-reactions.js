@@ -1,4 +1,9 @@
-import { resolveCombatantSideId } from "../combat-tracker/side-tracker.js";
+import {
+    getActiveSideId,
+    getOrderedCombatants,
+    resolveCombatantSideId,
+} from "../combat-tracker/side-tracker.js";
+import { getMovementBudget } from "./movement-budget.mjs";
 import { isMovementReactionAvailable } from "./activation-state.mjs";
 
 /* ------------------------------------------------------------------ */
@@ -17,11 +22,51 @@ import { isMovementReactionAvailable } from "./activation-state.mjs";
 /* ------------------------------------------------------------------ */
 
 const MODULE_ID = "1547core";
-// Generous reach cap for "plausibly threatened"; the reaction legality (range
-// gate) does the precise filtering, so this only bounds how far we bother to look.
+// Hard cap on how far we ever look for a threatened mover (bounds a ranged
+// reactor's overwatch search). Each reactor's real threatened distance is its
+// own weapon reach — see reactorThreatReachSquares.
 const MAX_THREAT_SQUARES = 30;
 
 const lastPos = new Map(); // tokenId -> { x, y }
+
+// The distance (in squares) at which `reactor` actually threatens a passing
+// enemy: its reaction weapon's reach. Melee weapons with no range bands
+// threaten one square (adjacency); a reach weapon (shortRange 2) threatens
+// two; a ranged weapon threatens out to its max range. This is what makes a
+// melee opportunity attack fire only within the weapon's reach instead of out
+// to the coarse search cap.
+function reactorThreatReachSquares(reactor) {
+    const api = globalThis.game?.modules?.get?.(MODULE_ID)?.api?.combat;
+    const weapon = api?.getActorReactionWeapon?.(reactor) ?? null;
+    const finite = (value) => (Number.isFinite(Number(value)) && Number(value) > 0 ? Number(value) : null);
+    const reach = weapon
+        ? (finite(weapon.maxRange) ?? finite(weapon.longRange) ?? finite(weapon.shortRange) ?? 1)
+        : 1;
+    return Math.min(MAX_THREAT_SQUARES, reach);
+}
+
+// Spend the mover's per-turn movement budget as it drags around the canvas
+// during its own side's window. Decrements `MovementRemaining` by the squares
+// crossed (Chebyshev). No-ops when the actor defines no MovementBudget, when it
+// isn't that side's turn, or when nothing actually changed. GM-authoritative
+// (the caller already gated on isGM). The per-side refill lives in
+// side-tracker.resetSideTurnState.
+function trackMoverMovementBudget({ combat, mover, moverSide, oldPos, newPos }) {
+    const activeSideId = getActiveSideId(combat, getOrderedCombatants(combat));
+    if (activeSideId && moverSide && activeSideId !== moverSide) return;
+    const g = gridSize();
+    const movedSquares = chebyshev(toCell(oldPos.x, oldPos.y, g), toCell(newPos.x, newPos.y, g));
+    if (movedSquares <= 0) return;
+    const props = mover.system?.props ?? {};
+    const budget = getMovementBudget(mover);
+    const remainingRaw = props.MovementRemaining ?? props.MoveRemaining;
+    let remaining = Number(remainingRaw);
+    // First move of a turn with no counter yet: start from the full budget.
+    if (!Number.isFinite(remaining)) remaining = Number.isFinite(budget) ? budget : movedSquares;
+    const next = Math.max(0, remaining - movedSquares);
+    if (Number.isFinite(Number(remainingRaw)) && next === Number(remainingRaw)) return;
+    void mover.update({ "system.props.MovementRemaining": next });
+}
 
 function gridSize() {
     return Number(globalThis.canvas?.grid?.size) || Number(globalThis.canvas?.dimensions?.size) || 100;
@@ -67,7 +112,10 @@ async function triggerMovementThreats({ combat, mover, moverSide, oldPos, newPos
         const rCell = toCell(rDoc.x, rDoc.y, g);
         let closest = Infinity;
         for (const cell of path) closest = Math.min(closest, chebyshev(cell, rCell));
-        if (closest > MAX_THREAT_SQUARES) continue;
+        // Only a reactor whose weapon reach actually covers the move path may
+        // take the opportunity — a melee reactor threatens its reach (1-2
+        // squares), a ranged reactor out to its range.
+        if (closest > reactorThreatReachSquares(reactor)) continue;
         // One opportunity per mover per round (pass already spent it).
         if (!isMovementReactionAvailable(reactor, mover, combat)) continue;
         // ONE event per reactor (not per square) — the first opportunity only.
@@ -113,10 +161,12 @@ export function registerMovementReactions() {
             if (!moverCombatant) return;
             const mover = moverCombatant.actor;
             if (!mover) return;
+            const moverSide = resolveCombatantSideId(moverCombatant);
+            trackMoverMovementBudget({ combat, mover, moverSide, oldPos, newPos });
             void triggerMovementThreats({
                 combat,
                 mover,
-                moverSide: resolveCombatantSideId(moverCombatant),
+                moverSide,
                 oldPos,
                 newPos,
             });

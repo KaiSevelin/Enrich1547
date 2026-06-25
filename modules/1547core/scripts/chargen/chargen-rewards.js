@@ -253,6 +253,14 @@ export function summarizeRewardChange(ch) {
     if (ch.type === "bio") return ch.text ? `Bio: ${ch.text}` : "Roll biography entry";
     if (ch.type === "item") return `Item: ${ch.name ?? ch.itemUuid ?? ch.tableUuid ?? "unknown"}`;
     if (ch.type === "language") return "Language reward";
+    if (ch.type === "move") {
+        const moveType = String(ch.moveType ?? "ground");
+        const amt = Number(ch.amount);
+        const signed = `${amt >= 0 ? "+" : ""}${amt}`;
+        return (moveType === "swim" || moveType === "climb")
+            ? `${moveType.charAt(0).toUpperCase()}${moveType.slice(1)} move ${signed}`
+            : `Movement ${signed}`;
+    }
     return ch.type;
 }
 
@@ -413,6 +421,49 @@ export async function applyRewardChanges(app, run, changes = [], deps = {}) {
                 amount: amt,
                 memorable: Math.abs(amt) >= 2,
                 priority: Math.abs(amt) >= 2 ? 2 : 0
+            });
+            continue;
+        }
+
+        if (ch.type === "move") {
+            const amt = Number(ch.amount ?? 0);
+            if (!Number.isFinite(amt) || amt === 0) continue;
+
+            const moveType = String(ch.moveType ?? "ground").toLowerCase();
+            const isTypePool = moveType === "swim" || moveType === "climb";
+            const key = moveType === "swim" ? "MoveSwim"
+                : moveType === "climb" ? "MoveClimb"
+                    : "MovementBudgetMod";
+            const props = app.actor.system?.props ?? {};
+            const before = Number(props[key] ?? 0) || 0;
+            // Per-type pools are clamped to 0..3 (0 = cannot move that way; chargen
+            // never grants more than 3 squares of swim/climb). The ground modifier
+            // is signed and uncapped so injuries push it negative.
+            const after = isTypePool
+                ? Math.min(3, Math.max(0, before + amt))
+                : before + amt;
+
+            // Nothing changed (e.g. already at the cap) — skip the write and note.
+            if (after === before) continue;
+
+            await app.actor.update({ [`system.props.${key}`]: String(after) });
+
+            let note;
+            if (isTypePool) {
+                note = amt > 0
+                    ? `You learned to ${moveType} (${moveType} move now ${after}).`
+                    : `Your ${moveType} faltered (${moveType} move now ${after}).`;
+            } else {
+                const squares = Math.abs(amt);
+                note = amt < 0
+                    ? `A lasting injury slowed you (movement ${amt} square${squares === 1 ? "" : "s"}).`
+                    : `You came away quicker (movement +${amt} square${squares === 1 ? "" : "s"}).`;
+            }
+            await app._addBio(run, note, {
+                kind: "move",
+                amount: amt,
+                memorable: true,
+                priority: 2
             });
             continue;
         }

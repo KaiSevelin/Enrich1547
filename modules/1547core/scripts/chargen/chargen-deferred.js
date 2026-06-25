@@ -105,6 +105,21 @@ export function parseDeferredTags(rawText, context = {}) {
             changes.push({ type: "money", formula: rest });
         } else if (cmd === "social" && /^[-+]?\d+$/.test(rest)) {
             changes.push({ type: "social", amount: Number(rest) });
+        } else if (cmd === "move" && parts.length >= 1) {
+            // [move N] adjusts the ground modifier (injuries — a stat change
+            // already moves the budget via Stamina/Dexterity dice, so this is for
+            // hurts that slow you without taking a die). [move swim N] / [move
+            // climb N] grant a learned per-type pool.
+            let moveType = "ground";
+            let amountToken = parts[0];
+            if (!/^[-+]?\d+$/.test(parts[0])) {
+                moveType = String(parts[0] ?? "").toLowerCase();
+                amountToken = parts[1];
+            }
+            if ((moveType === "ground" || moveType === "swim" || moveType === "climb")
+                && /^[-+]?\d+$/.test(String(amountToken ?? ""))) {
+                changes.push({ type: "move", moveType, amount: Number(amountToken) });
+            }
         } else if (cmd === "stat" && parts.length >= 2) {
             const characteristic = parts[0];
             const steps = Number(parts[1]);

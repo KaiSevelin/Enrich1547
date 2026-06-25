@@ -35,7 +35,7 @@ const DRIVE_CATEGORIES = new Set(
 
 const KNOWN_TYPES = new Set([
     "stat", "skill", "maneuver", "money", "luck", "contact",
-    "body", "social", "drive", "bio", "item", "language", "nothing"
+    "body", "social", "drive", "bio", "item", "language", "move", "nothing"
 ]);
 
 const problems = [];

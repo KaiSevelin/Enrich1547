@@ -57,6 +57,8 @@ export function normalizeTemplateType(v) {
         bio: "bio",
         item: "item",
         language: "language",
+        move: "move",
+        movement: "move",
         nothing: "nothing"
     };
     return map[raw.toLowerCase()] ?? raw.toLowerCase();

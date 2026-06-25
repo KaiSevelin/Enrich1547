@@ -66,8 +66,11 @@ export function buildReactionPrompt(deps = {}) {
     }).join("");
 
     return `
-        <section class="hud-tree-block hud-reaction-banner">
-            <div class="hud-section-title">Reaction Window</div>
+        <section class="hud-tree-block hud-reaction-banner hud-prompt-window hud-prompt-window-reaction">
+            <div class="hud-prompt-eyebrow-row">
+                <div class="hud-section-title">Reaction Window</div>
+                <span class="hud-prompt-chip">Reaction</span>
+            </div>
             <div class="hud-row-main">${escapeHtml(summaryParts[0] ?? "Reaction")}</div>
             <div class="hud-row-sub">${escapeHtml(summaryParts.slice(1).join(" - "))}</div>
             <div class="hud-chip-row hud-reaction-actions">
@@ -109,8 +112,11 @@ export function buildDamageTakenPrompt(deps = {}) {
     const selectedReactionName = damageWindow.selectedReaction?.name ?? damageWindow.defenseReaction?.name ?? "";
 
     return `
-        <section class="hud-tree-block hud-reaction-banner">
-            <div class="hud-section-title">Defense Summary</div>
+        <section class="hud-tree-block hud-reaction-banner hud-prompt-window hud-prompt-window-defense">
+            <div class="hud-prompt-eyebrow-row">
+                <div class="hud-section-title">Defense Summary</div>
+                <span class="hud-prompt-chip">Defense</span>
+            </div>
             <div class="hud-row-main">${escapeHtml(summaryParts[0] ?? "Defense")}</div>
             <div class="hud-row-sub">${escapeHtml(summaryParts.slice(1).join(" - "))}</div>
             ${selectedReactionName ? `<div class="hud-row-sub">${escapeHtml(selectedReactionName)}</div>` : ""}
@@ -164,8 +170,11 @@ export function buildPostManeuverPrompt(deps = {}) {
     }).join("");
 
     return `
-        <section class="hud-tree-block hud-reaction-banner">
-            <div class="hud-section-title">Post Maneuver Window</div>
+        <section class="hud-tree-block hud-reaction-banner hud-prompt-window hud-prompt-window-critical">
+            <div class="hud-prompt-eyebrow-row">
+                <div class="hud-section-title">Post Maneuver Window</div>
+                <span class="hud-prompt-chip">Critical</span>
+            </div>
             <div class="hud-row-main">${escapeHtml(summaryParts[0] ?? "Post Maneuver")}</div>
             <div class="hud-row-sub">${escapeHtml(summaryParts.slice(1).join(" - "))}</div>
             <div class="hud-chip-row hud-reaction-actions">

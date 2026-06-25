@@ -60,6 +60,49 @@ function buildStatsTree(data, deps = {}) {
     `;
 }
 
+function buildCombatActionPanel(data, deps = {}, activeView = "equipped") {
+    const { escapeHtml } = deps;
+    const action = data.currentAction ?? {};
+    const maneuverText = (action.preManeuverNames ?? []).length ? action.preManeuverNames.join(", ") : "None";
+    const fullTurnText = action.fullTurnName || "None";
+    const stagedText = [action.stagedAttackDice, action.stagedSkillDice].filter(Boolean).join(" | ") || "None";
+    const targetText = action.targetName || "No target";
+    const previewText = action.attackPreview || "No attack preview";
+    return `
+        <div class="hud-tree-block hud-attack-setup">
+            <div class="hud-section-title">Attack Setup</div>
+            <div class="hud-current-action-grid">
+                <div class="hud-current-action-row">
+                    <span class="hud-tree-key">Target</span>
+                    <span class="hud-tree-value">${escapeHtml(targetText)}</span>
+                </div>
+                <div class="hud-current-action-row">
+                    <span class="hud-tree-key">Pre Maneuvers</span>
+                    <span class="hud-tree-value">${escapeHtml(maneuverText)}</span>
+                </div>
+                <div class="hud-current-action-row">
+                    <span class="hud-tree-key">Full Turn</span>
+                    <span class="hud-tree-value">${escapeHtml(fullTurnText)}</span>
+                </div>
+                <div class="hud-current-action-row">
+                    <span class="hud-tree-key">Staged Dice</span>
+                    <span class="hud-tree-value">${escapeHtml(stagedText)}</span>
+                </div>
+                <div class="hud-current-action-row hud-current-action-row-preview">
+                    <span class="hud-tree-key">Attack Preview</span>
+                    <span class="hud-tree-value">${escapeHtml(previewText)}</span>
+                </div>
+            </div>
+            <div class="hud-setup-actions">
+                <button type="button" class="hud-mini-button${activeView === "equipped" ? " is-active" : ""}" data-hud-category="equipped">Attack</button>
+                <button type="button" class="hud-mini-button${activeView === "maneuvers" ? " is-active" : ""}" data-hud-category="maneuvers">Maneuvers</button>
+                <button type="button" class="hud-mini-button${activeView === "dice" ? " is-active" : ""}" data-hud-category="dice">Dice</button>
+                <button type="button" class="hud-mini-button${activeView === "skills" ? " is-active" : ""}" data-hud-category="skills">Skills</button>
+            </div>
+        </div>
+    `;
+}
+
 function buildEquippedTree(data, deps = {}) {
     const { escapeHtml } = deps;
     const equippedWeaponRows = data.equippedWeapons.length
@@ -227,7 +270,10 @@ function buildEquippedTree(data, deps = {}) {
         `;
     }, deps, { scroll: true });
 
+    const attackSetupBlock = data.isCombatActive ? buildCombatActionPanel(data, deps, "equipped") : "";
+
     return `
+        ${attackSetupBlock}
         <div class="hud-tree-block">
             <div class="hud-section-title">Equipped Weapons</div>
             <ul class="hud-list hud-tree-list">${equippedWeaponRows}</ul>
@@ -372,6 +418,79 @@ function buildOverviewTree(data, deps = {}) {
             <div class="hud-section-title">Active Effects</div>
             <ul class="hud-tree-children hud-tree-compact">${activeEffectRows || '<li class="hud-empty-row">None</li>'}</ul>
         </div>
+    `;
+}
+
+function buildCombatStateStrip(data, deps = {}) {
+    const { escapeHtml, formatCurrentMax } = deps;
+    const hpDisplay = formatCurrentMax(data.hitPoints, data.maxHitPoints) || "-";
+    const conditionSummary = (data.conditions ?? []).length ? data.conditions.join(", ") : "None";
+    const items = [
+        { label: "HP", value: hpDisplay },
+        { label: "Moves", value: Number.isFinite(Number(data.movesThisTurn)) ? data.movesThisTurn : "-" },
+        { label: "Attacks", value: Number.isFinite(Number(data.attacksRemaining)) ? data.attacksRemaining : "-" },
+        { label: "Full Turn", value: String(data.fullTurnAvailable ?? "Unknown") },
+        { label: "Risk", value: data.riskAndCritical?.find((entry) => entry.label === "RISK")?.display ?? "-" },
+        { label: "Critical", value: data.riskAndCritical?.find((entry) => entry.label !== "RISK")?.display ?? "-" },
+        { label: "Conditions", value: conditionSummary },
+    ];
+    return `
+        <section class="hud-section hud-combat-strip">
+            ${items.map((item) => `
+                <div class="hud-combat-cell">
+                    <div class="hud-combat-cell-label">${escapeHtml(item.label)}</div>
+                    <div class="hud-combat-cell-value">${escapeHtml(item.value)}</div>
+                </div>
+            `).join("")}
+        </section>
+    `;
+}
+
+function buildCurrentActionSummary(data, deps = {}) {
+    const { escapeHtml } = deps;
+    const action = data.currentAction ?? {};
+    const preManeuverText = (action.preManeuverNames ?? []).length ? action.preManeuverNames.join(", ") : "None";
+    const fullTurnText = action.fullTurnName || "None";
+    const stagedParts = [action.stagedAttackDice, action.stagedSkillDice].filter(Boolean);
+    const stagedText = stagedParts.length ? stagedParts.join(" | ") : "None";
+    const targetText = action.targetName || "No target";
+    const previewText = action.attackPreview || "No attack preview";
+    return `
+        <section class="hud-section">
+            <div class="hud-tree-block hud-current-action">
+                <div class="hud-section-title">Current Action</div>
+                <div class="hud-current-action-grid">
+                    <div class="hud-current-action-row">
+                        <span class="hud-tree-key">Weapon</span>
+                        <span class="hud-tree-value">${escapeHtml(action.weaponName || "None")}</span>
+                    </div>
+                    <div class="hud-current-action-row">
+                        <span class="hud-tree-key">Profile</span>
+                        <span class="hud-tree-value">${escapeHtml(action.weaponProfile || "None")}</span>
+                    </div>
+                    <div class="hud-current-action-row">
+                        <span class="hud-tree-key">Target</span>
+                        <span class="hud-tree-value">${escapeHtml(targetText)}</span>
+                    </div>
+                    <div class="hud-current-action-row">
+                        <span class="hud-tree-key">Pre Maneuvers</span>
+                        <span class="hud-tree-value">${escapeHtml(preManeuverText)}</span>
+                    </div>
+                    <div class="hud-current-action-row">
+                        <span class="hud-tree-key">Full Turn</span>
+                        <span class="hud-tree-value">${escapeHtml(fullTurnText)}</span>
+                    </div>
+                    <div class="hud-current-action-row">
+                        <span class="hud-tree-key">Staged Dice</span>
+                        <span class="hud-tree-value">${escapeHtml(stagedText)}</span>
+                    </div>
+                    <div class="hud-current-action-row hud-current-action-row-preview">
+                        <span class="hud-tree-key">Preview</span>
+                        <span class="hud-tree-value">${escapeHtml(previewText)}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
     `;
 }
 
@@ -560,20 +679,20 @@ function buildDiceTree(data, deps = {}) {
 }
 function getCategoryDefinitions(data) {
     return [
+        {
+            key: "equipped",
+            label: "Attack",
+            count: data.equippedWeapons.length + data.equippedArmor.length + data.equippedInventory.filter((item) => item.itemKind !== "weapon" && item.itemKind !== "armor").length,
+            icon: "fa-sword"
+        },
+        { key: "maneuvers", label: "Maneuvers", count: data.maneuverCount, icon: "fa-hand-fist" },
+        { key: "skills", label: "Skills", count: data.skills.length, icon: "fa-graduation-cap" },
+        { key: "inventory", label: "Inventory", count: data.inventory.length, icon: "fa-bag-shopping" },
         { key: "dice", label: "Dice", count: null, icon: "fa-dice-d20" },
         { key: "overview", label: "Overview", count: null, icon: "fa-eye" },
         { key: "stats", label: "Stats", count: data.stats.length, icon: "fa-chart-simple" },
+        { key: "conditions", label: "Conditions", count: data.conditions.length, icon: "fa-heart-pulse" },
         { key: "supernatural-marks", label: "Powers", count: data.supernaturalMarks.length + data.monsterMagic.length, icon: "fa-sparkles" },
-        {
-            key: "equipped",
-            label: "Equipped",
-            count: data.equippedWeapons.length + data.equippedArmor.length + data.equippedInventory.filter((item) => item.itemKind !== "weapon" && item.itemKind !== "armor").length,
-            icon: "fa-shield-halved"
-        },
-        { key: "inventory", label: "Inventory", count: data.inventory.length, icon: "fa-bag-shopping" },
-        { key: "maneuvers", label: "Maneuvers", count: data.maneuverCount, icon: "fa-hand-fist" },
-        { key: "skills", label: "Skills", count: data.skills.length, icon: "fa-graduation-cap" },
-        { key: "conditions", label: "Conditions", count: data.conditions.length, icon: "fa-heart-pulse" }
     ];
 }
 
@@ -710,7 +829,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                 const filtered = allManeuvers
                     .filter((maneuver) => maneuver?.isEscape || (deps.matchesManeuverFilter ? deps.matchesManeuverFilter(maneuver, activeFilter) : true))
                     .filter((maneuver) => maneuver?.isEscape || showAll || maneuver?.usable === true);
-                const rows = buildTreeList(filtered, (maneuver) => {
+                const renderManeuverRow = (maneuver) => {
                     const title = escapeHtml(maneuver.tooltip || "");
                     const subtitle = maneuver.reason || maneuver.summaryLine || maneuver.costSummary || "";
                     const detail = maneuver.detailLine || "";
@@ -757,7 +876,36 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                             </div>
                         </li>
                     `;
+                };
+                const timingMeta = {
+                    escape: { label: "Escape", tone: "escape" },
+                    reaction: { label: "Reaction", tone: "reaction" },
+                    post: { label: "Critical", tone: "critical" },
+                    "full-turn": { label: "Full Turn", tone: "full-turn" },
+                    pre: { label: "Pre", tone: "pre" },
+                };
+                const grouped = groupEntries(filtered, (maneuver) => {
+                    if (maneuver?.isEscape) return "escape";
+                    return String(maneuver?.timingKey ?? "other").trim() || "other";
                 });
+                const timingOrder = ["escape", "reaction", "post", "pre", "full-turn", "other"];
+                grouped.sort((a, b) => timingOrder.indexOf(a[0]) - timingOrder.indexOf(b[0]));
+                const rows = grouped.length
+                    ? grouped.map(([key, entries]) => {
+                        const meta = timingMeta[key] ?? { label: key.replace("-", " "), tone: "generic" };
+                        return `
+                            <div class="hud-maneuver-group hud-maneuver-group-${escapeHtml(meta.tone)}">
+                                <div class="hud-maneuver-group-header">
+                                    <span class="hud-maneuver-group-title">${escapeHtml(meta.label)}</span>
+                                    <span class="hud-maneuver-group-count">${escapeHtml(entries.length)}</span>
+                                </div>
+                                <ul class="hud-list hud-tree-list">
+                                    ${buildTreeList(entries, renderManeuverRow)}
+                                </ul>
+                            </div>
+                        `;
+                    }).join("")
+                    : "";
                 const commitButton = data.selectedFullTurnManeuver
                     ? `
                         <div class="hud-tree-block">
@@ -770,7 +918,9 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                         </div>
                     `
                     : "";
+                const workspaceBlock = data.isCombatActive ? buildCombatActionPanel(data, deps, "maneuvers") : "";
                 return `
+                    ${workspaceBlock}
                     <div class="hud-tree-block hud-inventory-filter-bar">
                         <label class="hud-counter-roll-config">
                             <span>Filter</span>
@@ -787,9 +937,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                     </div>
                     <div class="hud-tree-block">
                         <div class="hud-section-title">Maneuvers</div>
-                        <ul class="hud-list hud-tree-list">
-                            ${rows || '<li class="hud-empty-row">No maneuvers match this filter</li>'}
-                        </ul>
+                        ${rows || '<div class="hud-empty-row">No maneuvers match this filter</div>'}
                     </div>
                     ${commitButton}
                 `;
@@ -818,18 +966,26 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
 export function buildHudHtml(data, deps = {}) {
     const { HUD_STATE, escapeHtml, buildReactionPrompt, buildDamageTakenPrompt, buildPostManeuverPrompt } = deps;
     const categories = getCategoryDefinitions(data);
-    const activeCategory = categories.some((category) => category.key === HUD_STATE.activeCategory)
-        ? HUD_STATE.activeCategory
-        : categories[0].key;
+    const reactionPromptOpen = Boolean(deps.getActiveReactionWindow?.());
+    const postPromptOpen = Boolean(deps.getActivePostManeuverWindow?.());
+    const forcedCategory = (reactionPromptOpen || postPromptOpen) ? "maneuvers" : "";
+    const preferredCategory = data.isCombatActive && HUD_STATE.activeCategory === "overview"
+        ? "equipped"
+        : HUD_STATE.activeCategory;
+    const activeCategory = forcedCategory || (
+        categories.some((category) => category.key === preferredCategory)
+            ? preferredCategory
+            : categories[0].key
+    );
     const sideReadyButton = data.isCombatActive ? `
         <button
             type="button"
-            class="hud-category-tab"
+            class="hud-header-action"
             data-hud-side-ready
             title="Announce that your side is ready"
             aria-label="Announce that your side is ready"
         >
-            <span>Side Ready</span>
+            <span>End Side Turn</span>
         </button>
     ` : "";
     const categoryTabs = categories.map((category) => `
@@ -850,6 +1006,12 @@ export function buildHudHtml(data, deps = {}) {
             ${buildPostManeuverPrompt()}
         </div>
     `;
+    const combatHeaderBits = [];
+    if (data.isCombatActive) combatHeaderBits.push(`Round ${escapeHtml(data.round ?? "-")}`);
+    else combatHeaderBits.push("No active combat");
+    if (data.activeSideLabel) combatHeaderBits.push(data.isActorOnActiveSide ? `${escapeHtml(data.activeSideLabel)} active` : `${escapeHtml(data.activeSideLabel)} active now`);
+    if (data.actorSideLabel && data.actorSideLabel !== data.activeSideLabel) combatHeaderBits.push(`${escapeHtml(data.actorSideLabel)} for this actor`);
+    if (forcedCategory === "maneuvers") combatHeaderBits.push(postPromptOpen ? "Critical window open" : "Reaction window open");
 
     return `
         ${promptHtml}
@@ -859,9 +1021,10 @@ export function buildHudHtml(data, deps = {}) {
                 <div class="hud-header-text">
                     <div class="hud-title">${escapeHtml(data.tokenName)}</div>
                     <div class="hud-subtitle">
-                        ${data.isCombatActive ? `Combat round ${escapeHtml(data.round ?? "-")}` : "No active combat"}
+                        ${combatHeaderBits.join(" | ")}
                     </div>
                 </div>
+                ${sideReadyButton}
                 <button
                     type="button"
                     class="hud-collapse-button"
@@ -875,8 +1038,11 @@ export function buildHudHtml(data, deps = {}) {
 
             ${HUD_STATE.collapsed ? "" : `
             <section class="hud-section">
-                <div class="hud-category-row">${sideReadyButton}${categoryTabs}</div>
+                <div class="hud-category-row">${categoryTabs}</div>
             </section>
+
+            ${data.isCombatActive ? buildCombatStateStrip(data, deps) : ""}
+            ${data.isCombatActive ? buildCurrentActionSummary(data, deps) : ""}
 
             <section class="hud-section hud-tree-panel">
                 ${buildCategoryContent(data, activeCategory, deps)}
@@ -895,7 +1061,3 @@ export function buildEmptyHtml(message = "No token selected", deps = {}) {
         </section>
     `;
 }
-
-
-
-

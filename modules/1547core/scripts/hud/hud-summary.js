@@ -1,4 +1,11 @@
 import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
+import {
+    getActiveSideId,
+    getOrderedCombatants,
+    getSideLabel,
+    resolveCombatantSideId
+} from "../combat-tracker/side-tracker.js";
+import { getMovementBudget } from "../combat/movement-budget.mjs";
 ﻿import { conditionCombatDisadvantage } from "../services/condition-registry.js";
 
 
@@ -651,6 +658,13 @@ export function summarizeActor(actor, token, deps = {}) {
     // Post (critical) maneuvers — shown in the HUD's "Criticals" filter for
     // browsing; they're actually spent through the post-attack critical window.
     const currentCriticalPoints = getNumericProp(props, ["CriticalPoints", "CurrentCriticalPoints"]) ?? 0;
+    const combat = game.combat ?? null;
+    const orderedCombatants = combat ? getOrderedCombatants(combat) : [];
+    const activeSideId = combat ? getActiveSideId(combat, orderedCombatants) : "";
+    const actorCombatant = orderedCombatants.find((combatant) => combatant?.actor?.id === actor.id) ?? null;
+    const actorSideId = actorCombatant ? resolveCombatantSideId(actorCombatant) : "";
+    const activeSideLabel = activeSideId ? getSideLabel(activeSideId) : "";
+    const actorSideLabel = actorSideId ? getSideLabel(actorSideId) : "";
     const fallbackPostEntries = storedManeuverEntries.filter((entry) => entry.timingKey === "post" && !learnedSourceIds.has(entry.sourceId));
     const postManeuverEntries = [
         ...maneuverEntries.filter((entry) => entry.timingKey === "post"),
@@ -756,6 +770,18 @@ export function summarizeActor(actor, token, deps = {}) {
 
     const selectedPreManeuvers = maneuvers.filter((maneuver) => maneuver.selected).map((maneuver) => maneuver.source);
     const selectedFullTurnManeuver = fullTurnManeuvers.find((maneuver) => maneuver.selected) ?? null;
+    const currentAction = {
+        weaponName: activeWeaponSummary?.name ?? "",
+        weaponProfile: activeWeaponSummary?.activeAttackProfileData?.label
+            ?? activeWeaponSummary?.activeAttackProfileData?.name
+            ?? "",
+        targetName: primaryTarget?.name ?? primaryTarget?.actor?.name ?? "",
+        preManeuverNames: maneuvers.filter((maneuver) => maneuver.selected).map((maneuver) => maneuver.name).filter(Boolean),
+        fullTurnName: selectedFullTurnManeuver?.name ?? "",
+        stagedAttackDice: Object.entries(pendingAttackDice ?? {}).map(([dieKey, count]) => `${count} ${dieKey}`).join(", "),
+        stagedSkillDice: pendingSkillDice > 0 ? `${pendingSkillDice}d6` : "",
+        attackPreview: activeWeaponSummary?.activeAttackFormula ?? "",
+    };
     const inventory = inventoryItems.map((item) => {
         const sourceData = item.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item.flags?.[MODULE_ID]?.sourceData ?? {};
         const itemProps = item.system?.props ?? {};
@@ -906,7 +932,7 @@ export function summarizeActor(actor, token, deps = {}) {
 
     const rollContext = {
         advantageDice: getNumericProp(props, ["AvailableAdvantageDice", "AdvantageDice", "Advantage"]) ?? 0,
-        riskDice: getNumericProp(props, ["AvailableRiskDice", "RiskDice"]) ?? 0,
+        riskDice: getNumericProp(props, ["AvailableRiskDice", "RiskDice", "RiskPoints"]) ?? 0,
         extraD6: getPendingNextSkillDice(actor.id),
     };
     const attackDiceSelection = getDiceTabAttackSelection(actor.id);
@@ -955,6 +981,15 @@ export function summarizeActor(actor, token, deps = {}) {
         hasPendingSkillDice: pendingSkillDice > 0,
     };
 
+    // Budget is derived live from stats (Str + Sta + Dex×2); MovementRemaining is
+    // the tracked counter the movement hook decrements. moves-used = budget −
+    // remaining once the counter exists (it's seeded to budget at side start).
+    const movementBudget = getMovementBudget(actor);
+    const movementRemaining = getNumericProp(props, ["MovementRemaining", "MoveRemaining", "movementRemaining"]);
+    const movesThisTurn = Number.isFinite(Number(movementRemaining))
+        ? Math.max(0, Number(movementBudget) - Number(movementRemaining))
+        : null;
+
     return {
         actorId: actor.id,
         actorName: actor.name,
@@ -962,7 +997,9 @@ export function summarizeActor(actor, token, deps = {}) {
         actorImg: resolveActorPortrait(actor, token, MODULE_ID, game),
         hitPoints: hitPointSummary.current,
         maxHitPoints: hitPointSummary.max,
-        movement: getNumericProp(props, ["MovementRemaining", "MoveRemaining", "movementRemaining"]),
+        movement: movementRemaining,
+        movementBudget,
+        movesThisTurn,
         attacks: attacksRemaining,
         attacksRemaining,
         fullTurnAvailable,
@@ -996,6 +1033,12 @@ export function summarizeActor(actor, token, deps = {}) {
         maneuverCount: maneuvers.length + fullTurnManeuvers.length,
         isCombatActive,
         round: game.combat?.round ?? null,
+        activeSideId,
+        activeSideLabel,
+        actorSideId,
+        actorSideLabel,
+        isActorOnActiveSide: Boolean(activeSideId && actorSideId && activeSideId === actorSideId),
+        currentAction,
         checkTarget: buildCheckTargetSnapshot({
             targetedTokens,
             statDefinitions,

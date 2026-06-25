@@ -34,6 +34,8 @@ import {
     actorHasEquippedArmor,
     isPendingAttack,
     planApplyDefenseFollowUpState,
+    planSpendReservedCosts,
+    planStoreFumbleRiskPoints,
     PENDING_ATTACK_KIND,
 } from "./attack-lifecycle.mjs";
 import { resolveSelectedWeaponProfile, normalizeManeuver } from "./normalisation.mjs";
@@ -682,6 +684,33 @@ export async function resolveAttackOutcomePhased({
         });
         await run({ phase: "consumeAmmo", patches: ammoPatches });
         pendingAttack.committed = true;
+    }
+
+    // ── Phase N+1b: spend reserved pre-maneuver costs (spec step 13) ──
+    // Used reservations become spent on commit; nothing was deducted at
+    // reservation time, so a cancelled attack simply never reaches here
+    // (the points release by never being spent).
+    const { patches: reservedSpendPatches } = planSpendReservedCosts(
+        pendingAttack.actor,
+        pendingAttack.reservedCosts
+    );
+    if (reservedSpendPatches.length) {
+        await run({ phase: "spendReservations", patches: reservedSpendPatches });
+    }
+
+    // ── Phase N+1c: store fumble-generated RiskPoints (spec §Crit and Fumble) ──
+    // Each side's RiskPoints is set to the fumbles IT rolled this time. Any
+    // RiskPoints carried in were already turned into risk dice when this
+    // roll's pool was built, so this single write both clears the consumed
+    // points and stores the new ones for the next single roll.
+    const { patches: riskPointPatches } = planStoreFumbleRiskPoints({
+        attacker: pendingAttack.actor,
+        attackFumble: normalizedAttackRoll.fumble,
+        defender: pendingAttack.target,
+        defenseFumble: normalizedDefenseRoll.fumble,
+    });
+    if (riskPointPatches.length) {
+        await run({ phase: "storeRiskPoints", patches: riskPointPatches });
     }
 
     // ── Phase N+2: ACTION_COMMITTED ──

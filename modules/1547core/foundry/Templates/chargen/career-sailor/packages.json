@@ -22,6 +22,14 @@
                 "type": "money",
                 "formula": "3d6"
             }
+        },
+        {
+            "label": "Strong swimmer",
+            "gain": {
+                "type": "move",
+                "moveType": "swim",
+                "amount": 1
+            }
         }
     ]
 }

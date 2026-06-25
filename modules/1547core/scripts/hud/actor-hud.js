@@ -85,6 +85,7 @@ import {
     getActiveSideId,
     getResolvedSideOrder,
     persistCombatSideState,
+    resetSideTurnState,
 } from "../combat-tracker/side-tracker.js";
 
 const HUD_ROOT_ID = "1547core-actor-hud-root";
@@ -1759,6 +1760,8 @@ function buildHudHtml(data) {
         buildReactionPrompt,
         buildDamageTakenPrompt,
         buildPostManeuverPrompt,
+        getActiveReactionWindow,
+        getActivePostManeuverWindow,
         getStatPreview,
         formatCurrentMax,
         buildStatPreview,
@@ -2037,6 +2040,9 @@ async function advanceCombatToNextSide(combat) {
     await combat.setFlag(MODULE_ID, "activeSideId", nextState.activeSideId);
     await combat.setFlag(MODULE_ID, "roundNumber", nextState.round);
     await persistCombatSideState(combat);
+    // The side whose window just opened restores its per-turn resources
+    // (movement budget + full-turn action).
+    await resetSideTurnState(combat, nextState.activeSideId);
     return nextState;
 }
 

@@ -31,6 +31,14 @@
                 "targetKey": "Item.PmNFvXH9Emt3hIMg",
                 "fallback": true
             }
+        },
+        {
+            "label": "Rooftop runner",
+            "gain": {
+                "type": "move",
+                "moveType": "climb",
+                "amount": 1
+            }
         }
     ]
 }

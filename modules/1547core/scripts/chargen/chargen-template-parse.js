@@ -208,6 +208,15 @@ export function buildChangeFromEffectRow(row) {
         if (amountNum != null) ch.amount = amountNum;
         return ch;
     }
+    if (type === "move") {
+        // TargetKey selects the move type. "swim"/"climb" grant a learned per-type
+        // pool (MoveSwim / MoveClimb, 0 = cannot); blank or "ground" adjusts the
+        // ground budget modifier (MovementBudgetMod), where injuries go negative.
+        const moveType = targetKey.toLowerCase();
+        ch.moveType = (moveType === "swim" || moveType === "climb") ? moveType : "ground";
+        if (amountNum != null) ch.amount = amountNum;
+        return ch;
+    }
     if (type === "drive") {
         const action = targetKey.toLowerCase();
         if (action === "add" || action === "remove") ch.action = action;

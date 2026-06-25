@@ -21,6 +21,7 @@
  */
 
 import {
+    firstFiniteNumber,
     isTruthyLike,
     normalizeManeuver,
     normalizeWeaponModifier,
@@ -187,6 +188,75 @@ export function collectReservedCosts(maneuvers) {
             costType: maneuver.CostType,
             costAmount: Number(maneuver.CostAmount ?? 0),
         }));
+}
+
+/**
+ * Plan the actor.update patches that SPEND a pending attack's reserved
+ * pre-maneuver costs at commit (battle-flow-spec §"Resource Rules":
+ * "Used reservations become spent on commit"). Costs are aggregated per
+ * resource so two maneuvers charging the same pool decrement it once by
+ * the summed amount (planning is synchronous — separate patches would
+ * each read the same pre-spend value and lose all but the last). Mirrors
+ * planSpendActorManeuverCost's `system.props.<CostType>` decrement so
+ * pre-maneuver spending matches post/full-turn spending.
+ */
+export function planSpendReservedCosts(actor, reservedCosts = []) {
+    if (!actor?.id || !Array.isArray(reservedCosts) || !reservedCosts.length) {
+        return { patches: [], result: { spent: [] } };
+    }
+    const byType = new Map();
+    for (const reserved of reservedCosts) {
+        const costType = String(reserved?.costType ?? "").trim();
+        const amount = Math.max(0, Number(reserved?.costAmount ?? 0) || 0);
+        if (!costType || costType === "null" || amount <= 0) continue;
+        byType.set(costType, (byType.get(costType) ?? 0) + amount);
+    }
+    const patches = [];
+    const spent = [];
+    for (const [costType, amount] of byType) {
+        const currentValue = firstFiniteNumber([
+            actor.system?.props?.[costType],
+            actor.system?.[costType],
+        ]) ?? 0;
+        const nextValue = Math.max(0, currentValue - amount);
+        patches.push({
+            kind: "actor.update",
+            actorId: actor.id,
+            data: { [`system.props.${costType}`]: nextValue },
+        });
+        spent.push({ costType, costAmount: amount, previousValue: currentValue, nextValue });
+    }
+    return { patches, result: { spent } };
+}
+
+/**
+ * Plan the actor.update patches that record fumble-generated RiskPoints
+ * (battle-flow-spec §"Crit and Fumble Rules"). A roll's RiskPoints are
+ * SET (not added) to the fumbles that roll produced: any pre-existing
+ * RiskPoints were already converted to risk dice when this roll's pool
+ * was built (hud-summary reads `RiskPoints` into the roll's risk dice),
+ * so the resolution both clears the consumed points and stores the new
+ * ones in a single write. Fumbles are unaffected by the damage
+ * multiplier, so the raw per-side fumble counts are authoritative.
+ */
+export function planStoreFumbleRiskPoints({ attacker, attackFumble = 0, defender, defenseFumble = 0 } = {}) {
+    const patches = [];
+    const planFor = (actor, fumble) => {
+        if (!actor?.id) return;
+        const nextValue = Math.max(0, Number(fumble) || 0);
+        const currentValue = Math.max(0, Number(actor.system?.props?.RiskPoints) || 0);
+        // No-op when nothing changes — keeps clean (fumble-free, risk-free) rolls
+        // from emitting a redundant write phase.
+        if (nextValue === currentValue) return;
+        patches.push({
+            kind: "actor.update",
+            actorId: actor.id,
+            data: { "system.props.RiskPoints": nextValue },
+        });
+    };
+    planFor(attacker, attackFumble);
+    if (defender?.id !== attacker?.id) planFor(defender, defenseFumble);
+    return { patches, result: { attackFumble: Number(attackFumble) || 0, defenseFumble: Number(defenseFumble) || 0 } };
 }
 
 // ───────────────────────────────────────────────────── Roll-summary helpers ──

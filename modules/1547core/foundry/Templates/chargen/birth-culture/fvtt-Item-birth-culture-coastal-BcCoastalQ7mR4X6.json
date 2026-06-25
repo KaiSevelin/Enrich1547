@@ -108,6 +108,14 @@
                     "TargetKey": "Dexterity",
                     "Amount": "1",
                     "TargetText": ""
+                },
+                "3": {
+                    "$deleted": false,
+                    "Weight": "2",
+                    "Type": "Move",
+                    "TargetKey": "Swim",
+                    "Amount": "1",
+                    "TargetText": ""
                 }
             }
         },

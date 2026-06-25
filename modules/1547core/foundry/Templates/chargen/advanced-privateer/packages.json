@@ -23,6 +23,14 @@
                 "type": "item",
                 "tableUuid": "RollTable.02C8vUNaIquqBEig"
             }
+        },
+        {
+            "label": "Boarder's swimmer",
+            "gain": {
+                "type": "move",
+                "moveType": "swim",
+                "amount": 1
+            }
         }
     ]
 }
