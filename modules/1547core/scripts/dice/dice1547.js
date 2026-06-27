@@ -507,8 +507,45 @@ async function applyDiceSoNicePresets(dice3d) {
     }
     const system = new DiceSystem("dice1547", "dice1547", "dice1547", "default");
     dice3d.addSystem(system);
+
+    // Two colorsets so attack and defense dice read apart at a glance. The custom
+    // faces are transparent symbols, so a colorset's `background` becomes the
+    // visible face colour: attack dice are white, the two defense dice (Armor,
+    // Evade) light grey. Defensive try/catch — a DSN API mismatch must never block
+    // the geometry presets below (which are what make the denominations rollable).
+    try {
+        dice3d.addColorset({
+            name: "dice1547-attack",
+            description: "1547 Attack",
+            category: "1547",
+            foreground: "#3a2f10",
+            background: "#ffffff",
+            outline: "#c9c9c9",
+            edge: "#f2f2f2",
+            texture: "none",
+            material: "plastic",
+            font: "Arial",
+            visibility: "visible"
+        }, "default");
+        dice3d.addColorset({
+            name: "dice1547-defense",
+            description: "1547 Defense",
+            category: "1547",
+            foreground: "#3a2f10",
+            background: "#d2d2d2",
+            outline: "#a9a9a9",
+            edge: "#c4c4c4",
+            texture: "none",
+            material: "plastic",
+            font: "Arial",
+            visibility: "visible"
+        }, "default");
+    } catch (err) {
+        console.warn("1547core | Dice So Nice colorsets unavailable; dice keep default colours", err);
+    }
     dice3d.addDicePreset({
       type:"db",
+      colorset:"dice1547-attack",
       labels:[ 
         'modules/1547core/images/dice/fumble_balanced_bg.png', 
         'modules/1547core/images/dice/blank_balanced_bg.png', 
@@ -529,6 +566,7 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"da",
+      colorset:"dice1547-defense",
       labels:[
         'modules/1547core/images/dice/fumble_armor_bg.png',
         'modules/1547core/images/dice/blank_armor_bg.png',
@@ -549,6 +587,7 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"dc",
+      colorset:"dice1547-attack",
       labels:[
         'modules/1547core/images/dice/fumble_control_bg.png',
         'modules/1547core/images/dice/blank_control_bg.png',
@@ -569,6 +608,7 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"de",
+      colorset:"dice1547-defense",
       labels:[
         'modules/1547core/images/dice/fumble_evade_bg.png',
         'modules/1547core/images/dice/blank_evade_bg.png',
@@ -589,6 +629,7 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"dg",
+      colorset:"dice1547-attack",
       labels:[
         'modules/1547core/images/dice/blank_finesse_bg.png',
         'modules/1547core/images/dice/blank_finesse_bg.png',
@@ -609,6 +650,7 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"dh",
+      colorset:"dice1547-attack",
       labels:[
         'modules/1547core/images/dice/fumble_heavy_bg.png',
         'modules/1547core/images/dice/fumble_heavy_bg.png',
@@ -629,6 +671,7 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"dx",
+      colorset:"dice1547-attack",
       labels:[
         'modules/1547core/images/dice/0x_multiply_bg.png', 
         'modules/1547core/images/dice/blank_multiply_bg.png',
@@ -649,6 +692,7 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"dl",
+      colorset:"dice1547-attack",
       labels:[
         'modules/1547core/images/dice/fumble_lethal_bg.png',
         'modules/1547core/images/dice/fumble_lethal_bg.png',
@@ -669,6 +713,7 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"dp",
+      colorset:"dice1547-attack",
       labels:[
         'modules/1547core/images/dice/fumble_penetration_bg.png',
         'modules/1547core/images/dice/blank_penetration_bg.png',
@@ -689,6 +734,7 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"dr",
+      colorset:"dice1547-attack",
       labels:[
         'modules/1547core/images/dice/0x_risk_bg.png',
         'modules/1547core/images/dice/fumble_risk_bg.png',
