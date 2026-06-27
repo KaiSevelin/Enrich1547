@@ -770,18 +770,6 @@ export function summarizeActor(actor, token, deps = {}) {
 
     const selectedPreManeuvers = maneuvers.filter((maneuver) => maneuver.selected).map((maneuver) => maneuver.source);
     const selectedFullTurnManeuver = fullTurnManeuvers.find((maneuver) => maneuver.selected) ?? null;
-    const currentAction = {
-        weaponName: activeWeaponSummary?.name ?? "",
-        weaponProfile: activeWeaponSummary?.activeAttackProfileData?.label
-            ?? activeWeaponSummary?.activeAttackProfileData?.name
-            ?? "",
-        targetName: primaryTarget?.name ?? primaryTarget?.actor?.name ?? "",
-        preManeuverNames: maneuvers.filter((maneuver) => maneuver.selected).map((maneuver) => maneuver.name).filter(Boolean),
-        fullTurnName: selectedFullTurnManeuver?.name ?? "",
-        stagedAttackDice: Object.entries(pendingAttackDice ?? {}).map(([dieKey, count]) => `${count} ${dieKey}`).join(", "),
-        stagedSkillDice: pendingSkillDice > 0 ? `${pendingSkillDice}d6` : "",
-        attackPreview: activeWeaponSummary?.activeAttackFormula ?? "",
-    };
     const inventory = inventoryItems.map((item) => {
         const sourceData = item.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item.flags?.[MODULE_ID]?.sourceData ?? {};
         const itemProps = item.system?.props ?? {};
@@ -939,6 +927,20 @@ export function summarizeActor(actor, token, deps = {}) {
     const pendingAttackDice = getPendingNextAttackDice(actor.id);
     const selectedSkillDice = getDiceTabSkillDice(actor.id);
     const pendingSkillDice = getPendingNextSkillDice(actor.id);
+    // Built here (not earlier) so it can read pendingAttackDice/pendingSkillDice,
+    // which are declared just above — referencing them sooner is a TDZ error.
+    const currentAction = {
+        weaponName: activeWeaponSummary?.name ?? "",
+        weaponProfile: activeWeaponSummary?.activeAttackProfileData?.label
+            ?? activeWeaponSummary?.activeAttackProfileData?.name
+            ?? "",
+        targetName: primaryTarget?.name ?? primaryTarget?.actor?.name ?? "",
+        preManeuverNames: maneuvers.filter((maneuver) => maneuver.selected).map((maneuver) => maneuver.name).filter(Boolean),
+        fullTurnName: selectedFullTurnManeuver?.name ?? "",
+        stagedAttackDice: Object.entries(pendingAttackDice ?? {}).map(([dieKey, count]) => `${count} ${dieKey}`).join(", "),
+        stagedSkillDice: pendingSkillDice > 0 ? `${pendingSkillDice}d6` : "",
+        attackPreview: activeWeaponSummary?.activeAttackFormula ?? "",
+    };
     const attackDiceOptions = getAttackDiceTabOptions();
 
     const activePersistentEffects = [
