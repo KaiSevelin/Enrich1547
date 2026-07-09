@@ -82,11 +82,36 @@ console.log("\nmaneuver-legality: critical-point cost...");
     assert.strictEqual(legal(critM(0), {}), true, "zero cost is free");
     assert.strictEqual(legal(man(), {}), true, "no CostType at all is free");
 
-    // A non-crit cost type with no actor present is not crit-gated (passes).
+    // A pool cost with no actor present is not crit-gated (passes; guide-not-force).
     assert.strictEqual(
-        legal(man({ CostType: "StrengthPoints", CostAmount: 5 }), { currentCriticalPoints: 0 }),
-        true, "Strength cost ignores crit pool when no actor to check");
+        legal(man({ CostType: "CorePoints", CostAmount: 5 }), { currentCriticalPoints: 0 }),
+        true, "Core cost ignores crit pool when no actor to check");
     console.log("  ✓ per-token affordability, zero/no cost free, non-crit cost not crit-gated");
+}
+
+/* ── Core: Core-point pool gate (derived Spent/Max props) ─────────────── */
+console.log("\nmaneuver-legality: core-point cost...");
+{
+    const coreM = (cost) => man({ CostType: "CorePoints", CostAmount: cost });
+    const actorWith = (max, spent = 0, reserved = 0) => ({
+        system: { props: { MaxCorePoints: max, SpentCorePoints: spent, ReservedCorePoints: reserved } },
+    });
+
+    // Affordable when Max - Spent - Reserved >= cost.
+    assert.strictEqual(legal(coreM(1), { actor: actorWith(3) }), true, "3 avail ≥ 1");
+    assert.strictEqual(legal(coreM(3), { actor: actorWith(3) }), true, "3 avail ≥ 3");
+    assert.strictEqual(legal(coreM(1), { actor: actorWith(3, 3) }), false, "0 avail < 1 (all spent)");
+    assert.strictEqual(legal(coreM(2), { actor: actorWith(3, 1, 1) }), false, "1 avail < 2 (spent+reserved)");
+    assert.ok(hasReason(coreM(1), { actor: actorWith(1, 1) }, "Required resources"));
+
+    // In-memory reservedResources (sibling selections) also subtracts.
+    assert.strictEqual(
+        legal(coreM(1), { actor: actorWith(1), reservedResources: { CorePoints: 1 } }),
+        false, "reservedResources consumes the last point");
+
+    // No actor → not gated (guide-not-force).
+    assert.strictEqual(legal(coreM(5), {}), true, "no actor to check → passes");
+    console.log("  ✓ Max-Spent-Reserved affordability, reservedResources, no-actor passthrough");
 }
 
 /* ── Combat: range bands, action economy, getLegalManeuvers ───────────── */

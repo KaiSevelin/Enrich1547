@@ -1,21 +1,19 @@
 const RESOURCE_NAME_MAP = {
-    strength: "Strength",
-    stamina: "Stamina",
-    dexterity: "Dexterity",
-    intelligence: "Intelligence",
-    charisma: "Charisma",
-    faith: "Faith",
+    core: "Core",
+    corepoints: "Core",
     critical: "Critical",
-    power: "Power",
     advantage: "Advantage",
     risk: "Risk",
 };
 
+// Pools are stored on the actor template in PREFIX form
+// (Reserved<Name>Points / Spent<Name>Points / Max<Name>Points), so the
+// adjustment prop is built as `${field}${resourceName}Points`.
 const RESOURCE_ACTIONS = {
-    reserve: { suffix: "PointsReserved", deltaSign: 1 },
-    release: { suffix: "PointsReserved", deltaSign: -1 },
-    spend: { suffix: "PointsSpent", deltaSign: 1 },
-    recover: { suffix: "PointsSpent", deltaSign: -1 },
+    reserve: { field: "Reserved", deltaSign: 1 },
+    release: { field: "Reserved", deltaSign: -1 },
+    spend: { field: "Spent", deltaSign: 1 },
+    recover: { field: "Spent", deltaSign: -1 },
 };
 
 export async function adjustResource({
@@ -72,7 +70,7 @@ export function getResourceAdjustment({
     const resourceName = normalizeResourceName(resource);
     const normalizedAmount = normalizeAmount(amount);
     const actionConfig = getResourceActionConfig(action);
-    const prop = `${resourceName}${actionConfig.suffix}`;
+    const prop = `${actionConfig.field}${resourceName}Points`;
     const current = getNumericProp(actor.system?.props?.[prop]);
     const next = Math.max(0, current + actionConfig.deltaSign * normalizedAmount);
     const budget = getResourceBudget(actor, resourceName, {
@@ -98,8 +96,8 @@ export function getResourceTotals(actor, resource) {
 
     return {
         resource: resourceName,
-        reserved: getNumericProp(props[`${resourceName}PointsReserved`]),
-        spent: getNumericProp(props[`${resourceName}PointsSpent`]),
+        reserved: getNumericProp(props[`Reserved${resourceName}Points`]),
+        spent: getNumericProp(props[`Spent${resourceName}Points`]),
     };
 }
 
@@ -393,11 +391,13 @@ function resolveResourceCapacity(
 
     const candidates = [
         explicitCapacity,
+        props[`Max${resource}Points`],
         props[`${resource}Points`],
         props[`${resource}PointsMax`],
         props[`${resource}MaxPoints`],
         props[`${resource}Pool`],
         props[`${resource}PoolMax`],
+        system[`Max${resource}Points`],
         system[`${resource}Points`],
         system[`${resource}PointsMax`],
         system[`${resource}MaxPoints`],

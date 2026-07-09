@@ -24,13 +24,7 @@ const WINDOW_TO_TIMING = {
 };
 
 const COST_RESOURCE_NAMES = {
-    StrengthPoints: "Strength",
-    StaminaPoints: "Stamina",
-    DexterityPoints: "Dexterity",
-    CharismaPoints: "Charisma",
-    IntelligencePoints: "Intelligence",
-    FaithPoints: "Faith",
-    PowerPoints: "Power",
+    CorePoints: "Core",
     CriticalPoints: "Critical",
 };
 
@@ -393,6 +387,7 @@ function passesResourceGate(maneuver, context) {
 
     const props = actor.system?.props ?? {};
     const totalCandidates = [
+        props[`Max${resourceName}Points`],
         props[`${resourceName}Points`],
         props[`${resourceName}PointsMax`],
         props[`${resourceName}MaxPoints`],
@@ -401,8 +396,8 @@ function passesResourceGate(maneuver, context) {
     ];
 
     const spentCandidates = [
-        props[`${resourceName}PointsSpent`],
-        props[`${resourceName}PointsReserved`],
+        props[`Spent${resourceName}Points`],
+        props[`Reserved${resourceName}Points`],
     ];
 
     const total = firstFiniteNumber(totalCandidates);

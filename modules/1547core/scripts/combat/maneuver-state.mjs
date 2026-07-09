@@ -42,11 +42,43 @@ export function buildCommittedManeuverRecord(maneuver) {
  * maneuver charges. Returns `{ patches: [], result: null }` when the
  * maneuver has no cost (or is otherwise free).
  */
+// Costs backed by a derived Spent/Reserved/Available pool on the actor
+// template are spent by INCREMENTING the stored `Spent<Name>Points`
+// field (Available = Max - Spent - Reserved recomputes), not by
+// decrementing a raw pool prop. Map CostType -> the resource prefix.
+const DERIVED_POOL_COSTS = { CorePoints: "Core" };
+
 export function planSpendActorManeuverCost(actor, maneuver) {
     const costType = String(maneuver?.CostType ?? "").trim();
     const costAmount = Math.max(0, Number(maneuver?.CostAmount ?? 0) || 0);
     if (!actor?.id || !costType || costType === "null" || costAmount <= 0) {
         return { patches: [], result: null };
+    }
+
+    const poolName = DERIVED_POOL_COSTS[costType];
+    if (poolName) {
+        const spentProp = `Spent${poolName}Points`;
+        const currentSpent = firstFiniteNumber([actor.system?.props?.[spentProp]]) ?? 0;
+        const max = firstFiniteNumber([actor.system?.props?.[`Max${poolName}Points`]]);
+        let nextSpent = currentSpent + costAmount;
+        if (max != null) nextSpent = Math.min(nextSpent, max);
+
+        return {
+            patches: [
+                {
+                    kind: "actor.update",
+                    actorId: actor.id,
+                    data: { [`system.props.${spentProp}`]: nextSpent },
+                },
+            ],
+            result: {
+                costType,
+                spentProp,
+                previousValue: currentSpent,
+                nextValue: nextSpent,
+                costAmount,
+            },
+        };
     }
 
     const currentValue = firstFiniteNumber([

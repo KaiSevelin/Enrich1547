@@ -222,6 +222,25 @@ console.log("\nmaneuver-state.planSpendActorManeuverCost...");
     console.log("  ✓ clamped at 0 when cost exceeds available");
 }
 
+// CorePoints is a derived pool: spending INCREMENTS SpentCorePoints
+// (Available = Max - Spent - Reserved recomputes), not a raw decrement.
+{
+    const actor = { id: "a", system: { props: { SpentCorePoints: 1, MaxCorePoints: 5 } } };
+    const { patches, result } = ms.planSpendActorManeuverCost(actor, { CostType: "CorePoints", CostAmount: 2 });
+    assert.strictEqual(patches[0].data["system.props.SpentCorePoints"], 3,
+        "Core spend increments SpentCorePoints (1 + 2)");
+    assert.strictEqual(result.nextValue, 3);
+    console.log("  ✓ CorePoints spend increments SpentCorePoints (derived pool)");
+}
+
+{
+    const actor = { id: "a", system: { props: { SpentCorePoints: 4, MaxCorePoints: 5 } } };
+    const out = ms.planSpendActorManeuverCost(actor, { CostType: "CorePoints", CostAmount: 3 });
+    assert.strictEqual(out.patches[0].data["system.props.SpentCorePoints"], 5,
+        "clamped to MaxCorePoints");
+    console.log("  ✓ CorePoints spend clamps to MaxCorePoints");
+}
+
 console.log("\nmaneuver-state.planAppendCommittedManeuverState...");
 {
     const actor = {
