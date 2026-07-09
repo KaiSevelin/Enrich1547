@@ -46,7 +46,31 @@ export function buildCommittedManeuverRecord(maneuver) {
 // template are spent by INCREMENTING the stored `Spent<Name>Points`
 // field (Available = Max - Spent - Reserved recomputes), not by
 // decrementing a raw pool prop. Map CostType -> the resource prefix.
-const DERIVED_POOL_COSTS = { CorePoints: "Core" };
+export const DERIVED_POOL_COSTS = { CorePoints: "Core" };
+
+/**
+ * Resolve the single actor prop and its next value for spending `amount`
+ * of `costType`. Derived pools (Core) increment `Spent<Name>Points`
+ * clamped to `Max<Name>Points`; legacy base costs decrement
+ * `system.props.<costType>` (floored at 0). Shared by both the
+ * committed-maneuver and reserved-pre-maneuver spend paths.
+ */
+export function planPoolSpend(actor, costType, amount) {
+    const poolName = DERIVED_POOL_COSTS[costType];
+    if (poolName) {
+        const prop = `Spent${poolName}Points`;
+        const previousValue = firstFiniteNumber([actor.system?.props?.[prop]]) ?? 0;
+        const max = firstFiniteNumber([actor.system?.props?.[`Max${poolName}Points`]]);
+        let nextValue = previousValue + amount;
+        if (max != null) nextValue = Math.min(nextValue, max);
+        return { prop, previousValue, nextValue };
+    }
+    const previousValue = firstFiniteNumber([
+        actor.system?.props?.[costType],
+        actor.system?.[costType],
+    ]) ?? 0;
+    return { prop: costType, previousValue, nextValue: Math.max(0, previousValue - amount) };
+}
 
 export function planSpendActorManeuverCost(actor, maneuver) {
     const costType = String(maneuver?.CostType ?? "").trim();
@@ -55,49 +79,20 @@ export function planSpendActorManeuverCost(actor, maneuver) {
         return { patches: [], result: null };
     }
 
-    const poolName = DERIVED_POOL_COSTS[costType];
-    if (poolName) {
-        const spentProp = `Spent${poolName}Points`;
-        const currentSpent = firstFiniteNumber([actor.system?.props?.[spentProp]]) ?? 0;
-        const max = firstFiniteNumber([actor.system?.props?.[`Max${poolName}Points`]]);
-        let nextSpent = currentSpent + costAmount;
-        if (max != null) nextSpent = Math.min(nextSpent, max);
-
-        return {
-            patches: [
-                {
-                    kind: "actor.update",
-                    actorId: actor.id,
-                    data: { [`system.props.${spentProp}`]: nextSpent },
-                },
-            ],
-            result: {
-                costType,
-                spentProp,
-                previousValue: currentSpent,
-                nextValue: nextSpent,
-                costAmount,
-            },
-        };
-    }
-
-    const currentValue = firstFiniteNumber([
-        actor.system?.props?.[costType],
-        actor.system?.[costType],
-    ]) ?? 0;
-    const nextValue = Math.max(0, currentValue - costAmount);
+    const { prop, previousValue, nextValue } = planPoolSpend(actor, costType, costAmount);
 
     return {
         patches: [
             {
                 kind: "actor.update",
                 actorId: actor.id,
-                data: { [`system.props.${costType}`]: nextValue },
+                data: { [`system.props.${prop}`]: nextValue },
             },
         ],
         result: {
             costType,
-            previousValue: currentValue,
+            spentProp: prop,
+            previousValue,
             nextValue,
             costAmount,
         },

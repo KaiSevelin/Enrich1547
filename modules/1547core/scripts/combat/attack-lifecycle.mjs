@@ -33,6 +33,7 @@ import {
     buildCommittedManeuverRecord,
     planSpendActorManeuverCost,
     planAppendCommittedManeuverState,
+    planPoolSpend,
 } from "./maneuver-state.mjs";
 // COMBAT_EVENTS is a pure enum — importing it doesn't drag in any
 // Foundry deps. The orchestrator does the actual emitCombatEvent call.
@@ -214,17 +215,13 @@ export function planSpendReservedCosts(actor, reservedCosts = []) {
     const patches = [];
     const spent = [];
     for (const [costType, amount] of byType) {
-        const currentValue = firstFiniteNumber([
-            actor.system?.props?.[costType],
-            actor.system?.[costType],
-        ]) ?? 0;
-        const nextValue = Math.max(0, currentValue - amount);
+        const { prop, previousValue, nextValue } = planPoolSpend(actor, costType, amount);
         patches.push({
             kind: "actor.update",
             actorId: actor.id,
-            data: { [`system.props.${costType}`]: nextValue },
+            data: { [`system.props.${prop}`]: nextValue },
         });
-        spent.push({ costType, costAmount: amount, previousValue: currentValue, nextValue });
+        spent.push({ costType, costAmount: amount, previousValue, nextValue });
     }
     return { patches, result: { spent } };
 }
