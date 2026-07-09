@@ -741,6 +741,21 @@ export class SkillTreeChargenApp extends FormApplication {
                 [game.user.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
             }
         });
+        // Apply the CSB template immediately so the new character is fully built
+        // (components + default props) — no manual "Reload template" click needed.
+        // Defensive: the method is provided by Custom System Builder and its exact
+        // name/signature is version-dependent, and a failure here must never abort
+        // character creation. Tries the documented call, then a no-arg fallback.
+        try {
+            if (typeof actor?.reloadTemplate === "function") {
+                await actor.reloadTemplate(ACTOR_TEMPLATE_ID);
+            } else if (typeof actor?.system?.reloadTemplate === "function") {
+                await actor.system.reloadTemplate(ACTOR_TEMPLATE_ID);
+            }
+        } catch (err) {
+            try { await actor?.reloadTemplate?.(); } catch { /* leave for manual reload */ }
+            console.warn(`${MODULE_ID} | chargen: could not auto-apply CSB template; reload manually if the sheet looks bare`, err);
+        }
         const app = new SkillTreeChargenApp(actor, {
             simulation: opts.simulation ?? null
         });
