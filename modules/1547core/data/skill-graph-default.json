@@ -622,18 +622,6 @@
     "requirements": [],
     "anyOf": []
   },
-  "Item.1vsU4URL3rEUU62L": {
-    "name": "Feint",
-    "type": "equippableItem",
-    "kind": "maneuver",
-    "requirements": [
-      {
-        "nodeId": "Item.6W0w1AV1grz8V6Z7",
-        "minLevel": 1
-      }
-    ],
-    "anyOf": []
-  },
   "Item.qoob23NivFhPxDz7": {
     "name": "Quick Reload",
     "type": "equippableItem",
@@ -662,18 +650,6 @@
       {
         "nodeId": "Item.3rmcikTMMXLQyzfb",
         "minLevel": 1
-      }
-    ],
-    "anyOf": []
-  },
-  "Item.W88cuoIAA7yiKG9w": {
-    "name": "Counter Strike",
-    "type": "equippableItem",
-    "kind": "maneuver",
-    "requirements": [
-      {
-        "nodeId": "Item.6W0w1AV1grz8V6Z7",
-        "minLevel": 2
       }
     ],
     "anyOf": []
@@ -725,42 +701,6 @@
       }
     ],
     "anyOf": []
-  },
-  "Item.Nx7vHltQuktuUThp": {
-    "name": "Quick Brace",
-    "type": "equippableItem",
-    "kind": "maneuver",
-    "requirements": [
-      {
-        "nodeId": "Item.3rmcikTMMXLQyzfb",
-        "minLevel": 2
-      }
-    ],
-    "anyOf": []
-  },
-  "Item.L8M2Lhol4GaAr2rW": {
-    "name": "Quick Aim",
-    "type": "equippableItem",
-    "kind": "maneuver",
-    "requirements": [],
-    "anyOf": [
-      {
-        "options": [
-          {
-            "nodeId": "Item.fLIefMop44DdTwzl",
-            "minLevel": 2
-          },
-          {
-            "nodeId": "Item.3rmcikTMMXLQyzfb",
-            "minLevel": 2
-          },
-          {
-            "nodeId": "Item.Y0SfW0f3l5E5JHd5",
-            "minLevel": 2
-          }
-        ]
-      }
-    ]
   },
   "Item.ArcdShotMnvr0001": {
     "name": "Arced Shot",
@@ -816,18 +756,6 @@
   },
   "Item.rHF8ziPwUd6MJ6Qz": {
     "name": "Shield",
-    "type": "equippableItem",
-    "kind": "maneuver",
-    "requirements": [
-      {
-        "nodeId": "Item.6W0w1AV1grz8V6Z7",
-        "minLevel": 1
-      }
-    ],
-    "anyOf": []
-  },
-  "Item.Ki0terhQZNkLRN1L": {
-    "name": "Bind",
     "type": "equippableItem",
     "kind": "maneuver",
     "requirements": [
@@ -942,18 +870,6 @@
     ],
     "anyOf": []
   },
-  "Item.qKblR61N6NE1DHZf": {
-    "name": "All-In",
-    "type": "equippableItem",
-    "kind": "maneuver",
-    "requirements": [
-      {
-        "nodeId": "Item.6W0w1AV1grz8V6Z7",
-        "minLevel": 2
-      }
-    ],
-    "anyOf": []
-  },
   "Item.vEgS0TqHWtnsKYpP": {
     "name": "Charge",
     "type": "equippableItem",
@@ -1011,22 +927,6 @@
       {
         "nodeId": "Item.6W0w1AV1grz8V6Z7",
         "minLevel": 2
-      }
-    ],
-    "anyOf": []
-  },
-  "Item.p55MDtE7iZzgeOT0": {
-    "name": "Rally",
-    "type": "equippableItem",
-    "kind": "maneuver",
-    "requirements": [
-      {
-        "nodeId": "Item.6W0w1AV1grz8V6Z7",
-        "minLevel": 1
-      },
-      {
-        "nodeId": "Item.yK8twhFqVhpXoqgU",
-        "minLevel": 1
       }
     ],
     "anyOf": []
@@ -2482,6 +2382,174 @@
       {
         "nodeId": "Item.WjngVZIgku8cBETw",
         "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.b4TuRn8Kd2Lp6Xs1": {
+    "name": "Turn",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.c9QdRw3Mn7Ts2Vk4": {
+    "name": "Quick Draw",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.6W0w1AV1grz8V6Z7",
+            "minLevel": 1
+          },
+          {
+            "nodeId": "Item.3rmcikTMMXLQyzfb",
+            "minLevel": 1
+          }
+        ]
+      }
+    ]
+  },
+  "Item.e2OvRw7Jk4Nz9Lp3": {
+    "name": "Overwatch",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.Y0SfW0f3l5E5JHd5",
+            "minLevel": 3
+          },
+          {
+            "nodeId": "Item.3rmcikTMMXLQyzfb",
+            "minLevel": 3
+          }
+        ]
+      }
+    ]
+  },
+  "Item.f5CvRt2Mx8Qa1Hd6": {
+    "name": "Convert",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.g8HsWd4Lp1Tr7Qn2": {
+    "name": "Half-Sword",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 3
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.h3PoPk9Vs2Lm6Xc1": {
+    "name": "Push Of Pike",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.j7FlNk5Qr1Tb8Mz2": {
+    "name": "Flank",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.k4HaBy2Ln9Qp7Xs3": {
+    "name": "Hold At Bay",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.m1GuAl8Rp3Vx6Tk4": {
+    "name": "Guard Ally",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 1
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.n6AuGd4Qm2Ls9Hp1": {
+    "name": "Advance Under Guard",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
+      }
+    ],
+    "anyOf": []
+  },
+  "Item.p2GrBr7Nx5Lt1Qv8": {
+    "name": "Grapple Break",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [],
+    "anyOf": [
+      {
+        "options": [
+          {
+            "nodeId": "Item.UU75zjUE8ySUKzoC",
+            "minLevel": 1
+          },
+          {
+            "nodeId": "Item.zXuCnw9eUnBOb1Vp",
+            "minLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "Item.r9ShBa3Kp6Mx2Tw1": {
+    "name": "Shield Bash",
+    "type": "equippableItem",
+    "kind": "maneuver",
+    "requirements": [
+      {
+        "nodeId": "Item.6W0w1AV1grz8V6Z7",
+        "minLevel": 2
       }
     ],
     "anyOf": []
