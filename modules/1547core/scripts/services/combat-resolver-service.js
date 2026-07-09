@@ -1,5 +1,5 @@
 ﻿import { COMBAT_EVENTS, emitCombatEvent, onCombatEvent } from "./combat-events.js";
-import { applyCondition, removeCondition, getActiveConditions, CONDITIONS } from "./condition-registry.js";
+import { applyCondition, removeCondition, getActiveConditions, CONDITIONS, getConditionInflictorId, hasCondition } from "./condition-registry.js";
 import { evaluateManeuverLegality, getLegalManeuvers } from "../combat/maneuver-legality.mjs";
 import { buildDefenderPool, toFoundryFormula } from "../combat/pool-builder.mjs";
 import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
@@ -37,7 +37,8 @@ import {
     planCommitFullTurnManeuver,
 } from "../combat/attack-lifecycle.mjs";
 import { planMarkReactionUsed, planMarkMovementReacted, isReactionAvailable } from "../combat/activation-state.mjs";
-import { planSpendActorManeuverCost } from "../combat/maneuver-state.mjs";
+import { planSpendActorManeuverCost, planAppendCommittedManeuverState, buildCommittedManeuverRecord } from "../combat/maneuver-state.mjs";
+import { planEscapeConditions, statCheckFormula, escapeSucceeds } from "../combat/escape-state.mjs";
 
 // PENDING_ATTACK_KIND now lives in combat/attack-lifecycle.mjs and is re-imported above.
 const DEFAULT_UNARMED_WEAPON_SOURCE = {
@@ -168,19 +169,87 @@ export async function commitFullTurnManeuver(options = {}) {
 // locally (the dispatcher routes them to the GM otherwise).
 export async function commitConditionEscapeManeuver(actor, maneuverSource) {
     if (!actor || !maneuverSource) return { ok: false };
-    const { patches } = planSpendActorManeuverCost(actor, maneuverSource);
-    if (patches.length) await applyPatches(patches);
-    const removes = maneuverSource?.effectData?.removesCondition;
-    if (removes) await removeCondition(actor, removes);
+    const effect = maneuverSource?.effectData ?? {};
+    const ChatMessageCls = globalThis.ChatMessage;
+    const speaker = ChatMessageCls?.getSpeaker?.({ actor }) ?? {};
+    const esc = (s) => foundry.utils.escapeHTML(String(s ?? ""));
+
+    // Spend the cost (Core Escape spends CorePoints; the free escapes cost nothing).
+    const { patches: costPatches } = planSpendActorManeuverCost(actor, maneuverSource);
+    if (costPatches.length) await applyPatches(costPatches);
+
+    // --- Opposed-check escapes (Break Grapple / Slip The Lock / Break The Choke) ---
+    // Roll the escaper's stat against the condition's inflictor; break free on a
+    // tie or better. The inflictor was recorded when the condition was applied.
+    if (effect.opposedCheck) {
+        const stat = String(effect.opposedCheck);
+        const condition = (Array.isArray(effect.removesCondition) ? effect.removesCondition[0] : effect.removesCondition) ?? "";
+        const inflictorId = getConditionInflictorId(actor, condition);
+        const inflictor = inflictorId ? (game.actors?.get?.(inflictorId) ?? null) : null;
+
+        const RollCls = globalThis.Roll;
+        const escaperRoll = await new RollCls(statCheckFormula(actor.system?.props ?? {}, stat)).evaluate();
+        const inflictorRoll = inflictor
+            ? await new RollCls(statCheckFormula(inflictor.system?.props ?? {}, stat)).evaluate()
+            : null;
+        const success = escapeSucceeds(escaperRoll.total, inflictorRoll?.total ?? null);
+
+        if (success) await removeCondition(actor, condition);
+
+        // Grapple Break: a successful break grants advantage on the next attack.
+        let grappleBreakNote = "";
+        if (success && actorKnowsGrappleBreak(actor)) {
+            await grantGrappleBreakAdvantage(actor);
+            grappleBreakNote = "<br><em>Grapple Break: advantage on next attack.</em>";
+        }
+
+        const vs = inflictor
+            ? `${esc(actor.name)} ${escaperRoll.total} vs ${esc(inflictor.name)} ${inflictorRoll.total}`
+            : `${esc(actor.name)} ${escaperRoll.total} (uncontested)`;
+        try {
+            await ChatMessageCls?.create?.({
+                speaker,
+                content: `<strong>${esc(maneuverSource.name ?? "Escape")}</strong> — ${esc(stat)} check`
+                    + `<br>${vs}`
+                    + `<br>${success ? `Breaks free of ${esc(condition)}.` : `Fails to break free of ${esc(condition)}.`}`
+                    + grappleBreakNote,
+            });
+        } catch (_err) { /* non-fatal */ }
+        return { ok: true, success, removed: success ? [condition] : [] };
+    }
+
+    // --- Guaranteed removals (Core Escape clears every held condition; Stand Up) ---
+    const toRemove = planEscapeConditions(effect, (name) => hasCondition(actor, name));
+    for (const name of toRemove) await removeCondition(actor, name);
     try {
-        const ChatMessageCls = globalThis.ChatMessage;
+        const freed = toRemove.length ? toRemove.map(esc).join(", ") : esc("the hold");
         await ChatMessageCls?.create?.({
-            speaker: ChatMessageCls.getSpeaker({ actor }),
-            content: `<strong>${foundry.utils.escapeHTML(String(maneuverSource.name ?? "Escape"))}</strong>`
-                + `<br>${foundry.utils.escapeHTML(String(actor.name ?? "Combatant"))} breaks free of ${foundry.utils.escapeHTML(String(removes ?? "the hold"))}.`,
+            speaker,
+            content: `<strong>${esc(maneuverSource.name ?? "Escape")}</strong>`
+                + `<br>${esc(actor.name ?? "Combatant")} breaks free of ${freed}.`,
         });
     } catch (_err) { /* non-fatal */ }
-    return { ok: true };
+    return { ok: true, removed: toRemove };
+}
+
+function actorKnowsGrappleBreak(actor) {
+    const items = actor?.items?.contents ?? actor?.items ?? [];
+    return items.some((i) => String(i?.name ?? "").trim().toLowerCase() === "grapple break");
+}
+
+async function grantGrappleBreakAdvantage(actor) {
+    const record = {
+        id: "grapple-break-advantage",
+        name: "Grapple Break",
+        type: "reaction",
+        triggerType: "escape-succeeded",
+        committedAt: Date.now(),
+        duration: "until-next-attack",
+        createsPersistentEffect: "grapple-break-advantage",
+        effectData: { grantAdvantageNextLegalAttack: true, advantageOnNextAttack: 1 },
+    };
+    const { patches } = planAppendCommittedManeuverState(actor, record);
+    if (patches.length) await applyPatches(patches);
 }
 
 export async function commitPostManeuver(options = {}) {

@@ -202,6 +202,19 @@ export async function removeCondition(actor, name) {
     if (ef) await ef.delete();
 }
 
+/** The id of the actor that inflicted a named condition, or null. */
+export function getConditionInflictorId(actor, name) {
+    const target = actor?.actor ?? actor;
+    const ef = effectList(target).find((e) => slug(e?.name) === slug(name));
+    return String(ef?.flags?.[MODULE_ID]?.inflictorId ?? "").trim() || null;
+}
+
+/** Does the actor currently hold a named condition? */
+export function hasCondition(actor, name) {
+    const target = actor?.actor ?? actor;
+    return effectList(target).some((e) => slug(e?.name) === slug(name));
+}
+
 export function registerConditionRegistry() {
     registerConditionStatusEffects();
     const coreModule = game.modules.get(MODULE_ID);

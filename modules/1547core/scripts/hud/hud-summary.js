@@ -739,8 +739,13 @@ export function summarizeActor(actor, token, deps = {}) {
         .map((entry) => {
             const required = Array.isArray(entry.source?.requirements?.requiredActorConditions)
                 ? entry.source.requirements.requiredActorConditions : [];
-            const conditioned = required.length > 0 && required.every((c) => actorConditionSlugs.has(conditionSlug(c)));
-            if (!conditioned) return null; // only offered while you hold the condition
+            const requiredAny = Array.isArray(entry.source?.requirements?.requiredAnyActorCondition)
+                ? entry.source.requirements.requiredAnyActorCondition : [];
+            // Offer while you hold the condition(s): ALL of requiredActorConditions,
+            // or ANY of requiredAnyActorCondition (Core Escape covers three).
+            const conditioned = (required.length > 0 && required.every((c) => actorConditionSlugs.has(conditionSlug(c))))
+                || (requiredAny.length > 0 && requiredAny.some((c) => actorConditionSlugs.has(conditionSlug(c))));
+            if (!conditioned) return null;
             const evaluation = typeof evaluateManeuverLegality === "function"
                 ? evaluateManeuverLegality(entry.source, escapeContext)
                 : { legal: true, reasons: [] };

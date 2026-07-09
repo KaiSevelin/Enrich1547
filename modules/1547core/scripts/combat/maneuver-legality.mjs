@@ -209,6 +209,13 @@ function passesActorStateGate(maneuver, context) {
         return false;
     }
 
+    // `requiredAnyActorCondition` is satisfied by holding ANY one of the listed
+    // conditions (Core Escape: legal while Grappled OR Locked OR Choking Hold).
+    const requiredAnyActorCondition = toNameSet(req.requiredAnyActorCondition);
+    if (requiredAnyActorCondition.size && ![...requiredAnyActorCondition].some((condition) => actorConditions.has(condition))) {
+        return false;
+    }
+
     if (prohibitedActorConditions.size && [...prohibitedActorConditions].some((condition) => actorConditions.has(condition))) {
         return false;
     }

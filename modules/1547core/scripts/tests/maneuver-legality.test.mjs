@@ -135,6 +135,22 @@ console.log("\nmaneuver-legality: passive timing...");
     console.log("  ✓ passive matches only the passive timing + trigger; getLegalManeuvers gathers it");
 }
 
+/* ── Core Escape: requiredAnyActorCondition (any-of) ──────────────────── */
+console.log("\nmaneuver-legality: requiredAnyActorCondition...");
+{
+    const coreEscape = man({
+        type: "pre", triggerType: "escape",
+        requirements: { requiredAnyActorCondition: ["grappled", "locked", "choking-hold"] },
+    });
+    // Legal while holding ANY one of the listed conditions.
+    assert.strictEqual(legal(coreEscape, { timingType: "pre", actorConditions: ["locked"] }), true, "one held → legal");
+    assert.strictEqual(legal(coreEscape, { timingType: "pre", actorConditions: ["grappled", "locked"] }), true);
+    // Illegal when holding none of them.
+    assert.strictEqual(legal(coreEscape, { timingType: "pre", actorConditions: ["prone"] }), false, "none held → illegal");
+    assert.ok(hasReason(coreEscape, { timingType: "pre", actorConditions: [] }, "Actor state"));
+    console.log("  ✓ any-of: legal on one held, illegal on none");
+}
+
 /* ── Reaction budget: one reaction per turn (decision #9) ──────────────── */
 console.log("\nmaneuver-legality: reaction budget...");
 {

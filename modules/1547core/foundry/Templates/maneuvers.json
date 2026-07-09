@@ -1951,7 +1951,7 @@
     ],
     "enabled": false,
     "requirements": {
-      "requiredActorConditions": [
+      "requiredAnyActorCondition": [
         "grappled",
         "locked",
         "choking-hold"
