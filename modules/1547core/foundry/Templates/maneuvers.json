@@ -164,7 +164,7 @@
       "text": "Unmounted, melee weapon, moved at least 3 squares before attack",
       "requiresUnmounted": true
     },
-    "description": "A rushing impact that turns momentum into a heavier unmounted melee attack. It is declared before an attack is resolved. In play, it adds 1 multiplier die. It requires Combat Melee 3; Unmounted, melee weapon, moved at least 3 squares before attack."
+    "description": "A rushing impact that turns momentum into a heavier unmounted melee attack. It is declared before an attack is resolved. In play, it adds 1 multiplier die, and adds 1 risk die. It requires Combat Melee 3; Unmounted, melee weapon, moved at least 3 squares before attack."
   },
   {
     "_id": "EzBwgx66m1efLL1D",
@@ -224,7 +224,7 @@
       "text": "Mounted and moved at least 3 squares before attack",
       "requiresMounted": true
     },
-    "description": "A mounted driving attack that turns speed and weight into immediate offensive force. It is declared before an attack is resolved. In play, it adds 1 main die, and adds 1 multiplier die. It requires Combat Melee 2, Outdoor Riding 2; Mounted and moved at least 3 squares before attack."
+    "description": "A mounted driving attack that turns speed and weight into immediate offensive force. It is declared before an attack is resolved. In play, it adds 1 main die, adds 1 multiplier die, and adds 1 risk die. It requires Combat Melee 2, Outdoor Riding 2; Mounted and moved at least 3 squares before attack."
   },
   {
     "_id": "nfzU9B8ALyhxczjL",
@@ -348,7 +348,7 @@
     ],
     "enabled": false,
     "requirements": {},
-    "description": "A careful withdrawal that breaks contact without inviting the usual reaction strike. It is declared before movement is resolved. In play, it ignores movement-triggered reactions. At the cost of one Dexterity point."
+    "description": "A careful withdrawal that breaks contact without inviting the usual reaction strike. It is activated as a full-turn maneuver instead of making a normal attack. In play, it ignores movement-triggered reactions."
   },
   {
     "_id": "lURv2PmrFg0xnqbr",
@@ -386,7 +386,7 @@
         "prone"
       ]
     },
-    "description": "A sudden bodily avoidance that tries to slip the attack rather than meet it with steel or shield. It is used as a reaction when attacked. In play, it removes 1 incoming multiplier die. It requires Cannot be used in medium or heavy armor, while locked, or while prone. At the cost of one Dexterity point."
+    "description": "A sudden bodily avoidance that tries to slip the attack rather than meet it with steel or shield. It is used as a reaction when attacked. In play, it removes 1 incoming multiplier die. It requires Cannot be used in medium or heavy armor, while locked, or while prone."
   },
   {
     "_id": "UJBuJkDMX2UZ8fvL",
@@ -542,7 +542,7 @@
       ],
       "requiresTargetLocked": true
     },
-    "description": "A brutal close-control sequence that turns an existing lock into a heavier strike and follow-up. It is declared before an attack is resolved. In play, it adds 2 main dies, and creates a follow-up safe attack. It requires Combat Unarmed 2; a weapon with control; Target already locked. At the cost of one Strength point."
+    "description": "A brutal close-control sequence that turns an existing lock into a heavier strike and follow-up. It is declared before an attack is resolved. In play, it adds 2 main dies, and creates a follow-up safe attack. It requires Combat Unarmed 2; a weapon with control; Target already locked."
   },
   {
     "_id": "RAwHPMwVPZ8vbhfw",
@@ -574,7 +574,7 @@
         "threat-zone-left"
       ]
     },
-    "description": "A fast answer against movement through your reach, meant to punish careless steps. It is used as a reaction when a target crosses your threat zone. In play, it creates a follow-up safe attack. It requires Any equipped weapon. At the cost of one Dexterity point."
+    "description": "A fast answer against movement through your reach, meant to punish careless steps. It is used as a reaction when a target crosses your threat zone. In play, it creates a follow-up safe attack. It requires Any equipped weapon."
   },
   {
     "_id": "sOJVkvmtsRuiBUc3",
@@ -678,7 +678,7 @@
     "requirements": {
       "skill": "Combat Melee 2"
     },
-    "description": "A forward-driving attack that keeps pressure on a hurt or shaken target and crowds out their escape. It is declared before an attack is resolved. In play, it moves you 1 square toward the target if damage is dealt, and prevents the target from using Disengage. It requires Combat Melee 2. At the cost of one Stamina point."
+    "description": "A forward-driving attack that keeps pressure on a hurt or shaken target and crowds out their escape. It is declared before an attack is resolved. In play, it moves you 1 square toward the target if damage is dealt, and prevents the target from using Disengage. It requires Combat Melee 2."
   },
   {
     "_id": "qoob23NivFhPxDz7",
@@ -714,7 +714,7 @@
         "Reloading"
       ]
     },
-    "description": "A hurried reload performed under pressure to keep a missile weapon in the fight. It is declared before an attack is resolved. In play, it reduces reload time by 1. It requires Combat Firearms 2 or Combat Ranged 2; a weapon with reloading. At the cost of one Dexterity point."
+    "description": "A hurried reload performed under pressure to keep a missile weapon in the fight. It is used in the moment its combat window allows. In play, it reduces reload time by 1. It requires Combat Firearms 2 or Combat Ranged 2; a weapon with reloading."
   },
   {
     "_id": "mlZAwyG0zBfXzydm",
@@ -751,7 +751,7 @@
         "Receiving"
       ]
     },
-    "description": "A disciplined answer to an incoming charge, turning the enemy's rush into your own prepared opening. It is used as a reaction when a charge is declared. In play, it adds 1 multiplier die, and creates a follow-up safe attack. It requires Combat Melee 2; a weapon with receiving. At the cost of one Stamina point."
+    "description": "A disciplined answer to an incoming charge, turning the enemy's rush into your own prepared opening. It is used as a reaction when a charge is declared. In play, it adds 1 multiplier die, and creates a follow-up safe attack. It requires Combat Melee 2; a weapon with receiving."
   },
   {
     "_id": "QaEAgV8VpMOIBehT",
@@ -852,7 +852,7 @@
     "requirements": {
       "skill": "Strength Athletics 1"
     },
-    "description": "A forceful reaction that resists being tripped, pulled, or unhorsed by a hooking attack. It is used as a reaction when a hooking effect is applied. In play, it creates a tactical advantage or restriction that should be resolved according to its timing, tags, and listed requirements. It requires Strength Athletics 1. At the cost of one Strength point."
+    "description": "A forceful reaction that resists being tripped, pulled, or unhorsed by a hooking attack. It is used as a reaction when a hooking effect is applied. In play, it creates a tactical advantage or restriction that should be resolved according to its timing, tags, and listed requirements. It requires Strength Athletics 1."
   },
   {
     "_id": "VdirxzHv2Gf0MKW2",
@@ -888,7 +888,7 @@
         "Fast"
       ]
     },
-    "description": "A trained return strike launched the moment an enemy's failed attack leaves them exposed. It is used as a reaction after an attack fails to deal damage. In play, it creates a follow-up safe attack. It requires Combat Melee 3; a weapon with fast. At the cost of one Dexterity point."
+    "description": "A trained return strike launched the moment an enemy's failed attack leaves them exposed. It is used as a reaction after an attack fails to deal damage. In play, it creates a follow-up safe attack. It requires Combat Melee 3; a weapon with fast."
   },
   {
     "_id": "ChkR8nWx1MtoYYRm",
@@ -957,7 +957,7 @@
         "Shield"
       ]
     },
-    "description": "A shield-led defense that absorbs the force of an incoming attack behind solid coverage. It is used as a reaction when attacked. In play, it adds 2 armor dies to the defense. It requires Combat Melee 1; a weapon with shield."
+    "description": "A shield-led defense that absorbs the force of an incoming attack behind solid coverage. It is used in the moment its combat window allows. In play, it adds 2 armor dies to the defense. It requires Combat Melee 1; a weapon with shield."
   },
   {
     "_id": "wfETgvyluTlkDV3L",
@@ -995,7 +995,7 @@
         "Shield"
       ]
     },
-    "description": "A shield-based group defense that strengthens the line when fighters hold together. It is used as a reaction when attacked. In play, it grants 1 defense advantage. It requires Tactics; a weapon with shield; Adjacent ally also has access to Shield Wall."
+    "description": "A shield-based group defense that strengthens the line when fighters hold together. It is used in the moment its combat window allows. In play, it grants 1 defense advantage, and adds 1 armor die when an adjacent ally also holds Shield Wall. It requires Tactics; a weapon with shield; Adjacent ally also has access to Shield Wall."
   },
   {
     "_id": "H1aCK1J68Y0LAL9P",
@@ -1038,7 +1038,7 @@
         "RangedWeapon"
       ]
     },
-    "description": "A full-turn hail of shots used to pin enemies down and restrict their movement through a threatened space. It is activated as a full-turn maneuver instead of making a normal attack. In play, it uses the weapon's maximum range, and creates the suppressing fire battlefield effect. It requires Combat Ranged 3 or Combat Firearms 3; the firearm and ranged weapon groups. At the cost of one Stamina point."
+    "description": "A full-turn hail of shots used to pin enemies down and restrict their movement through a threatened space. It is activated as a full-turn maneuver instead of making a normal attack. In play, it uses the weapon's maximum range, and creates the suppressing fire battlefield effect. It requires Combat Ranged 3 or Combat Firearms 3; the firearm and ranged weapon groups."
   },
   {
     "_id": "MHMCM3D4kHEUABWp",
@@ -1140,7 +1140,7 @@
         "Sidearm"
       ]
     },
-    "description": "A tactical maneuver called Quick Draw that shifts the immediate terms of the fight. It is declared before an attack is resolved. In play, it readies an equipped sidearm for immediate use, and lets that sidearm be used in the current action. It requires Combat Melee 1 or Combat Firearms 1; the sidearm groups. At the cost of one Dexterity point."
+    "description": "A snap draw that brings a sidearm to bear in the same breath as the attack. It is declared before an attack is resolved. In play, it readies an equipped sidearm for immediate use, and lets that sidearm be used in the current action. It requires Combat Melee 1 or Combat Firearms 1; the sidearm groups."
   },
   {
     "_id": "e2OvRw7Jk4Nz9Lp3",
@@ -1183,7 +1183,7 @@
         "RangedWeapon"
       ]
     },
-    "description": "A tactical maneuver called Overwatch that shifts the immediate terms of the fight. It is activated as a full-turn maneuver instead of making a normal attack. In play, it adds 1 main die, and creates the overwatch effect. It requires Combat Ranged 3 or Combat Firearms 3; the firearm and ranged weapon groups. At the cost of one Dexterity point."
+    "description": "A held ready stance that watches a field of fire for a target to punish. It is activated as a full-turn maneuver instead of making a normal attack. In play, it adds 1 main die, and creates the overwatch effect. It requires Combat Ranged 3 or Combat Firearms 3; the firearm and ranged weapon groups."
   },
   {
     "_id": "f5CvRt2Mx8Qa1Hd6",
@@ -1250,7 +1250,7 @@
         "Rigid Blade"
       ]
     },
-    "description": "A close-in rigid-blade technique that sacrifices ease to exploit gaps in armor. It is declared before an attack is resolved. In play, it adds 1 disadvantage, and ignores the target's highest armor die. It requires Combat Melee 3; a weapon with rigid blade. At the cost of one Strength point."
+    "description": "A close-in rigid-blade technique that sacrifices ease to exploit gaps in armor. It is declared before an attack is resolved. In play, it adds 1 disadvantage, and ignores the target's highest armor die. It requires Combat Melee 3; a weapon with rigid blade."
   },
   {
     "_id": "h3PoPk9Vs2Lm6Xc1",
@@ -1322,7 +1322,7 @@
       "text": "One ally also threatens the target from another side",
       "requiresFlankingAlly": true
     },
-    "description": "A positional attack that turns divided pressure on the target into a sharper melee opening. It is declared before an attack is resolved. In play, it adds 1 multiplier die. It requires Combat Melee 2; One ally also threatens the target from another side. At the cost of one Dexterity point."
+    "description": "A positional attack that turns divided pressure on the target into a sharper melee opening. It is declared before an attack is resolved. In play, it adds 1 multiplier die. It requires Combat Melee 2; One ally also threatens the target from another side."
   },
   {
     "_id": "k4HaBy2Ln9Qp7Xs3",
@@ -1359,7 +1359,7 @@
         "Spear"
       ]
     },
-    "description": "A long-weapon stop that arrests an enemy the moment they push into your reach. It is used as a reaction when a target crosses your threat zone. In play, it stops an entering target in the entered square. It requires Combat Melee 2; the polearm and spear groups. At the cost of one Strength point."
+    "description": "A long-weapon stop that arrests an enemy the moment they push into your reach. It is used as a reaction when a target crosses your threat zone. In play, it stops an entering target in the entered square. It requires Combat Melee 2; the polearm and spear groups."
   },
   {
     "_id": "m1GuAl8Rp3Vx6Tk4",
@@ -1397,7 +1397,7 @@
       ],
       "requiresAdjacentAllyTarget": true
     },
-    "description": "A protective intervention that lets you cover an adjacent ally with your own shield and presence. It is used as a reaction when attacked. In play, it creates a tactical advantage or restriction that should be resolved according to its timing, tags, and listed requirements. It requires Combat Melee 1 or Tactics; a weapon with shield; Adjacent ally is the target of the attack. At the cost of one Stamina point."
+    "description": "A protective intervention that lets you cover an adjacent ally with your own shield and presence. It is used in the moment its combat window allows. In play, it adds 1 armor die to an adjacent ally's defense. It requires Combat Melee 1 or Tactics; a weapon with shield; Adjacent ally is the target of the attack."
   },
   {
     "_id": "n6AuGd4Qm2Ls9Hp1",
@@ -1433,7 +1433,7 @@
         "Shield"
       ]
     },
-    "description": "A guarded advance that trades stamina for safer forward movement behind shield work. It is declared before movement is resolved. In play, it adds 2 squares of movement, and ignores opportunity strikes during the move. It requires Combat Melee 2 or Tactics; a weapon with shield. At the cost of one Stamina point."
+    "description": "A guarded advance that trades stamina for safer forward movement behind shield work. It is activated as a full-turn maneuver instead of making a normal attack. In play, it adds 2 squares of movement, and ignores opportunity strikes during the move. It requires Combat Melee 2 or Tactics; a weapon with shield."
   },
   {
     "_id": "p2GrBr7Nx5Lt1Qv8",
@@ -1462,7 +1462,7 @@
     "requirements": {
       "skill": "Combat Unarmed 1 or Strength Athletics 2"
     },
-    "description": "A violent effort to wrench free that leaves your attacker open. On a successful break (Break Grapple / Slip The Lock / Break The Choke), gain advantage on your next attack roll. It requires Combat Unarmed 1 or Strength Athletics 2."
+    "description": "A violent effort to wrench free from a lock or choking hold and possibly answer in the same beat. It triggers the instant you break free of a hold. In play, it grants advantage on your next attack. It requires Combat Unarmed 1 or Strength Athletics 2."
   },
   {
     "_id": "r9ShBa3Kp6Mx2Tw1",
@@ -1498,7 +1498,7 @@
         "Shield"
       ]
     },
-    "description": "A shield-led strike meant to stagger and drive the target backward if it lands cleanly. It is declared before an attack is resolved. In play, it pushes the target 1 square if the attack deals damage. It requires Combat Melee 2; a weapon with shield. At the cost of one Strength point."
+    "description": "A shield-led strike meant to stagger and drive the target backward if it lands cleanly. It is used in the moment its combat window allows. In play, it pushes the target 1 square if the attack deals damage. It requires Combat Melee 2; a weapon with shield."
   },
   {
     "_id": "MnPounceA0000001",
@@ -1536,7 +1536,7 @@
       ],
       "text": "Quadruped body; moved at least 2 squares before the attack."
     },
-    "description": "A leaping natural-weapon attack that uses movement to bowl the prey down under sudden force. It is declared before an attack is resolved. In play, it adds 1 multiplier die, and applies the prone condition. It requires a weapon with natural; Quadruped body; moved at least 2 squares before the attack. At the cost of one Dexterity point."
+    "description": "A leaping natural-weapon attack that uses movement to bowl the prey down under sudden force. It is declared before an attack is resolved. In play, it adds 1 multiplier die, and applies the prone condition. It requires a weapon with natural; Quadruped body; moved at least 2 squares before the attack."
   },
   {
     "_id": "MnTrampleA000001",
@@ -1572,7 +1572,7 @@
       ],
       "text": "Massive size; moves through creatures at least one size smaller."
     },
-    "description": "A massive rushing movement that batters through smaller creatures and throws them down. It is declared before movement is resolved. In play, it applies the prone condition, lets the attacker pass through smaller creatures, and applies natural-weapon damage to each affected creature. It requires Massive size; moves through creatures at least one size smaller. At the cost of 2 strength points."
+    "description": "A massive rushing movement that batters through smaller creatures and throws them down. It is declared before movement is resolved. In play, it applies the prone condition, lets the attacker pass through smaller creatures, and applies natural-weapon damage to each affected creature. It requires Massive size; moves through creatures at least one size smaller."
   },
   {
     "_id": "MnTailSweep00001",
@@ -1607,7 +1607,7 @@
       ],
       "text": "Heavy or long tail; affects creatures behind the actor."
     },
-    "description": "A broad tail-driven attack that clears space behind the creature with brute control. It is declared before an attack is resolved. In play, it applies prone if the attack deals damage, and strikes across the rear arc adjacent. It requires Heavy or long tail; affects creatures behind the actor. At the cost of one Strength point."
+    "description": "A broad tail-driven attack that clears space behind the creature with brute control. It is declared before an attack is resolved. In play, it applies prone if the attack deals damage, and strikes across the rear arc adjacent. It requires Heavy or long tail; affects creatures behind the actor."
   },
   {
     "_id": "MnConstrictA0001",
@@ -1716,7 +1716,7 @@
       ],
       "text": "Wings broad enough to drive air with force."
     },
-    "description": "A heavy wing-driven strike that knocks a target back or down under forceful air and impact. It is declared before an attack is resolved. In play, it pushes the target 2 squares if the attack deals damage, and applies prone if the attack deals damage. It requires Wings broad enough to drive air with force. At the cost of one Dexterity point."
+    "description": "A heavy wing-driven strike that knocks a target back or down under forceful air and impact. It is declared before an attack is resolved. In play, it pushes the target 2 squares if the attack deals damage, and applies prone if the attack deals damage. It requires Wings broad enough to drive air with force."
   },
   {
     "_id": "ArcdShotMnvr0001",
@@ -1751,7 +1751,7 @@
         "ThrownWeapon"
       ]
     },
-    "description": "A lobbed, indirect shot that arcs over anything in the way to fall on the target. It is declared before an attack is resolved. In play, it adds a risk die (a lobbed shot is a gamble: it can go awry or land true), ignores intervening obstacles (no cover interception), and cannot exploit an exposed back (no rear bonus). It requires Combat Ranged 1 or Combat Thrown 1, and an arc-capable weapon (a bow, sling, or thrown weapon, never a firearm) with overhead clearance for the arc; the GM may forbid it indoors or under cover."
+    "description": "A lobbed, indirect shot that arcs over anything in the way to fall on the target. It is declared before an attack is resolved. In play, it adds 1 risk die, and arcs over intervening cover to strike indirectly. It requires Combat Ranged 1 or Combat Thrown 1; the ranged weapon and thrown weapon groups; An arc-capable weapon (a bow, sling, or thrown weapon, never a firearm) with overhead clearance for the arc; the GM may forbid it indoors or under cover."
   },
   {
     "_id": "EscBreakGrappl01",
@@ -1782,7 +1782,7 @@
         "grappled"
       ]
     },
-    "description": "Twist and slip free of a grapple. Spend one Dexterity point to remove the Grappled condition."
+    "description": "A twisting effort to slip free of a grapple. It is used to break free of a condition that holds you. In play, it is resolved as an opposed dexterity check, and removes the grappled condition."
   },
   {
     "_id": "EscSlipLock00001",
@@ -1813,7 +1813,7 @@
         "locked"
       ]
     },
-    "description": "Force a limb free of a joint-lock. Spend one Strength point to remove the Locked condition."
+    "description": "A forceful wrench to free a limb from a joint-lock. It is used to break free of a condition that holds you. In play, it is resolved as an opposed strength check, and removes the locked condition."
   },
   {
     "_id": "EscBreakChoke001",
@@ -1844,7 +1844,7 @@
         "choking-hold"
       ]
     },
-    "description": "Wrench the hold off your throat. Spend one Strength point to remove the Choking Hold condition."
+    "description": "A desperate wrench to tear a choking hold off your throat. It is used to break free of a condition that holds you. In play, it is resolved as an opposed strength check, and removes the choking hold condition."
   },
   {
     "_id": "EscStandUp000001",
@@ -1874,7 +1874,7 @@
         "prone"
       ]
     },
-    "description": "Rise from prone. Free, but you forgo all movement this turn (not automated)."
+    "description": "A quick rise back to your feet from prone. It is used to break free of a condition that holds you. In play, it removes the prone condition."
   },
   {
     "_id": "CoreAttack000001",
@@ -1922,7 +1922,7 @@
     ],
     "enabled": false,
     "requirements": {},
-    "description": "A burst of raw effort that doubles your movement. It is declared before movement is resolved. In play, it doubles your move. At the cost of one Core point."
+    "description": "A burst of raw effort that carries you twice as far. It is declared before movement is resolved. In play, it doubles your movement. At the cost of one Core point."
   },
   {
     "_id": "CoreEscape000001",
@@ -1957,7 +1957,7 @@
         "choking-hold"
       ]
     },
-    "description": "A surge of raw effort to break free. It removes every one of Grappled, Locked, and Choking Hold you are under (not Prone). At the cost of one Core point."
+    "description": "A surge of raw effort that wrenches you free of every hold at once. It is used to break free of a condition that holds you. In play, it removes every one of grappled, locked, and choking hold you are under. At the cost of one Core point."
   },
   {
     "_id": "CoreToughnss0001",
@@ -1981,7 +1981,7 @@
     ],
     "enabled": false,
     "requirements": {},
-    "description": "A bracing of the body against a blow. It is used as a reaction after taking damage. In play, it reduces damage taken by 1. At the cost of one Core point."
+    "description": "A bracing of the body that lets you shrug off part of a blow. It is used as a reaction after taking damage. In play, it reduces damage taken by 1. At the cost of one Core point."
   },
   {
     "_id": "CoreDefense00001",
@@ -2005,6 +2005,6 @@
     ],
     "enabled": false,
     "requirements": {},
-    "description": "A committed defensive effort. It is used as a reaction when attacked. In play, it adds 1 multiplier die to the defense. At the cost of one Core point."
+    "description": "A committed defensive effort that hardens your guard against a blow. It is used as a reaction when attacked. In play, it adds 1 multiplier die to the defense. At the cost of one Core point."
   }
 ]

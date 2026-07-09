@@ -188,12 +188,15 @@ function consumePersistentEffectIfPresent(actor, effectType, deps = {}) {
     return consumer(actor, effectType);
 }
 
-function buildDefenseRollFormula(armorSummary, defender = null) {
+function buildDefenseRollFormula(armorSummary, defender = null, { addMultiplierDice = 0 } = {}) {
     const pool = buildDefenderPool(Array.isArray(armorSummary?.defenseDice) ? armorSummary.defenseDice : undefined);
     // Conditions (Locked, Weakened, Exhausted, Cursed) add Risk dice to the defence
     // pool — Prone is excluded (its disadvantage is on attacks only).
     const disadvantage = defender ? conditionCombatDisadvantage(defender, "defense") : 0;
     for (let i = 0; i < disadvantage; i += 1) pool.push("Risk");
+    // Core Defense: the chosen defense reaction adds Multiplier dice to the pool,
+    // so they genuinely multiply the defence result (not a flat protection bonus).
+    for (let i = 0; i < Math.max(0, Number(addMultiplierDice) || 0); i += 1) pool.push("Multiplier");
     return toFoundryFormula(pool);
 }
 
@@ -393,6 +396,7 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
             }
         }
         await consumePersistentEffectIfPresent(context.actor, "aimed", deps);
+        await consumePersistentEffectIfPresent(context.actor, "grapple-break-advantage", deps);
         if (Object.keys(getPendingNextAttackDice?.(context.actor?.id) ?? {}).length > 0) {
             clearPendingNextAttackDice?.(context.actor?.id);
         }
@@ -550,7 +554,10 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
                 name: "Unprotected",
             };
 
-        const defenseFormula = buildDefenseRollFormula(defenderArmor, targetActor);
+        const chosenDefenseReaction = result.reactionResolution?.reaction ?? null;
+        const defenseFormula = buildDefenseRollFormula(defenderArmor, targetActor, {
+            addMultiplierDice: Number(chosenDefenseReaction?.effectData?.addDefenseMultiplierDice ?? 0) || 0,
+        });
         const defenderSpeaker = ChatMessage.getSpeaker({ actor: targetActor, token: context.primaryTarget?.document });
         const defenseModifierNote = targetActor
             ? formatRollModifiers({ disadvantage: conditionDisadvantageSources(targetActor, "defense") })
@@ -572,7 +579,7 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
             defenseRoll: defenseRollSummary,
             // A defender's chosen defense reaction (Desperate Defense, Evade, …)
             // no longer cancels the attack — apply its modifiers here.
-            defenseReaction: result.reactionResolution?.reaction ?? null,
+            defenseReaction: chosenDefenseReaction,
         });
         const attackerName = context.actor?.name ?? "Attacker";
         const defenderName = targetActor?.name ?? "Target";
@@ -608,12 +615,13 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
         if (resolvedAttack?.defenseModifiers?.safeCounterattack) {
             await offerSafeCounterattack({
                 originalPendingAttack: result.pendingAttack,
-                defenseReaction: result.reactionResolution?.reaction ?? null,
+                defenseReaction: chosenDefenseReaction,
                 context, deps,
             });
         }
 
         await consumePersistentEffectIfPresent(context.actor, "aimed", deps);
+        await consumePersistentEffectIfPresent(context.actor, "grapple-break-advantage", deps);
         if (Object.keys(getPendingNextAttackDice?.(context.actor?.id) ?? {}).length > 0) {
             clearPendingNextAttackDice?.(context.actor?.id);
         }

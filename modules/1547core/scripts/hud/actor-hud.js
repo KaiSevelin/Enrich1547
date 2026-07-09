@@ -220,6 +220,7 @@ function getManeuverEffectSummary(maneuver) {
     if (Number(effect.addMultiplierDice ?? 0) > 0) parts.push(`+${effect.addMultiplierDice} multiplier die`);
     if (Number(effect.addRiskDice ?? 0) > 0) parts.push(`+${effect.addRiskDice} risk die`);
     if (Number(effect.addMoveSquares ?? 0) > 0) parts.push(`+${effect.addMoveSquares} move`);
+    if (effect.doubleMove === true) parts.push("Double move");
     if (Number(effect.reduceDamageTaken ?? 0) > 0) parts.push(`Reduce damage by ${effect.reduceDamageTaken}`);
     if (effect.ignoreHighestArmorDie === true) parts.push("Ignore highest armor die");
     if (effect.safeAttack === true || effect.createsSafeAttack === true) parts.push("Makes the attack safe");
@@ -430,6 +431,7 @@ function getPersistentEffectLabel(effectType) {
         case "aimed": return "Aimed";
         case "braced": return "Braced";
         case "overwatch": return "Overwatch";
+        case "grapple-break-advantage": return "Grapple Break (advantage next attack)";
         default: return String(effectType ?? "").trim() || "Persistent Effect";
     }
 }

@@ -985,11 +985,15 @@ export function summarizeActor(actor, token, deps = {}) {
         }),
         ...getActiveDefenseStateForActor(actor)
     ];
-    const aimedEffectActive = activePersistentEffects.some((entry) => entry.effectType === "aimed");
+    // "Advantage on your next attack" — from Aim (aimed) or a successful
+    // Grapple Break (grapple-break-advantage). Either grants +1 advantage die.
+    const advantageNextAttackActive = activePersistentEffects.some(
+        (entry) => entry.effectType === "aimed" || entry.effectType === "grapple-break-advantage"
+    );
     const bracedEffectActive = activePersistentEffects.some((entry) => entry.effectType === "braced");
     const weaponRollContext = {
         ...rollContext,
-        advantageDice: rollContext.advantageDice + (aimedEffectActive ? 1 : 0),
+        advantageDice: rollContext.advantageDice + (advantageNextAttackActive ? 1 : 0),
         addMainDice: 0,
         addMultiplierDice: bracedEffectActive ? 1 : 0,
         extraDiceCounts: pendingAttackDice,
@@ -1026,6 +1030,13 @@ export function summarizeActor(actor, token, deps = {}) {
     const movesThisTurn = Number.isFinite(Number(movementRemaining))
         ? Math.max(0, Number(movementBudget) - Number(movementRemaining))
         : null;
+    // Core Speed (a pre-move maneuver) can double the move for 1 Core Point.
+    // Surfaced in the move indicator as a hint; the engine never auto-applies it.
+    const knowsCoreSpeed = maneuverEntries.some(
+        (entry) => String(entry?.name ?? "").trim().toLowerCase() === "core speed"
+    );
+    const availableCore = getNumericProp(props, ["AvailableCorePoints"]) ?? 0;
+    const moveDoubleAvailable = knowsCoreSpeed && Number(availableCore) >= 1;
 
     return {
         actorId: actor.id,
@@ -1037,6 +1048,7 @@ export function summarizeActor(actor, token, deps = {}) {
         movement: movementRemaining,
         movementBudget,
         movesThisTurn,
+        moveDoubleAvailable,
         attacks: attacksRemaining,
         attacksRemaining,
         fullTurnAvailable,

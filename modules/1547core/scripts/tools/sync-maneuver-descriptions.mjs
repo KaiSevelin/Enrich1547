@@ -33,13 +33,7 @@ function humanizeIdentifier(value) {
 
 function humanizeCostType(costType) {
     const map = {
-        StrengthPoints: "one Strength point",
-        StaminaPoints: "one Stamina point",
-        DexterityPoints: "one Dexterity point",
-        CharismaPoints: "one Charisma point",
-        IntelligencePoints: "one Intelligence point",
-        FaithPoints: "one Faith point",
-        PowerPoints: "one Power point",
+        CorePoints: "one Core point",
         CriticalPoints: "one Critical point"
     };
     return map[costType] ?? "";
@@ -74,7 +68,9 @@ function formatTrigger(maneuver) {
         "charge-declared": "It is used as a reaction when a charge is declared.",
         "hook-applied": "It is used as a reaction when a hooking effect is applied.",
         "locked": "It is used as a reaction while you are locked.",
-        "choking-hold": "It is used as a reaction while you are trapped in a choking hold."
+        "choking-hold": "It is used as a reaction while you are trapped in a choking hold.",
+        "escape": "It is used to break free of a condition that holds you.",
+        "escape-succeeded": "It triggers the instant you break free of a hold."
     };
     if (map[trigger]) return map[trigger];
     if (usage === "pre") return "It is declared before the action it modifies is resolved.";
@@ -152,6 +148,19 @@ function describeEffect(maneuver) {
     if (effect.eachTargetDefendsSeparately) lines.push("still makes each target defend separately");
     if (effect.createsPersistentEffect) lines.push(`creates the ${humanizeIdentifier(effect.createsPersistentEffect)} effect`);
     if (effect.createsBattlefieldEffect) lines.push(`creates the ${humanizeIdentifier(effect.createsBattlefieldEffect)} battlefield effect`);
+    if (effect.doubleMove) lines.push("doubles your movement");
+    if (effect.recoverCorePoints) lines.push(`recovers ${effect.recoverCorePoints} Core point${effect.recoverCorePoints === 1 ? "" : "s"}`);
+    if (effect.addDefenseMultiplierDice) lines.push(`adds ${effect.addDefenseMultiplierDice} multiplier die${effect.addDefenseMultiplierDice === 1 ? "" : "s"} to the defense`);
+    if (effect.addArmorDiceToAllyDefense) lines.push(`adds ${effect.addArmorDiceToAllyDefense} armor die${effect.addArmorDiceToAllyDefense === 1 ? "" : "s"} to an adjacent ally's defense`);
+    if (effect.addArmorDiceIfAdjacentShieldWallAlly) lines.push(`adds ${effect.addArmorDiceIfAdjacentShieldWallAlly} armor die when an adjacent ally also holds Shield Wall`);
+    if (effect.advantageOnNextAttack) lines.push("grants advantage on your next attack");
+    if (effect.indirect) lines.push("arcs over intervening cover to strike indirectly");
+    if (effect.opposedCheck) lines.push(`is resolved as an opposed ${humanizeIdentifier(effect.opposedCheck)} check`);
+    if (effect.removesCondition) {
+        const conds = (Array.isArray(effect.removesCondition) ? effect.removesCondition : [effect.removesCondition]).map(humanizeIdentifier);
+        const list = formatList(conds);
+        lines.push(effect.removesAllHeld ? `removes every one of ${list} you are under` : `removes the ${list} condition`);
+    }
 
     if (lines.length === 0) {
         return "In play, it creates a tactical advantage or restriction that should be resolved according to its timing, tags, and listed requirements.";
@@ -172,6 +181,19 @@ function describeIdentity(maneuver) {
         "Act Of Strength": "A forceful commitment that turns bodily power directly into a heavier melee attack.",
         "Act Of Toughness": "A bodily hardening response that lets you endure a blow that would otherwise bite deeper.",
         "Aim": "A full-turn setup spent steadying the shot instead of firing at once.",
+        "Core Attack": "A raw exertion of effort that drives any attack harder.",
+        "Core Speed": "A burst of raw effort that carries you twice as far.",
+        "Core Escape": "A surge of raw effort that wrenches you free of every hold at once.",
+        "Core Toughness": "A bracing of the body that lets you shrug off part of a blow.",
+        "Core Defense": "A committed defensive effort that hardens your guard against a blow.",
+        "Core Restore": "A moment seized after a telling blow to recover spent effort.",
+        "Quick Draw": "A snap draw that brings a sidearm to bear in the same breath as the attack.",
+        "Overwatch": "A held ready stance that watches a field of fire for a target to punish.",
+        "Arced Shot": "A lobbed, indirect shot that arcs over anything in the way to fall on the target.",
+        "Break Grapple": "A twisting effort to slip free of a grapple.",
+        "Slip The Lock": "A forceful wrench to free a limb from a joint-lock.",
+        "Break The Choke": "A desperate wrench to tear a choking hold off your throat.",
+        "Stand Up": "A quick rise back to your feet from prone.",
         "All-in": "A reckless commitment that drives a heavy attack harder by accepting greater danger in return.",
         "Assassinate": "A hidden killing stroke meant to end the fight before the target can properly react.",
         "Bind": "A strong parrying catch that ties up the enemy's attack and strips its extra force away.",
