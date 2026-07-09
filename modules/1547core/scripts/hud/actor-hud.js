@@ -137,13 +137,7 @@ const MANEUVER_FILTER_OPTIONS = [
     { value: "reaction", label: "Reactions" },
 ];
 const MANEUVER_COST_SHORT_LABELS = {
-    StrengthPoints: "STR",
-    StaminaPoints: "STA",
-    DexterityPoints: "DEX",
-    IntelligencePoints: "INT",
-    FaithPoints: "FTH",
-    CharismaPoints: "CHA",
-    PowerPoints: "POW",
+    CorePoints: "CORE",
     CriticalPoints: "CRIT"
 };
 const DICE_TAB_ATTACK_OPTIONS = [

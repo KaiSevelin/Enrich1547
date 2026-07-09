@@ -815,13 +815,7 @@ export function summarizeActor(actor, token, deps = {}) {
     const supernaturalMarks = supernaturalMarkItems.map((item) => summarizeMagicCarrier(item, "supernatural-mark"));
     const monsterMagic = monsterMagicItems.map((item) => summarizeMagicCarrier(item, "monster-magic"));
     const pointPools = [
-        { label: "STR", key: "StrengthPoints" },
-        { label: "STA", key: "StaminaPoints" },
-        { label: "DEX", key: "DexterityPoints" },
-        { label: "INT", key: "IntelligencePoints" },
-        { label: "FTH", key: "FaithPoints" },
-        { label: "CHA", key: "CharismaPoints" },
-        { label: "POW", key: "PowerPoints" }
+        { label: "CORE", key: "CorePoints" }
     ].map((entry) => {
         const summary = getResourceSummary(props, entry.key);
         const reserved = Math.max(0, Number(reservedResources[entry.key] ?? 0) || 0);
