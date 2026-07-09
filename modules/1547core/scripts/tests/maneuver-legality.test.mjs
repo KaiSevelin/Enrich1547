@@ -135,6 +135,26 @@ console.log("\nmaneuver-legality: passive timing...");
     console.log("  ✓ passive matches only the passive timing + trigger; getLegalManeuvers gathers it");
 }
 
+/* ── Reaction budget: one reaction per turn (decision #9) ──────────────── */
+console.log("\nmaneuver-legality: reaction budget...");
+{
+    const react = (o = {}) => man({ type: "reaction", triggerType: "attack-declared", ...o });
+    const rctx = (extra) => ({ timingType: "reaction", triggerType: "attack-declared", ...extra });
+
+    // Available (or unknown) → legal; positively spent → blocked.
+    assert.strictEqual(legal(react(), rctx({ reactionAvailable: true })), true);
+    assert.strictEqual(legal(react(), rctx()), true, "unknown → guide-not-force passes");
+    assert.strictEqual(legal(react(), rctx({ reactionAvailable: false })), false, "spent → blocked");
+    assert.ok(hasReason(react(), rctx({ reactionAvailable: false }), "Reaction already used"));
+
+    // The budget constrains reaction-timed maneuvers only.
+    assert.strictEqual(
+        legal(man({ type: "pre", triggerType: "attack-declared" }),
+            { timingType: "pre", triggerType: "attack-declared", reactionAvailable: false }),
+        true, "a pre maneuver ignores the reaction budget");
+    console.log("  ✓ reaction spent blocks reactions only; unknown passes");
+}
+
 /* ── Combat: range bands, action economy, getLegalManeuvers ───────────── */
 console.log("\nmaneuver-legality: range + action economy + filtering...");
 {

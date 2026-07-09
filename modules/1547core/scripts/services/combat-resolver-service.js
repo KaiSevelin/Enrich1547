@@ -366,7 +366,9 @@ function buildAttackReactionCandidates({
         pendingProfile,
         reactionWeapon,
         reactionProfile,
-        context,
+        // One-reaction-per-turn budget (decision #9): drop the whole reaction
+        // candidate list once the defender has spent its reaction this round.
+        context: { ...context, reactionAvailable: isReactionAvailable(defender, game.combat) },
     });
     // Offer "Face attacker" when the incoming shot is a faceable rear hit
     // (facing spec rule 3). positionAdvantage is threaded from the HUD.

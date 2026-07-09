@@ -92,6 +92,7 @@ const LEGALITY_GATES = [
     (m, c) => { const t = normalizeTimingContext(c); return (t && m.type !== t) ? `Timing mismatch: expected ${m.type}, got ${t}.` : null; },
     (m, c) => matchesTrigger(m, c.triggerType) ? null : `Trigger mismatch: ${c.triggerType ?? "none"}.`,
     (m, c) => passesUsageLimit(m, c) ? null : "Usage limit reached.",
+    (m, c) => passesReactionBudgetGate(m, c) ? null : "Reaction already used this turn.",
     (m, c) => passesActionEconomyGate(m, c) ? null : "Action economy does not allow this maneuver.",
     (m, c) => passesActorStateGate(m, c) ? null : "Actor state does not allow this maneuver.",
     (m, c) => getDefenseFollowUpBlockReason(m, c) || null,
@@ -150,6 +151,16 @@ function passesUsageLimit(maneuver, context) {
     );
 
     return !used.has(maneuver._id) && !used.has(maneuver.id) && !used.has(maneuver.name);
+}
+
+// The one-reaction-per-turn budget (decision #9): a reaction-timed maneuver
+// is illegal once the actor has spent its reaction this turn. Guide-not-force:
+// only blocks when the caller positively reports the reaction as spent
+// (context.reactionAvailable === false); an absent flag leaves it to the
+// window-level economy in reaction-service.
+function passesReactionBudgetGate(maneuver, context) {
+    if (maneuver.type !== "reaction") return true;
+    return context.reactionAvailable !== false;
 }
 
 function passesActionEconomyGate(maneuver, context) {

@@ -144,6 +144,7 @@ export function buildAttackReactionCandidates({
         target: attacker,
         timingType: "reaction",
         triggerType: "attack-declared",
+        reactionAvailable: context.reactionAvailable,
         distanceSquares: context.distanceSquares,
         rangeSquares: context.rangeSquares,
         actorConditions: context.targetConditions,
