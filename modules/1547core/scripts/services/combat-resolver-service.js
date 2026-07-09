@@ -21,6 +21,8 @@ import {
     buildAttackReactionCandidates as buildAttackReactionCandidatesPure,
     buildThreatReactionCandidates as buildThreatReactionCandidatesPure,
     buildDefensePassiveManeuvers,
+    buildGuardAllyDefenseSources,
+    buildShieldWallFormationSource,
 } from "../combat/reaction-candidates.mjs";
 import { buildFaceReactionCandidate } from "../combat/facing.mjs";
 import {
@@ -198,7 +200,7 @@ export async function commitConditionEscapeManeuver(actor, maneuverSource) {
 
         // Grapple Break: a successful break grants advantage on the next attack.
         let grappleBreakNote = "";
-        if (success && actorKnowsGrappleBreak(actor)) {
+        if (success && actorKnowsManeuver(actor, "Grapple Break")) {
             await grantGrappleBreakAdvantage(actor);
             grappleBreakNote = "<br><em>Grapple Break: advantage on next attack.</em>";
         }
@@ -232,9 +234,48 @@ export async function commitConditionEscapeManeuver(actor, maneuverSource) {
     return { ok: true, removed: toRemove };
 }
 
-function actorKnowsGrappleBreak(actor) {
+function actorKnowsManeuver(actor, name) {
     const items = actor?.items?.contents ?? actor?.items ?? [];
-    return items.some((i) => String(i?.name ?? "").trim().toLowerCase() === "grapple break");
+    const want = String(name ?? "").trim().toLowerCase();
+    return items.some((i) => String(i?.name ?? "").trim().toLowerCase() === want);
+}
+
+function getTokenCenter(token) {
+    if (token?.center && Number.isFinite(Number(token.center.x))) {
+        return { x: Number(token.center.x), y: Number(token.center.y) };
+    }
+    const doc = token?.document ?? token ?? {};
+    const size = globalThis.canvas?.grid?.size ?? 100;
+    return {
+        x: Number(doc.x ?? 0) + (Number(doc.width ?? 1) * size) / 2,
+        y: Number(doc.y ?? 0) + (Number(doc.height ?? 1) * size) / 2,
+    };
+}
+
+function chebyshevSquares(a, b) {
+    const size = globalThis.canvas?.grid?.size ?? 100;
+    const ca = getTokenCenter(a);
+    const cb = getTokenCenter(b);
+    return Math.max(Math.abs((cb.x - ca.x) / size), Math.abs((cb.y - ca.y) / size));
+}
+
+// Same-side (same disposition) actors within one square of the defender.
+function getAdjacentAllies(defender) {
+    const dToken = defender?.getActiveTokens?.(true)?.[0] ?? null;
+    if (!dToken) return [];
+    const disposition = Number(dToken.document?.disposition);
+    const placeables = globalThis.canvas?.tokens?.placeables ?? [];
+    const seen = new Set();
+    const allies = [];
+    for (const t of placeables) {
+        const actor = t?.actor;
+        if (!actor || actor.id === defender.id || seen.has(actor.id)) continue;
+        if (Number(t.document?.disposition) !== disposition) continue;
+        if (chebyshevSquares(dToken, t) > 1) continue;
+        seen.add(actor.id);
+        allies.push(actor);
+    }
+    return allies;
 }
 
 async function grantGrappleBreakAdvantage(actor) {
@@ -477,6 +518,25 @@ export async function resolveAttackOutcome(options = {}) {
             reactionProfile: resolveSelectedWeaponProfile(reactionWeapon, {}),
             context: pendingAttack?.metadata ?? {},
         });
+
+        // Cross-actor: adjacent same-side allies extend Guard Ally armor to the
+        // defender, and an adjacent Shield Wall ally enables the defender's
+        // Shield Wall formation bonus.
+        const allies = getAdjacentAllies(defender);
+        let hasAdjacentShieldWallAlly = false;
+        for (const ally of allies) {
+            const aw = getActorReactionWeapon(ally);
+            const guard = buildGuardAllyDefenseSources({
+                ally,
+                defender,
+                reactionWeapon: aw,
+                reactionProfile: resolveSelectedWeaponProfile(aw, {}),
+            });
+            if (guard.length) defenderPassiveDefenseManeuvers = [...defenderPassiveDefenseManeuvers, ...guard];
+            if (actorKnowsManeuver(ally, "Shield Wall")) hasAdjacentShieldWallAlly = true;
+        }
+        const formation = buildShieldWallFormationSource(defenderPassiveDefenseManeuvers, hasAdjacentShieldWallAlly);
+        if (formation.length) defenderPassiveDefenseManeuvers = [...defenderPassiveDefenseManeuvers, ...formation];
     }
 
     const result = await resolveAttackOutcomePhased({

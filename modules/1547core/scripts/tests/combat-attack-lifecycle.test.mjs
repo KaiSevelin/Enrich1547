@@ -85,19 +85,38 @@ console.log("\nattack-lifecycle.normalizeDefenseModifiers...");
 }
 
 {
-    // Passive defense maneuvers (Shield) fold in like a chosen reaction.
+    // Passive defense maneuvers fold in like a chosen reaction: Shield (armor
+    // dice), Shield Wall (defense advantage), Guard Ally (ally armor) — all as
+    // flat protection.
     const out = al.normalizeDefenseModifiers({
         defenseReaction: { effectData: { addArmorDice: 1 } },
         passiveSources: [
             { name: "Shield", effectData: { addArmorDice: 2 } },
+            { name: "Shield Wall", effectData: { grantDefenseAdvantage: 1 } },
+            { name: "Guard Ally", effectData: { addArmorDiceToAllyDefense: 1 } },
             { name: "Nope", effectData: {} },
         ],
     });
-    assert.strictEqual(out.addArmorDice, 3, "reaction +1 and passive Shield +2 stack");
+    assert.strictEqual(out.addArmorDice, 5, "reaction 1 + Shield 2 + Shield Wall adv 1 + Guard Ally 1");
     // Absent/empty passiveSources is a no-op.
     const none = al.normalizeDefenseModifiers({ defenseReaction: { effectData: { addArmorDice: 1 } } });
     assert.strictEqual(none.addArmorDice, 1);
-    console.log("  ✓ passiveSources (Shield) fold into addArmorDice; empty is a no-op");
+    console.log("  ✓ passiveSources (Shield / Shield Wall / Guard Ally) fold into addArmorDice");
+}
+
+console.log("\nreaction-candidates.buildShieldWallFormationSource...");
+{
+    const rc = await import("../combat/reaction-candidates.mjs");
+    const defenderPassives = [{ name: "Shield Wall", effectData: { grantDefenseAdvantage: 1, addArmorDiceIfAdjacentShieldWallAlly: 1 } }];
+    // No adjacent Shield Wall ally → no formation bonus.
+    assert.deepStrictEqual(rc.buildShieldWallFormationSource(defenderPassives, false), []);
+    // Adjacent Shield Wall ally → +1 armor die synthetic source.
+    const src = rc.buildShieldWallFormationSource(defenderPassives, true);
+    assert.strictEqual(src.length, 1);
+    assert.strictEqual(src[0].effectData.addArmorDice, 1);
+    // Defender without Shield Wall → nothing, even with an ally present.
+    assert.deepStrictEqual(rc.buildShieldWallFormationSource([{ name: "Shield", effectData: { addArmorDice: 2 } }], true), []);
+    console.log("  ✓ formation bonus only with defender Shield Wall + adjacent Shield Wall ally");
 }
 
 console.log("\nattack-lifecycle.normalizeAppliedAttackModifiers...");

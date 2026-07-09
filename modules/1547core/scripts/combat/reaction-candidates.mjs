@@ -198,6 +198,51 @@ export function buildDefensePassiveManeuvers({
 }
 
 /**
+ * An adjacent ally's passive "ally-attacked" defense maneuvers (Guard Ally)
+ * that they extend to the defender they are protecting. Returned as
+ * normalized maneuvers whose `addArmorDiceToAllyDefense` the caller folds
+ * into the defender's defense. `hasAdjacentAllyTarget` is stamped true
+ * because the caller only passes allies already adjacent to the defender.
+ */
+export function buildGuardAllyDefenseSources({
+    ally,
+    defender,
+    reactionWeapon,
+    reactionProfile,
+    context = {},
+} = {}) {
+    if (!ally || !defender) return [];
+    return getLegalManeuvers({
+        actor: ally,
+        weapon: reactionWeapon,
+        profile: reactionProfile,
+        target: defender,
+        timingType: "passive",
+        triggerType: "ally-attacked",
+        hasAdjacentAllyTarget: true,
+        actorConditions: context.allyConditions,
+    });
+}
+
+/**
+ * Shield Wall's conditional armor: the defender's own Shield Wall grants an
+ * extra armor die only when an adjacent ally also has Shield Wall. Pure —
+ * the caller resolves adjacency and passes the boolean. Returns a synthetic
+ * defense source (or [] when it doesn't apply).
+ */
+export function buildShieldWallFormationSource(defenderPassives = [], hasAdjacentShieldWallAlly = false) {
+    if (!hasAdjacentShieldWallAlly) return [];
+    const sw = (defenderPassives ?? []).find(
+        (m) => (Number(m?.effectData?.addArmorDiceIfAdjacentShieldWallAlly ?? 0) || 0) > 0
+    );
+    if (!sw) return [];
+    return [{
+        name: "Shield Wall (formation)",
+        effectData: { addArmorDice: Number(sw.effectData.addArmorDiceIfAdjacentShieldWallAlly) || 0 },
+    }];
+}
+
+/**
  * Reaction candidates the zone-owner may take when someone enters
  * their threat zone. Combines legal threat-reactions with the
  * overwatch candidate when applicable.

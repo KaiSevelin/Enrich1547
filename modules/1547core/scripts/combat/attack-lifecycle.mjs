@@ -156,7 +156,12 @@ export function normalizeDefenseModifiers({ defenseReaction = null, damageTakenR
     const sources = [defenseReaction, damageTakenReaction, ...(Array.isArray(passiveSources) ? passiveSources : [])].filter(Boolean);
     return sources.reduce((summary, source) => {
         const effect = source?.effectData ?? {};
+        // Flat protection contributions: armor dice (Shield), a granted defense
+        // advantage (Shield Wall — treated as one extra armor die), and an
+        // adjacent ally's Guard Ally contribution.
         summary.addArmorDice += Number(effect.addArmorDice ?? 0) || 0;
+        summary.addArmorDice += Number(effect.grantDefenseAdvantage ?? 0) || 0;
+        summary.addArmorDice += Number(effect.addArmorDiceToAllyDefense ?? 0) || 0;
         summary.reduceDamageTaken += Number(effect.reduceDamageTaken ?? 0) || 0;
         summary.lockParryingWeaponUntil = summary.lockParryingWeaponUntil
             || String(effect.lockParryingWeaponUntil ?? "").trim()
