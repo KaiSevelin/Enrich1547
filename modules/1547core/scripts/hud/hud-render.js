@@ -795,6 +795,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                     disabled: true,
                     usable: true,
                     selectable: false,
+                    CostType: candidate.source?.CostType ?? candidate.CostType ?? null,
                     costSummary: candidate.costSummary ?? candidate.CostType ?? "Reaction",
                     summaryLine: candidate.summaryLine ?? candidate.effectSummary ?? "Triggered reaction",
                     detailLine: candidate.detailLine ?? "Use from the reaction prompt when triggered.",
@@ -834,6 +835,9 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                     const subtitle = maneuver.reason || maneuver.summaryLine || maneuver.costSummary || "";
                     const detail = maneuver.detailLine || "";
                     const timingLabel = String(maneuver.timingKey ?? "maneuver").replace("-", " ");
+                    // Maneuvers that spend the scarce Core Points pool get a subtle red tinge.
+                    const usesCore = (maneuver.source?.CostType ?? maneuver.CostType) === "CorePoints";
+                    const coreClass = usesCore ? " is-core-cost" : "";
                     const content = `
                         <span class="hud-row-main">${escapeHtml(maneuver.name)}</span>
                         <span class="hud-row-sub">${escapeHtml(subtitle)}</span>
@@ -845,7 +849,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                             <li class="hud-tree-item is-escape" title="${title}">
                                 <button
                                     type="button"
-                                    class="hud-action-row is-escape${maneuver.usable ? "" : " is-muted"}"
+                                    class="hud-action-row is-escape${maneuver.usable ? "" : " is-muted"}${coreClass}"
                                     data-hud-escape-commit="${escapeHtml(maneuver.id)}"
                                     ${maneuver.usable ? "" : "disabled"}
                                 >
@@ -859,7 +863,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                             <li class="hud-tree-item" title="${title}">
                                 <button
                                     type="button"
-                                    class="hud-action-row${maneuver.selected ? " is-active" : ""}"
+                                    class="hud-action-row${maneuver.selected ? " is-active" : ""}${coreClass}"
                                     data-hud-maneuver-select="${escapeHtml(maneuver.id)}"
                                     data-hud-maneuver-timing="${escapeHtml(maneuver.timingKey)}"
                                     ${maneuver.disabled ? " disabled" : ""}
@@ -871,7 +875,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                     }
                     return `
                         <li class="hud-tree-item" title="${title}">
-                            <div class="hud-action-row${maneuver.usable ? "" : " is-muted"}">
+                            <div class="hud-action-row${maneuver.usable ? "" : " is-muted"}${coreClass}">
                                 ${content}
                             </div>
                         </li>

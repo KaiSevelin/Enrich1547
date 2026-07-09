@@ -752,6 +752,15 @@ a.enricher-1547::before {
   color: #fffaf0;
 }
 
+/* Maneuvers that spend the scarce Core Points pool: a subtle red tinge. */
+.actor-hud-1547 .hud-action-row.is-core-cost {
+  background: rgba(170, 45, 40, 0.12);
+  box-shadow: inset 3px 0 0 rgba(205, 75, 65, 0.6);
+}
+.actor-hud-1547 .hud-action-row.is-core-cost:hover {
+  background: rgba(190, 55, 48, 0.2);
+}
+
 .actor-hud-1547 .hud-tree-item.is-active {
   background: rgba(201, 171, 113, 0.12);
   border-color: rgba(201, 171, 113, 0.28);
