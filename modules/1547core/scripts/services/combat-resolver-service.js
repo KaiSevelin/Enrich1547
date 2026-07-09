@@ -320,6 +320,7 @@ function describePostManeuverEffect(effect = {}) {
     if (Number(effect.addDisadvantageToTargetDefense ?? 0) > 0) parts.push(`+${effect.addDisadvantageToTargetDefense} disadvantage to target's defence`);
     if (Number(effect.addMainDice ?? 0) > 0) parts.push(`+${effect.addMainDice} main die`);
     if (Number(effect.addDamage ?? 0) > 0) parts.push(`+${effect.addDamage} damage`);
+    if (Number(effect.recoverCorePoints ?? 0) > 0) parts.push(`Recover ${effect.recoverCorePoints} Core point`);
     const ongoing = String(effect.ongoingDamagePerTurn ?? "").trim();
     if (ongoing) parts.push(`Ongoing damage: ${ongoing}/turn (GM applies)`);
     if (effect.disarmWeapon) parts.push(`Disarm — drop ${Number(effect.placeDroppedWeaponSquares ?? 0) || 0} sq away (GM applies)`);
@@ -366,6 +367,17 @@ async function applyPostManeuverEffect(options = {}) {
             await applyPatches([{ kind: "actor.applyCondition", actorId: target.id, name: conditionName, inflictorId: actor?.id ?? "" }]);
         } catch (err) {
             console.error("1547core | post-maneuver condition apply failed", err);
+        }
+    }
+
+    // Core Restore: recover Core Points by decrementing SpentCorePoints
+    // (floored at 0) — the crit cost was already spent by planCommitPostManeuver.
+    const recoverCore = Number(effect.recoverCorePoints ?? 0) || 0;
+    if (recoverCore > 0 && actor?.id) {
+        const currentSpent = Number(actor.system?.props?.SpentCorePoints ?? 0) || 0;
+        const nextSpent = Math.max(0, currentSpent - recoverCore);
+        if (nextSpent !== currentSpent) {
+            await applyPatches([{ kind: "actor.update", actorId: actor.id, data: { "system.props.SpentCorePoints": nextSpent } }]);
         }
     }
 

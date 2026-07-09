@@ -513,12 +513,12 @@ async function resolveManualSpell(spell, sourceToken, options = {}) {
         case "Faith Manipulation": {
             const targetToken = requireTargetToken(spell, options);
             const lossRoll = await evaluateRollFormula("1d3");
-            const nextSpent = await applyNumericPropDelta(targetToken.actor, "system.props.SpentFaithPoints", lossRoll.total);
-            const available = Number(targetToken.actor.system?.props?.AvailableFaithPoints ?? 0);
+            const nextSpent = await applyNumericPropDelta(targetToken.actor, "system.props.SpentCorePoints", lossRoll.total);
+            const available = Number(targetToken.actor.system?.props?.AvailableCorePoints ?? 0);
             return {
                 ok: true,
                 outcome: "manual",
-                detailText: `Target loses ${lossRoll.total} Faith Points. Spent Faith Points is now ${nextSpent}; available faith now reads ${available}.`,
+                detailText: `Target loses ${lossRoll.total} Core Points. Spent Core Points is now ${nextSpent}; available Core now reads ${available}.`,
                 manualResolved: true,
             };
         }
