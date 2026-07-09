@@ -768,6 +768,42 @@ export function summarizeActor(actor, token, deps = {}) {
         })
         .filter(Boolean);
 
+    // Passives are always-on and auto-applied — never selectable. Surface
+    // them as informational rows: "active" when their prerequisites are met,
+    // "inactive" otherwise (e.g. Shield with no shield equipped).
+    const passiveManeuvers = maneuverEntries
+        .filter((entry) => entry.timingKey === "passive")
+        .map((entry) => {
+            const evaluation = typeof evaluateManeuverLegality === "function"
+                ? evaluateManeuverLegality(entry.source, {
+                    ...preContext,
+                    timingType: "passive",
+                    triggerType: entry.source?.triggerType ?? null,
+                })
+                : { legal: true, reasons: [] };
+            const reason = getPlayerFacingManeuverReason(evaluation.reasons?.[0] ?? "", entry.source, preContext);
+            return {
+                id: entry.itemId,
+                sourceId: entry.sourceId,
+                name: entry.name,
+                timingKey: "passive",
+                type: "passive",
+                isPassive: true,
+                state: evaluation.legal ? "active" : "inactive",
+                usable: evaluation.legal,
+                disabled: true,
+                selectable: false,
+                tooltip: buildManeuverTooltip(entry.source, reason),
+                reason: evaluation.legal ? "" : (reason || "Prerequisites not met."),
+                costSummary: evaluation.legal ? "Active" : "Inactive",
+                effectSummary: getManeuverEffectSummary(entry.source),
+                summaryLine: buildManeuverSummaryLine(entry.source),
+                detailLine: buildManeuverDetailLine(entry.source),
+                source: entry.source,
+                item: entry.item,
+            };
+        });
+
     const selectedPreManeuvers = maneuvers.filter((maneuver) => maneuver.selected).map((maneuver) => maneuver.source);
     const selectedFullTurnManeuver = fullTurnManeuvers.find((maneuver) => maneuver.selected) ?? null;
     const inventory = inventoryItems.map((item) => {
@@ -1014,6 +1050,7 @@ export function summarizeActor(actor, token, deps = {}) {
         fullTurnManeuvers,
         postManeuvers,
         escapeManeuvers,
+        passiveManeuvers,
         criticalPoints: currentCriticalPoints,
         selectedPreManeuvers,
         selectedFullTurnManeuver,

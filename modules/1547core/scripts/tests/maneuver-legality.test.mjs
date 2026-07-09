@@ -114,6 +114,27 @@ console.log("\nmaneuver-legality: core-point cost...");
     console.log("  ✓ Max-Spent-Reserved affordability, reservedResources, no-actor passthrough");
 }
 
+/* ── Passives: timing + trigger gather ────────────────────────────────── */
+console.log("\nmaneuver-legality: passive timing...");
+{
+    const flank = man({ type: "passive", triggerType: "attack-declared", name: "Flank", CostType: null });
+
+    // A passive is legal only under the passive timing + its trigger.
+    assert.strictEqual(legal(flank, { timingType: "passive", triggerType: "attack-declared" }), true);
+    assert.strictEqual(legal(flank, { timingType: "pre", triggerType: "attack-declared" }), false, "not a pre");
+    assert.ok(hasReason(flank, { timingType: "pre", triggerType: "attack-declared" }, "Timing mismatch"));
+    assert.strictEqual(legal(flank, { timingType: "passive", triggerType: "defending" }), false, "wrong phase");
+
+    // getLegalManeuvers gathers only passives matching the phase (a pre with the
+    // same trigger is excluded when the passive window is requested).
+    const gathered = getLegalManeuvers({
+        maneuvers: [flank, man({ type: "pre", triggerType: "attack-declared", name: "Nope" })],
+        timingType: "passive", triggerType: "attack-declared",
+    });
+    assert.deepStrictEqual(gathered.map((m) => m.name), ["Flank"]);
+    console.log("  ✓ passive matches only the passive timing + trigger; getLegalManeuvers gathers it");
+}
+
 /* ── Combat: range bands, action economy, getLegalManeuvers ───────────── */
 console.log("\nmaneuver-legality: range + action economy + filtering...");
 {

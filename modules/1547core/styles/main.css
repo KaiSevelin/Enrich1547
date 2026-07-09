@@ -384,6 +384,11 @@ a.enricher-1547::before {
   padding-left: 0.45rem;
 }
 
+.actor-hud-1547 .hud-maneuver-group-passive .hud-maneuver-group-header {
+  border-left: 3px solid rgba(120, 170, 140, 0.8);
+  padding-left: 0.45rem;
+}
+
 .actor-hud-1547 .hud-prompt-window {
   position: relative;
 }

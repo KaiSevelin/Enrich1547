@@ -402,7 +402,23 @@ export function buildPendingAttack({
         throw new Error(`Illegal pre-maneuver selection. ${summary}`);
     }
 
-    const mergedModifiers = mergeModifierSummaries(mergeManeuverEffects(selected), extraModifiers);
+    // Passive maneuvers (Flank, ...) auto-apply whenever legal — no
+    // selection, no cost. Fold the attacker's legal attack-phase passives
+    // in alongside the selected pre-maneuvers.
+    const passiveAttackManeuvers = getLegalManeuvers({
+        actor,
+        weapon: normalizedWeapon,
+        profile: selectedProfile,
+        target,
+        targets,
+        timingType: "passive",
+        triggerType: "attack-declared",
+        ...context,
+    });
+    const mergedModifiers = mergeModifierSummaries(
+        mergeManeuverEffects([...selected, ...passiveAttackManeuvers]),
+        extraModifiers
+    );
 
     // Total multiplier dice the defender faces: the profile's own Multiplier dice
     // plus any the attacker's pre-maneuvers add. Lets the reaction list hide
