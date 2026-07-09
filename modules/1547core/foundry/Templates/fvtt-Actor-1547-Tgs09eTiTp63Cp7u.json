@@ -2632,151 +2632,7 @@
                     "type": "panel",
                     "contents": [
                         {
-                            "key": "StrengthPoints",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 0,
-                            "editRole": 0,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "label",
-                            "size": "m-small",
-                            "icon": "dumbbell",
-                            "value": "${concat(AvailableStrengthPoints, \" / \", MaxStrengthPoints)}$ ",
-                            "prefix": "",
-                            "suffix": "",
-                            "rollMessage": "",
-                            "altRollMessage": "",
-                            "rollMessageToChat": true,
-                            "altRollMessageToChat": true,
-                            "style": "label"
-                        },
-                        {
-                            "key": "DexterityPoints",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 0,
-                            "editRole": 0,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "label",
-                            "size": "m-small",
-                            "icon": "person-running",
-                            "value": "${concat(AvailableDexterityPoints, \" / \", MaxDexterityPoints)}$ ",
-                            "prefix": "",
-                            "suffix": "",
-                            "rollMessage": "",
-                            "altRollMessage": "",
-                            "rollMessageToChat": true,
-                            "altRollMessageToChat": true,
-                            "style": "label"
-                        },
-                        {
-                            "key": "StaminaPoints",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 0,
-                            "editRole": 0,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "label",
-                            "size": "m-small",
-                            "icon": "user-injured",
-                            "value": "${concat(AvailableStaminaPoints, \" / \", MaxStaminaPoints)}$ ",
-                            "prefix": "",
-                            "suffix": "",
-                            "rollMessage": "",
-                            "altRollMessage": "",
-                            "rollMessageToChat": true,
-                            "altRollMessageToChat": true,
-                            "style": "label"
-                        },
-                        {
-                            "key": "IntelligencePoints",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 0,
-                            "editRole": 0,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "label",
-                            "size": "m-small",
-                            "icon": "brain",
-                            "value": "${concat(AvailableIntelligencePoints, \" / \", MaxIntelligencePoints)}$ ",
-                            "prefix": "",
-                            "suffix": "",
-                            "rollMessage": "",
-                            "altRollMessage": "",
-                            "rollMessageToChat": true,
-                            "altRollMessageToChat": true,
-                            "style": "label"
-                        },
-                        {
-                            "key": "FaithPoints",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 0,
-                            "editRole": 0,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "label",
-                            "size": "m-small",
-                            "icon": "person-praying",
-                            "value": "${concat(AvailableFaithPoints, \" / \", MaxFaithPoints)}$ ",
-                            "prefix": "",
-                            "suffix": "",
-                            "rollMessage": "",
-                            "altRollMessage": "",
-                            "rollMessageToChat": true,
-                            "altRollMessageToChat": true,
-                            "style": "label"
-                        },
-                        {
-                            "key": "CharismaPoints",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 0,
-                            "editRole": 0,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "label",
-                            "size": "m-small",
-                            "icon": "person-rays",
-                            "value": "${concat(AvailableCharismaPoints, \" / \", MaxCharismaPoints)}$ ",
-                            "prefix": "",
-                            "suffix": "",
-                            "rollMessage": "",
-                            "altRollMessage": "",
-                            "rollMessageToChat": true,
-                            "altRollMessageToChat": true,
-                            "style": "label"
-                        },
-                        {
-                            "key": "PowerPoints",
+                            "key": "CorePoints",
                             "colSpan": 1,
                             "rowSpan": 1,
                             "cssClass": "",
@@ -2789,8 +2645,8 @@
                             "escapeHTML": false,
                             "type": "label",
                             "size": "full-size",
-                            "icon": "hat-wizard",
-                            "value": "${concat(AvailablePowerPoints, \" / \", MaxPowerPoints)}$ ",
+                            "icon": "gem",
+                            "value": "${concat(AvailableCorePoints, \" / \", MaxCorePoints)}$ ",
                             "prefix": "",
                             "suffix": "",
                             "rollMessage": "",
@@ -2962,116 +2818,20 @@
                 "value": "${Stats_StrengthDice+Stats_StaminaDice+Stats_DexterityDice}$"
             },
             {
-                "name": "MaxStrengthPoints",
-                "value": "${Stats_StrengthDice}$"
+                "name": "MaxCorePoints",
+                "value": "${Stats_StrengthDice+Stats_StaminaDice+Stats_DexterityDice+Stats_IntelligenceDice+Stats_FaithDice+Stats_CharismaDice+Stats_PowerDice}$"
             },
             {
-                "name": "MaxStaminaPoints",
-                "value": "${Stats_StaminaDice}$"
-            },
-            {
-                "name": "MaxDexterityPoints",
-                "value": "${Stats_DexterityDice}$"
-            },
-            {
-                "name": "MaxIntelligencePoints",
-                "value": "${Stats_IntelligenceDice}$"
-            },
-            {
-                "name": "MaxFaithPoints",
-                "value": "${Stats_FaithDice}$"
-            },
-            {
-                "name": "MaxCharismaPoints",
-                "value": "${Stats_CharismaDice}$"
-            },
-            {
-                "name": "MaxPowerPoints",
-                "value": "${Stats_PowerDice}$"
-            },
-            {
-                "name": "ReservedStrengthPoints",
+                "name": "ReservedCorePoints",
                 "value": "0"
             },
             {
-                "name": "ReservedStaminaPoints",
+                "name": "SpentCorePoints",
                 "value": "0"
             },
             {
-                "name": "ReservedDexterityPoints",
-                "value": "0"
-            },
-            {
-                "name": "ReservedIntelligencePoints",
-                "value": "0"
-            },
-            {
-                "name": "ReservedFaithPoints",
-                "value": "0"
-            },
-            {
-                "name": "ReservedCharismaPoints",
-                "value": "0"
-            },
-            {
-                "name": "ReservedPowerPoints",
-                "value": "0"
-            },
-            {
-                "name": "SpentStrengthPoints",
-                "value": "0"
-            },
-            {
-                "name": "SpentStaminaPoints",
-                "value": "0"
-            },
-            {
-                "name": "SpentDexterityPoints",
-                "value": "0"
-            },
-            {
-                "name": "SpentIntelligencePoints",
-                "value": "0"
-            },
-            {
-                "name": "SpentFaithPoints",
-                "value": "0"
-            },
-            {
-                "name": "SpentCharismaPoints",
-                "value": "0"
-            },
-            {
-                "name": "SpentPowerPoints",
-                "value": "0"
-            },
-            {
-                "name": "AvailableStrengthPoints",
-                "value": "${MaxStrengthPoints - SpentStrengthPoints - ReservedStrengthPoints}$"
-            },
-            {
-                "name": "AvailableStaminaPoints",
-                "value": "${MaxStaminaPoints - SpentStaminaPoints - ReservedStaminaPoints}$"
-            },
-            {
-                "name": "AvailableDexterityPoints",
-                "value": "${MaxDexterityPoints - SpentDexterityPoints - ReservedDexterityPoints}$"
-            },
-            {
-                "name": "AvailableIntelligencePoints",
-                "value": "${MaxIntelligencePoints - SpentIntelligencePoints - ReservedIntelligencePoints}$"
-            },
-            {
-                "name": "AvailableFaithPoints",
-                "value": "${MaxFaithPoints - SpentFaithPoints - ReservedFaithPoints}$"
-            },
-            {
-                "name": "AvailableCharismaPoints",
-                "value": "${MaxCharismaPoints - SpentCharismaPoints - ReservedCharismaPoints}$"
-            },
-            {
-                "name": "AvailablePowerPoints",
-                "value": "${MaxPowerPoints - SpentPowerPoints - ReservedPowerPoints}$"
+                "name": "AvailableCorePoints",
+                "value": "${MaxCorePoints - SpentCorePoints - ReservedCorePoints}$"
             }
         ],
         "attributeBar": {},
