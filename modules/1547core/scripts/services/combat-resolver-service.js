@@ -20,6 +20,7 @@ import {
     resolveThreatReactionActor,
     buildAttackReactionCandidates as buildAttackReactionCandidatesPure,
     buildThreatReactionCandidates as buildThreatReactionCandidatesPure,
+    buildDefensePassiveManeuvers,
 } from "../combat/reaction-candidates.mjs";
 import { buildFaceReactionCandidate } from "../combat/facing.mjs";
 import {
@@ -390,8 +391,26 @@ export async function executeSafeCounterattack(options = {}) {
     }, runPhases);
 }
 export async function resolveAttackOutcome(options = {}) {
+    // Gather the defender's always-on passive defense maneuvers (Shield, ...)
+    // here, where the defender's equipped reaction weapon resolves — the
+    // weapon gate needs it (Shield requires a Shield-trait weapon).
+    const pendingAttack = options.pendingAttack ?? null;
+    const defender = pendingAttack?.target ?? null;
+    let defenderPassiveDefenseManeuvers = [];
+    if (defender) {
+        const reactionWeapon = getActorReactionWeapon(defender);
+        defenderPassiveDefenseManeuvers = buildDefensePassiveManeuvers({
+            defender,
+            attacker: pendingAttack?.actor ?? null,
+            reactionWeapon,
+            reactionProfile: resolveSelectedWeaponProfile(reactionWeapon, {}),
+            context: pendingAttack?.metadata ?? {},
+        });
+    }
+
     const result = await resolveAttackOutcomePhased({
         ...options,
+        defenderPassiveDefenseManeuvers,
         buildDefaultDefenseRollSummary,
     }, runPhases);
 

@@ -165,6 +165,38 @@ export function buildAttackReactionCandidates({
 }
 
 /**
+ * The defender's always-on passive defense maneuvers (Shield, ...) when
+ * an attack is declared against them. Returned as normalized maneuvers so
+ * the caller can fold their effectData into the defense modifiers.
+ *
+ * Weapon-gated passives are STRICTLY gated (Shield requires a Shield-trait
+ * weapon and passesWeaponGate fails closed when no weapon resolves), so the
+ * caller must pass the defender's resolved reaction weapon/profile —
+ * exactly as buildAttackReactionCandidates does for reactions.
+ */
+export function buildDefensePassiveManeuvers({
+    defender,
+    attacker,
+    reactionWeapon,
+    reactionProfile,
+    context = {},
+} = {}) {
+    if (!defender) return [];
+    return getLegalManeuvers({
+        actor: defender,
+        weapon: reactionWeapon,
+        profile: reactionProfile,
+        target: attacker,
+        timingType: "passive",
+        triggerType: "defending",
+        distanceSquares: context.distanceSquares,
+        rangeSquares: context.rangeSquares,
+        actorConditions: context.targetConditions,
+        targetConditions: context.actorConditions,
+    });
+}
+
+/**
  * Reaction candidates the zone-owner may take when someone enters
  * their threat zone. Combines legal threat-reactions with the
  * overwatch candidate when applicable.

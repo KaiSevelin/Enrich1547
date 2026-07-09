@@ -474,6 +474,7 @@ export async function resolveAttackOutcomePhased({
     defenderPostChoice = null,
     attackerPostChoice = null,
     currentDamageTakenReaction = null,
+    defenderPassiveDefenseManeuvers = [],
     buildDefaultDefenseRollSummary,
 } = {}, run) {
     if (!pendingAttack) throw new Error("Missing pending attack.");
@@ -489,6 +490,7 @@ export async function resolveAttackOutcomePhased({
     const defenseModifiers = normalizeDefenseModifiers({
         defenseReaction,
         damageTakenReaction: currentDamageTakenReaction,
+        passiveSources: defenderPassiveDefenseManeuvers,
     });
     const normalizedAttackRoll = {
         ...applyMultiplier(normalizeRollSummary(attackRoll)),

@@ -84,6 +84,22 @@ console.log("\nattack-lifecycle.normalizeDefenseModifiers...");
     console.log("  ✓ collects both reactions; nulls collapse cleanly");
 }
 
+{
+    // Passive defense maneuvers (Shield) fold in like a chosen reaction.
+    const out = al.normalizeDefenseModifiers({
+        defenseReaction: { effectData: { addArmorDice: 1 } },
+        passiveSources: [
+            { name: "Shield", effectData: { addArmorDice: 2 } },
+            { name: "Nope", effectData: {} },
+        ],
+    });
+    assert.strictEqual(out.addArmorDice, 3, "reaction +1 and passive Shield +2 stack");
+    // Absent/empty passiveSources is a no-op.
+    const none = al.normalizeDefenseModifiers({ defenseReaction: { effectData: { addArmorDice: 1 } } });
+    assert.strictEqual(none.addArmorDice, 1);
+    console.log("  ✓ passiveSources (Shield) fold into addArmorDice; empty is a no-op");
+}
+
 console.log("\nattack-lifecycle.normalizeAppliedAttackModifiers...");
 assert.deepStrictEqual(
     al.normalizeAppliedAttackModifiers({ addMainDice: 2, addMoveSquares: 3 }),

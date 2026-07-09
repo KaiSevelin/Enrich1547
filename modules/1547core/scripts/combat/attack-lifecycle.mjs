@@ -149,8 +149,11 @@ export function mergeManeuverEffects(maneuvers) {
     );
 }
 
-export function normalizeDefenseModifiers({ defenseReaction = null, damageTakenReaction = null } = {}) {
-    const sources = [defenseReaction, damageTakenReaction].filter(Boolean);
+export function normalizeDefenseModifiers({ defenseReaction = null, damageTakenReaction = null, passiveSources = [] } = {}) {
+    // passiveSources are the defender's always-on passive defense maneuvers
+    // (Shield, ...) — they fold in exactly like a chosen defense reaction,
+    // reading the same effectData keys (addArmorDice / reduceDamageTaken).
+    const sources = [defenseReaction, damageTakenReaction, ...(Array.isArray(passiveSources) ? passiveSources : [])].filter(Boolean);
     return sources.reduce((summary, source) => {
         const effect = source?.effectData ?? {};
         summary.addArmorDice += Number(effect.addArmorDice ?? 0) || 0;
