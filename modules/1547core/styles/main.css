@@ -798,18 +798,51 @@ a.enricher-1547::before {
   color: #fffaf0;
 }
 
-/* Maneuvers that spend the scarce Core Points pool: a subtle red tinge. */
-.actor-hud-1547 .hud-action-row.is-core-cost {
-  background: rgba(170, 45, 40, 0.12);
-  box-shadow: inset 3px 0 0 rgba(205, 75, 65, 0.6);
+/* Compact single-line rows shared by the Attack pre-maneuvers, the Maneuvers
+   tab and the Skills tab: name on the left, a trailing Core icon or dice value
+   on the right, all boxes the same small uniform height in two columns. */
+.actor-hud-1547 .hud-tree-item:has(> .hud-maneuver-compact) {
+  padding: 0.14rem 0.34rem;
 }
-.actor-hud-1547 .hud-action-row.is-core-cost:hover {
-  background: rgba(190, 55, 48, 0.2);
+.actor-hud-1547 .hud-maneuver-compact {
+  min-height: 1.55rem;
+  gap: 0.3rem;
+}
+.actor-hud-1547 .hud-maneuver-compact .hud-row-main {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.72rem;
+}
+.actor-hud-1547 .hud-maneuver-compact .hud-tree-value {
+  flex: 0 0 auto;
 }
 
-.actor-hud-1547 .hud-tree-item.is-active {
-  background: rgba(201, 171, 113, 0.12);
-  border-color: rgba(201, 171, 113, 0.28);
+/* The Core-point cost icon that trails a maneuver name. */
+.actor-hud-1547 .hud-core-icon {
+  flex: 0 0 auto;
+  font-size: 0.62rem;
+  color: rgba(224, 96, 86, 0.95);
+}
+
+/* Maneuvers that spend the scarce Core Points pool: tint the whole box a
+   subtle transparent red rather than drawing a left stripe. */
+.actor-hud-1547 .hud-tree-item:has(> .hud-action-row.is-core-cost) {
+  background: rgba(170, 45, 40, 0.14);
+  border-color: rgba(205, 75, 65, 0.3);
+}
+.actor-hud-1547 .hud-tree-item:has(> .hud-action-row.is-core-cost:hover) {
+  background: rgba(190, 55, 48, 0.22);
+}
+
+/* A selected maneuver is shown by tinting its box gold (no "SELECTED" text).
+   Placed after the core-cost rule so a selected core maneuver reads as
+   selected. */
+.actor-hud-1547 .hud-tree-item.is-active,
+.actor-hud-1547 .hud-tree-item:has(> .hud-action-row.is-active) {
+  background: rgba(201, 171, 113, 0.2);
+  border-color: rgba(201, 171, 113, 0.5);
 }
 
 .actor-hud-1547 .hud-action-row .hud-row-sub {

@@ -60,46 +60,44 @@ function buildStatsTree(data, deps = {}) {
     `;
 }
 
-function buildCombatActionPanel(data, deps = {}, activeView = "equipped") {
-    const { escapeHtml } = deps;
-    const action = data.currentAction ?? {};
-    const maneuverText = (action.preManeuverNames ?? []).length ? action.preManeuverNames.join(", ") : "None";
-    const fullTurnText = action.fullTurnName || "None";
-    const stagedText = [action.stagedAttackDice, action.stagedSkillDice].filter(Boolean).join(" | ") || "None";
-    const targetText = action.targetName || "No target";
-    const previewText = action.attackPreview || "No attack preview";
+// Compact maneuver row shared by the Attack (pre-maneuvers) and Maneuvers
+// tabs: shows only the name + a Core-point icon when it costs Core. Selected
+// and core-cost states are shown by background tint (CSS), not text.
+function renderManeuverRow(maneuver, escapeHtml) {
+    const usesCore = (maneuver.source?.CostType ?? maneuver.CostType) === "CorePoints";
+    const coreIcon = usesCore
+        ? `<i class="fa-solid fa-gem hud-core-icon" title="Costs 1 Core Point" aria-hidden="true"></i>`
+        : "";
+    const coreClass = usesCore ? " is-core-cost" : "";
+    const title = escapeHtml(maneuver.tooltip || maneuver.name || "");
+    const content = `<span class="hud-row-main">${escapeHtml(maneuver.name)}</span>${coreIcon}`;
+    if (maneuver.isEscape) {
+        return `
+            <li class="hud-tree-item is-escape" title="${title}">
+                <button type="button" class="hud-action-row hud-maneuver-compact is-escape${maneuver.usable ? "" : " is-muted"}${coreClass}"
+                    data-hud-escape-commit="${escapeHtml(maneuver.id)}"${maneuver.usable ? "" : " disabled"}>
+                    ${content}
+                </button>
+            </li>
+        `;
+    }
+    if (maneuver.selectable) {
+        return `
+            <li class="hud-tree-item" title="${title}">
+                <button type="button" class="hud-action-row hud-maneuver-compact${maneuver.selected ? " is-active" : ""}${coreClass}"
+                    data-hud-maneuver-select="${escapeHtml(maneuver.id)}"
+                    data-hud-maneuver-timing="${escapeHtml(maneuver.timingKey)}"${maneuver.disabled ? " disabled" : ""}>
+                    ${content}
+                </button>
+            </li>
+        `;
+    }
     return `
-        <div class="hud-tree-block hud-attack-setup">
-            <div class="hud-section-title">Attack Setup</div>
-            <div class="hud-current-action-grid">
-                <div class="hud-current-action-row">
-                    <span class="hud-tree-key">Target</span>
-                    <span class="hud-tree-value">${escapeHtml(targetText)}</span>
-                </div>
-                <div class="hud-current-action-row">
-                    <span class="hud-tree-key">Pre Maneuvers</span>
-                    <span class="hud-tree-value">${escapeHtml(maneuverText)}</span>
-                </div>
-                <div class="hud-current-action-row">
-                    <span class="hud-tree-key">Full Turn</span>
-                    <span class="hud-tree-value">${escapeHtml(fullTurnText)}</span>
-                </div>
-                <div class="hud-current-action-row">
-                    <span class="hud-tree-key">Staged Dice</span>
-                    <span class="hud-tree-value">${escapeHtml(stagedText)}</span>
-                </div>
-                <div class="hud-current-action-row hud-current-action-row-preview">
-                    <span class="hud-tree-key">Attack Preview</span>
-                    <span class="hud-tree-value">${escapeHtml(previewText)}</span>
-                </div>
+        <li class="hud-tree-item" title="${title}">
+            <div class="hud-action-row hud-maneuver-compact${maneuver.usable ? "" : " is-muted"}${coreClass}">
+                ${content}
             </div>
-            <div class="hud-setup-actions">
-                <button type="button" class="hud-mini-button${activeView === "equipped" ? " is-active" : ""}" data-hud-category="equipped">Attack</button>
-                <button type="button" class="hud-mini-button${activeView === "maneuvers" ? " is-active" : ""}" data-hud-category="maneuvers">Maneuvers</button>
-                <button type="button" class="hud-mini-button${activeView === "dice" ? " is-active" : ""}" data-hud-category="dice">Dice</button>
-                <button type="button" class="hud-mini-button${activeView === "skills" ? " is-active" : ""}" data-hud-category="skills">Skills</button>
-            </div>
-        </div>
+        </li>
     `;
 }
 
@@ -258,20 +256,7 @@ function buildEquippedTree(data, deps = {}) {
     // Pre-attack maneuvers, selectable here so the Attack tab is "what to do
     // this turn": pick a weapon, pick pre maneuvers, attack.
     const preManeuverRows = (data.maneuvers ?? []).length
-        ? buildTreeList(data.maneuvers, (m) => `
-            <li class="hud-tree-item" title="${escapeHtml(m.tooltip || m.name)}">
-                <button
-                    type="button"
-                    class="hud-action-row${m.selected ? " is-active" : ""}${(m.source?.CostType === "CorePoints") ? " is-core-cost" : ""}"
-                    data-hud-maneuver-select="${escapeHtml(m.id)}"
-                    data-hud-maneuver-timing="${escapeHtml(m.timingKey)}"
-                    ${m.disabled ? " disabled" : ""}
-                >
-                    <span class="hud-row-main">${escapeHtml(m.name)}</span>
-                    <span class="hud-tree-value">${escapeHtml(m.selected ? "Selected" : (m.costSummary || ""))}</span>
-                </button>
-            </li>
-        `)
+        ? buildTreeList(data.maneuvers, (m) => renderManeuverRow(m, escapeHtml))
         : `<li class="hud-empty-row">No pre maneuvers</li>`;
 
     return `
@@ -551,8 +536,10 @@ function buildSummaryStrip(data, deps = {}) {
     const corePool = (data.pointPools ?? []).find((p) => p.key === "CorePoints") ?? (data.pointPools ?? [])[0] ?? null;
     const conditions = data.conditions ?? [];
     const rc = data.weaponRollContext ?? data.rollContext ?? {};
-    const moveDisplay = Number.isFinite(Number(data.movement)) ? String(data.movement)
-        : (Number.isFinite(Number(data.movementBudget)) ? String(data.movementBudget) : "-");
+    // movement (remaining) can be null out of combat; fall back to the budget,
+    // and never render a literal "null".
+    const moveVal = [data.movement, data.movementBudget].find((v) => v != null && Number.isFinite(Number(v)));
+    const moveDisplay = moveVal != null ? String(moveVal) : "-";
 
     const cells = [
         { icon: "fa-heart", value: `${data.hitPoints ?? "-"}/${data.maxHitPoints ?? "-"}`, tip: "Hit Points (current / max)" },
@@ -701,57 +688,6 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                 const filtered = allManeuvers
                     .filter((maneuver) => maneuver?.isEscape || maneuver?.isPassive || (deps.matchesManeuverFilter ? deps.matchesManeuverFilter(maneuver, activeFilter) : true))
                     .filter((maneuver) => maneuver?.isEscape || maneuver?.isPassive || showAll || maneuver?.usable === true);
-                const renderManeuverRow = (maneuver) => {
-                    const title = escapeHtml(maneuver.tooltip || "");
-                    const subtitle = maneuver.reason || maneuver.summaryLine || maneuver.costSummary || "";
-                    const detail = maneuver.detailLine || "";
-                    const timingLabel = String(maneuver.timingKey ?? "maneuver").replace("-", " ");
-                    // Maneuvers that spend the scarce Core Points pool get a subtle red tinge.
-                    const usesCore = (maneuver.source?.CostType ?? maneuver.CostType) === "CorePoints";
-                    const coreClass = usesCore ? " is-core-cost" : "";
-                    const content = `
-                        <span class="hud-row-main">${escapeHtml(maneuver.name)}</span>
-                        <span class="hud-row-sub">${escapeHtml(subtitle)}</span>
-                        ${detail ? `<span class="hud-row-sub">${escapeHtml(detail)}</span>` : ""}
-                        <span class="hud-tree-value">${escapeHtml(maneuver.selected ? "Selected" : (maneuver.costSummary || timingLabel))}</span>
-                    `;
-                    if (maneuver.isEscape) {
-                        return `
-                            <li class="hud-tree-item is-escape" title="${title}">
-                                <button
-                                    type="button"
-                                    class="hud-action-row is-escape${maneuver.usable ? "" : " is-muted"}${coreClass}"
-                                    data-hud-escape-commit="${escapeHtml(maneuver.id)}"
-                                    ${maneuver.usable ? "" : "disabled"}
-                                >
-                                    ${content}
-                                </button>
-                            </li>
-                        `;
-                    }
-                    if (maneuver.selectable) {
-                        return `
-                            <li class="hud-tree-item" title="${title}">
-                                <button
-                                    type="button"
-                                    class="hud-action-row${maneuver.selected ? " is-active" : ""}${coreClass}"
-                                    data-hud-maneuver-select="${escapeHtml(maneuver.id)}"
-                                    data-hud-maneuver-timing="${escapeHtml(maneuver.timingKey)}"
-                                    ${maneuver.disabled ? " disabled" : ""}
-                                >
-                                    ${content}
-                                </button>
-                            </li>
-                        `;
-                    }
-                    return `
-                        <li class="hud-tree-item" title="${title}">
-                            <div class="hud-action-row${maneuver.usable ? "" : " is-muted"}${coreClass}">
-                                ${content}
-                            </div>
-                        </li>
-                    `;
-                };
                 const timingMeta = {
                     escape: { label: "Escape", tone: "escape" },
                     reaction: { label: "Reaction", tone: "reaction" },
@@ -776,7 +712,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                                     <span class="hud-maneuver-group-count">${escapeHtml(entries.length)}</span>
                                 </div>
                                 <ul class="hud-list hud-tree-list hud-two-col">
-                                    ${buildTreeList(entries, renderManeuverRow)}
+                                    ${buildTreeList(entries, (m) => renderManeuverRow(m, escapeHtml))}
                                 </ul>
                             </div>
                         `;
@@ -794,9 +730,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                         </div>
                     `
                     : "";
-                const workspaceBlock = data.isCombatActive ? buildCombatActionPanel(data, deps, "maneuvers") : "";
                 return `
-                    ${workspaceBlock}
                     <div class="hud-tree-block hud-inventory-filter-bar">
                         <label class="hud-counter-roll-config">
                             <span>Filter</span>
@@ -820,18 +754,21 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
             })();
         case "dice":
             return buildDiceTree(data, deps);
-        case "skills":
+        case "skills": {
+            // Only rollable skills (those with a dice formula) belong here; the
+            // umbrella entries like "Combat - Melee" carry no roll of their own.
+            const rollableSkills = (data.skills || []).filter((skill) => skill.formula);
             return `${buildChecksHeader(data, deps)}<ul class="hud-list hud-tree-list hud-list-scroll hud-skill-scroll hud-two-col">
-                ${buildTreeList(data.skills, (skill) => `
+                ${buildTreeList(rollableSkills, (skill) => `
                     <li class="hud-tree-item">
-                        <button type="button" class="hud-action-row" data-hud-skill="${escapeHtml(skill.name)}" title="${escapeHtml(skill.tooltip || skill.name)}">
+                        <button type="button" class="hud-action-row hud-maneuver-compact" data-hud-skill="${escapeHtml(skill.name)}" title="${escapeHtml(skill.tooltip || skill.name)}">
                             <span class="hud-row-main">${escapeHtml(skill.name)}</span>
-                            <span class="hud-row-sub">${escapeHtml([skill.group, skill.linkedStat, `L${skill.currentLevel}`].filter(Boolean).join(" - "))}</span>
-                            ${skill.formula ? `<span class="hud-tree-value">${escapeHtml(skill.formula)}</span>` : ""}
+                            <span class="hud-tree-value">${escapeHtml(skill.formula)}</span>
                         </button>
                     </li>
                 `)}
             </ul>`;
+        }
         default:
             return buildStatsTree(data, deps);
     }
