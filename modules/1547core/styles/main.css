@@ -325,6 +325,17 @@ a.enricher-1547::before {
   font-variant-numeric: tabular-nums;
 }
 
+/* Generic two-column layout for lists/blocks (Attack, Maneuvers, Skills). */
+.actor-hud-1547 .hud-two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  align-items: start;
+}
+.actor-hud-1547 .hud-two-col > * {
+  min-width: 0;
+}
+
 .actor-hud-1547 .hud-current-action {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.025));
 }

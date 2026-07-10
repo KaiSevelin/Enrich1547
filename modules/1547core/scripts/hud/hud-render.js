@@ -163,8 +163,16 @@ function buildEquippedTree(data, deps = {}) {
                 if (Number(weapon.maxRange) > 0) parts.push(`<span class="hud-pill"><span class="hud-pill-label">Max</span><span class="hud-pill-value">${escapeHtml(weapon.maxRange)}</span></span>`);
                 return parts.join("");
             })();
+            // Multi-mode weapons (e.g. Rapier: Bind / Thrust) list each mode's
+            // damage dice in the hover tooltip.
+            const modeTip = (weapon.attackProfiles ?? []).length > 1
+                ? weapon.attackProfiles
+                    .map((p) => `${p.label}: ${(p.dice ?? []).join(", ") || p.formula || "-"}`)
+                    .join("\n")
+                : "";
+            const weaponTooltip = [weapon.tooltip || weapon.name, modeTip].filter(Boolean).join("\n");
             return `
-                <li class="hud-tree-item hud-weapon-card" title="${escapeHtml(weapon.tooltip || weapon.name)}">
+                <li class="hud-tree-item hud-weapon-card" title="${escapeHtml(weaponTooltip)}">
                     <div class="hud-weapon-title-row">
                         <div class="hud-row-main">${escapeHtml(`${weapon.name}${ammoSuffix}`)}</div>
                         ${inlineProfilePicker}
@@ -247,44 +255,39 @@ function buildEquippedTree(data, deps = {}) {
         `)
         : `<li class="hud-empty-row">No equipped armor</li>`;
 
-    const equippedItemGroups = groupEntries(
-        data.equippedInventory.filter((item) => item.itemKind !== "weapon" && item.itemKind !== "armor"),
-        (item) => item.group || "Other Gear"
-    );
-    const equippedItemRows = buildGroupedTree(equippedItemGroups, (item) => {
-        const status = [item.type, item.equipped ? "Equipped" : "", item.consumable ? "Usable" : ""].filter(Boolean);
-        return `
-            <li class="hud-tree-item" title="${escapeHtml(item.tooltip || item.name)}">
-                <div class="hud-row-main">${escapeHtml(item.name)}</div>
-                ${status.length ? `<ul class="hud-tree-children"><li>${escapeHtml(status.join(" - "))}</li></ul>` : ""}
-                <div class="hud-weapon-action-strip">
-                    <button
-                        type="button"
-                        class="hud-mini-button"
-                        data-hud-item-unequip="${escapeHtml(item.id)}"
-                    >
-                        Unequip
-                    </button>
-                </div>
+    // Pre-attack maneuvers, selectable here so the Attack tab is "what to do
+    // this turn": pick a weapon, pick pre maneuvers, attack.
+    const preManeuverRows = (data.maneuvers ?? []).length
+        ? buildTreeList(data.maneuvers, (m) => `
+            <li class="hud-tree-item" title="${escapeHtml(m.tooltip || m.name)}">
+                <button
+                    type="button"
+                    class="hud-action-row${m.selected ? " is-active" : ""}${(m.source?.CostType === "CorePoints") ? " is-core-cost" : ""}"
+                    data-hud-maneuver-select="${escapeHtml(m.id)}"
+                    data-hud-maneuver-timing="${escapeHtml(m.timingKey)}"
+                    ${m.disabled ? " disabled" : ""}
+                >
+                    <span class="hud-row-main">${escapeHtml(m.name)}</span>
+                    <span class="hud-tree-value">${escapeHtml(m.selected ? "Selected" : (m.costSummary || ""))}</span>
+                </button>
             </li>
-        `;
-    }, deps, { scroll: true });
-
-    const attackSetupBlock = data.isCombatActive ? buildCombatActionPanel(data, deps, "equipped") : "";
+        `)
+        : `<li class="hud-empty-row">No pre maneuvers</li>`;
 
     return `
-        ${attackSetupBlock}
-        <div class="hud-tree-block">
-            <div class="hud-section-title">Equipped Weapons</div>
-            <ul class="hud-list hud-tree-list">${equippedWeaponRows}</ul>
+        <div class="hud-two-col">
+            <div class="hud-tree-block">
+                <div class="hud-section-title">Equipped Weapons</div>
+                <ul class="hud-list hud-tree-list">${equippedWeaponRows}</ul>
+            </div>
+            <div class="hud-tree-block">
+                <div class="hud-section-title">Equipped Armor</div>
+                <ul class="hud-list hud-tree-list">${equippedArmorRows}</ul>
+            </div>
         </div>
         <div class="hud-tree-block">
-            <div class="hud-section-title">Equipped Armor</div>
-            <ul class="hud-list hud-tree-list">${equippedArmorRows}</ul>
-        </div>
-        <div class="hud-tree-block">
-            <div class="hud-section-title">Equipped Gear</div>
-            <div class="hud-group-stack">${equippedItemRows}</div>
+            <div class="hud-section-title">Pre Maneuvers</div>
+            <ul class="hud-list hud-tree-list hud-two-col">${preManeuverRows}</ul>
         </div>
     `;
 }
@@ -336,7 +339,28 @@ function buildInventoryTree(data, deps = {}) {
         `;
     }, deps, { scroll: true });
 
+    const equippedRows = (data.equippedInventory ?? []).length
+        ? buildTreeList(data.equippedInventory, (item) => {
+            const status = [item.type, item.consumable ? "Usable" : ""].filter(Boolean);
+            return `
+                <li class="hud-tree-item" title="${escapeHtml(item.tooltip || item.name)}">
+                    <div class="hud-row-main">${escapeHtml(item.name)}</div>
+                    ${status.length ? `<ul class="hud-tree-children"><li>${escapeHtml(status.join(" - "))}</li></ul>` : ""}
+                    ${item.isVirtualDefault ? "" : `
+                        <div class="hud-weapon-action-strip">
+                            <button type="button" class="hud-mini-button" data-hud-item-unequip="${escapeHtml(item.id)}">Unequip</button>
+                        </div>
+                    `}
+                </li>
+            `;
+        })
+        : `<li class="hud-empty-row">No equipped items</li>`;
+
     return `
+        <div class="hud-tree-block">
+            <div class="hud-section-title">Equipped</div>
+            <ul class="hud-list hud-tree-list">${equippedRows}</ul>
+        </div>
         ${filterControl}
         <div class="hud-tree-block">
             <div class="hud-section-title">Inventory</div>
@@ -799,9 +823,11 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                 // criticals when the actor has critical points to spend, preparations
                 // while in combat, else all. The filter follows context changes; a
                 // manual pick sticks until the context next changes.
+                // Default view shows all maneuvers (pre + full-turn to the fore,
+                // passives in their own group); reaction/critical windows still
+                // switch the filter contextually.
                 const contextualFilter = reactionWindow ? "reaction"
-                    : (Number(data.criticalPoints ?? 0) > 0 ? "post"
-                        : (data.isCombatActive === true ? "pre" : "all"));
+                    : (Number(data.criticalPoints ?? 0) > 0 ? "post" : "all");
                 if (HUD_STATE.maneuverFilterContext !== contextualFilter) {
                     HUD_STATE.maneuverFilter = contextualFilter;
                     HUD_STATE.maneuverFilterContext = contextualFilter;
@@ -926,7 +952,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                                     <span class="hud-maneuver-group-title">${escapeHtml(meta.label)}</span>
                                     <span class="hud-maneuver-group-count">${escapeHtml(entries.length)}</span>
                                 </div>
-                                <ul class="hud-list hud-tree-list">
+                                <ul class="hud-list hud-tree-list hud-two-col">
                                     ${buildTreeList(entries, renderManeuverRow)}
                                 </ul>
                             </div>
@@ -972,7 +998,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
         case "dice":
             return buildDiceTree(data, deps);
         case "skills":
-            return `${buildChecksHeader(data, deps)}<ul class="hud-list hud-tree-list hud-list-scroll hud-skill-scroll">
+            return `${buildChecksHeader(data, deps)}<ul class="hud-list hud-tree-list hud-list-scroll hud-skill-scroll hud-two-col">
                 ${buildTreeList(data.skills, (skill) => `
                     <li class="hud-tree-item">
                         <button type="button" class="hud-action-row" data-hud-skill="${escapeHtml(skill.name)}" title="${escapeHtml(skill.tooltip || skill.name)}">
