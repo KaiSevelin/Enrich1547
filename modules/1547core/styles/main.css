@@ -709,6 +709,23 @@ a.enricher-1547::before {
   gap: 0.18rem;
 }
 
+/* A two-column list. Higher specificity than the base `.hud-list`
+   (`display:flex`) which otherwise wins by source order and forces one column.
+   `align-items: stretch` makes the two boxes in each row share a height so the
+   boxes look uniform. */
+.actor-hud-1547 .hud-list.hud-two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.3rem;
+  align-items: stretch;
+}
+.actor-hud-1547 .hud-list.hud-two-col > .hud-tree-item {
+  display: flex;
+}
+.actor-hud-1547 .hud-list.hud-two-col > .hud-tree-item > .hud-maneuver-compact {
+  width: 100%;
+}
+
 .actor-hud-1547 .hud-stat-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

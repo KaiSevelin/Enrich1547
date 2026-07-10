@@ -82,9 +82,11 @@ function renderManeuverRow(maneuver, escapeHtml) {
         `;
     }
     if (maneuver.selectable) {
+        // Grey out maneuvers that can't currently be performed (illegal/disabled).
+        const mutedClass = (maneuver.disabled || maneuver.usable === false) ? " is-muted" : "";
         return `
             <li class="hud-tree-item" title="${title}">
-                <button type="button" class="hud-action-row hud-maneuver-compact${maneuver.selected ? " is-active" : ""}${coreClass}"
+                <button type="button" class="hud-action-row hud-maneuver-compact${maneuver.selected ? " is-active" : ""}${mutedClass}${coreClass}"
                     data-hud-maneuver-select="${escapeHtml(maneuver.id)}"
                     data-hud-maneuver-timing="${escapeHtml(maneuver.timingKey)}"${maneuver.disabled ? " disabled" : ""}>
                     ${content}

@@ -145,15 +145,19 @@ export function registerMovementReactions() {
     };
     Hooks.on("canvasReady", seed);
 
-    Hooks.on("updateToken", (tokenDoc, changes) => {
+    Hooks.on("updateToken", (tokenDoc) => {
         try {
             const id = tokenDoc?.id;
             if (!id) return;
-            const moved = ("x" in (changes ?? {})) || ("y" in (changes ?? {}));
             const newPos = { x: Number(tokenDoc.x) || 0, y: Number(tokenDoc.y) || 0 };
             const oldPos = lastPos.get(id);
             lastPos.set(id, newPos);
-            if (!moved || !oldPos) return;
+            // Detect movement by the actual position delta rather than by whether
+            // the update diff carried x/y. In Foundry v13 a drag can update the
+            // token without surfacing x/y at the top level of the change diff,
+            // which previously left the movement budget un-decremented.
+            const moved = !!oldPos && (oldPos.x !== newPos.x || oldPos.y !== newPos.y);
+            if (!moved) return;
             if (!globalThis.game?.user?.isGM) return; // GM is the authoritative trigger
             const combat = globalThis.game?.combat;
             if (!combat?.started) return;
