@@ -544,6 +544,36 @@ function getCategoryDefinitions(data) {
     ];
 }
 
+// Compact icon+tooltip summary shown under the portrait on every tab: HP,
+// Core points, Moves, Conditions, Risk dice and Advantage dice.
+function buildSummaryStrip(data, deps = {}) {
+    const { escapeHtml } = deps;
+    const corePool = (data.pointPools ?? []).find((p) => p.key === "CorePoints") ?? (data.pointPools ?? [])[0] ?? null;
+    const conditions = data.conditions ?? [];
+    const rc = data.weaponRollContext ?? data.rollContext ?? {};
+    const moveDisplay = Number.isFinite(Number(data.movement)) ? String(data.movement)
+        : (Number.isFinite(Number(data.movementBudget)) ? String(data.movementBudget) : "-");
+
+    const cells = [
+        { icon: "fa-heart", value: `${data.hitPoints ?? "-"}/${data.maxHitPoints ?? "-"}`, tip: "Hit Points (current / max)" },
+        { icon: "fa-gem", value: corePool?.display ?? "-", tip: "Core Points (available / max)" },
+        { icon: "fa-person-running", value: moveDisplay, tip: "Movement remaining (squares)" },
+        { icon: "fa-heart-pulse", value: String(conditions.length), tip: `Conditions: ${conditions.length ? conditions.join(", ") : "none"}` },
+        { icon: "fa-triangle-exclamation", value: String(Number(rc.riskDice ?? 0) || 0), tip: "Risk dice on your next roll" },
+        { icon: "fa-star", value: String(Number(rc.advantageDice ?? 0) || 0), tip: "Advantage dice on your next roll" },
+    ];
+    return `
+        <section class="hud-section hud-summary-strip">
+            ${cells.map((c) => `
+                <div class="hud-summary-cell" title="${escapeHtml(c.tip)}">
+                    <i class="fa-solid ${c.icon}" aria-hidden="true"></i>
+                    <span class="hud-summary-value">${escapeHtml(c.value)}</span>
+                </div>
+            `).join("")}
+        </section>
+    `;
+}
+
 function buildCategoryContent(data, activeCategory, deps = {}) {
     const { escapeHtml, HUD_STATE, getStatPreview } = deps;
     switch (activeCategory) {
