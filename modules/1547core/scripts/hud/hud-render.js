@@ -427,11 +427,7 @@ function buildCombatStateStrip(data, deps = {}) {
     const conditionSummary = (data.conditions ?? []).length ? data.conditions.join(", ") : "None";
     const items = [
         { label: "HP", value: hpDisplay },
-        {
-            label: "Moves",
-            value: (Number.isFinite(Number(data.movesThisTurn)) ? String(data.movesThisTurn) : "-")
-                + (data.moveDoubleAvailable ? " · Core Speed ×2" : ""),
-        },
+        { label: "Moves", value: Number.isFinite(Number(data.movesThisTurn)) ? data.movesThisTurn : "-" },
         { label: "Attacks", value: Number.isFinite(Number(data.attacksRemaining)) ? data.attacksRemaining : "-" },
         { label: "Full Turn", value: String(data.fullTurnAvailable ?? "Unknown") },
         { label: "Risk", value: data.riskAndCritical?.find((entry) => entry.label === "RISK")?.display ?? "-" },
