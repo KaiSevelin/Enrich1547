@@ -130,4 +130,20 @@ console.log("\nchargen-template-parse: legacy single-reward backstop...");
     console.log("  ✓ legacy single-reward item parses (no ReferenceError); reads top-level transitions");
 }
 
+console.log("\nchargen: stat-name change type tolerance...");
+{
+    // A stat name used directly as a change Type (the "Type: Faith" authoring
+    // shorthand in some career templates) normalizes to a stat change instead
+    // of crashing schema validation with `Unknown change type "faith"`.
+    assert.strictEqual(utils.normalizeTemplateType("Faith"), "stat");
+    assert.strictEqual(utils.normalizeTemplateType("Strength"), "stat");
+    assert.strictEqual(utils.normalizeTemplateType("Stat"), "stat");
+    assert.strictEqual(utils.normalizeTemplateType("skill"), "skill");
+
+    // The full effect-row parse yields a valid stat change (TargetKey → characteristic).
+    const ch = parse.buildChangeFromEffectRow({ Type: "Faith", TargetKey: "Faith", Amount: "1" });
+    assert.deepStrictEqual(ch, { type: "stat", characteristic: "Faith", steps: 1 });
+    console.log("  ✓ stat-name Type parses to a valid stat change");
+}
+
 console.log("\nAll chargen-template-parse tests passed.");

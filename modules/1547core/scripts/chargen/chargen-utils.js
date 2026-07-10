@@ -46,6 +46,17 @@ export function normalizeTemplateType(v) {
     if (!raw) return "";
     const map = {
         stat: "stat",
+        // A primary stat name used directly as a change type is treated as a
+        // stat change (its TargetKey/characteristic carries which stat). This
+        // tolerates the "Type: Faith" authoring shorthand seen in some career
+        // templates instead of crashing chargen on it.
+        strength: "stat",
+        stamina: "stat",
+        dexterity: "stat",
+        intelligence: "stat",
+        faith: "stat",
+        charisma: "stat",
+        power: "stat",
         skill: "skill",
         maneuver: "maneuver",
         money: "money",
