@@ -1,4 +1,9 @@
-const MODULE_ID = "skilltreehelper";
+// Document flags stay under the legacy "skilltreehelper" scope so existing
+// actor/item skill-tree progress survives without a per-document migration.
+const FLAG_NS = "skilltreehelper";
+// The graph world-setting lives under the active module id so it appears under
+// "1547core" in the settings UI instead of an unmapped legacy namespace.
+const SETTINGS_NS = "1547core";
 
 function asNonNegativeInt(value) {
     const n = Number(value);
@@ -19,11 +24,11 @@ function asOptionalNonNegativeInt(value) {
 // back-compat (the external module + chargen1547_v2 read the same path), but
 // read/write it directly so binding works in any world.
 function readSkillTreeFlag(doc, key) {
-    return foundry.utils.getProperty(doc?.flags ?? {}, `${MODULE_ID}.${key}`);
+    return foundry.utils.getProperty(doc?.flags ?? {}, `${FLAG_NS}.${key}`);
 }
 async function writeSkillTreeFlag(doc, key, value) {
     if (typeof doc?.update !== "function") return false;
-    await doc.update({ [`flags.${MODULE_ID}.${key}`]: value });
+    await doc.update({ [`flags.${FLAG_NS}.${key}`]: value });
     return true;
 }
 
@@ -56,7 +61,7 @@ function getByPath(obj, path) {
 }
 
 function getExplicitNodeRef(item) {
-    return String(item?.flags?.[MODULE_ID]?.nodeId ?? "").trim();
+    return String(item?.flags?.[FLAG_NS]?.nodeId ?? "").trim();
 }
 
 function getNodeRefCandidates(item) {
@@ -397,7 +402,7 @@ export async function getGraphData() {
     let raw = "{}";
 
     try {
-        raw = await game.settings.get(MODULE_ID, "graphJSON");
+        raw = await game.settings.get(SETTINGS_NS, "graphJSON");
     } catch {
         raw = "{}";
     }
@@ -411,7 +416,7 @@ export async function getGraphData() {
 
 export async function setGraphData(data) {
     const normalized = validateGraphData(data);
-    await game.settings.set(MODULE_ID, "graphJSON", JSON.stringify(normalized, null, 2));
+    await game.settings.set(SETTINGS_NS, "graphJSON", JSON.stringify(normalized, null, 2));
 }
 
 export function getActorNodeLevels(actor, graphData) {
@@ -897,10 +902,10 @@ export async function grantFirstAvailableNode(actor, nodeId, targetLevel = 1, op
     const createData = sourceDoc.toObject();
     createData.flags ??= {};
     createData.flags.core ??= {};
-    createData.flags[MODULE_ID] ??= {};
+    createData.flags[FLAG_NS] ??= {};
     createData.flags.core.sourceId = next.nodeId;
-    createData.flags[MODULE_ID].nodeId = next.nodeId;
-    createData.flags[MODULE_ID].skillTree = { level: Number(next.level ?? 1) };
+    createData.flags[FLAG_NS].nodeId = next.nodeId;
+    createData.flags[FLAG_NS].skillTree = { level: Number(next.level ?? 1) };
 
     const [created] = await actor.createEmbeddedDocuments("Item", [createData]);
     return {

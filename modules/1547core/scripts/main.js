@@ -225,6 +225,11 @@ Hooks.once("ready", () => {
         (module) => module.runContainerMigration()
     );
     void runImportedModuleStep(
+        "runSkillTreeGraphMigration",
+        () => import("./migrations/skill-tree-migration.js"),
+        (module) => void module.runSkillTreeGraphMigration()
+    );
+    void runImportedModuleStep(
         "register1547ActorHud",
         () => import("./hud/actor-hud.js"),
         (module) => module.register1547ActorHud()

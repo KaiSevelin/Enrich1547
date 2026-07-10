@@ -964,6 +964,14 @@ export function register1547ModuleSettings() {
         default: 0
     });
 
+    game.settings.register(MODULE_ID, "skillTreeGraphMigration", {
+        name: "Skill Tree Graph Migration Version",
+        scope: "world",
+        config: false,
+        type: String,
+        default: ""
+    });
+
     game.settings.register(MODULE_ID, "reactionWindowSeconds", {
         name: "Reaction Window Seconds",
         hint: "How many seconds a reaction window stays open before it automatically passes.",

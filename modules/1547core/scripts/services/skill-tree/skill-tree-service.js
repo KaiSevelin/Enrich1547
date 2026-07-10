@@ -3,13 +3,17 @@
  * in 0.2.93). Owns the world-level skill-graph data, validation engine,
  * and graph editor UI.
  *
- * Settings namespace remains "skilltreehelper" for back-compat with existing
- * worlds (graphJSON setting key + actor flag namespace), so player data
- * does not need to migrate when this consolidation lands.
+ * World SETTINGS (graphJSON + the graph-editor menu) now live under the
+ * active "1547core" module id, so they show under 1547core in the settings
+ * UI instead of an unmapped legacy namespace. Document FLAGS (actor/item
+ * nodeId) stay under "skilltreehelper" so existing player progress survives
+ * without a per-document migration. The graphJSON value is carried across
+ * namespaces on ready by migrations/skill-tree-migration.js.
  *
  * Consumers like chargen1547_v2 continue to read `globalThis.SkillTree`.
  */
 
+import { MODULE_ID } from "../../lib/constants.mjs";
 import { SkillTreeNodeEditor } from "./node-editor.js";
 import {
     buildSkillGraph,
@@ -42,7 +46,7 @@ const LEGACY_NAMESPACE = "skilltreehelper";
 
 function readGraphDataSync() {
     try {
-        const raw = game.settings.get(LEGACY_NAMESPACE, "graphJSON");
+        const raw = game.settings.get(MODULE_ID, "graphJSON");
         return normalizeGraphData(JSON.parse(String(raw ?? "{}")));
     } catch {
         return {};
@@ -95,9 +99,10 @@ function createSkillTreeApi() {
 export function registerSkillTreeService() {
     globalThis.SkillTree = createSkillTreeApi();
 
-    // Register the world setting under the legacy namespace so existing
-    // worlds and the chargen1547_v2 dependency continue working unchanged.
-    game.settings.register(LEGACY_NAMESPACE, "graphJSON", {
+    // World settings live under the active module id so they group under
+    // 1547core in the settings UI. The stored value is migrated across from
+    // the legacy namespace on ready (migrations/skill-tree-migration.js).
+    game.settings.register(MODULE_ID, "graphJSON", {
         name: "SkillTree Graph JSON",
         hint: "World-level graph configuration for item prerequisites.",
         scope: "world",
@@ -106,7 +111,7 @@ export function registerSkillTreeService() {
         default: "{}"
     });
 
-    game.settings.registerMenu(LEGACY_NAMESPACE, "node-editor", {
+    game.settings.registerMenu(MODULE_ID, "node-editor", {
         name: "SkillTree Graph Editor",
         label: "Open Editor",
         hint: "Edit world-level item prerequisite graph.",
