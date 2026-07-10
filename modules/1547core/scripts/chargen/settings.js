@@ -1,7 +1,12 @@
 import { importWorldContent } from "./import-world-content.js";
 
 import { STATIC_LEGACY_REF_MAP } from "./legacy-rolltable-map.js";
+import { MODULE_ID } from "../lib/constants.mjs";
 
+// Settings now register under the active "1547core" module id so they group
+// there in Configure Settings (not an unmapped legacy section). CHARGEN_MODULE_ID
+// remains the legacy scope name used by the on-ready value migration
+// (migrations/chargen-settings-migration.js) and for existing document flags.
 export const CHARGEN_MODULE_ID = "chargen1547_v2";
 export const DEFAULT_STARTING_TABLE = "RollTable.BhHorosc3d6Q7mR4";
 
@@ -154,7 +159,7 @@ export class ChargenSetupDataMenu extends FormApplication {
 }
 
 export function registerChargenSettings() {
-    game.settings.register(CHARGEN_MODULE_ID, SETTING_KEYS.startingTable, {
+    game.settings.register(MODULE_ID, SETTING_KEYS.startingTable, {
         name: "Starting Roll Table",
         hint: "RollTable UUID used as the starting table when none is passed explicitly.",
         scope: "world",
@@ -163,7 +168,7 @@ export function registerChargenSettings() {
         default: DEFAULT_STARTING_TABLE
     });
 
-    game.settings.register(CHARGEN_MODULE_ID, SETTING_KEYS.contentFolderName, {
+    game.settings.register(MODULE_ID, SETTING_KEYS.contentFolderName, {
         name: "Managed Content Folder Name",
         hint: "Root folder name used when setting up Character Generator items and rolltables.",
         scope: "world",
@@ -172,7 +177,7 @@ export function registerChargenSettings() {
         default: "Character generator"
     });
 
-    game.settings.register(CHARGEN_MODULE_ID, SETTING_KEYS.maxRolls, {
+    game.settings.register(MODULE_ID, SETTING_KEYS.maxRolls, {
         name: "Maximum Number of Rolls",
         hint: "Maximum number of life-path table rolls before character generation is forced to end.",
         scope: "world",
@@ -181,7 +186,7 @@ export function registerChargenSettings() {
         default: 14
     });
 
-    game.settings.register(CHARGEN_MODULE_ID, SETTING_KEYS.careerStatPicks, {
+    game.settings.register(MODULE_ID, SETTING_KEYS.careerStatPicks, {
         name: "Career Advancement Stat Picks",
         hint: "Number of extra stat increases granted in the post-career advancement wizard.",
         scope: "world",
@@ -190,7 +195,7 @@ export function registerChargenSettings() {
         default: 3
     });
 
-    game.settings.register(CHARGEN_MODULE_ID, SETTING_KEYS.careerSkillPicks, {
+    game.settings.register(MODULE_ID, SETTING_KEYS.careerSkillPicks, {
         name: "Career Advancement Skill Picks",
         hint: "Number of extra skill increases granted in the post-career advancement wizard.",
         scope: "world",
@@ -199,7 +204,7 @@ export function registerChargenSettings() {
         default: 3
     });
 
-    game.settings.register(CHARGEN_MODULE_ID, SETTING_KEYS.careerManeuverPicks, {
+    game.settings.register(MODULE_ID, SETTING_KEYS.careerManeuverPicks, {
         name: "Career Advancement Maneuver/Reward Picks",
         hint: "Number of maneuver or alternative reward picks granted in the final step of the post-career advancement wizard.",
         scope: "world",
@@ -208,21 +213,21 @@ export function registerChargenSettings() {
         default: 2
     });
 
-    game.settings.register(CHARGEN_MODULE_ID, SETTING_KEYS.legacyIdMap, {
+    game.settings.register(MODULE_ID, SETTING_KEYS.legacyIdMap, {
         scope: "world",
         config: false,
         type: Object,
         default: {}
     });
 
-    game.settings.register(CHARGEN_MODULE_ID, SETTING_KEYS.packageRegistry, {
+    game.settings.register(MODULE_ID, SETTING_KEYS.packageRegistry, {
         scope: "world",
         config: false,
         type: Object,
         default: {}
     });
 
-    game.settings.registerMenu(CHARGEN_MODULE_ID, "setupData", {
+    game.settings.registerMenu(MODULE_ID, "setupData", {
         name: "Setup Character Generator Content",
         label: "Setup Character Generator Content",
         hint: "Import or update the managed Character Generator items and rolltables in the world "
@@ -235,7 +240,7 @@ export function registerChargenSettings() {
 }
 
 export function getChargenSetting(key) {
-    return game.settings.get(CHARGEN_MODULE_ID, key);
+    return game.settings.get(MODULE_ID, key);
 }
 
 export function getLegacyMappedRef(ref) {

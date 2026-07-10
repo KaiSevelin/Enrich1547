@@ -972,6 +972,14 @@ export function register1547ModuleSettings() {
         default: ""
     });
 
+    game.settings.register(MODULE_ID, "chargenSettingsMigration", {
+        name: "Chargen Settings Migration",
+        scope: "world",
+        config: false,
+        type: String,
+        default: ""
+    });
+
     game.settings.register(MODULE_ID, "reactionWindowSeconds", {
         name: "Reaction Window Seconds",
         hint: "How many seconds a reaction window stays open before it automatically passes.",

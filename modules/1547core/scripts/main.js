@@ -230,6 +230,11 @@ Hooks.once("ready", () => {
         (module) => void module.runSkillTreeGraphMigration()
     );
     void runImportedModuleStep(
+        "runChargenSettingsMigration",
+        () => import("./migrations/chargen-settings-migration.js"),
+        (module) => void module.runChargenSettingsMigration()
+    );
+    void runImportedModuleStep(
         "register1547ActorHud",
         () => import("./hud/actor-hud.js"),
         (module) => module.register1547ActorHud()
