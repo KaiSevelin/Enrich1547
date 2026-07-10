@@ -369,186 +369,6 @@ function buildInventoryTree(data, deps = {}) {
     `;
 }
 
-function buildConditionTree(data, deps = {}) {
-    const { escapeHtml } = deps;
-    return buildTreeList(data.conditions, (condition) => {
-        const desc = getConditionDescription(condition);
-        return `
-        <li class="hud-tree-item"${desc ? ` title="${escapeHtml(`${condition} — ${desc}`)}"` : ""}>
-            <div class="hud-row-main">${escapeHtml(condition)}</div>
-            ${desc ? `<div class="hud-row-sub">${escapeHtml(desc)}</div>` : ""}
-        </li>
-    `;
-    });
-}
-
-function buildOverviewTree(data, deps = {}) {
-    const { escapeHtml, formatCurrentMax } = deps;
-
-    const hpDisplay = formatCurrentMax(data.hitPoints, data.maxHitPoints);
-    const riskRows = data.riskAndCritical.map((resource) => `
-        <li><span class="hud-tree-key">${escapeHtml(resource.label)}</span><span class="hud-tree-value">${escapeHtml(resource.display)}</span></li>
-    `).join("");
-    // Combined Advantage block: attack and skill/stat advantage on one block.
-    // Each non-zero entry shows once, prefixed by Attack: or Skill: so the
-    // single line can be scanned without two headers.
-    const advantageEntries = [
-        ...[
-            { label: "Advantage", value: Number(data.weaponRollContext?.advantageDice ?? 0) || 0 },
-            { label: "Risk", value: Number(data.weaponRollContext?.riskDice ?? 0) || 0 },
-            { label: "Main Dice", value: Number(data.weaponRollContext?.addMainDice ?? 0) || 0 },
-            { label: "Multiplier", value: Number(data.weaponRollContext?.addMultiplierDice ?? 0) || 0 },
-            ...Object.entries(data.weaponRollContext?.extraDiceCounts ?? {}).map(([dieKey, count]) => ({
-                label: `${dieKey}`,
-                value: Number(count ?? 0) || 0,
-            })),
-        ].map((e) => ({ ...e, prefix: "Attack" })),
-        ...[
-            { label: "Base Advantage", value: Number(data.rollContext?.advantageDice ?? 0) || 0 },
-            { label: "Staged d6", value: Number(data.rollContext?.extraD6 ?? 0) || 0 },
-        ].map((e) => ({ ...e, prefix: "Skill" })),
-    ].filter((entry) => entry.value > 0);
-    const advantageRows = advantageEntries.map((entry) => `
-        <li><span class="hud-tree-key">${escapeHtml(`${entry.prefix}: ${entry.label}`)}</span><span class="hud-tree-value">+${escapeHtml(entry.value)}</span></li>
-    `).join("");
-    const liveRiskCritRows = [
-        { label: "Attack Risk Dice", value: Number(data.weaponRollContext?.riskDice ?? 0) || 0 },
-        ...data.riskAndCritical.map((resource) => ({
-            label: resource.label === "RISK" ? "Risk Points" : "Critical Points",
-            value: resource.display,
-            isDisplay: true,
-        })),
-    ].map((entry) => `
-        <li><span class="hud-tree-key">${escapeHtml(entry.label)}</span><span class="hud-tree-value">${entry.isDisplay ? escapeHtml(entry.value) : `+${escapeHtml(entry.value)}`}</span></li>
-    `).join("");
-    const activeEffectRows = (data.activePersistentEffects ?? []).map((effect) => `<li><span class="hud-tree-key">${escapeHtml(effect.label)}</span><span class="hud-tree-value">${escapeHtml(effect.duration || "Active")}</span></li>`).join("");
-
-    return `
-        <div class="hud-overview-grid">
-            <div class="hud-tree-block hud-overview-block hud-overview-block-hp">
-                <div class="hud-section-title">Hit Points</div>
-                <div class="hud-overview-value">${escapeHtml(hpDisplay || "-")}</div>
-            </div>
-            <div class="hud-tree-block hud-overview-block hud-overview-block-risk">
-                <div class="hud-section-title">Risk & Critical</div>
-                <ul class="hud-tree-children hud-tree-compact">${liveRiskCritRows || '<li class="hud-empty-row">None</li>'}</ul>
-            </div>
-            <div class="hud-tree-block hud-overview-block">
-                <div class="hud-section-title">Advantage</div>
-                <ul class="hud-tree-children hud-tree-compact">${advantageRows || '<li class="hud-empty-row">None</li>'}</ul>
-            </div>
-        </div>
-        <div class="hud-tree-block">
-            <div class="hud-section-title">Active Effects</div>
-            <ul class="hud-tree-children hud-tree-compact">${activeEffectRows || '<li class="hud-empty-row">None</li>'}</ul>
-        </div>
-    `;
-}
-
-function buildCombatStateStrip(data, deps = {}) {
-    const { escapeHtml, formatCurrentMax } = deps;
-    const hpDisplay = formatCurrentMax(data.hitPoints, data.maxHitPoints) || "-";
-    const conditionSummary = (data.conditions ?? []).length ? data.conditions.join(", ") : "None";
-    const items = [
-        { label: "HP", value: hpDisplay },
-        { label: "Moves", value: Number.isFinite(Number(data.movesThisTurn)) ? data.movesThisTurn : "-" },
-        { label: "Attacks", value: Number.isFinite(Number(data.attacksRemaining)) ? data.attacksRemaining : "-" },
-        { label: "Full Turn", value: String(data.fullTurnAvailable ?? "Unknown") },
-        { label: "Risk", value: data.riskAndCritical?.find((entry) => entry.label === "RISK")?.display ?? "-" },
-        { label: "Critical", value: data.riskAndCritical?.find((entry) => entry.label !== "RISK")?.display ?? "-" },
-        { label: "Conditions", value: conditionSummary },
-    ];
-    return `
-        <section class="hud-section hud-combat-strip">
-            ${items.map((item) => `
-                <div class="hud-combat-cell">
-                    <div class="hud-combat-cell-label">${escapeHtml(item.label)}</div>
-                    <div class="hud-combat-cell-value">${escapeHtml(item.value)}</div>
-                </div>
-            `).join("")}
-        </section>
-    `;
-}
-
-// Compact icon+tooltip summary shown under the portrait on every tab: HP,
-// Core points, Moves, Conditions, Risk dice and Advantage dice. Replaces the
-// wider combat strip + current-action panel.
-function buildSummaryStrip(data, deps = {}) {
-    const { escapeHtml } = deps;
-    const corePool = (data.pointPools ?? []).find((p) => p.key === "CorePoints") ?? (data.pointPools ?? [])[0] ?? null;
-    const conditions = data.conditions ?? [];
-    const rc = data.weaponRollContext ?? data.rollContext ?? {};
-    const moveDisplay = Number.isFinite(Number(data.movement)) ? String(data.movement)
-        : (Number.isFinite(Number(data.movementBudget)) ? String(data.movementBudget) : "-");
-
-    const cells = [
-        { icon: "fa-heart", value: `${data.hitPoints ?? "-"}/${data.maxHitPoints ?? "-"}`, tip: "Hit Points (current / max)" },
-        { icon: "fa-gem", value: corePool?.display ?? "-", tip: "Core Points (available / max)" },
-        { icon: "fa-person-running", value: moveDisplay, tip: "Movement remaining (squares)" },
-        { icon: "fa-heart-pulse", value: String(conditions.length), tip: `Conditions: ${conditions.length ? conditions.join(", ") : "none"}` },
-        { icon: "fa-triangle-exclamation", value: String(Number(rc.riskDice ?? 0) || 0), tip: "Risk dice on your next roll" },
-        { icon: "fa-star", value: String(Number(rc.advantageDice ?? 0) || 0), tip: "Advantage dice on your next roll" },
-    ];
-    return `
-        <section class="hud-section hud-summary-strip">
-            ${cells.map((c) => `
-                <div class="hud-summary-cell" title="${escapeHtml(c.tip)}">
-                    <i class="fa-solid ${c.icon}" aria-hidden="true"></i>
-                    <span class="hud-summary-value">${escapeHtml(c.value)}</span>
-                </div>
-            `).join("")}
-        </section>
-    `;
-}
-
-function buildCurrentActionSummary(data, deps = {}) {
-    const { escapeHtml } = deps;
-    const action = data.currentAction ?? {};
-    const preManeuverText = (action.preManeuverNames ?? []).length ? action.preManeuverNames.join(", ") : "None";
-    const fullTurnText = action.fullTurnName || "None";
-    const stagedParts = [action.stagedAttackDice, action.stagedSkillDice].filter(Boolean);
-    const stagedText = stagedParts.length ? stagedParts.join(" | ") : "None";
-    const targetText = action.targetName || "No target";
-    const previewText = action.attackPreview || "No attack preview";
-    return `
-        <section class="hud-section">
-            <div class="hud-tree-block hud-current-action">
-                <div class="hud-section-title">Current Action</div>
-                <div class="hud-current-action-grid">
-                    <div class="hud-current-action-row">
-                        <span class="hud-tree-key">Weapon</span>
-                        <span class="hud-tree-value">${escapeHtml(action.weaponName || "None")}</span>
-                    </div>
-                    <div class="hud-current-action-row">
-                        <span class="hud-tree-key">Profile</span>
-                        <span class="hud-tree-value">${escapeHtml(action.weaponProfile || "None")}</span>
-                    </div>
-                    <div class="hud-current-action-row">
-                        <span class="hud-tree-key">Target</span>
-                        <span class="hud-tree-value">${escapeHtml(targetText)}</span>
-                    </div>
-                    <div class="hud-current-action-row">
-                        <span class="hud-tree-key">Pre Maneuvers</span>
-                        <span class="hud-tree-value">${escapeHtml(preManeuverText)}</span>
-                    </div>
-                    <div class="hud-current-action-row">
-                        <span class="hud-tree-key">Full Turn</span>
-                        <span class="hud-tree-value">${escapeHtml(fullTurnText)}</span>
-                    </div>
-                    <div class="hud-current-action-row">
-                        <span class="hud-tree-key">Staged Dice</span>
-                        <span class="hud-tree-value">${escapeHtml(stagedText)}</span>
-                    </div>
-                    <div class="hud-current-action-row hud-current-action-row-preview">
-                        <span class="hud-tree-key">Preview</span>
-                        <span class="hud-tree-value">${escapeHtml(previewText)}</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-    `;
-}
-
 // Skills-tab "Checks" header. Replaces the legacy counter-roll bar with a
 // 4-way mode picker (Manual / Stat / Skill / General) and a per-mode
 // expansion. Selection state lives in HUD_STATE.check*. The actual counter
@@ -653,31 +473,6 @@ function buildChecksHeader(data, deps = {}) {
     `;
 }
 
-function buildCounterRollControls(deps = {}) {
-    const { HUD_STATE, escapeHtml, sanitizeCounterRollDice } = deps;
-    const checked = HUD_STATE.counterRollEnabled ? " checked" : "";
-    return `
-        <div class="hud-tree-block hud-counter-roll-bar">
-            <label class="hud-counter-roll-toggle">
-                <input type="checkbox" data-hud-counter-enabled${checked}>
-                <span>Counter Roll</span>
-            </label>
-            <label class="hud-counter-roll-config">
-                <span>Difficulty</span>
-                <input
-                    type="number"
-                    min="1"
-                    max="10"
-                    step="1"
-                    value="${escapeHtml(sanitizeCounterRollDice(HUD_STATE.counterRollDice))}"
-                    data-hud-counter-dice
-                >
-                <span>d6</span>
-            </label>
-        </div>
-    `;
-}
-
 function buildDiceTree(data, deps = {}) {
     const { escapeHtml } = deps;
     const diceTab = data.diceTab ?? {};
@@ -752,8 +547,6 @@ function getCategoryDefinitions(data) {
 function buildCategoryContent(data, activeCategory, deps = {}) {
     const { escapeHtml, HUD_STATE, getStatPreview } = deps;
     switch (activeCategory) {
-        case "overview":
-            return buildOverviewTree(data, deps);
         case "stats":
             return (() => {
                 const previewStat = getStatPreview(data);
@@ -1009,8 +802,6 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                     </li>
                 `)}
             </ul>`;
-        case "conditions":
-            return `<ul class="hud-list hud-tree-list">${buildConditionTree(data, deps)}</ul>`;
         default:
             return buildStatsTree(data, deps);
     }
