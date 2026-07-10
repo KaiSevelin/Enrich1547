@@ -295,6 +295,36 @@ a.enricher-1547::before {
   color: #f8f2e6;
 }
 
+/* Compact under-portrait summary: icon + value chips in a wrapping row. */
+.actor-hud-1547 .hud-summary-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.actor-hud-1547 .hud-summary-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.22rem 0.5rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 0.8rem;
+  color: #f8f2e6;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.actor-hud-1547 .hud-summary-cell i {
+  color: rgba(201, 171, 113, 0.92);
+  font-size: 0.82rem;
+}
+
+.actor-hud-1547 .hud-summary-value {
+  font-variant-numeric: tabular-nums;
+}
+
 .actor-hud-1547 .hud-current-action {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.025));
 }

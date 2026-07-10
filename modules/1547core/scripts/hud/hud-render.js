@@ -446,6 +446,37 @@ function buildCombatStateStrip(data, deps = {}) {
     `;
 }
 
+// Compact icon+tooltip summary shown under the portrait on every tab: HP,
+// Core points, Moves, Conditions, Risk dice and Advantage dice. Replaces the
+// wider combat strip + current-action panel.
+function buildSummaryStrip(data, deps = {}) {
+    const { escapeHtml } = deps;
+    const corePool = (data.pointPools ?? []).find((p) => p.key === "CorePoints") ?? (data.pointPools ?? [])[0] ?? null;
+    const conditions = data.conditions ?? [];
+    const rc = data.weaponRollContext ?? data.rollContext ?? {};
+    const moveDisplay = Number.isFinite(Number(data.movement)) ? String(data.movement)
+        : (Number.isFinite(Number(data.movementBudget)) ? String(data.movementBudget) : "-");
+
+    const cells = [
+        { icon: "fa-heart", value: `${data.hitPoints ?? "-"}/${data.maxHitPoints ?? "-"}`, tip: "Hit Points (current / max)" },
+        { icon: "fa-gem", value: corePool?.display ?? "-", tip: "Core Points (available / max)" },
+        { icon: "fa-person-running", value: moveDisplay, tip: "Movement remaining (squares)" },
+        { icon: "fa-heart-pulse", value: String(conditions.length), tip: `Conditions: ${conditions.length ? conditions.join(", ") : "none"}` },
+        { icon: "fa-triangle-exclamation", value: String(Number(rc.riskDice ?? 0) || 0), tip: "Risk dice on your next roll" },
+        { icon: "fa-star", value: String(Number(rc.advantageDice ?? 0) || 0), tip: "Advantage dice on your next roll" },
+    ];
+    return `
+        <section class="hud-section hud-summary-strip">
+            ${cells.map((c) => `
+                <div class="hud-summary-cell" title="${escapeHtml(c.tip)}">
+                    <i class="fa-solid ${c.icon}" aria-hidden="true"></i>
+                    <span class="hud-summary-value">${escapeHtml(c.value)}</span>
+                </div>
+            `).join("")}
+        </section>
+    `;
+}
+
 function buildCurrentActionSummary(data, deps = {}) {
     const { escapeHtml } = deps;
     const action = data.currentAction ?? {};
@@ -689,9 +720,7 @@ function getCategoryDefinitions(data) {
         { key: "skills", label: "Skills", count: data.skills.length, icon: "fa-graduation-cap" },
         { key: "inventory", label: "Inventory", count: data.inventory.length, icon: "fa-bag-shopping" },
         { key: "dice", label: "Dice", count: null, icon: "fa-dice-d20" },
-        { key: "overview", label: "Overview", count: null, icon: "fa-eye" },
         { key: "stats", label: "Stats", count: data.stats.length, icon: "fa-chart-simple" },
-        { key: "conditions", label: "Conditions", count: data.conditions.length, icon: "fa-heart-pulse" },
         { key: "supernatural-marks", label: "Powers", count: data.supernaturalMarks.length + data.monsterMagic.length, icon: "fa-sparkles" },
     ];
 }
@@ -704,19 +733,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
         case "stats":
             return (() => {
                 const previewStat = getStatPreview(data);
-                const pointRows = (data.pointPools ?? []).map((resource) => `
-                    <li class="hud-point-cell">
-                        <span class="hud-tree-key">${escapeHtml(resource.label)}</span>
-                        <span class="hud-tree-value">${escapeHtml(resource.display)}</span>
-                    </li>
-                `).join("");
-                const pointPoolsBlock = `
-                    <div class="hud-tree-block">
-                        <div class="hud-section-title">Point Pools</div>
-                        <ul class="hud-tree-children hud-tree-compact hud-points-grid">${pointRows || '<li class="hud-empty-row">None</li>'}</ul>
-                    </div>
-                `;
-                return `${buildCounterRollControls(deps)}${pointPoolsBlock}<ul class="hud-list hud-tree-list hud-stat-grid">
+                return `<ul class="hud-list hud-tree-list hud-stat-grid">
                 ${buildTreeList(data.stats, (stat) => `
                     <li class="hud-tree-item${stat.label === previewStat?.label ? " is-active" : ""}">
                         <button type="button" class="hud-action-row${stat.label === previewStat?.label ? " is-active" : ""}" data-hud-stat="${escapeHtml(stat.label)}">
@@ -755,15 +772,20 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                         </li>
                     `)
                     : `<li class="hud-empty-row">No monster magic</li>`;
+                // Monster magic only shows for monsters (actors that carry
+                // monster-magic items); PCs see just their supernatural marks.
+                const monsterMagicBlock = data.monsterMagic.length ? `
+                    <div class="hud-tree-block">
+                        <div class="hud-section-title">Monster Magic</div>
+                        <ul class="hud-list hud-tree-list">${monsterMagicRows}</ul>
+                    </div>
+                ` : "";
                 return `
                     <div class="hud-tree-block">
                         <div class="hud-section-title">Supernatural Marks</div>
                         <ul class="hud-list hud-tree-list">${markRows}</ul>
                     </div>
-                    <div class="hud-tree-block">
-                        <div class="hud-section-title">Monster Magic</div>
-                        <ul class="hud-list hud-tree-list">${monsterMagicRows}</ul>
-                    </div>
+                    ${monsterMagicBlock}
                 `;
             })();
         case "inventory":
@@ -1046,8 +1068,7 @@ export function buildHudHtml(data, deps = {}) {
                 <div class="hud-category-row">${categoryTabs}</div>
             </section>
 
-            ${data.isCombatActive ? buildCombatStateStrip(data, deps) : ""}
-            ${data.isCombatActive ? buildCurrentActionSummary(data, deps) : ""}
+            ${buildSummaryStrip(data, deps)}
 
             <section class="hud-section hud-tree-panel">
                 ${buildCategoryContent(data, activeCategory, deps)}
