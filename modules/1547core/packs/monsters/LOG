@@ -1,5 +1,5 @@
-2026/07/10-14:21:21.248 bee4 Delete type=3 #1
-2026/07/10-14:21:21.251 248 Level-0 table #5: started
-2026/07/10-14:21:21.253 248 Level-0 table #5: 95861 bytes OK
-2026/07/10-14:21:21.254 248 Delete type=0 #3
-2026/07/10-14:21:21.255 248 Manual compaction at level-0 from '!actors!MonBaseBeast001' @ 72057594037927935 : 1 .. '!actors!MonBaseZone0001' @ 0 : 0; will stop at (end)
+2026/07/10-19:28:32.937 af38 Delete type=3 #1
+2026/07/10-19:28:32.940 a534 Level-0 table #5: started
+2026/07/10-19:28:32.942 a534 Level-0 table #5: 95861 bytes OK
+2026/07/10-19:28:32.943 a534 Delete type=0 #3
+2026/07/10-19:28:32.943 a534 Manual compaction at level-0 from '!actors!MonBaseBeast001' @ 72057594037927935 : 1 .. '!actors!MonBaseZone0001' @ 0 : 0; will stop at (end)
