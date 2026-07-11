@@ -51,12 +51,26 @@ function reactorThreatReachSquares(reactor) {
 // isn't that side's turn, or when nothing actually changed. GM-authoritative
 // (the caller already gated on isGM). The per-side refill lives in
 // side-tracker.resetSideTurnState.
+// Set true (or set the `1547core.debugMovement` world flag) to trace why a move
+// did/didn't spend the movement budget. Logs to the browser console.
+const DEBUG_MOVE = true;
+function moveLog(...args) {
+    if (!DEBUG_MOVE) return;
+    try { console.debug(`${MODULE_ID} | move-debug |`, ...args); } catch (_e) { /* ignore */ }
+}
+
 function trackMoverMovementBudget({ combat, mover, moverSide, oldPos, newPos }) {
     const activeSideId = getActiveSideId(combat, getOrderedCombatants(combat));
-    if (activeSideId && moverSide && activeSideId !== moverSide) return;
+    if (activeSideId && moverSide && activeSideId !== moverSide) {
+        moveLog("BAIL side-gate: activeSideId", activeSideId, "!= moverSide", moverSide, "(mover:", mover?.name, ")");
+        return;
+    }
     const g = gridSize();
     const movedSquares = chebyshev(toCell(oldPos.x, oldPos.y, g), toCell(newPos.x, newPos.y, g));
-    if (movedSquares <= 0) return;
+    if (movedSquares <= 0) {
+        moveLog("BAIL zero-move: gridSize", g, "old", oldPos, "new", newPos);
+        return;
+    }
     const props = mover.system?.props ?? {};
     const budget = getMovementBudget(mover);
     const remainingRaw = props.MovementRemaining ?? props.MoveRemaining;
@@ -64,8 +78,14 @@ function trackMoverMovementBudget({ combat, mover, moverSide, oldPos, newPos }) 
     // First move of a turn with no counter yet: start from the full budget.
     if (!Number.isFinite(remaining)) remaining = Number.isFinite(budget) ? budget : movedSquares;
     const next = Math.max(0, remaining - movedSquares);
-    if (Number.isFinite(Number(remainingRaw)) && next === Number(remainingRaw)) return;
-    void mover.update({ "system.props.MovementRemaining": next });
+    if (Number.isFinite(Number(remainingRaw)) && next === Number(remainingRaw)) {
+        moveLog("BAIL no-change: next", next, "== remainingRaw", remainingRaw);
+        return;
+    }
+    moveLog("WRITE MovementRemaining", remainingRaw, "->", next, "(budget", budget, "moved", movedSquares, "mover", mover?.name, ")");
+    void mover.update({ "system.props.MovementRemaining": next })
+        .then((doc) => moveLog("WRITE ok, read-back", doc?.system?.props?.MovementRemaining))
+        .catch((err) => moveLog("WRITE FAILED", err?.message ?? err));
 }
 
 function gridSize() {
@@ -157,14 +177,14 @@ export function registerMovementReactions() {
             // token without surfacing x/y at the top level of the change diff,
             // which previously left the movement budget un-decremented.
             const moved = !!oldPos && (oldPos.x !== newPos.x || oldPos.y !== newPos.y);
-            if (!moved) return;
-            if (!globalThis.game?.user?.isGM) return; // GM is the authoritative trigger
+            if (!moved) { moveLog("updateToken: no position delta", { id, oldPos, newPos }); return; }
+            if (!globalThis.game?.user?.isGM) { moveLog("BAIL not-GM"); return; } // GM is the authoritative trigger
             const combat = globalThis.game?.combat;
-            if (!combat?.started) return;
+            if (!combat?.started) { moveLog("BAIL no-combat-started"); return; }
             const moverCombatant = combatantForToken(combat, id);
-            if (!moverCombatant) return;
+            if (!moverCombatant) { moveLog("BAIL no-combatant for token", id); return; }
             const mover = moverCombatant.actor;
-            if (!mover) return;
+            if (!mover) { moveLog("BAIL combatant has no actor"); return; }
             const moverSide = resolveCombatantSideId(moverCombatant);
             trackMoverMovementBudget({ combat, mover, moverSide, oldPos, newPos });
             void triggerMovementThreats({

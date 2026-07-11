@@ -486,7 +486,6 @@ export function summarizeActor(actor, token, deps = {}) {
     const activeWeaponItem = activeWeaponSummary ? (activeWeaponSummary.itemDocument ?? actor.items?.get?.(activeWeaponSummary.id) ?? activeWeaponSummary) : null;
     const combatApi = game.modules.get(MODULE_ID)?.api?.combat ?? {};
     const evaluateManeuverLegality = combatApi?.evaluateManeuverLegality;
-    const getStoredManeuverData = combatApi?.getStoredManeuverData;
     const actorConditions = effects.map((effect) => effect.name).filter(Boolean);
     const targetConditions = (primaryTarget?.actor?.effects?.contents ?? primaryTarget?.actor?.effects ?? []).map((effect) => effect.name).filter(Boolean);
     const maneuverEntries = maneuverItems.map((item) => {
@@ -504,32 +503,14 @@ export function summarizeActor(actor, token, deps = {}) {
             timing: formatManeuverTimingLabel(timingKey)
         };
     });
-    const storedManeuverEntries = typeof getStoredManeuverData === "function"
-        ? (getStoredManeuverData() ?? []).map((source) => {
-            const timingKey = normalizeManeuverTimingKey(source?.type);
-            const sourceId = source?._id ?? source?.id ?? source?.name ?? null;
-            return sourceId ? {
-                item: null,
-                source,
-                itemId: sourceId,
-                sourceId,
-                name: source?.name ?? sourceId,
-                timingKey,
-                timing: formatManeuverTimingLabel(timingKey)
-            } : null;
-        }).filter(Boolean)
-        : [];
-    const learnedSourceIds = new Set(maneuverEntries.map((entry) => entry.sourceId));
-    const fallbackPreEntries = storedManeuverEntries.filter((entry) => entry.timingKey === "pre" && !learnedSourceIds.has(entry.sourceId));
-    const fallbackFullTurnEntries = storedManeuverEntries.filter((entry) => entry.timingKey === "full-turn" && !learnedSourceIds.has(entry.sourceId));
-    const preManeuverEntries = [
-        ...maneuverEntries.filter((entry) => entry.timingKey === "pre" && String(entry.source?.triggerType ?? "").trim().toLowerCase() === "attack-declared"),
-        ...fallbackPreEntries
-    ];
-    const fullTurnManeuverEntries = [
-        ...maneuverEntries.filter((entry) => entry.timingKey === "full-turn"),
-        ...fallbackFullTurnEntries
-    ];
+    // Maneuvers surfaced in the HUD come ONLY from the actor's own learned
+    // maneuver items (mirrors the character sheet). The former "stored maneuver
+    // data" fallback pulled in every maneuver in the world — including monster
+    // maneuvers (Wing Buffet) and ones the actor never learned (Charge, Sap) —
+    // and leaked them into the Attack/Maneuvers tabs, so it is gone. escape and
+    // passive lists already sourced from learned items only.
+    const preManeuverEntries = maneuverEntries.filter((entry) => entry.timingKey === "pre" && String(entry.source?.triggerType ?? "").trim().toLowerCase() === "attack-declared");
+    const fullTurnManeuverEntries = maneuverEntries.filter((entry) => entry.timingKey === "full-turn");
     const selectedPreIds = getSelectedPreManeuverIds(actor.id).filter((id) => preManeuverEntries.some((entry) => entry.itemId === id));
     setSelectedPreManeuverIds(actor.id, selectedPreIds);
     const selectedPreEntries = preManeuverEntries.filter((entry) => selectedPreIds.includes(entry.itemId));
@@ -665,11 +646,7 @@ export function summarizeActor(actor, token, deps = {}) {
     const actorSideId = actorCombatant ? resolveCombatantSideId(actorCombatant) : "";
     const activeSideLabel = activeSideId ? getSideLabel(activeSideId) : "";
     const actorSideLabel = actorSideId ? getSideLabel(actorSideId) : "";
-    const fallbackPostEntries = storedManeuverEntries.filter((entry) => entry.timingKey === "post" && !learnedSourceIds.has(entry.sourceId));
-    const postManeuverEntries = [
-        ...maneuverEntries.filter((entry) => entry.timingKey === "post"),
-        ...fallbackPostEntries
-    ];
+    const postManeuverEntries = maneuverEntries.filter((entry) => entry.timingKey === "post");
     const postContext = {
         actor,
         armors: armorItems,

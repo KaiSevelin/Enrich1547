@@ -698,6 +698,28 @@ a.enricher-1547::before {
   color: #f8f2e6;
 }
 
+/* Inventory item title: name + its type on ONE row, the type in muted italic
+   so it reads as a subtitle rather than part of the name. Keeps the boxes short. */
+.actor-hud-1547 .hud-inv-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+.actor-hud-1547 .hud-inv-title-row .hud-row-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.actor-hud-1547 .hud-inv-type {
+  flex: 0 0 auto;
+  font-style: italic;
+  font-size: 0.64rem;
+  color: rgba(243, 234, 215, 0.6);
+}
+
 .actor-hud-1547 .hud-row-sub {
   display: block;
   margin-top: 0.05rem;

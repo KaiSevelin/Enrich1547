@@ -216,9 +216,8 @@ function buildEquippedTree(data, deps = {}) {
                     </div>
                     ${rangeShown && rangePills ? `<div class="hud-pill-row hud-weapon-range-pills">${rangePills}</div>` : ""}
                     <div class="hud-weapon-action-status ${weapon.attackState?.status === "valid" ? "is-valid" : "is-invalid"}">${escapeHtml(weapon.attackState?.label || "Unavailable")}</div>
-                    <div class="hud-row-sub">${escapeHtml(weapon.attackState?.reason || "")}</div>
                     <ul class="hud-tree-children hud-tree-compact">
-                        <li><span class="hud-tree-key">Active</span><span class="hud-tree-value">${escapeHtml(weapon.activeAttackFormula || "-")}</span></li>
+                        <li><span class="hud-tree-value">${escapeHtml(weapon.activeAttackFormula || "-")}</span></li>
                         ${weapon.weaponModifierSummary ? `<li><span class="hud-tree-key">Modifiers</span><span class="hud-tree-value">${escapeHtml(weapon.weaponModifierSummary)}</span></li>` : ""}
                         ${weapon.usesAmmo && weapon.ammoModifierSummary ? `<li><span class="hud-tree-key">Ammo Mods</span><span class="hud-tree-value">${escapeHtml(weapon.ammoModifierSummary)}</span></li>` : ""}
                     </ul>
@@ -319,8 +318,10 @@ function buildInventoryTree(data, deps = {}) {
 
         return `
             <li class="hud-tree-item" title="${escapeHtml(item.tooltip || item.name)}">
-                <div class="hud-row-main">${escapeHtml(item.name)}</div>
-                ${status.length ? `<ul class="hud-tree-children"><li>${escapeHtml(status.join(" - "))}</li></ul>` : ""}
+                <div class="hud-inv-title-row">
+                    <span class="hud-row-main">${escapeHtml(item.name)}</span>
+                    ${status.length ? `<span class="hud-inv-type">${escapeHtml(status.join(" · "))}</span>` : ""}
+                </div>
                 ${equipButton}
             </li>
         `;
@@ -331,8 +332,10 @@ function buildInventoryTree(data, deps = {}) {
             const status = [item.type, item.consumable ? "Usable" : ""].filter(Boolean);
             return `
                 <li class="hud-tree-item" title="${escapeHtml(item.tooltip || item.name)}">
-                    <div class="hud-row-main">${escapeHtml(item.name)}</div>
-                    ${status.length ? `<ul class="hud-tree-children"><li>${escapeHtml(status.join(" - "))}</li></ul>` : ""}
+                    <div class="hud-inv-title-row">
+                        <span class="hud-row-main">${escapeHtml(item.name)}</span>
+                        ${status.length ? `<span class="hud-inv-type">${escapeHtml(status.join(" · "))}</span>` : ""}
+                    </div>
                     ${item.isVirtualDefault ? "" : `
                         <div class="hud-weapon-action-strip">
                             <button type="button" class="hud-mini-button" data-hud-item-unequip="${escapeHtml(item.id)}">Unequip</button>
