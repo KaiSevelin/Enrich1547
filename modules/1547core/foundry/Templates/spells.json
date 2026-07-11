@@ -11808,5 +11808,119 @@
         ],
         "complexity": "Easy",
         "randomStepRollFormula": "1d2+1"
+    },
+    {
+        "_id": "Sp00000000000104",
+        "id": "Sp00000000000104",
+        "name": "Create Flying Ointment",
+        "uuid": "Item.Sp00000000000104",
+        "folder": "Spells",
+        "itemType": "spell",
+        "spellKind": "Necromancy",
+        "strength": 3,
+        "ritualProfile": "Necromancy",
+        "failureProfile": "Catastrophic",
+        "randomOutcome": false,
+        "spellNotes": "Canonical effect: on success the caster renders one jar of flying ointment, which grants flight for one hour to a beast or an inanimate object. The rite always requires congress with an infernal Devil-role unnatural and the boiling of the resulting offspring.",
+        "description": "A transgressive necromantic working that renders a flying ointment from forbidden matter. The witch lies with an unnatural of the infernal domain and devil role, carries and bears its offspring, then boils that offspring down into a pale grease. Smeared upon a broom, a beast, or any bearing thing, the ointment lifts it into the night air. It sits at the far, dangerous end of the craft, demanding steadiness, secrecy, and someone willing to bear its cost.",
+        "schools": [
+            "Necromancy"
+        ],
+        "prerequisitesTable": [
+            {
+                "RequirementType": "Item",
+                "RequirementTarget": "A cauldron and rendering fire, and an infernal-sired offspring",
+                "RequirementLevel": 1,
+                "RequirementNotes": "The rite consumes the offspring conceived with an infernal Devil-role unnatural."
+            }
+        ],
+        "successEffects": [
+            {
+                "Description": "Create Flying Ointment: Grant/Ointment of Flying",
+                "ApplicationMode": "GrantItem",
+                "EffectType": "Grant",
+                "EffectSubtype": "Item",
+                "Visible": true,
+                "TargetType": "Self",
+                "TargetCount": "1",
+                "TargetRange": "Self",
+                "TargetFilter": "",
+                "TargetDescription": "The caster receives the finished ointment.",
+                "CheckType": "None",
+                "CheckFormula": "",
+                "ResistanceType": "",
+                "ResistanceFormula": "",
+                "OnPartial": "",
+                "OnFailure": "",
+                "DetectionCheck": "",
+                "PayloadTarget": "Item",
+                "PayloadOperation": "Grant",
+                "PayloadValue": "Ointment of flying",
+                "PayloadDice": "",
+                "PayloadTag": "",
+                "PayloadTraitName": "",
+                "PayloadTraitText": "",
+                "GrantedItemTemplate": "Item.OintmntOfFlyng01",
+                "GrantedItemName": "Ointment of flying",
+                "PayloadNotes": "Produces one jar of flying ointment (grants flight for one hour to a beast or object).",
+                "DurationType": "Permanent",
+                "DurationValue": "",
+                "ExpiryTrigger": "",
+                "RemovalMethod": "",
+                "SuppressedBy": ""
+            }
+        ],
+        "ritualStrengthTable": "",
+        "ritualStepTable": "RitualSteps_Hard",
+        "ritualModifierTable": "",
+        "ritualAssemblyNotes": "To be generated from recipes and ritual tables defined later.",
+        "failureTable": "",
+        "failureEscalationTable": "",
+        "failureNotes": "Failure is roll-table-driven per the magic source document.",
+        "img": "media/home/games/1547/Skills/spell.webp",
+        "schoolRequirementMode": "Any",
+        "schoolRequirements": [
+            {
+                "School": "Necromancy",
+                "Level": 3
+            }
+        ],
+        "staticRitualSteps": [
+            {
+                "StepScope": "Mandatory",
+                "AlternativeGroup": "",
+                "StepType": "StaticSkill",
+                "StepText": "Meet the Necromancy school casting requirement.",
+                "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
+                "Difficulty": "3",
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Necromancy school casting requirement. (average)"
+            },
+            {
+                "StepScope": "Mandatory",
+                "AlternativeGroup": "",
+                "StepType": "RareMaterial",
+                "StepText": "Lie with an unnatural of the Infernal domain and Devil role, and conceive its offspring.",
+                "SkillCheck": "",
+                "Difficulty": "",
+                "StepNotes": "Always required. The ointment can only be rendered from an infernal-sired offspring.",
+                "Icon": "fa-gem",
+                "Tooltip": "Lie with an infernal Devil-role unnatural and conceive its offspring. (required condition, no roll)"
+            },
+            {
+                "StepScope": "Mandatory",
+                "AlternativeGroup": "",
+                "StepType": "AlchemicalOperation",
+                "StepText": "Boil the offspring down to render the flying ointment.",
+                "SkillCheck": "",
+                "Difficulty": "",
+                "StepNotes": "Always required. Render the ointment by boiling the offspring.",
+                "Icon": "fa-flask",
+                "Tooltip": "Boil the offspring to render the ointment. (required condition, no roll)"
+            }
+        ],
+        "complexity": "Hard",
+        "randomStepRollFormula": "1d6+1"
     }
 ]
