@@ -1,6 +1,4 @@
 import {
-    getActiveSideId,
-    getOrderedCombatants,
     resolveCombatantSideId,
 } from "../combat-tracker/side-tracker.js";
 import { getMovementBudget } from "./movement-budget.mjs";
@@ -59,12 +57,12 @@ function moveLog(...args) {
     try { console.debug(`${MODULE_ID} | move-debug |`, ...args); } catch (_e) { /* ignore */ }
 }
 
-function trackMoverMovementBudget({ combat, mover, moverSide, oldPos, newPos }) {
-    const activeSideId = getActiveSideId(combat, getOrderedCombatants(combat));
-    if (activeSideId && moverSide && activeSideId !== moverSide) {
-        moveLog("BAIL side-gate: activeSideId", activeSideId, "!= moverSide", moverSide, "(mover:", mover?.name, ")");
-        return;
-    }
+// Spend movement whenever a token actually changes cells: subtract the minimum
+// number of squares to reach the new position (Chebyshev — a diagonal step is 1
+// square). No turn/side gating; negative "remaining" is allowed and meaningful
+// (the token overspent its budget). The per-turn refill back to full lives in
+// side-tracker.resetSideTurnState.
+function trackMoverMovementBudget({ mover, oldPos, newPos }) {
     const g = gridSize();
     const movedSquares = chebyshev(toCell(oldPos.x, oldPos.y, g), toCell(newPos.x, newPos.y, g));
     if (movedSquares <= 0) {
@@ -75,13 +73,9 @@ function trackMoverMovementBudget({ combat, mover, moverSide, oldPos, newPos }) 
     const budget = getMovementBudget(mover);
     const remainingRaw = props.MovementRemaining ?? props.MoveRemaining;
     let remaining = Number(remainingRaw);
-    // First move of a turn with no counter yet: start from the full budget.
-    if (!Number.isFinite(remaining)) remaining = Number.isFinite(budget) ? budget : movedSquares;
-    const next = Math.max(0, remaining - movedSquares);
-    if (Number.isFinite(Number(remainingRaw)) && next === Number(remainingRaw)) {
-        moveLog("BAIL no-change: next", next, "== remainingRaw", remainingRaw);
-        return;
-    }
+    // First move with no counter yet: start from the full budget.
+    if (!Number.isFinite(remaining)) remaining = Number.isFinite(budget) ? budget : 0;
+    const next = remaining - movedSquares; // negatives are valid (overspent)
     moveLog("WRITE MovementRemaining", remainingRaw, "->", next, "(budget", budget, "moved", movedSquares, "mover", mover?.name, ")");
     void mover.update({ "system.props.MovementRemaining": next })
         .then((doc) => moveLog("WRITE ok, read-back", doc?.system?.props?.MovementRemaining))
@@ -179,17 +173,26 @@ export function registerMovementReactions() {
             const moved = !!oldPos && (oldPos.x !== newPos.x || oldPos.y !== newPos.y);
             if (!moved) { moveLog("updateToken: no position delta", { id, oldPos, newPos }); return; }
             if (!globalThis.game?.user?.isGM) { moveLog("BAIL not-GM"); return; } // GM is the authoritative trigger
+
+            // Movement-budget deduction runs for ANY moved token with an actor,
+            // regardless of combat state or whose turn it is (per design: 1
+            // square = 1 move spent, negatives allowed). The per-turn refill to
+            // full still happens at side-turn start in the combat tracker.
+            const mover = tokenDoc.actor ?? game.actors?.get?.(tokenDoc.actorId) ?? null;
+            if (mover) trackMoverMovementBudget({ mover, oldPos, newPos });
+            else moveLog("BAIL no actor on token", id);
+
+            // The opportunity-attack / threat system is genuinely combat-scoped.
             const combat = globalThis.game?.combat;
-            if (!combat?.started) { moveLog("BAIL no-combat-started"); return; }
+            if (!combat?.started) { moveLog("threats: no combat started"); return; }
             const moverCombatant = combatantForToken(combat, id);
-            if (!moverCombatant) { moveLog("BAIL no-combatant for token", id); return; }
-            const mover = moverCombatant.actor;
-            if (!mover) { moveLog("BAIL combatant has no actor"); return; }
+            if (!moverCombatant) { moveLog("threats: no combatant for token", id); return; }
+            const combatMover = moverCombatant.actor;
+            if (!combatMover) { moveLog("threats: combatant has no actor"); return; }
             const moverSide = resolveCombatantSideId(moverCombatant);
-            trackMoverMovementBudget({ combat, mover, moverSide, oldPos, newPos });
             void triggerMovementThreats({
                 combat,
-                mover,
+                mover: combatMover,
                 moverSide,
                 oldPos,
                 newPos,
