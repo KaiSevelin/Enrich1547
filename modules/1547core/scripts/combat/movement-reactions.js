@@ -1,4 +1,6 @@
 import {
+    getActiveSideId,
+    getOrderedCombatants,
     resolveCombatantSideId,
 } from "../combat-tracker/side-tracker.js";
 import { getMovementBudget } from "./movement-budget.mjs";
@@ -190,6 +192,15 @@ export function registerMovementReactions() {
             const combatMover = moverCombatant.actor;
             if (!combatMover) { moveLog("threats: combatant has no actor"); return; }
             const moverSide = resolveCombatantSideId(moverCombatant);
+            // Opportunity attacks only fire while the mover is in ITS OWN side's
+            // window. Without this, a token position update that lands outside
+            // that window — e.g. when a side turn ends and the tracker refills /
+            // repositions tokens — spuriously provokes a threat reaction.
+            const activeSideId = getActiveSideId(combat, getOrderedCombatants(combat));
+            if (activeSideId && moverSide && activeSideId !== moverSide) {
+                moveLog("threats: mover not on active side", { moverSide, activeSideId });
+                return;
+            }
             void triggerMovementThreats({
                 combat,
                 mover: combatMover,
