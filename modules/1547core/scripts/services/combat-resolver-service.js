@@ -395,27 +395,36 @@ async function applyPostManeuverEffect(options = {}) {
             await applyPatches([{ kind: "actor.update", actorId: actor.id, data: { "system.props.CriticalPoints": 0 } }]);
         }
         if (convertedDamage > 0) {
-            // Auto-apply the converted damage straight to the target's HP (ignores
-            // protection — the crit is already "past" the defence). Routed through
-            // the patch dispatcher so it lands even when this client can't write
-            // the target. Falls back to a card if there's no target.
+            // Converted damage is treated like ordinary attack damage: it is added
+            // to the attack's raw damage and re-matched against the defender's
+            // protection. Only the extra that now gets THROUGH (over what the base
+            // attack already dealt) is applied. e.g. 1 dmg + 1 crit vs 2 defence =
+            // 0 through. Routed through the dispatcher so it lands cross-client.
+            const rawDamage = Number(options.attackDamage ?? 0) || 0;
+            const protection = Number(options.attackProtection ?? 0) || 0;
+            const alreadyThrough = Math.max(0, rawDamage - protection);
+            const nowThrough = Math.max(0, rawDamage + convertedDamage - protection);
+            const additionalDamage = Math.max(0, nowThrough - alreadyThrough);
             let hpNote = "";
-            if (target?.id) {
+            if (target?.id && additionalDamage > 0) {
                 try {
-                    const { patches, result } = planApplyDamage(target, convertedDamage);
+                    const { patches, result } = planApplyDamage(target, additionalDamage);
                     if (patches.length) await applyPatches(patches, { awaitRemote: true });
                     hpNote = ` — ${esc(target.name ?? "target")} now ${result.currentHitPoints} HP`
                         + (result.isDead ? " (dead)" : result.isUnconscious ? " (unconscious)" : "");
                 } catch (err) {
                     console.error("1547core | Convert damage apply failed", err);
                 }
+            } else if (additionalDamage <= 0) {
+                hpNote = " — stopped by the defence (nothing gets through)";
             }
             try {
                 const CM = globalThis.ChatMessage;
                 await CM?.create?.({
                     speaker: CM.getSpeaker({ actor }),
                     content: `<strong>Convert — ${esc(maneuver?.name ?? "Convert")}</strong>`
-                        + `<br>${esc(actor?.name ?? "Combatant")} converts ${critCount} critical point${critCount === 1 ? "" : "s"} into <strong>+${convertedDamage} damage</strong>`
+                        + `<br>${esc(actor?.name ?? "Combatant")} converts ${critCount} critical point${critCount === 1 ? "" : "s"} into +${convertedDamage} damage`
+                        + ` (vs ${protection} defence): <strong>${additionalDamage} through</strong>`
                         + (target ? ` to ${esc(target.name ?? "target")}` : "") + hpNote + ".",
                 });
             } catch (_e) { /* non-fatal */ }
@@ -644,6 +653,8 @@ function decoratePostManeuverWindow(window) {
         currentCriticalPoints,
         actorConditions,
         targetConditions,
+        attackDamage,
+        attackProtection,
     } = window;
     return {
         ...window,
@@ -657,6 +668,8 @@ function decoratePostManeuverWindow(window) {
                 currentCriticalPoints,
                 actorConditions,
                 targetConditions,
+                attackDamage,
+                attackProtection,
             });
         },
         passPostManeuver() {

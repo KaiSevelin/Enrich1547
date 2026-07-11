@@ -650,6 +650,8 @@ export async function resolveAttackOutcomePhased({
             selectedPostManeuver: defenderPostChoice,
             actorConditions: pendingAttack.metadata?.targetConditions,
             targetConditions: pendingAttack.metadata?.actorConditions,
+            attackDamage: normalizedAttackRoll.damage,
+            attackProtection: normalizedDefenseRoll.protection + defenseModifiers.reduceDamageTaken,
         }),
         buildPostManeuverWindowData({
             side: "attacker",
@@ -661,6 +663,8 @@ export async function resolveAttackOutcomePhased({
             selectedPostManeuver: attackerPostChoice,
             actorConditions: pendingAttack.metadata?.actorConditions,
             targetConditions: pendingAttack.metadata?.targetConditions,
+            attackDamage: normalizedAttackRoll.damage,
+            attackProtection: normalizedDefenseRoll.protection + defenseModifiers.reduceDamageTaken,
         }),
     ].filter((w) => w?.actor && w.legalPostManeuvers.length > 0);
     // A side with zero legal post-maneuvers has nothing to choose, so
@@ -774,6 +778,8 @@ function buildPostManeuverWindowData({
     selectedPostManeuver = null,
     actorConditions = [],
     targetConditions = [],
+    attackDamage = 0,
+    attackProtection = 0,
 } = {}) {
     return {
         id: `post-${side}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -786,5 +792,9 @@ function buildPostManeuverWindowData({
         selectedPostManeuver: normalizeManeuver(selectedPostManeuver),
         actorConditions,
         targetConditions,
+        // Raw attack damage + total protection, so a post-maneuver like Convert
+        // can re-match added damage against the defence instead of applying flat.
+        attackDamage: Number(attackDamage) || 0,
+        attackProtection: Number(attackProtection) || 0,
     };
 }
