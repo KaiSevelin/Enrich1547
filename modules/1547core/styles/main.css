@@ -846,6 +846,10 @@ a.enricher-1547::before {
 .actor-hud-1547 .hud-maneuver-compact {
   min-height: 1.55rem;
   gap: 0.3rem;
+  /* Breathing room so the name clears the coloured left accent bar and the
+     trailing Core icon / dice pulls in from the right edge. */
+  padding-left: 0.5rem;
+  padding-right: 0.4rem;
 }
 .actor-hud-1547 .hud-maneuver-compact .hud-row-main {
   flex: 1 1 auto;
