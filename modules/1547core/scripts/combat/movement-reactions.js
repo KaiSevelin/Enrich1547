@@ -161,6 +161,15 @@ export function registerMovementReactions() {
     };
     Hooks.on("canvasReady", seed);
 
+    // Re-seed the movement baseline whenever the combat advances (turn/side/round
+    // change). Otherwise a stale lastPos left over from a move earlier in the turn
+    // could read as a fresh delta on the next token update and spuriously provoke
+    // a threat reaction "when changing side".
+    // The side system advances via a combat FLAG (activeSideId), not turn/round,
+    // so re-seed on any combat update (cheap + harmless).
+    Hooks.on("updateCombat", () => { moveLog("updateCombat: re-seeding movement baseline"); seed(); });
+    Hooks.on("combatTurnChange", () => seed());
+
     // Capture each token's position BEFORE the update is applied. preUpdateToken
     // still carries the pre-update x/y on the document, so this guarantees
     // updateToken can measure the delta even on a token's very FIRST move of the

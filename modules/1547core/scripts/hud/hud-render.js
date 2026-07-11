@@ -695,7 +695,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                 // Escape maneuvers sort FIRST and bypass the filter/usable gate (they
                 // only appear while you hold the matching condition).
                 const escapeList = data.escapeManeuvers ?? [];
-                const allManeuvers = [...escapeList, ...(data.maneuvers ?? []), ...(data.fullTurnManeuvers ?? []), ...knownPost, ...postList, ...reactionList, ...(data.passiveManeuvers ?? [])];
+                const allManeuvers = [...escapeList, ...(data.maneuvers ?? []), ...(data.moveManeuvers ?? []), ...(data.fullTurnManeuvers ?? []), ...knownPost, ...postList, ...reactionList, ...(data.passiveManeuvers ?? [])];
                 // Default behaviour hides anything not currently usable so the
                 // list stays short; the "View all" checkbox below relaxes the
                 // gate when the player wants the full menu (browse mode).
@@ -709,13 +709,14 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                     post: { label: "Critical", tone: "critical" },
                     "full-turn": { label: "Full Turn", tone: "full-turn" },
                     pre: { label: "Pre", tone: "pre" },
+                    move: { label: "Movement", tone: "pre" },
                     passive: { label: "Passive (always on)", tone: "passive" },
                 };
                 const grouped = groupEntries(filtered, (maneuver) => {
                     if (maneuver?.isEscape) return "escape";
                     return String(maneuver?.timingKey ?? "other").trim() || "other";
                 });
-                const timingOrder = ["escape", "reaction", "post", "pre", "full-turn", "passive", "other"];
+                const timingOrder = ["escape", "reaction", "post", "pre", "move", "full-turn", "passive", "other"];
                 grouped.sort((a, b) => timingOrder.indexOf(a[0]) - timingOrder.indexOf(b[0]));
                 const rows = grouped.length
                     ? grouped.map(([key, entries]) => {

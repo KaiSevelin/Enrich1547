@@ -828,6 +828,45 @@ export function summarizeActor(actor, token, deps = {}) {
             };
         });
 
+    // Movement pre-maneuvers (Core Speed) are declared when moving, so they
+    // never appeared in the attack-declared pre list — surface them (stackable)
+    // in the Maneuvers tab so the player can stage them for the movement flow.
+    const moveContext = { ...preContext, timingType: "pre", triggerType: "move-declared" };
+    const moveManeuvers = maneuverEntries
+        .filter((entry) => entry.timingKey === "pre" && String(entry.source?.triggerType ?? "").trim().toLowerCase() === "move-declared")
+        .map((entry) => {
+            const core = isCoreManeuverSource(entry.source);
+            const count = core && typeof getCoreStackCount === "function" ? getCoreStackCount(actor.id, entry.itemId) : 0;
+            const source = scaleCoreManeuverSource(applyIgnoredCostOverride(entry.source, ignoredCostIds.has(entry.itemId)), count);
+            const evaluation = typeof evaluateManeuverLegality === "function"
+                ? evaluateManeuverLegality(entry.source, moveContext)
+                : { legal: true, reasons: [] };
+            const reason = getPlayerFacingManeuverReason(evaluation.reasons?.[0] ?? "", entry.source, moveContext);
+            return {
+                id: entry.itemId,
+                sourceId: entry.sourceId,
+                name: entry.name,
+                timing: entry.timing,
+                timingKey: "move",
+                type: "move",
+                selected: count > 0,
+                disabled: !evaluation.legal,
+                usable: evaluation.legal,
+                selectable: true,
+                isCore: core,
+                coreStackCount: core ? count : 0,
+                coreStackMax: core ? (count + Math.max(0, Number(availableCore) || 0)) : 0,
+                tooltip: buildManeuverTooltip(entry.source, reason),
+                reason,
+                costSummary: getManeuverCostSummary(source),
+                effectSummary: getManeuverEffectSummary(source),
+                summaryLine: buildManeuverSummaryLine(source),
+                detailLine: buildManeuverDetailLine(source),
+                source,
+                item: entry.item,
+            };
+        });
+
     const selectedPreManeuvers = maneuvers.filter((maneuver) => maneuver.selected).map((maneuver) => maneuver.source);
     const selectedFullTurnManeuver = fullTurnManeuvers.find((maneuver) => maneuver.selected) ?? null;
     const inventory = inventoryItems.map((item) => {
@@ -1075,6 +1114,7 @@ export function summarizeActor(actor, token, deps = {}) {
         equippedWeapons,
         equippedArmor,
         maneuvers,
+        moveManeuvers,
         fullTurnManeuvers,
         postManeuvers,
         escapeManeuvers,
