@@ -356,12 +356,12 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
         ui.notifications?.warn?.("Weapon item could not be resolved.");
         return;
     }
-    const currentManeuverEffects = summarizeManeuverEffects(currentSummary.selectedPreManeuvers);
-    // Conditions (Weakened, Exhausted, Cursed, Locked, Prone) add Risk dice to the attack pool.
-    currentManeuverEffects.addDisadvantage = Number(currentManeuverEffects.addDisadvantage ?? 0) + conditionCombatDisadvantage(context.actor, "attack");
-    const baseWeaponRollContext = buildWeaponRollContext(currentSummary, currentManeuverEffects);
+    // summarizeActor already folded the selected pre-maneuvers AND condition
+    // disadvantage into currentSummary.weaponRollContext. Re-folding them here
+    // double-counted every maneuver die (e.g. Core Attack added 2 Multiplier
+    // dice + 2 Risk dice instead of 1 each), so use the already-built context.
     const effectiveWeaponRollContext = {
-        ...baseWeaponRollContext,
+        ...currentSummary.weaponRollContext,
         ammoAddDice: Array.isArray(currentWeapon?.loadedAmmoAddDice) ? currentWeapon.loadedAmmoAddDice : []
     };
     const attackFormula = buildFoundryAttackRollFormula(currentWeapon?.activeAttackProfileData, effectiveWeaponRollContext) || "";
@@ -624,6 +624,16 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
         await consumePersistentEffectIfPresent(context.actor, "grapple-break-advantage", deps);
         if (Object.keys(getPendingNextAttackDice?.(context.actor?.id) ?? {}).length > 0) {
             clearPendingNextAttackDice?.(context.actor?.id);
+        }
+        // Charge each selected pre-maneuver's cost now that the attack resolved
+        // (e.g. Core Attack spends 1 Core Point). Pre-maneuver costs were never
+        // being deducted — only post/full-turn/escape commits spent theirs.
+        for (const preManeuver of currentSummary.selectedPreManeuvers ?? []) {
+            try {
+                await combatApi?.spendActorManeuverCost?.(context.actor, preManeuver);
+            } catch (err) {
+                console.error("1547core | pre-maneuver cost spend failed", err);
+            }
         }
         clearActorManeuverSelections(context.actor?.id);
         ui.notifications?.info?.(`Attack resolved against ${targetActor?.name ?? "target"}.`);

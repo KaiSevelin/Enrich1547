@@ -1198,8 +1198,7 @@
     "automated": false,
     "handlerId": null,
     "effectData": {
-      "convertCriticalPointsToDamage": 1,
-      "addDamage": 1
+      "convertCriticalPointsToDamage": 1
     },
     "usageLimit": {
       "scope": "side-based-turn",
@@ -1213,7 +1212,7 @@
     "requirements": {
       "skill": "Combat Melee 1"
     },
-    "description": "A direct conversion of critical advantage into immediate extra harm. It is spent after a successful attack in the post-maneuver window. In play, it converts 1 critical point into damage, and adds 1 extra damage. It requires Combat Melee 1. At the cost of one Critical point."
+    "description": "A direct conversion of critical advantage into immediate extra harm. It is spent after a successful attack in the post-maneuver window. In play, it converts every critical point from the attack into 1 damage each. It requires Combat Melee 1. At the cost of the attack's Critical points."
   },
   {
     "_id": "g8HsWd4Lp1Tr7Qn2",

@@ -1103,7 +1103,7 @@
             "Traits_Shield": false,
             "Traits_SmallShield": false,
             "Traits_Tactical": false,
-            "MinReach": 2,
+            "MinReach": 1,
             "MaxReach": 2,
             "ActiveAttackProfile": "Attack",
             "UsesAmmo": false,
@@ -1157,7 +1157,7 @@
                     "MountedWeapon"
                 ],
                 "img": "media/home/games/1547/Items/Lance.webp",
-                "minReach": 2,
+                "minReach": 1,
                 "maxReach": 2,
                 "usesAmmo": false,
                 "ammoType": "",

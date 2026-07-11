@@ -117,6 +117,7 @@ export function registerCombatResolverService() {
             commitFullTurnManeuver,
             commitPostManeuver,
             commitConditionEscapeManeuver,
+            spendActorManeuverCost,
             getActivePersistentEffects,
             consumePersistentEffect,
         },
@@ -378,6 +379,29 @@ async function applyPostManeuverEffect(options = {}) {
         const nextSpent = Math.max(0, currentSpent - recoverCore);
         if (nextSpent !== currentSpent) {
             await applyPatches([{ kind: "actor.update", actorId: actor.id, data: { "system.props.SpentCorePoints": nextSpent } }]);
+        }
+    }
+
+    // Convert: turn the attack's critical points into extra damage at
+    // `convertCriticalPointsToDamage` per point. The commit step already spent
+    // CostAmount; zero out whatever crit remains so the FULL pool is converted,
+    // and card the total for the GM to apply (manual economy).
+    const critToDamageRate = Number(effect.convertCriticalPointsToDamage ?? 0) || 0;
+    if (critToDamageRate > 0 && actor?.id) {
+        const critCount = Math.max(0, Number(options.currentCriticalPoints ?? 0) || 0);
+        const convertedDamage = critToDamageRate * critCount;
+        if (Number(actor.system?.props?.CriticalPoints ?? 0) > 0) {
+            await applyPatches([{ kind: "actor.update", actorId: actor.id, data: { "system.props.CriticalPoints": 0 } }]);
+        }
+        if (convertedDamage > 0) {
+            try {
+                const CM = globalThis.ChatMessage;
+                await CM?.create?.({
+                    speaker: CM.getSpeaker({ actor }),
+                    content: `<strong>Convert — ${esc(maneuver?.name ?? "Convert")}</strong>`
+                        + `<br>${esc(actor?.name ?? "Combatant")} converts ${critCount} critical point${critCount === 1 ? "" : "s"} into <strong>+${convertedDamage} damage</strong>${target ? ` to ${esc(target.name ?? "target")}` : ""}. (GM applies)`,
+                });
+            } catch (_e) { /* non-fatal */ }
         }
     }
 
