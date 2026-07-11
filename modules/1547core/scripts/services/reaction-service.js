@@ -1,4 +1,16 @@
 import { MODULE_ID } from "../lib/constants.mjs";
+import { getCoreStackCount, setCoreStackCount } from "../hud/hud-state.js";
+
+// Core reaction stacking: scale a chosen Core reaction's numeric effects + cost
+// by the Core Points staged on it. count <= 1 returns the reaction unchanged, so
+// normal (unstacked) reactions are untouched.
+function scaleCoreReactionSelection(reaction, count) {
+    const n = Math.max(1, Number(count) || 1);
+    if (!reaction || n <= 1) return reaction;
+    const fx = { ...(reaction.effectData ?? {}) };
+    for (const k of Object.keys(fx)) if (typeof fx[k] === "number") fx[k] = fx[k] * n;
+    return { ...reaction, effectData: fx, CostAmount: (Number(reaction.CostAmount ?? reaction.source?.CostAmount) || 1) * n };
+}
 ﻿import {
     COMBAT_EVENTS,
     emitCombatEvent,
@@ -251,6 +263,18 @@ async function handleReactionTrigger(sourceEvent, trigger) {
         if (selectedReaction && reactorActor) void combatApi?.markReactionUsed?.(reactorActor);
     } else if (selectedReaction && reactorActor) {
         void combatApi?.markReactionUsed?.(reactorActor);
+    }
+
+    // Core reaction stacking: scale the chosen Core reaction's effect + cost by
+    // the Core Points staged on it (Core Defense / Core Toughness), then clear
+    // that stack. Gated on count>1 inside the scaler, so unstacked reactions are
+    // untouched. Done before the spend so the scaled cost is charged and the
+    // scaled effectData rides along in the resolution to the attacker.
+    if (selectedReaction && reactorActor && String(selectedReaction.CostType ?? selectedReaction.source?.CostType ?? "") === "CorePoints") {
+        const mid = selectedReaction.id ?? selectedReaction._id ?? selectedReaction.source?.id ?? selectedReaction.source?._id ?? selectedReaction.name;
+        const staged = getCoreStackCount(reactorActor.id, mid);
+        if (staged > 1) selectedReaction = scaleCoreReactionSelection(selectedReaction, staged);
+        if (staged > 0) setCoreStackCount(reactorActor.id, mid, 0);
     }
 
     // Spend the chosen reaction maneuver's resource cost (e.g. Core Defense's

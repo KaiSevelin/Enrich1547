@@ -8,11 +8,18 @@ export function buildReactionPrompt(deps = {}) {
         getManeuverEffectSummary,
         getManeuverTimingSummary,
         buildManeuverDetailLine,
+        getCoreStackCount,
         escapeHtml,
     } = deps;
 
     const reactionWindow = getActiveReactionWindow?.();
     if (!reactionWindow) return "";
+
+    // Core-reaction stacking: the reactor can stage extra Core Points on a Core
+    // reaction (Core Defense / Core Toughness) before committing. Ceiling =
+    // staged + still-available.
+    const reactorId = reactionWindow.actor?.id ?? null;
+    const availableCore = Math.max(0, Number(reactionWindow.actor?.system?.props?.AvailableCorePoints ?? 0) || 0);
 
     const actorName = reactionWindow.actor?.name ?? "";
     const targetName = reactionWindow.target?.name ?? "";
@@ -49,6 +56,15 @@ export function buildReactionPrompt(deps = {}) {
         const subtitle = subtitleParts.join(" | ") || (isDisabled ? firstReason : getManeuverTimingSummary?.(candidate) || "");
         const detail = buildManeuverDetailLine?.(candidate) || "";
         const tooltip = [firstReason, subtitle, detail].filter(Boolean).join(" | ");
+        // Core reactions get a gem stepper: left-click +1 Core Point, right-click
+        // −1. The staged count scales the reaction's effect + cost on commit.
+        const usesCore = String(candidate?.CostType ?? candidate?.source?.CostType ?? "") === "CorePoints";
+        const maneuverId = candidate?.id ?? candidate?._id ?? candidate?.source?.id ?? candidate?.name ?? "";
+        const staged = usesCore && reactorId && typeof getCoreStackCount === "function"
+            ? getCoreStackCount(reactorId, maneuverId) : 0;
+        const stackControl = usesCore && !isDisabled
+            ? `<button type="button" class="hud-mini-button hud-core-stack-btn is-core-cost" data-hud-core-stack="${escapeHtml(maneuverId)}" data-hud-core-max="${staged + availableCore}" title="Core Points staged: ${staged}. Left-click +1, right-click −1."><i class="fa-solid fa-gem hud-core-icon" aria-hidden="true"></i>&times;${Math.max(1, staged)}</button>`
+            : "";
         return `
             <button
                 type="button"
@@ -62,6 +78,7 @@ export function buildReactionPrompt(deps = {}) {
                 <span class="hud-mini-button-sub">${escapeHtml(subtitle)}</span>
                 ${detail ? `<span class="hud-mini-button-sub">${escapeHtml(detail)}</span>` : ""}
             </button>
+            ${stackControl}
         `;
     }).join("");
 

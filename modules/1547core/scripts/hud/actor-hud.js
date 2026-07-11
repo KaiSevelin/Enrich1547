@@ -1501,6 +1501,7 @@ function buildReactionPrompt() {
         getManeuverEffectSummary,
         getManeuverTimingSummary,
         buildManeuverDetailLine,
+        getCoreStackCount,
         escapeHtml,
     });
 }
