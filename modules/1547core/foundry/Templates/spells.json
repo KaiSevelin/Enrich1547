@@ -11716,5 +11716,97 @@
         ],
         "complexity": "Easy",
         "randomStepRollFormula": "1d2+1"
+    },
+    {
+        "_id": "Sp00000000000103",
+        "id": "Sp00000000000103",
+        "name": "Milk Hare",
+        "uuid": "Item.Sp00000000000103",
+        "folder": "Spells",
+        "itemType": "spell",
+        "spellKind": "Knot",
+        "strength": 1,
+        "ritualProfile": "Knot",
+        "failureProfile": "Minor",
+        "randomOutcome": false,
+        "spellNotes": "Canonical effect: on success the caster's milk-hare familiar drains a chosen herd and returns the stolen milk to the caster; it leaves a smear of yellow mould where it fed and the raided cattle run dry for a time.",
+        "description": "Conjures a milk-thieving spirit — a bjära in the shape of a hare, a miniature horse, or a cat — quickened on a knotted cord and sent out to suckle a neighbour's cattle dry. Too swift to be seen save as a blur across the byre, it betrays its passing only by a smear of yellow mould left where it fed. Its work done, the familiar scurries home to the caster and vomits up the stolen milk. It is worked through cords, bindings, and held tension, as is common in knot magic. A lighter working, but light magic still has teeth when it slips or turns.",
+        "schools": [
+            "Knot"
+        ],
+        "prerequisitesTable": [
+            {
+                "RequirementType": "Item",
+                "RequirementTarget": "Knotted cord bound with hair or wool taken from the target's herd",
+                "RequirementLevel": 1,
+                "RequirementNotes": "The familiar must be knotted from something of the beasts it is sent to rob, and quickened by the caster."
+            }
+        ],
+        "successEffects": [
+            {
+                "Description": "Milk Hare: Grant/Stolen Milk",
+                "ApplicationMode": "NarrativeOnly",
+                "EffectType": "Grant",
+                "EffectSubtype": "Stolen Milk",
+                "Visible": true,
+                "TargetType": "Self",
+                "TargetCount": "1",
+                "TargetRange": "Self",
+                "TargetFilter": "",
+                "TargetDescription": "",
+                "CheckType": "None",
+                "CheckFormula": "",
+                "ResistanceType": "",
+                "ResistanceFormula": "",
+                "OnPartial": "",
+                "OnFailure": "",
+                "DetectionCheck": "",
+                "PayloadTarget": "Provision / milk",
+                "PayloadOperation": "Grant",
+                "PayloadValue": "Stolen milk",
+                "PayloadDice": "",
+                "PayloadTag": "",
+                "PayloadTraitName": "",
+                "PayloadTraitText": "",
+                "GrantedItemTemplate": "",
+                "GrantedItemName": "",
+                "PayloadNotes": "The familiar returns and vomits up milk stolen from a chosen herd. The raided cattle run dry for a time and a smear of yellow mould marks where it fed.",
+                "DurationType": "Instant",
+                "DurationValue": "",
+                "ExpiryTrigger": "",
+                "RemovalMethod": "",
+                "SuppressedBy": ""
+            }
+        ],
+        "ritualStrengthTable": "",
+        "ritualStepTable": "RitualSteps_Easy",
+        "ritualModifierTable": "",
+        "ritualAssemblyNotes": "To be generated from recipes and ritual tables defined later.",
+        "failureTable": "",
+        "failureEscalationTable": "",
+        "failureNotes": "Failure is roll-table-driven per the magic source document.",
+        "img": "media/home/games/1547/Skills/spell.webp",
+        "schoolRequirementMode": "Any",
+        "schoolRequirements": [
+            {
+                "School": "Knot",
+                "Level": 1
+            }
+        ],
+        "staticRitualSteps": [
+            {
+                "StepScope": "Mandatory",
+                "AlternativeGroup": "",
+                "StepType": "StaticSkill",
+                "StepText": "Meet the Knot school casting requirement.",
+                "SkillCheck": "Pagan Expertise Knot",
+                "Difficulty": "1",
+                "StepNotes": "Static core school requirement.",
+                "Icon": "fa-graduation-cap",
+                "Tooltip": "Meet the Knot school casting requirement. (trivial)"
+            }
+        ],
+        "complexity": "Easy",
+        "randomStepRollFormula": "1d2+1"
     }
 ]
