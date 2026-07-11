@@ -1,3 +1,7 @@
+import { MODULE_ID as CORE_MODULE_ID } from "../lib/constants.mjs";
+
+// Legacy scope, kept only for console log labels. Chargen SETTINGS now live under
+// the canonical 1547core scope (see chargen/settings.js), so writes go there.
 const MODULE_ID = "chargen1547_v2";
 const VALID_ID_RX = /^[A-Za-z0-9]{16}$/;
 
@@ -369,8 +373,8 @@ export async function importWorldContent(opts = {}) {
 
     const packageReport = await buildPackageRegistry(rootPath, files, refMap);
 
-    await game.settings.set(MODULE_ID, "legacyIdMap", refMap);
-    await game.settings.set(MODULE_ID, "packageRegistry", packageReport.registry);
+    await game.settings.set(CORE_MODULE_ID, "legacyIdMap", refMap);
+    await game.settings.set(CORE_MODULE_ID, "packageRegistry", packageReport.registry);
 
     if (packageReport.warnings.length) {
         for (const w of packageReport.warnings) console.warn(`[${MODULE_ID}] packages.json: ${w}`);
