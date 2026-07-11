@@ -41,6 +41,7 @@ import {
 import { planMarkReactionUsed, planMarkMovementReacted, isReactionAvailable } from "../combat/activation-state.mjs";
 import { planSpendActorManeuverCost, planAppendCommittedManeuverState, buildCommittedManeuverRecord } from "../combat/maneuver-state.mjs";
 import { planEscapeConditions, statCheckFormula, escapeSucceeds } from "../combat/escape-state.mjs";
+import { planApplyDamage } from "../combat/hp-state.mjs";
 
 // PENDING_ATTACK_KIND now lives in combat/attack-lifecycle.mjs and is re-imported above.
 const DEFAULT_UNARMED_WEAPON_SOURCE = {
@@ -394,12 +395,28 @@ async function applyPostManeuverEffect(options = {}) {
             await applyPatches([{ kind: "actor.update", actorId: actor.id, data: { "system.props.CriticalPoints": 0 } }]);
         }
         if (convertedDamage > 0) {
+            // Auto-apply the converted damage straight to the target's HP (ignores
+            // protection — the crit is already "past" the defence). Routed through
+            // the patch dispatcher so it lands even when this client can't write
+            // the target. Falls back to a card if there's no target.
+            let hpNote = "";
+            if (target?.id) {
+                try {
+                    const { patches, result } = planApplyDamage(target, convertedDamage);
+                    if (patches.length) await applyPatches(patches, { awaitRemote: true });
+                    hpNote = ` — ${esc(target.name ?? "target")} now ${result.currentHitPoints} HP`
+                        + (result.isDead ? " (dead)" : result.isUnconscious ? " (unconscious)" : "");
+                } catch (err) {
+                    console.error("1547core | Convert damage apply failed", err);
+                }
+            }
             try {
                 const CM = globalThis.ChatMessage;
                 await CM?.create?.({
                     speaker: CM.getSpeaker({ actor }),
                     content: `<strong>Convert — ${esc(maneuver?.name ?? "Convert")}</strong>`
-                        + `<br>${esc(actor?.name ?? "Combatant")} converts ${critCount} critical point${critCount === 1 ? "" : "s"} into <strong>+${convertedDamage} damage</strong>${target ? ` to ${esc(target.name ?? "target")}` : ""}. (GM applies)`,
+                        + `<br>${esc(actor?.name ?? "Combatant")} converts ${critCount} critical point${critCount === 1 ? "" : "s"} into <strong>+${convertedDamage} damage</strong>`
+                        + (target ? ` to ${esc(target.name ?? "target")}` : "") + hpNote + ".",
                 });
             } catch (_e) { /* non-fatal */ }
         }
