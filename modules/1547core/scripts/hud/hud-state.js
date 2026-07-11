@@ -31,6 +31,8 @@
     selectedPreManeuverIdsByActor: {},
     selectedFullTurnManeuverIdByActor: {},
     ignoredCostManeuverIdsByActor: {},
+    // Core-maneuver stacking: actorId -> { maneuverId -> Core Points spent }.
+    coreStackCountByActor: {},
     postManeuverQueue: [],
     deferredPostManeuverWindows: [],
     selectedPostManeuverIdByWindow: {},
@@ -217,6 +219,48 @@ export function toggleSelectedPreManeuver(actorId, maneuverId) {
     setSelectedPreManeuverIds(actorId, Array.from(current));
 }
 
+// ── Core-maneuver stacking ────────────────────────────────────────────────
+// How many Core Points are staged on a given Core maneuver (0 = not staged).
+export function getCoreStackCount(actorId, maneuverId) {
+    const a = String(actorId ?? "").trim();
+    const m = String(maneuverId ?? "").trim();
+    if (!a || !m) return 0;
+    return Math.max(0, Number(HUD_STATE.coreStackCountByActor?.[a]?.[m] ?? 0) || 0);
+}
+
+export function getCoreStackCounts(actorId) {
+    const a = String(actorId ?? "").trim();
+    if (!a) return {};
+    return { ...(HUD_STATE.coreStackCountByActor?.[a] ?? {}) };
+}
+
+export function setCoreStackCount(actorId, maneuverId, count) {
+    const a = String(actorId ?? "").trim();
+    const m = String(maneuverId ?? "").trim();
+    if (!a || !m) return 0;
+    const n = Math.max(0, Number(count) || 0);
+    if (!HUD_STATE.coreStackCountByActor[a]) HUD_STATE.coreStackCountByActor[a] = {};
+    if (n > 0) HUD_STATE.coreStackCountByActor[a][m] = n;
+    else {
+        delete HUD_STATE.coreStackCountByActor[a][m];
+        if (!Object.keys(HUD_STATE.coreStackCountByActor[a]).length) delete HUD_STATE.coreStackCountByActor[a];
+    }
+    return n;
+}
+
+// Add/remove a point. `max` clamps the top end (available Core Points). Returns
+// the new count.
+export function adjustCoreStackCount(actorId, maneuverId, delta, max = Infinity) {
+    const next = Math.max(0, Math.min(Number(max) || 0, getCoreStackCount(actorId, maneuverId) + (Number(delta) || 0)));
+    return setCoreStackCount(actorId, maneuverId, next);
+}
+
+export function clearCoreStackCounts(actorId) {
+    const a = String(actorId ?? "").trim();
+    if (!a || !HUD_STATE.coreStackCountByActor?.[a]) return;
+    delete HUD_STATE.coreStackCountByActor[a];
+}
+
 export function getSelectedFullTurnManeuverId(actorId) {
     const key = String(actorId ?? "").trim();
     if (!key) return null;
@@ -253,6 +297,7 @@ export function toggleSelectedFullTurnManeuver(actorId, maneuverId) {
 export function clearActorManeuverSelections(actorId) {
     clearSelectedPreManeuvers(actorId);
     clearSelectedFullTurnManeuver(actorId);
+    clearCoreStackCounts(actorId);
 }
 
 export function getSelectedReactionChoiceId() {

@@ -65,8 +65,13 @@ function buildStatsTree(data, deps = {}) {
 // and core-cost states are shown by background tint (CSS), not text.
 function renderManeuverRow(maneuver, escapeHtml) {
     const usesCore = (maneuver.source?.CostType ?? maneuver.CostType) === "CorePoints";
+    const stackCount = Number(maneuver.coreStackCount ?? 0) || 0;
+    // Core maneuvers stack Core Points: show ×N when staged, otherwise the plain
+    // gem. Left-click adds a point, right-click removes one (handled in bindings).
     const coreIcon = usesCore
-        ? `<i class="fa-solid fa-gem hud-core-icon" title="Costs 1 Core Point" aria-hidden="true"></i>`
+        ? (stackCount > 0
+            ? `<span class="hud-core-stack" title="${stackCount} Core Point${stackCount === 1 ? "" : "s"} staged — left-click +1, right-click −1"><i class="fa-solid fa-gem hud-core-icon" aria-hidden="true"></i>&times;${stackCount}</span>`
+            : `<i class="fa-solid fa-gem hud-core-icon" title="Costs Core Points — left-click to add, right-click to remove" aria-hidden="true"></i>`)
         : "";
     const coreClass = usesCore ? " is-core-cost" : "";
     const title = escapeHtml(maneuver.tooltip || maneuver.name || "");
@@ -84,10 +89,15 @@ function renderManeuverRow(maneuver, escapeHtml) {
     if (maneuver.selectable) {
         // Grey out maneuvers that can't currently be performed (illegal/disabled).
         const mutedClass = (maneuver.disabled || maneuver.usable === false) ? " is-muted" : "";
+        // Core maneuvers stack Core Points (left-click +1 / right-click −1);
+        // everything else is a simple toggle.
+        const selectAttrs = usesCore
+            ? `data-hud-core-stack="${escapeHtml(maneuver.id)}" data-hud-core-max="${Number(maneuver.coreStackMax ?? 0) || 0}"`
+            : `data-hud-maneuver-select="${escapeHtml(maneuver.id)}"`;
         return `
             <li class="hud-tree-item" title="${title}">
                 <button type="button" class="hud-action-row hud-maneuver-compact${maneuver.selected ? " is-active" : ""}${mutedClass}${coreClass}"
-                    data-hud-maneuver-select="${escapeHtml(maneuver.id)}"
+                    ${selectAttrs}
                     data-hud-maneuver-timing="${escapeHtml(maneuver.timingKey)}"${maneuver.disabled ? " disabled" : ""}>
                     ${content}
                 </button>

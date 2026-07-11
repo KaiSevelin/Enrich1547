@@ -58,6 +58,24 @@ function buildManeuverSource(item, sourceData = {}, itemProps = {}, getNumericPr
     };
 }
 
+function isCoreManeuverSource(source) {
+    return String(source?.CostType ?? "") === "CorePoints";
+}
+
+// Stacking: scale a Core maneuver's cost + numeric effects by the number of
+// Core Points staged on it. 1 point = base values; N points = N× the CostAmount
+// and N× each numeric effectData value (1 point = +1 die/unit). Non-Core or
+// count <= 1 returns the source unchanged.
+function scaleCoreManeuverSource(source, count) {
+    const n = Math.max(0, Number(count) || 0);
+    if (!isCoreManeuverSource(source) || n <= 1) return source;
+    const fx = { ...(source.effectData ?? {}) };
+    for (const k of Object.keys(fx)) {
+        if (typeof fx[k] === "number") fx[k] = fx[k] * n;
+    }
+    return { ...source, CostAmount: (Number(source.CostAmount) || 1) * n, effectData: fx };
+}
+
 function summarizeManeuverEffects(maneuvers) {
     return (Array.isArray(maneuvers) ? maneuvers : []).reduce((summary, maneuver) => {
         const effect = maneuver?.effectData ?? {};
@@ -309,6 +327,7 @@ export function summarizeActor(actor, token, deps = {}) {
         getWeaponAttackState,
         getSelectedPreManeuverIds,
         setSelectedPreManeuverIds,
+        getCoreStackCount,
         getSelectedFullTurnManeuverId,
         clearSelectedFullTurnManeuver,
         getIgnoredCostManeuverIds,
@@ -511,11 +530,29 @@ export function summarizeActor(actor, token, deps = {}) {
     // passive lists already sourced from learned items only.
     const preManeuverEntries = maneuverEntries.filter((entry) => entry.timingKey === "pre" && String(entry.source?.triggerType ?? "").trim().toLowerCase() === "attack-declared");
     const fullTurnManeuverEntries = maneuverEntries.filter((entry) => entry.timingKey === "full-turn");
-    const selectedPreIds = getSelectedPreManeuverIds(actor.id).filter((id) => preManeuverEntries.some((entry) => entry.itemId === id));
-    setSelectedPreManeuverIds(actor.id, selectedPreIds);
-    const selectedPreEntries = preManeuverEntries.filter((entry) => selectedPreIds.includes(entry.itemId));
-    const selectedPreSourceIds = selectedPreEntries.map((entry) => entry.source._id ?? entry.source.id ?? entry.source.name).filter(Boolean);
     const ignoredCostIds = new Set(getIgnoredCostManeuverIds(actor.id));
+    // Non-Core pre-maneuvers use the boolean selection set; Core pre-maneuvers
+    // (CostType CorePoints) are "selected" when they have a Core-Point stack
+    // count > 0, and their cost + numeric effects scale with that count.
+    const selectedPreIds = getSelectedPreManeuverIds(actor.id).filter((id) => preManeuverEntries.some((entry) => entry.itemId === id && !isCoreManeuverSource(entry.source)));
+    setSelectedPreManeuverIds(actor.id, selectedPreIds);
+    const selectedPreIdSet = new Set(selectedPreIds);
+    const preEntryState = preManeuverEntries.map((entry) => {
+        const core = isCoreManeuverSource(entry.source);
+        const count = core
+            ? (typeof getCoreStackCount === "function" ? getCoreStackCount(actor.id, entry.itemId) : 0)
+            : (selectedPreIdSet.has(entry.itemId) ? 1 : 0);
+        const withIgnore = applyIgnoredCostOverride(entry.source, ignoredCostIds.has(entry.itemId));
+        return {
+            entry,
+            core,
+            count,
+            selected: count > 0,
+            source: scaleCoreManeuverSource(withIgnore, count),
+        };
+    });
+    const selectedPreEntries = preEntryState.filter((s) => s.selected);
+    const selectedPreSourceIds = selectedPreEntries.map((s) => s.source._id ?? s.source.id ?? s.source.name).filter(Boolean);
     const selectedFullTurnId = getSelectedFullTurnManeuverId(actor.id);
     const selectedFullTurnEntry = fullTurnManeuverEntries.find((entry) => entry.itemId === selectedFullTurnId) ?? null;
     if (selectedFullTurnId && !selectedFullTurnEntry) {
@@ -529,7 +566,7 @@ export function summarizeActor(actor, token, deps = {}) {
         return Number(placeable.document?.disposition) === Number(token?.document?.disposition);
     }));
     const reservedManeuverSources = [
-        ...selectedPreEntries.map((entry) => applyIgnoredCostOverride(entry.source, ignoredCostIds.has(entry.itemId))),
+        ...selectedPreEntries.map((s) => s.source),
         ...(selectedFullTurnEntry ? [applyIgnoredCostOverride(selectedFullTurnEntry.source, ignoredCostIds.has(selectedFullTurnEntry.itemId))] : []),
     ];
     const reservedResources = buildReservedResourceTotals(reservedManeuverSources);
@@ -554,11 +591,11 @@ export function summarizeActor(actor, token, deps = {}) {
         selectedManeuverIds: selectedPreSourceIds,
         currentCriticalPoints: getNumericProp(props, ["CriticalPoints", "CurrentCriticalPoints"]) ?? 0
     };
-    const maneuvers = preManeuverEntries.map((entry) => {
+    const availableCore = getNumericProp(props, ["AvailableCorePoints"]) ?? 0;
+    const maneuvers = preEntryState.map(({ entry, core, count, selected, source }) => {
         const evaluation = typeof evaluateManeuverLegality === "function"
             ? evaluateManeuverLegality(entry.source, preContext)
             : { legal: true, reasons: [] };
-        const selected = selectedPreIds.includes(entry.itemId);
         const state = !evaluation.legal ? "disabled" : (selected ? "selected" : "enabled");
         const reason = getPlayerFacingManeuverReason(evaluation.reasons?.[0] ?? "", entry.source, preContext);
         return {
@@ -573,13 +610,18 @@ export function summarizeActor(actor, token, deps = {}) {
             disabled: state === "disabled",
             usable: state !== "disabled",
             selectable: true,
+            // Core-maneuver stacking: how many Core Points are staged, and the
+            // ceiling (staged + still-available) so the HUD can clamp +clicks.
+            isCore: core,
+            coreStackCount: core ? count : 0,
+            coreStackMax: core ? (count + Math.max(0, Number(availableCore) || 0)) : 0,
             tooltip: buildManeuverTooltip(entry.source, reason),
             reason,
-            costSummary: ignoredCostIds.has(entry.itemId) ? `${getManeuverCostSummary(entry.source)} ignored` : getManeuverCostSummary(entry.source),
-            effectSummary: getManeuverEffectSummary(entry.source),
-            summaryLine: buildManeuverSummaryLine(entry.source),
-            detailLine: buildManeuverDetailLine(entry.source),
-            source: applyIgnoredCostOverride(entry.source, ignoredCostIds.has(entry.itemId)),
+            costSummary: ignoredCostIds.has(entry.itemId) ? `${getManeuverCostSummary(source)} ignored` : getManeuverCostSummary(source),
+            effectSummary: getManeuverEffectSummary(source),
+            summaryLine: buildManeuverSummaryLine(source),
+            detailLine: buildManeuverDetailLine(source),
+            source,
             item: entry.item
         };
     });

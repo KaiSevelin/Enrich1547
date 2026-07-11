@@ -869,6 +869,17 @@ a.enricher-1547::before {
   color: rgba(224, 96, 86, 0.95);
 }
 
+/* Staged Core-Point count on a stacked Core maneuver (gem ×N). */
+.actor-hud-1547 .hud-core-stack {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.12rem;
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: rgba(232, 120, 110, 1);
+}
+
 /* Maneuvers that spend the scarce Core Points pool: tint the whole box a
    subtle transparent red rather than drawing a left stripe. */
 .actor-hud-1547 .hud-tree-item:has(> .hud-action-row.is-core-cost) {

@@ -68,6 +68,7 @@ export function bindHudInteractions(root, token, deps = {}) {
         clearSelectedFullTurnManeuver,
         toggleSelectedPreManeuver,
         clearSelectedPreManeuvers,
+        adjustCoreStackCount,
         toggleSelectedFullTurnManeuver,
         summarizeActor,
         executeSelectedFullTurnManeuver,
@@ -439,6 +440,20 @@ export function bindHudInteractions(root, token, deps = {}) {
             }
             void renderHudForSelection();
         });
+    }
+    // Core-maneuver stacking: left-click adds a Core Point, right-click removes
+    // one. The count (and its ceiling = staged + available) drives the ×N badge
+    // and the scaled cost/effect in summarizeActor.
+    for (const button of root.querySelectorAll("[data-hud-core-stack]")) {
+        const maneuverId = button.dataset.hudCoreStack;
+        const max = Math.max(0, Number(button.dataset.hudCoreMax) || 0);
+        const bump = (delta) => {
+            if (!token?.actor || !maneuverId || button.disabled) return;
+            if (typeof adjustCoreStackCount === "function") adjustCoreStackCount(token.actor.id, maneuverId, delta, max);
+            void renderHudForSelection();
+        };
+        button.addEventListener("click", () => bump(1));
+        button.addEventListener("contextmenu", (event) => { event.preventDefault(); bump(-1); });
     }
     for (const button of root.querySelectorAll("[data-hud-pre-maneuver]")) {
         button.addEventListener("click", () => {
