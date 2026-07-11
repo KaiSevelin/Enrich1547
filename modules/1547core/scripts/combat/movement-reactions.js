@@ -161,6 +161,18 @@ export function registerMovementReactions() {
     };
     Hooks.on("canvasReady", seed);
 
+    // Capture each token's position BEFORE the update is applied. preUpdateToken
+    // still carries the pre-update x/y on the document, so this guarantees
+    // updateToken can measure the delta even on a token's very FIRST move of the
+    // session — the canvasReady seed alone can miss late-drawn tokens, which
+    // made the first move register as 0 squares.
+    Hooks.on("preUpdateToken", (tokenDoc) => {
+        try {
+            const id = tokenDoc?.id;
+            if (id) lastPos.set(id, { x: Number(tokenDoc.x) || 0, y: Number(tokenDoc.y) || 0 });
+        } catch (_err) { /* non-fatal */ }
+    });
+
     Hooks.on("updateToken", (tokenDoc) => {
         try {
             const id = tokenDoc?.id;
