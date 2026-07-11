@@ -1112,23 +1112,22 @@
     "name": "Quick Draw",
     "uuid": "Item.c9QdRw3Mn7Ts2Vk4",
     "folder": "Maneuvers",
-    "type": "pre",
-    "triggerType": "attack-declared",
+    "type": "passive",
+    "triggerType": "equip",
     "CostType": null,
     "CostAmount": 0,
     "automated": false,
     "handlerId": null,
     "effectData": {
-      "readyEquippedSidearm": true,
-      "usableInCurrentAction": true
+      "freeWeaponSwapPerTurn": true
     },
     "usageLimit": {
       "scope": "side-based-turn",
       "maxUses": 1
     },
     "tags": [
-      "sidearm",
-      "utility"
+      "utility",
+      "passive"
     ],
     "enabled": false,
     "requirements": {
@@ -1140,7 +1139,7 @@
         "Sidearm"
       ]
     },
-    "description": "A snap draw that brings a sidearm to bear in the same breath as the attack. It is declared before an attack is resolved. In play, it readies an equipped sidearm for immediate use, and lets that sidearm be used in the current action. It requires Combat Melee 1 or Combat Firearms 1; the sidearm groups."
+    "description": "A trained readiness with your arms. As a passive ability, it lets a player change their equipped weapon once per turn for free."
   },
   {
     "_id": "e2OvRw7Jk4Nz9Lp3",

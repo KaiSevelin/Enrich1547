@@ -253,6 +253,16 @@ async function handleReactionTrigger(sourceEvent, trigger) {
         void combatApi?.markReactionUsed?.(reactorActor);
     }
 
+    // Spend the chosen reaction maneuver's resource cost (e.g. Core Defense's
+    // Core Point). markReactionUsed only spends the per-turn reaction budget, so
+    // costed reactions were never charging their pool.
+    if (selectedReaction && reactorActor) {
+        const costManeuver = (selectedReaction.CostType ?? selectedReaction.source?.CostType)
+            ? (selectedReaction.CostType ? selectedReaction : selectedReaction.source)
+            : selectedReaction;
+        void combatApi?.spendActorManeuverCost?.(reactorActor, costManeuver);
+    }
+
     if (!selectedReaction) return null;
 
     if (selectedReaction?.generatedByPersistentEffect === "overwatch") {
