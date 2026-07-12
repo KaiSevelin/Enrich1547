@@ -358,6 +358,12 @@ async function applyPostManeuverEffect(options = {}) {
 // the response. Throws propagate unchanged.
 
 async function runPhases({ phase, patches = [], event = null, awaitRemote = false } = {}) {
+    // Runtime tracer (CONFIG.debug.combat1547): names each phase and its
+    // patch count, so an EMPTY spend phase (e.g. no reserved costs collected)
+    // is distinguishable from a write that failed to land.
+    if (globalThis.CONFIG?.debug?.combat1547) {
+        try { console.debug(`${MODULE_ID} | phase-debug | ${phase}: ${patches.length} patch(es)`, patches.length ? patches : ""); } catch (_e) { /* ignore */ }
+    }
     // A phase that reads document state back after this boundary passes
     // `awaitRemote: true` so routed (GM-applied) writes are confirmed first.
     if (patches.length) await applyPatches(patches, { awaitRemote });

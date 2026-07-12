@@ -61,12 +61,32 @@ export function resolveTokenById(tokenId, sceneId) {
         ?? null;
 }
 
+// Runtime write tracer: `CONFIG.debug.combat1547 = true` in the console logs
+// every actor.update patch with a post-write read-back — the fastest way to
+// see whether a combat write (Core spend, movement, HP) actually landed on
+// the actor the display reads.
+function patchLog(...args) {
+    if (!globalThis.CONFIG?.debug?.combat1547) return;
+    try { console.debug(`${MODULE_ID} | patch-debug |`, ...args); } catch (_e) { /* ignore */ }
+}
+
 export async function applyPatch(patch) {
     if (!patch || !patch.kind) return;
     switch (patch.kind) {
         case "actor.update": {
             const actor = resolveActorById(patch.actorId);
-            if (actor?.update) await actor.update(patch.data);
+            if (actor?.update) {
+                await actor.update(patch.data);
+                if (globalThis.CONFIG?.debug?.combat1547) {
+                    const readBack = Object.fromEntries(Object.keys(patch.data).map((path) => [
+                        path,
+                        globalThis.foundry?.utils?.getProperty?.(actor, path),
+                    ]));
+                    patchLog("actor.update", actor.name, `(id ${patch.actorId})`, "wrote", patch.data, "read-back", readBack);
+                }
+            } else {
+                patchLog("actor.update UNRESOLVED actor", patch.actorId, patch.data);
+            }
             return;
         }
         case "item.update": {
