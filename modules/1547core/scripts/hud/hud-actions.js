@@ -146,8 +146,12 @@ function buildRidersHtml(resolved, escapeHtml) {
 
 async function consumeHudFullTurn(actor) {
     if (!actor?.update) return;
+    // Spending the FULL turn consumes the whole activation: the full-turn
+    // action itself AND any remaining movement (ruling 2026-07-12 — a
+    // full-turn reload/equip leaves no moves).
     await actor.update({
-        "system.props.FullTurnAvailable": false
+        "system.props.FullTurnAvailable": false,
+        "system.props.MovementRemaining": 0,
     });
 }
 

@@ -23,7 +23,10 @@ export function buildReactionPrompt(deps = {}) {
     // which used to clamp the ceiling to the wrong actor's pool.
     const reactorActor = typeof getReactorActor === "function" ? getReactorActor() : null;
     const reactorId = reactorActor?.id ?? null;
-    const availableCore = Math.max(0, Number(reactorActor?.system?.props?.AvailableCorePoints ?? 0) || 0);
+    // Raw CorePoints is the live pool on the actor template; AvailableCorePoints
+    // only exists on legacy derived-model actors.
+    const reactorProps = reactorActor?.system?.props ?? {};
+    const availableCore = Math.max(0, Number(reactorProps.AvailableCorePoints ?? reactorProps.CorePoints ?? 0) || 0);
 
     const actorName = reactionWindow.actor?.name ?? "";
     const targetName = reactionWindow.target?.name ?? "";

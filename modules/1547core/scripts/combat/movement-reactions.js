@@ -54,8 +54,10 @@ function reactorThreatReachSquares(reactor) {
 // Set true (or set the `1547core.debugMovement` world flag) to trace why a move
 // did/didn't spend the movement budget. Logs to the browser console.
 const DEBUG_MOVE = false;
+// Runtime toggle (no reload needed): run `CONFIG.debug.move1547 = true` in the
+// console to trace why a move did or didn't spend the movement budget.
 function moveLog(...args) {
-    if (!DEBUG_MOVE) return;
+    if (!DEBUG_MOVE && !globalThis.CONFIG?.debug?.move1547) return;
     try { console.debug(`${MODULE_ID} | move-debug |`, ...args); } catch (_e) { /* ignore */ }
 }
 

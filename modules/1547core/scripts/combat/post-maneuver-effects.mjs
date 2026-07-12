@@ -231,16 +231,23 @@ export async function applyPostManeuverEffectPhased(options = {}, run, deps = {}
         }
     }
 
-    // Core Restore: recover Core Points by decrementing SpentCorePoints
-    // (floored at 0) — the crit cost was already spent by planCommitPostManeuver.
+    // Core Restore: recover Core Points on the raw `CorePoints` pool (the
+    // actor template's single Core prop — 2026-07-12, matching the spend
+    // side in maneuver-state). Clamped to CorePointsMax/MaxCorePoints when
+    // the actor defines a cap. The crit cost was already spent by
+    // planCommitPostManeuver.
     const recoverCore = Number(effect.recoverCorePoints ?? 0) || 0;
     if (recoverCore > 0 && actor?.id) {
-        const currentSpent = Number(actor.system?.props?.SpentCorePoints ?? 0) || 0;
-        const nextSpent = Math.max(0, currentSpent - recoverCore);
-        if (nextSpent !== currentSpent) {
+        const props = actor.system?.props ?? {};
+        const current = Number(props.CorePoints ?? 0) || 0;
+        const cap = [props.CorePointsMax, props.MaxCorePoints]
+            .map(Number)
+            .find((value) => Number.isFinite(value) && value > 0);
+        const next = cap != null ? Math.min(current + recoverCore, cap) : current + recoverCore;
+        if (next !== current) {
             await run({
                 phase: "coreRestore",
-                patches: [{ kind: "actor.update", actorId: actor.id, data: { "system.props.SpentCorePoints": nextSpent } }],
+                patches: [{ kind: "actor.update", actorId: actor.id, data: { "system.props.CorePoints": next } }],
             });
         }
     }

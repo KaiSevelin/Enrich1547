@@ -526,6 +526,11 @@ export async function applyCombatStartSidesAndInitiative(combat) {
     await combat.setFlag(MODULE_ID, "activeSideId", sideOrder[0] ?? "");
     await combat.setFlag(MODULE_ID, "sideInitiativeRolled", true);
     await persistCombatSideState(combat);
+    // Seed the FIRST side's per-turn resources (MovementRemaining +
+    // FullTurnAvailable) at combat start — resetSideTurnState otherwise only
+    // runs on side ADVANCE, leaving round 1's opening side unseeded (no
+    // moves-left counter, full-turn actions reading a missing prop).
+    if (sideOrder[0]) await resetSideTurnState(combat, sideOrder[0]);
     await postSideInitiativeMessage(sideOrder, rollsBySide);
 }
 

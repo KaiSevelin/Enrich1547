@@ -797,7 +797,7 @@ export function buildHudHtml(data, deps = {}) {
             ? preferredCategory
             : categories[0].key
     );
-    const sideReadyButton = data.isCombatActive ? `
+    const sideReadyButton = (data.isCombatActive && data.isActorInCombat) ? `
         <button
             type="button"
             class="hud-header-action"
@@ -827,10 +827,15 @@ export function buildHudHtml(data, deps = {}) {
         </div>
     `;
     const combatHeaderBits = [];
-    if (data.isCombatActive) combatHeaderBits.push(`Round ${escapeHtml(data.round ?? "-")}`);
-    else combatHeaderBits.push("No active combat");
-    if (data.activeSideLabel) combatHeaderBits.push(data.isActorOnActiveSide ? `${escapeHtml(data.activeSideLabel)} active` : `${escapeHtml(data.activeSideLabel)} active now`);
-    if (data.actorSideLabel && data.actorSideLabel !== data.activeSideLabel) combatHeaderBits.push(`${escapeHtml(data.actorSideLabel)} for this actor`);
+    // Battle header (round / active team / actor's team) only for actors that
+    // are actually IN the started encounter — bystanders see no battle chrome.
+    if (data.isActorInCombat) {
+        combatHeaderBits.push(`Round ${escapeHtml(data.round ?? "-")}`);
+        if (data.activeSideLabel) combatHeaderBits.push(data.isActorOnActiveSide ? `${escapeHtml(data.activeSideLabel)} active` : `${escapeHtml(data.activeSideLabel)} active now`);
+        if (data.actorSideLabel && data.actorSideLabel !== data.activeSideLabel) combatHeaderBits.push(`${escapeHtml(data.actorSideLabel)} for this actor`);
+    } else {
+        combatHeaderBits.push("No active combat");
+    }
     if (forcedCategory === "maneuvers") combatHeaderBits.push(postPromptOpen ? "Critical window open" : "Reaction window open");
 
     return `

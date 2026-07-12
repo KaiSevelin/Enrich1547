@@ -72,6 +72,35 @@ export function assignSides(combatants = []) {
     const result = new Map();
     const list = Array.isArray(combatants) ? combatants.filter((c) => c && c.id) : [];
 
+    // Exactly two combatants = a duel regardless of who they are (ruling
+    // 2026-07-12): the pair ALWAYS splits onto opposing teams — two friendly
+    // NPCs or a player vs a friendly NPC no longer land on the same side.
+    // Team-1 goes to the player (or the friendlier disposition); tracker
+    // order breaks ties. The one exception: both combatants belonging to the
+    // SAME player stay together (a player's own tokens are never split).
+    if (list.length === 2) {
+        const [a, b] = list;
+        const ownerA = primaryPlayerOwner(a.ownerUserIds);
+        const ownerB = primaryPlayerOwner(b.ownerUserIds);
+        if (ownerA && ownerA === ownerB) return result;
+        const aPlayer = a.isPlayer === true || !!ownerA;
+        const bPlayer = b.isPlayer === true || !!ownerB;
+        let first = a;
+        let second = b;
+        if (!aPlayer && bPlayer) {
+            first = b;
+            second = a;
+        } else if (aPlayer === bPlayer
+            && dispositionSide(a.disposition) === TEAM_TWO
+            && dispositionSide(b.disposition) === TEAM_ONE) {
+            first = b;
+            second = a;
+        }
+        result.set(first.id, TEAM_ONE);
+        result.set(second.id, TEAM_TWO);
+        return result;
+    }
+
     // Group each player by owning user; a player with no distinct owner (GM-owned)
     // becomes its own group so duels still split. Non-players mark the fight mixed.
     const groupByCombatant = new Map();

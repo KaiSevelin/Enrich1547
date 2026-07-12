@@ -513,12 +513,14 @@ async function resolveManualSpell(spell, sourceToken, options = {}) {
         case "Faith Manipulation": {
             const targetToken = requireTargetToken(spell, options);
             const lossRoll = await evaluateRollFormula("1d3");
-            const nextSpent = await applyNumericPropDelta(targetToken.actor, "system.props.SpentCorePoints", lossRoll.total);
-            const available = Number(targetToken.actor.system?.props?.AvailableCorePoints ?? 0);
+            // Core is the raw `CorePoints` pool on the actor template
+            // (2026-07-12) — the old SpentCorePoints/AvailableCorePoints
+            // derived fields don't exist on live actors.
+            const nextCore = await applyNumericPropDelta(targetToken.actor, "system.props.CorePoints", -lossRoll.total);
             return {
                 ok: true,
                 outcome: "manual",
-                detailText: `Target loses ${lossRoll.total} Core Points. Spent Core Points is now ${nextSpent}; available Core now reads ${available}.`,
+                detailText: `Target loses ${lossRoll.total} Core Points and now has ${Math.max(0, nextCore)}.`,
                 manualResolved: true,
             };
         }

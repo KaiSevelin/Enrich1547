@@ -145,10 +145,11 @@ console.log("\nattack-lifecycle.collectReservedCosts...");
 
 console.log("\nattack-lifecycle.findOverCommittedPools...");
 {
-    // Derived pool (CorePoints → Max/SpentCorePoints): two 3-cost maneuvers
-    // each pass the per-maneuver gate against a 4-point pool, but the SUM (6)
+    // Core is a RAW pool (`props.CorePoints`, 2026-07-12 — the derived
+    // Max/Spent model matched no template field): two 3-cost maneuvers each
+    // pass the per-maneuver gate against a 4-point pool, but the SUM (6)
     // must be flagged (ruling 2026-07-11: validate at attack declaration).
-    const coreActor = { id: "a1", system: { props: { MaxCorePoints: 4, SpentCorePoints: 0 } } };
+    const coreActor = { id: "a1", system: { props: { CorePoints: 4 } } };
     const two = [
         { _id: "m1", CostType: "CorePoints", CostAmount: 3 },
         { _id: "m2", CostType: "CorePoints", CostAmount: 3 },
@@ -158,10 +159,10 @@ console.log("\nattack-lifecycle.findOverCommittedPools...");
     assert.deepStrictEqual(over[0], { costType: "CorePoints", required: 6, available: 4 });
     // One maneuver alone is affordable.
     assert.deepStrictEqual(al.findOverCommittedPools(coreActor, two.slice(0, 1)), []);
-    // Spent points shrink the available pool.
-    const spentActor = { id: "a2", system: { props: { MaxCorePoints: 4, SpentCorePoints: 2 } } };
+    // A partially spent raw pool shrinks availability.
+    const spentActor = { id: "a2", system: { props: { CorePoints: 2 } } };
     assert.strictEqual(al.findOverCommittedPools(spentActor, two.slice(0, 1)).length, 1);
-    // Legacy raw prop pools (system.props.<CostType>) sum the same way.
+    // Other raw prop pools (system.props.<CostType>) sum the same way.
     const rawActor = { id: "a3", system: { props: { StaminaPoints: 3 } } };
     const rawTwo = [
         { _id: "s1", CostType: "StaminaPoints", CostAmount: 2 },
@@ -177,7 +178,7 @@ console.log("\nattack-lifecycle.findOverCommittedPools...");
         al.findOverCommittedPools(coreActor, [{ _id: "c1", CostType: "CriticalPoints", CostAmount: 99 }]),
         []
     );
-    console.log("  ✓ flags summed over-commit per pool (derived + raw), passes unknown pools");
+    console.log("  ✓ flags summed over-commit per raw pool, passes unknown pools");
 }
 
 // ────────────────────────────────────────── roll summary ──
@@ -294,23 +295,24 @@ console.log("\nmaneuver-state.planSpendActorManeuverCost...");
     console.log("  ✓ clamped at 0 when cost exceeds available");
 }
 
-// CorePoints is a derived pool: spending INCREMENTS SpentCorePoints
-// (Available = Max - Spent - Reserved recomputes), not a raw decrement.
+// CorePoints is a RAW pool (2026-07-12): the actor template stores a single
+// `CorePoints` prop, so spending decrements it directly — the old derived
+// Spent/Max model wrote a phantom SpentCorePoints field nothing displayed.
 {
-    const actor = { id: "a", system: { props: { SpentCorePoints: 1, MaxCorePoints: 5 } } };
+    const actor = { id: "a", system: { props: { CorePoints: 4 } } };
     const { patches, result } = ms.planSpendActorManeuverCost(actor, { CostType: "CorePoints", CostAmount: 2 });
-    assert.strictEqual(patches[0].data["system.props.SpentCorePoints"], 3,
-        "Core spend increments SpentCorePoints (1 + 2)");
-    assert.strictEqual(result.nextValue, 3);
-    console.log("  ✓ CorePoints spend increments SpentCorePoints (derived pool)");
+    assert.strictEqual(patches[0].data["system.props.CorePoints"], 2,
+        "Core spend decrements the raw CorePoints pool (4 - 2)");
+    assert.strictEqual(result.nextValue, 2);
+    console.log("  ✓ CorePoints spend decrements the raw pool");
 }
 
 {
-    const actor = { id: "a", system: { props: { SpentCorePoints: 4, MaxCorePoints: 5 } } };
+    const actor = { id: "a", system: { props: { CorePoints: 1 } } };
     const out = ms.planSpendActorManeuverCost(actor, { CostType: "CorePoints", CostAmount: 3 });
-    assert.strictEqual(out.patches[0].data["system.props.SpentCorePoints"], 5,
-        "clamped to MaxCorePoints");
-    console.log("  ✓ CorePoints spend clamps to MaxCorePoints");
+    assert.strictEqual(out.patches[0].data["system.props.CorePoints"], 0,
+        "clamped at 0 when cost exceeds the pool");
+    console.log("  ✓ CorePoints spend clamps at 0");
 }
 
 console.log("\nmaneuver-state.planAppendCommittedManeuverState...");

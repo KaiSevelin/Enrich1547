@@ -404,24 +404,25 @@ function passesResourceGate(maneuver, context) {
     if (!resourceName) return true;
 
     const props = actor.system?.props ?? {};
-    const totalCandidates = [
-        props[`Max${resourceName}Points`],
+    // A `Max<Name>Points` cap means the DERIVED model (available = max −
+    // spent − reserved). Every other candidate is a LIVE raw pool that spends
+    // by direct decrement — subtracting Spent/Reserved props from a live pool
+    // double-counts (and stale SpentCorePoints values written by the old
+    // derived-model spend path would silently shrink it).
+    const derivedMax = firstFiniteNumber([props[`Max${resourceName}Points`]]);
+    const total = derivedMax ?? firstFiniteNumber([
         props[`${resourceName}Points`],
         props[`${resourceName}PointsMax`],
         props[`${resourceName}MaxPoints`],
         props[`${resourceName}Pool`],
         props[`${resourceName}PoolMax`],
-    ];
-
-    const spentCandidates = [
-        props[`Spent${resourceName}Points`],
-        props[`Reserved${resourceName}Points`],
-    ];
-
-    const total = firstFiniteNumber(totalCandidates);
+    ]);
     if (total == null) return true;
 
-    const committed = spentCandidates.reduce(
+    const committed = derivedMax == null ? 0 : [
+        props[`Spent${resourceName}Points`],
+        props[`Reserved${resourceName}Points`],
+    ].reduce(
         (sum, value) => sum + (Number.isFinite(Number(value)) ? Number(value) : 0),
         0
     );

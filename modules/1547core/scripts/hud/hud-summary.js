@@ -500,7 +500,12 @@ export function summarizeActor(actor, token, deps = {}) {
         equippedArmor = [buildDefaultUnprotectedArmorSummary(game, MODULE_ID)];
     }
 
-    const fullTurnAvailable = getStringProp(props, ["FullTurnAvailable", "fullTurnAvailable"]) || "Unknown";
+    // A MISSING FullTurnAvailable prop means the actor has not spent its full
+    // turn (fresh combat, first activation — resetSideTurnState only writes it
+    // on side ADVANCE). Only an explicit "used" value blocks; treating the
+    // missing prop as unavailable locked out reload/equip on round 1.
+    const fullTurnAvailableRaw = getStringProp(props, ["FullTurnAvailable", "fullTurnAvailable"]);
+    const fullTurnAvailable = fullTurnAvailableRaw === "" ? true : isTruthyLike(fullTurnAvailableRaw);
     const activeWeaponSummary = equippedWeapons[0] ?? null;
     const activeWeaponItem = activeWeaponSummary ? (activeWeaponSummary.itemDocument ?? actor.items?.get?.(activeWeaponSummary.id) ?? activeWeaponSummary) : null;
     const combatApi = game.modules.get(MODULE_ID)?.api?.combat ?? {};
@@ -582,7 +587,7 @@ export function summarizeActor(actor, token, deps = {}) {
         distanceSquares: getChebyshevDistanceSquares(token, primaryTarget),
         rangeSquares: getChebyshevDistanceSquares(token, primaryTarget),
         attacksRemaining: isCombatActive ? attacksRemaining : null,
-        fullTurnAvailable: isCombatActive ? isTruthyLike(fullTurnAvailable) : true,
+        fullTurnAvailable: isCombatActive ? fullTurnAvailable : true,
         actorConditions,
         targetConditions,
         hasVisibleAlly,
@@ -591,7 +596,9 @@ export function summarizeActor(actor, token, deps = {}) {
         selectedManeuverIds: selectedPreSourceIds,
         currentCriticalPoints: getNumericProp(props, ["CriticalPoints", "CurrentCriticalPoints"]) ?? 0
     };
-    const availableCore = getNumericProp(props, ["AvailableCorePoints"]) ?? 0;
+    // The actor template stores Core as a single raw CorePoints pool —
+    // AvailableCorePoints only exists on legacy/derived-model actors.
+    const availableCore = getNumericProp(props, ["AvailableCorePoints", "CorePoints"]) ?? 0;
     const maneuvers = preEntryState.map(({ entry, core, count, selected, source }) => {
         const evaluation = typeof evaluateManeuverLegality === "function"
             ? evaluateManeuverLegality(entry.source, preContext)
@@ -637,7 +644,7 @@ export function summarizeActor(actor, token, deps = {}) {
         distanceSquares: getChebyshevDistanceSquares(token, primaryTarget),
         rangeSquares: getChebyshevDistanceSquares(token, primaryTarget),
         attacksRemaining,
-        fullTurnAvailable: isCombatActive ? isTruthyLike(fullTurnAvailable) : true,
+        fullTurnAvailable: isCombatActive ? fullTurnAvailable : true,
         actorConditions,
         targetConditions,
         hasVisibleAlly,
@@ -701,7 +708,7 @@ export function summarizeActor(actor, token, deps = {}) {
         distanceSquares: getChebyshevDistanceSquares(token, primaryTarget),
         rangeSquares: getChebyshevDistanceSquares(token, primaryTarget),
         attacksRemaining,
-        fullTurnAvailable: isCombatActive ? isTruthyLike(fullTurnAvailable) : true,
+        fullTurnAvailable: isCombatActive ? fullTurnAvailable : true,
         actorConditions,
         targetConditions,
         hasVisibleAlly,
@@ -748,7 +755,7 @@ export function summarizeActor(actor, token, deps = {}) {
         triggerType: "escape",
         actorConditions: [...actorConditionSlugs],
         attacksRemaining,
-        fullTurnAvailable: isCombatActive ? isTruthyLike(fullTurnAvailable) : true,
+        fullTurnAvailable: isCombatActive ? fullTurnAvailable : true,
         reservedResources,
         usedManeuvers,
         currentCriticalPoints,
@@ -1039,7 +1046,7 @@ export function summarizeActor(actor, token, deps = {}) {
     const activePersistentEffects = [
         ...getActivePersistentEffectsForActor(actor, {
             isCombatActive,
-            fullTurnAvailable: isCombatActive ? isTruthyLike(fullTurnAvailable) : true,
+            fullTurnAvailable: isCombatActive ? fullTurnAvailable : true,
         }),
         ...getActiveDefenseStateForActor(actor)
     ];
@@ -1139,6 +1146,9 @@ export function summarizeActor(actor, token, deps = {}) {
         actorSideId,
         actorSideLabel,
         isActorOnActiveSide: Boolean(activeSideId && actorSideId && activeSideId === actorSideId),
+        // True only when THIS actor is a combatant in the started encounter —
+        // battle UI (Side Ready, round/team header) hides for bystanders.
+        isActorInCombat: Boolean(isCombatActive && actorCombatant),
         currentAction,
         checkTarget: buildCheckTargetSnapshot({
             targetedTokens,

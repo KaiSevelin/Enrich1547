@@ -43,10 +43,14 @@ export function buildCommittedManeuverRecord(maneuver) {
  * maneuver has no cost (or is otherwise free).
  */
 // Costs backed by a derived Spent/Reserved/Available pool on the actor
-// template are spent by INCREMENTING the stored `Spent<Name>Points`
-// field (Available = Max - Spent - Reserved recomputes), not by
-// decrementing a raw pool prop. Map CostType -> the resource prefix.
-export const DERIVED_POOL_COSTS = { CorePoints: "Core" };
+// template would be spent by INCREMENTING a stored `Spent<Name>Points`
+// field (Available = Max - Spent - Reserved recomputes) instead of
+// decrementing a raw pool prop. The map is EMPTY (2026-07-12): the live
+// actor template stores Core as a single raw `CorePoints` prop — the old
+// `CorePoints: "Core"` mapping wrote a phantom SpentCorePoints field the
+// sheet never displayed, which is why Core Points "were never deducted".
+// Re-add a mapping only together with matching Max/Spent template fields.
+export const DERIVED_POOL_COSTS = {};
 
 /**
  * Resolve the single actor prop and its next value for spending `amount`

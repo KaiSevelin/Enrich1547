@@ -75,13 +75,40 @@ assert.strictEqual(gmOwnedCoop.get("p2"), "team-1", "GM-owned players group toge
 assert.strictEqual(gmOwnedCoop.get("foe"), "team-2");
 console.log("  ✓ GM-owned player characters group together vs an NPC (co-op)");
 
-// A single player: rule does NOT trigger — leave defaults (empty map).
-const onePlayer = assignSides([
+// Exactly TWO combatants = a duel regardless of who they are (ruling
+// 2026-07-12): always split, player/friendly side first.
+const onePlayerPair = assignSides([
     { id: "a", ownerUserIds: ["alice"], disposition: 1 },
     { id: "n", ownerUserIds: [], disposition: -1 },
 ]);
-assert.strictEqual(onePlayer.size, 0, "fewer than two players -> no override");
-console.log("  ✓ a single player leaves the disposition defaults alone");
+assert.strictEqual(onePlayerPair.get("a"), "team-1", "player takes team-1 in a pair");
+assert.strictEqual(onePlayerPair.get("n"), "team-2", "the lone opponent takes team-2");
+
+// Two NPCs (even both friendly) split too — two tokens selected for battle
+// default to opposing teams.
+const npcPair = assignSides([
+    { id: "n1", ownerUserIds: [], disposition: 1 },
+    { id: "n2", ownerUserIds: [], disposition: 1 },
+]);
+assert.strictEqual(npcPair.get("n1"), "team-1");
+assert.strictEqual(npcPair.get("n2"), "team-2", "an NPC pair still splits into a duel");
+
+// NPC-first ordering: the friendlier disposition still claims team-1.
+const hostileFirstPair = assignSides([
+    { id: "h", ownerUserIds: [], disposition: -1 },
+    { id: "f", ownerUserIds: [], disposition: 1 },
+]);
+assert.strictEqual(hostileFirstPair.get("f"), "team-1", "friendly claims team-1 even when listed second");
+assert.strictEqual(hostileFirstPair.get("h"), "team-2");
+
+// The exception: BOTH combatants belong to the same player — never split a
+// player's own tokens (empty map = leave defaults).
+const sameOwnerPair = assignSides([
+    { id: "a1", ownerUserIds: ["alice"] },
+    { id: "a2", ownerUserIds: ["alice"] },
+]);
+assert.strictEqual(sameOwnerPair.size, 0, "one player's own pair is never split");
+console.log("  ✓ two-combatant battles split into opposing teams (same-owner pair excepted)");
 
 // Three players, PLAYERS-ONLY -> round-robin across exactly two teams (A->1, B->2, C->1).
 const threePlayers = assignSides([
