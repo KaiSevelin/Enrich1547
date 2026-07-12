@@ -42,38 +42,28 @@ export function buildCommittedManeuverRecord(maneuver) {
  * maneuver charges. Returns `{ patches: [], result: null }` when the
  * maneuver has no cost (or is otherwise free).
  */
-// Costs backed by a derived Spent/Reserved/Available pool on the actor
-// template would be spent by INCREMENTING a stored `Spent<Name>Points`
-// field (Available = Max - Spent - Reserved recomputes) instead of
-// decrementing a raw pool prop. The map is EMPTY (2026-07-12): the live
-// actor template stores Core as a single raw `CorePoints` prop — the old
-// `CorePoints: "Core"` mapping wrote a phantom SpentCorePoints field the
-// sheet never displayed, which is why Core Points "were never deducted".
-// Re-add a mapping only together with matching Max/Spent template fields.
-export const DERIVED_POOL_COSTS = {};
+// Cost types whose LIVE pool lives under a different prop than the cost
+// name. On the actor template, `CorePoints` is a CSB *computed label*
+// (the "11 / 11" string built from AvailableCorePoints / MaxCorePoints) —
+// writing to it is a no-op that CSB recomputes right back ("Core Points
+// reset to max after attack"). The real stored pool is
+// `AvailableCorePoints` (2026-07-12; the earlier derived SpentCorePoints
+// model was equally phantom).
+export const POOL_PROP_ALIASES = { CorePoints: "AvailableCorePoints" };
 
 /**
  * Resolve the single actor prop and its next value for spending `amount`
- * of `costType`. Derived pools (Core) increment `Spent<Name>Points`
- * clamped to `Max<Name>Points`; legacy base costs decrement
- * `system.props.<costType>` (floored at 0). Shared by both the
+ * of `costType`: decrement the LIVE pool prop (the alias when one exists,
+ * else `system.props.<costType>`), floored at 0. Shared by both the
  * committed-maneuver and reserved-pre-maneuver spend paths.
  */
 export function planPoolSpend(actor, costType, amount) {
-    const poolName = DERIVED_POOL_COSTS[costType];
-    if (poolName) {
-        const prop = `Spent${poolName}Points`;
-        const previousValue = firstFiniteNumber([actor.system?.props?.[prop]]) ?? 0;
-        const max = firstFiniteNumber([actor.system?.props?.[`Max${poolName}Points`]]);
-        let nextValue = previousValue + amount;
-        if (max != null) nextValue = Math.min(nextValue, max);
-        return { prop, previousValue, nextValue };
-    }
+    const prop = POOL_PROP_ALIASES[costType] ?? costType;
     const previousValue = firstFiniteNumber([
-        actor.system?.props?.[costType],
-        actor.system?.[costType],
+        actor.system?.props?.[prop],
+        actor.system?.[prop],
     ]) ?? 0;
-    return { prop: costType, previousValue, nextValue: Math.max(0, previousValue - amount) };
+    return { prop, previousValue, nextValue: Math.max(0, previousValue - amount) };
 }
 
 export function planSpendActorManeuverCost(actor, maneuver) {

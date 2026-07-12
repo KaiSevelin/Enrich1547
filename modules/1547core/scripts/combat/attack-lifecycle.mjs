@@ -34,7 +34,7 @@ import {
     planSpendActorManeuverCost,
     planAppendCommittedManeuverState,
     planPoolSpend,
-    DERIVED_POOL_COSTS,
+    POOL_PROP_ALIASES,
 } from "./maneuver-state.mjs";
 // COMBAT_EVENTS is a pure enum — importing it doesn't drag in any
 // Foundry deps. The orchestrator does the actual emitCombatEvent call.
@@ -220,19 +220,11 @@ export function findOverCommittedPools(actor, maneuvers = []) {
     const props = actor?.system?.props ?? {};
     const overCommitted = [];
     for (const [costType, required] of byType) {
-        const poolName = DERIVED_POOL_COSTS[costType];
-        let available;
-        if (poolName) {
-            const max = Number(props[`Max${poolName}Points`]);
-            if (!Number.isFinite(max)) continue;
-            const spent = Number(props[`Spent${poolName}Points`]) || 0;
-            const reservedPoints = Number(props[`Reserved${poolName}Points`]) || 0;
-            available = Math.max(0, max - spent - reservedPoints);
-        } else {
-            const raw = Number(props[costType]);
-            if (!Number.isFinite(raw)) continue;
-            available = Math.max(0, raw);
-        }
+        // Same live-pool resolution as planPoolSpend: the alias prop when one
+        // exists (CorePoints → AvailableCorePoints), else the raw cost prop.
+        const raw = Number(props[POOL_PROP_ALIASES[costType] ?? costType]);
+        if (!Number.isFinite(raw)) continue;
+        const available = Math.max(0, raw);
         if (required > available) overCommitted.push({ costType, required, available });
     }
     return overCommitted;

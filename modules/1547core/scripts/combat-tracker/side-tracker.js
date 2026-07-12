@@ -522,6 +522,21 @@ export async function applyCombatStartSidesAndInitiative(combat) {
     const rollsBySide = await rollSideInitiative(sideIds);
     const sideOrder = orderSidesByInitiative(sideIds, rollsBySide);
 
+    // Mirror the side's 3d6 total onto every member's combatant.initiative so
+    // the tracker's numbers MATCH the Side Initiative chat card (previously
+    // the tracker showed unrelated per-token rolls, e.g. Foundry's own d20).
+    const initiativeUpdates = orderedCombatants
+        .map((combatant) => {
+            const total = rollsBySide.get(resolveCombatantSideId(combatant));
+            return Number.isFinite(total) && combatant.initiative !== total
+                ? { _id: combatant.id, initiative: total }
+                : null;
+        })
+        .filter(Boolean);
+    if (initiativeUpdates.length) {
+        await combat.updateEmbeddedDocuments("Combatant", initiativeUpdates);
+    }
+
     await combat.setFlag(MODULE_ID, "sideOrder", sideOrder);
     await combat.setFlag(MODULE_ID, "activeSideId", sideOrder[0] ?? "");
     await combat.setFlag(MODULE_ID, "sideInitiativeRolled", true);

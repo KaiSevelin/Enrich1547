@@ -145,11 +145,11 @@ console.log("\nattack-lifecycle.collectReservedCosts...");
 
 console.log("\nattack-lifecycle.findOverCommittedPools...");
 {
-    // Core is a RAW pool (`props.CorePoints`, 2026-07-12 — the derived
-    // Max/Spent model matched no template field): two 3-cost maneuvers each
+    // Core costs read the LIVE `AvailableCorePoints` pool (2026-07-12; the
+    // `CorePoints` prop is a computed label): two 3-cost maneuvers each
     // pass the per-maneuver gate against a 4-point pool, but the SUM (6)
     // must be flagged (ruling 2026-07-11: validate at attack declaration).
-    const coreActor = { id: "a1", system: { props: { CorePoints: 4 } } };
+    const coreActor = { id: "a1", system: { props: { AvailableCorePoints: 4 } } };
     const two = [
         { _id: "m1", CostType: "CorePoints", CostAmount: 3 },
         { _id: "m2", CostType: "CorePoints", CostAmount: 3 },
@@ -159,8 +159,8 @@ console.log("\nattack-lifecycle.findOverCommittedPools...");
     assert.deepStrictEqual(over[0], { costType: "CorePoints", required: 6, available: 4 });
     // One maneuver alone is affordable.
     assert.deepStrictEqual(al.findOverCommittedPools(coreActor, two.slice(0, 1)), []);
-    // A partially spent raw pool shrinks availability.
-    const spentActor = { id: "a2", system: { props: { CorePoints: 2 } } };
+    // A partially spent live pool shrinks availability.
+    const spentActor = { id: "a2", system: { props: { AvailableCorePoints: 2 } } };
     assert.strictEqual(al.findOverCommittedPools(spentActor, two.slice(0, 1)).length, 1);
     // Other raw prop pools (system.props.<CostType>) sum the same way.
     const rawActor = { id: "a3", system: { props: { StaminaPoints: 3 } } };
@@ -295,22 +295,22 @@ console.log("\nmaneuver-state.planSpendActorManeuverCost...");
     console.log("  ✓ clamped at 0 when cost exceeds available");
 }
 
-// CorePoints is a RAW pool (2026-07-12): the actor template stores a single
-// `CorePoints` prop, so spending decrements it directly — the old derived
-// Spent/Max model wrote a phantom SpentCorePoints field nothing displayed.
+// CorePoints costs spend the LIVE `AvailableCorePoints` pool (2026-07-12):
+// `CorePoints` itself is a CSB computed "X / Y" label CSB recomputes right
+// back, and the older SpentCorePoints field was equally phantom.
 {
-    const actor = { id: "a", system: { props: { CorePoints: 4 } } };
+    const actor = { id: "a", system: { props: { AvailableCorePoints: 4, MaxCorePoints: 4 } } };
     const { patches, result } = ms.planSpendActorManeuverCost(actor, { CostType: "CorePoints", CostAmount: 2 });
-    assert.strictEqual(patches[0].data["system.props.CorePoints"], 2,
-        "Core spend decrements the raw CorePoints pool (4 - 2)");
+    assert.strictEqual(patches[0].data["system.props.AvailableCorePoints"], 2,
+        "Core spend decrements AvailableCorePoints (4 - 2)");
     assert.strictEqual(result.nextValue, 2);
-    console.log("  ✓ CorePoints spend decrements the raw pool");
+    console.log("  ✓ CorePoints spend decrements the live AvailableCorePoints pool");
 }
 
 {
-    const actor = { id: "a", system: { props: { CorePoints: 1 } } };
+    const actor = { id: "a", system: { props: { AvailableCorePoints: 1 } } };
     const out = ms.planSpendActorManeuverCost(actor, { CostType: "CorePoints", CostAmount: 3 });
-    assert.strictEqual(out.patches[0].data["system.props.CorePoints"], 0,
+    assert.strictEqual(out.patches[0].data["system.props.AvailableCorePoints"], 0,
         "clamped at 0 when cost exceeds the pool");
     console.log("  ✓ CorePoints spend clamps at 0");
 }
