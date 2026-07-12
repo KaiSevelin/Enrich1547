@@ -452,7 +452,10 @@ the informational Attack Result card. The per-maneuver crit cost is the maneuver
    and, on accept, resolves it fully — declare (`executeSafeCounterattack`) → attack roll → the
    original attacker's defense roll → `resolveAttackOutcome` → card. See `hud-actions.js`
    (`offerSafeCounterattack`/`runSafeCounterattack`), `combat/safe-counterattack.js`,
-   `combat-architecture-evolution-spec-v1.md` B3.
+   `combat-architecture-evolution-spec-v1.md` B3. **2026-07-11:** the relay is the ONLY
+   counterattack path — the damage-taken window's parallel button/binding
+   (`commitSafeCounterattack`, never populated) was deleted; that window is purely the
+   informational defense summary.
 3. **Reaction renewal — ✅ implemented.** A reaction is now **once per round** and renews each round
    (`combat/activation-state.mjs`, keyed `${combatId}:${round}`; gated + marked in `reaction-service`
    via the Move 1 dispatcher). Attack/movement economy stays **manual** (by ruling). Note: a
@@ -468,8 +471,11 @@ the informational Attack Result card. The per-maneuver crit cost is the maneuver
    (bypasses: GM, `facingAutoFace`, `facingForced`, non-combatants). Facing is now a rule, not a
    convention. *Movement* (x/y) is intentionally **not** locked yet — rotation only (movement is more
    intrusive; enable on request).
-6. **Fully-defeated opposing side wraps** (§2). Side Ready loops back to the surviving side instead
-   of ending combat. **Decide:** end combat, or surface "the opposing side is defeated."
+6. **Fully-defeated opposing side — ✅ resolved (announce + GM prompt).** When only one side still
+   has non-defeated combatants, the GM client posts a victory chat banner and asks "End combat?"
+   (`side-tracker.js checkForSideVictory`, riding the `updateCombatant` defeated sync). Never
+   auto-ends — reinforcements/surrender stay possible; declining doesn't re-prompt
+   (`victoryAnnounced` combat flag, cleared if a second side revives). *Needs a live test.*
 7. **Dice totals once depended on Dice So Nice.** Now read from the evaluated roll
    (`computeRollTotals`) with the DSN hook as fallback — keep new combat math off the animation hook.
 8. **Multiplier — ✅ resolved.** Both the direct `computeDice1547Totals` path and the Dice So Nice
@@ -479,9 +485,11 @@ the informational Attack Result card. The per-maneuver crit cost is the maneuver
    preserve a stored `0` (no `|| 1` coercion). Unit-tested in `combat-attack-lifecycle.test.mjs`.
 9. **Face does not roll a separate defense** — it cancels the rear +1 and turns the defender. If
    Face should *also* let a normal defense roll, thread it like the other defense reactions.
-10. **Multi-target & ammunition under-specified.** `declareAttack` accepts `targets[]` and consumes
-    loaded ammo (`planConsumeLoadedAmmo`, `ammoAddDice`); this spec documents the single-target melee
-    path. Area/multi-target resolution and reload/ammo economy need their own treatment.
+10. **Multi-target — deferred by ruling (2026-07-11); single-target is canonical.** `declareAttack`
+    now clamps `targets[]` to the first target with a warning; area/multi-target resolution (per-
+    defender reactions, crits, damage windows) is future work to be specced as its own vertical
+    slice. Ammo economy (`planConsumeLoadedAmmo`, `ammoAddDice`, reload) still needs its own
+    treatment.
 11. **Crit pool per-token — ✅ reconciled.** `resolveAttackOutcomePhased` now feeds the defender
     window `defenderCriticalPoints` and the attacker window `attackerCriticalPoints` (each its own
     roll's crits, never pooled); `currentCriticalPoints` survives only as their sum for the result
@@ -511,11 +519,38 @@ The combat-design decisions these specs/code must follow (also in agent memory `
   kept for tracker/movement gating). Conditions/effects are **round-clocked**.
 - **Arc/indirect overhead-clear** is a manual GM call.
 
+### Rulings added 2026-07-11 (grilling session — effect scaling, costs, windows)
+
+- **Resolution is FLAT — margin of success never scales anything.** Beating defense by 10 equals
+  beating it by 1: `damage − protection − reduceDamageTaken`. Multiplier dice (a rolled 0 cancels
+  all), crit points and Core-stacking ARE the scaling system. Do not add margin scaling.
+- **Pre-maneuver costs are charged ONCE, at commit** — the resolution's `spendReservations` phase
+  (`planSpendReservedCosts`). Selection is free and reversible; there is no reserve-on-select and no
+  refund path. (The old maneuver-state-spec's reservation model is rejected; the HUD's duplicate
+  spend loop was removed as a double-spend bug.)
+- **Over-commit is caught at Attack click:** `findOverCommittedPools` sums the selected
+  pre-maneuvers' costs per pool at declaration and blocks with a message when a pool is exceeded —
+  no silent clamp-at-zero underpayment.
+- **Crit points are in-memory and exchange-scoped by design.** They flow resolution result →
+  post-window payload → HUD decrement, and die when the window closes. A mid-exchange browser
+  refresh losing them is accepted. No actor prop backs them (Convert's `props.CriticalPoints`
+  read was vestigial and is removed).
+- **Reactions are chosen BLIND at attack declaration** (defender sees attacker/weapon/pre-maneuvers,
+  never the roll). No post-roll reaction tier. Only free safe attack/counterattack cancel the
+  declaration; everything else is a modifier.
+- **Post-maneuver physical effects — automate the easy subset:** rotate-target (8-way, 45°/step)
+  and push (straight line away from the attacker, stop at the first wall, no budget spend / no
+  opportunity attacks — `forcedManeuverMove`) are automated in `applyPostManeuverEffect`. Disarm,
+  swallow, place-adjacent and the grapple-break advantage stay "(GM applies)".
+- **Multi-target attacks are deferred** — single-target is canonical (see §12 #10).
+- **Spec hygiene:** `combat-spec-v2.md`, `combat-state-machine-v1.md` and `maneuver-state-spec-v1.md`
+  were **deleted** as diverging from as-built; THIS document is the single source of truth.
+
 ---
 
 ## Companion specs
 - `facing-and-positioning-spec-v1.md`, `facing-implementation-spec-v1.md` — rules + Face/lock plan.
 - `cross-client-reaction-spec-v1.md` — the relay transport (now generalised to all windows).
 - `maneuver-schema-spec-v1.md`, `maneuver-legality-and-filtering-spec-v1.md`, `maneuver-rules-guide.md`.
-- `dice-resolution-spec-v1.md`, `combat-resolution-loop-spec-v1.md`, `combat-state-machine-v1.md`.
+- `dice-resolution-spec-v1.md`, `combat-resolution-loop-spec-v1.md`.
 - `cover-spec-v1.md`, `ranged-shot-visualization-spec-v1.md` — not-yet-built ranged work.

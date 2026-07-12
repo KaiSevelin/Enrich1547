@@ -395,7 +395,6 @@ export async function executeResolvedReactionPhased(resolution, run, deps = {}) 
 export async function executeSafeCounterattackPhased({
     pendingAttack,
     defenseReaction = null,
-    currentDamageTakenReaction = null,
     getActorReactionWeapon,
     normalizeWeapon,
     buildAttackReactionCandidates,
@@ -410,10 +409,7 @@ export async function executeSafeCounterattackPhased({
         throw new Error("Safe counterattack is missing a defender or attacker.");
     }
 
-    const defenseModifiers = normalizeDefenseModifiers({
-        defenseReaction,
-        damageTakenReaction: currentDamageTakenReaction,
-    });
+    const defenseModifiers = normalizeDefenseModifiers({ defenseReaction });
     if (!defenseModifiers.safeCounterattack) {
         throw new Error("No safe counterattack is available.");
     }
@@ -435,10 +431,7 @@ export async function executeSafeCounterattackPhased({
         weapon: reactionWeapon,
         profile: reactionProfile,
         effect: { createFreeSafeCounterattack: true },
-        generatedByReaction:
-            currentDamageTakenReaction?.name
-            ?? defenseReaction?.name
-            ?? "safe-counterattack",
+        generatedByReaction: defenseReaction?.name ?? "safe-counterattack",
         distanceSquares,
         actorConditions: pendingAttack?.metadata?.targetConditions,
         targetConditions: pendingAttack?.metadata?.actorConditions,
@@ -473,7 +466,6 @@ export async function resolveAttackOutcomePhased({
     defenseReaction = null,
     defenderPostChoice = null,
     attackerPostChoice = null,
-    currentDamageTakenReaction = null,
     defenderPassiveDefenseManeuvers = [],
     buildDefaultDefenseRollSummary,
 } = {}, run) {
@@ -489,7 +481,6 @@ export async function resolveAttackOutcomePhased({
     const appliedModifiers = normalizeAppliedAttackModifiers(pendingAttack?.mergedModifiers ?? {});
     const defenseModifiers = normalizeDefenseModifiers({
         defenseReaction,
-        damageTakenReaction: currentDamageTakenReaction,
         passiveSources: defenderPassiveDefenseManeuvers,
     });
     const normalizedAttackRoll = {
@@ -797,4 +788,176 @@ function buildPostManeuverWindowData({
         attackDamage: Number(attackDamage) || 0,
         attackProtection: Number(attackProtection) || 0,
     };
+}
+
+// ───────────────────────────────────────────────── resolveExchangePhased ──
+//
+// The Exchange pipeline (ADR-0004): the SINGLE entry point for
+// declare → reaction → attack roll → defense roll → resolve → result card.
+// Previously this skeleton was re-assembled in five places (weapon attack,
+// safe counterattack, cover interception, overwatch free shot, choke) which
+// drifted independently — the 2026-07-11 pre-maneuver double-spend bug lived
+// exactly in that gap.
+//
+// Named presets expand to private capability flags; callers never pass raw
+// flags. Decoration that genuinely differs per caller (ranged cover, facing,
+// positional advantage, rider text) runs BEFORE/AFTER the pipeline in the
+// caller — never inside it.
+//
+// Foundry-glue deps (per ADR-0002 DI convention):
+//   rollToChat({formula, speaker, flavor})   → {roll, message, totals}
+//   rollDefenseForActor(actor, token, {addMultiplierDice}) → totals | null
+//   resolveOutcome(args)                     → resolved exchange (the
+//     orchestrator's resolveAttackOutcome wrapper — includes passive-defense
+//     gathering, defeated sync, post-window decoration)
+//   postChat({speaker, content})             → posts the result card
+//   normalizeWeapon / buildAttackReactionCandidates / getActorReactionWeapon
+//     forwarded to the declare-phase functions.
+
+const EXCHANGE_PRESETS = {
+    // A normal weapon attack: full declaration (reaction window), defender
+    // rolls, crits/fumbles live.
+    "weapon": { declare: "attack", rollDefense: true, critsEnabled: true },
+    // The defender's free counterattack after a defensive reaction: declared
+    // through the safe-counterattack path, resolved like a normal exchange.
+    "safe-counter": { declare: "counter", rollDefense: true, critsEnabled: true },
+    // A ranged shot caught by cover hits the obstacle as a safe attack:
+    // no declaration event, no defense roll, no crits/fumbles.
+    "interception": { declare: "given", rollDefense: false, critsEnabled: false },
+    // An overwatch / opportunity shot whose declaration already happened via
+    // the threat reaction — roll and resolve the pre-declared pending attack.
+    "free-shot": { declare: "given", rollDefense: true, critsEnabled: true },
+};
+
+const NULL_DEFENSE_ROLL = { damage: 0, protection: 0, crit: 0, fumble: 0, multiplier: 1 };
+
+// Pure HTML escaping so the card builder stays testable without Foundry.
+function escapeCardHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (ch) => (
+        { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]
+    ));
+}
+
+/**
+ * The one Exchange result card. Pure — unit-testable with a literal
+ * `resolved` fixture. `extraHtml` is the caller's decoration (rider lines,
+ * interception notes) and is NOT escaped: callers escape their own values.
+ */
+export function buildExchangeResultCard({
+    title,
+    attackerName,
+    defenderName,
+    resolved,
+    showCrits = true,
+    extraHtml = "",
+} = {}) {
+    const hp = resolved?.hitPointUpdate ?? null;
+    const hpText = Number.isFinite(Number(hp?.currentHitPoints))
+        ? `<br>HP: ${escapeCardHtml(String(hp.currentHitPoints))}${Number.isFinite(Number(hp?.previousHitPoints)) ? ` / was ${escapeCardHtml(String(hp.previousHitPoints))}` : ""}`
+        : "";
+    const critText = showCrits
+        ? `<br>Critical: attacker ${escapeCardHtml(String(resolved?.attackerCriticalPoints ?? 0))} / defender ${escapeCardHtml(String(resolved?.defenderCriticalPoints ?? 0))}`
+        : "";
+    return `<strong>${escapeCardHtml(title ?? "Attack Result")}</strong>`
+        + `<br>${escapeCardHtml(attackerName ?? "Attacker")} -> ${escapeCardHtml(defenderName ?? "Target")}`
+        + `<br>Damage: ${escapeCardHtml(String(resolved?.attackRoll?.damage ?? 0))}`
+        + `<br>Protection: ${escapeCardHtml(String(resolved?.defenseRoll?.protection ?? 0))}`
+        + `<br>Applied: ${escapeCardHtml(String(resolved?.damageApplied ?? 0))}`
+        + critText + hpText + (extraHtml || "");
+}
+
+export async function resolveExchangePhased({
+    mode,
+    // Declare inputs. weapon: the declareAttackPhased options (actor, target,
+    // weapon, profileId, selectedPreManeuvers, …). safe-counter:
+    // { pendingAttack, defenseReaction } of the ORIGINAL attack.
+    declare = null,
+    // interception / free-shot: the pre-built or pre-declared pending attack.
+    pendingAttack = null,
+    // (declareResult|null) → { formula, flavor, speaker } | null. Called after
+    // the declaration settles so the caller can fold reaction outcomes into
+    // the formula (e.g. Face cancelling rear advantage). null aborts quietly.
+    buildAttackRoll,
+    // Defender token for the defense roll's speaker (weapon mode has it in
+    // hand; others let rollDefenseForActor resolve the active token).
+    targetToken = null,
+    // { title, buildExtraHtml?(resolved) } — omit for no result card.
+    card = null,
+    deps = {},
+} = {}, run) {
+    const preset = EXCHANGE_PRESETS[mode];
+    if (!preset) throw new Error(`resolveExchangePhased: unknown mode "${mode}".`);
+    if (typeof deps.rollToChat !== "function") throw new Error("resolveExchangePhased: missing rollToChat dep.");
+    if (typeof deps.resolveOutcome !== "function") throw new Error("resolveExchangePhased: missing resolveOutcome dep.");
+    if (preset.rollDefense && typeof deps.rollDefenseForActor !== "function") {
+        throw new Error("resolveExchangePhased: missing rollDefenseForActor dep.");
+    }
+
+    // ── Declare ──
+    let declareResult = null;
+    let pending = pendingAttack;
+    let defenseReaction = null;
+    if (preset.declare === "attack") {
+        declareResult = await declareAttackPhased({
+            ...declare,
+            normalizeWeapon: deps.normalizeWeapon,
+            buildAttackReactionCandidates: deps.buildAttackReactionCandidates,
+        }, run);
+        if (declareResult?.cancelled) return { cancelled: true, declareResult };
+        pending = declareResult.pendingAttack;
+        defenseReaction = declareResult.reactionResolution?.reaction ?? null;
+    } else if (preset.declare === "counter") {
+        declareResult = await executeSafeCounterattackPhased({
+            pendingAttack: declare?.pendingAttack,
+            defenseReaction: declare?.defenseReaction,
+            getActorReactionWeapon: deps.getActorReactionWeapon,
+            normalizeWeapon: deps.normalizeWeapon,
+            buildAttackReactionCandidates: deps.buildAttackReactionCandidates,
+        }, run);
+        if (!declareResult?.pendingAttack || declareResult.cancelled) {
+            return { cancelled: true, declareResult };
+        }
+        pending = declareResult.pendingAttack;
+    }
+    if (!pending) throw new Error("resolveExchangePhased: no pending attack.");
+
+    // ── Attack roll (caller-decorated formula) ──
+    const attackSpec = typeof buildAttackRoll === "function" ? buildAttackRoll(declareResult) : buildAttackRoll;
+    if (!attackSpec?.formula) return { aborted: true, declareResult, pendingAttack: pending };
+    const rolledAttack = await deps.rollToChat(attackSpec);
+    let attackRoll = rolledAttack?.totals ?? null;
+    if (!attackRoll) throw new Error("Could not read the attack roll result.");
+    if (!preset.critsEnabled) attackRoll = { ...attackRoll, crit: 0, fumble: 0 };
+
+    // ── Defense roll ──
+    let defenseRoll;
+    if (!preset.rollDefense) {
+        defenseRoll = { ...NULL_DEFENSE_ROLL };
+    } else {
+        const addMultiplierDice = Number(defenseReaction?.effectData?.addDefenseMultiplierDice ?? 0) || 0;
+        defenseRoll = await deps.rollDefenseForActor(pending.target, targetToken, { addMultiplierDice });
+    }
+
+    // ── Resolve + card ──
+    const resolved = await deps.resolveOutcome({
+        pendingAttack: pending,
+        attackRoll,
+        defenseRoll,
+        defenseReaction,
+    });
+    if (card?.title && typeof deps.postChat === "function") {
+        await deps.postChat({
+            speaker: attackSpec.speaker,
+            content: buildExchangeResultCard({
+                title: card.title,
+                attackerName: pending.actor?.name,
+                defenderName: pending.target?.name,
+                resolved,
+                showCrits: preset.critsEnabled,
+                extraHtml: typeof card.buildExtraHtml === "function" ? (card.buildExtraHtml(resolved) ?? "") : "",
+            }),
+        });
+    }
+
+    return { pendingAttack: pending, declareResult, defenseReaction, attackRoll, defenseRoll, resolved };
 }

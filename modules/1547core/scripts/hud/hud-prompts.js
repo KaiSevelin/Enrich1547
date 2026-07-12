@@ -9,6 +9,7 @@ export function buildReactionPrompt(deps = {}) {
         getManeuverTimingSummary,
         buildManeuverDetailLine,
         getCoreStackCount,
+        getReactorActor,
         escapeHtml,
     } = deps;
 
@@ -17,9 +18,12 @@ export function buildReactionPrompt(deps = {}) {
 
     // Core-reaction stacking: the reactor can stage extra Core Points on a Core
     // reaction (Core Defense / Core Toughness) before committing. Ceiling =
-    // staged + still-available.
-    const reactorId = reactionWindow.actor?.id ?? null;
-    const availableCore = Math.max(0, Number(reactionWindow.actor?.system?.props?.AvailableCorePoints ?? 0) || 0);
+    // staged + still-available. The reactor is the actor whose HUD is showing
+    // (injected) — reactionWindow.actor is the ATTACKER for attack windows,
+    // which used to clamp the ceiling to the wrong actor's pool.
+    const reactorActor = typeof getReactorActor === "function" ? getReactorActor() : null;
+    const reactorId = reactorActor?.id ?? null;
+    const availableCore = Math.max(0, Number(reactorActor?.system?.props?.AvailableCorePoints ?? 0) || 0);
 
     const actorName = reactionWindow.actor?.name ?? "";
     const targetName = reactionWindow.target?.name ?? "";
@@ -139,7 +143,6 @@ export function buildDamageTakenPrompt(deps = {}) {
             ${selectedReactionName ? `<div class="hud-row-sub">${escapeHtml(selectedReactionName)}</div>` : ""}
             ${defenseSummary ? `<div class="hud-row-sub">${escapeHtml(defenseSummary)}</div>` : ""}
             <div class="hud-chip-row hud-reaction-actions">
-                ${damageWindow.defenseModifiers?.safeCounterattack && typeof damageWindow.commitSafeCounterattack === "function" ? `<button type="button" class="hud-mini-button is-active" data-hud-safe-counterattack>Safe Counterattack</button>` : ""}
                 <button type="button" class="hud-mini-button" data-hud-damage-taken-close>Close</button>
             </div>
         </section>

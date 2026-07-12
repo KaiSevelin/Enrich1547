@@ -1,10 +1,11 @@
 import { MODULE_ID } from "../lib/constants.mjs";
-import { getCoreStackCount, setCoreStackCount } from "../hud/hud-state.js";
 
 // Core reaction stacking: scale a chosen Core reaction's numeric effects + cost
 // by the Core Points staged on it. count <= 1 returns the reaction unchanged, so
-// normal (unstacked) reactions are untouched.
-function scaleCoreReactionSelection(reaction, count) {
+// normal (unstacked) reactions are untouched. The staged count rides the
+// selection payload (`selectedReaction.stagedCore`, set by the HUD commit —
+// ADR-0004: no service → hud-state import). Exported for unit tests.
+export function scaleCoreReactionSelection(reaction, count) {
     const n = Math.max(1, Number(count) || 1);
     if (!reaction || n <= 1) return reaction;
     const fx = { ...(reaction.effectData ?? {}) };
@@ -237,7 +238,9 @@ async function handleReactionTrigger(sourceEvent, trigger) {
         }
     }
 
-    const selectedReaction = await waitForReactionSelection({
+    // `let`, not `const`: the Core-stacking scaler below reassigns this with
+    // the scaled copy (a const here threw and killed the whole attack).
+    let selectedReaction = await waitForReactionSelection({
         reactionWindow,
         selectionController,
     });
@@ -266,15 +269,14 @@ async function handleReactionTrigger(sourceEvent, trigger) {
     }
 
     // Core reaction stacking: scale the chosen Core reaction's effect + cost by
-    // the Core Points staged on it (Core Defense / Core Toughness), then clear
-    // that stack. Gated on count>1 inside the scaler, so unstacked reactions are
+    // the Core Points staged on it (Core Defense / Core Toughness). The staged
+    // count arrived on the selection payload (HUD commit); the HUD clears its
+    // own stack. Gated on count>1 inside the scaler, so unstacked reactions are
     // untouched. Done before the spend so the scaled cost is charged and the
     // scaled effectData rides along in the resolution to the attacker.
     if (selectedReaction && reactorActor && String(selectedReaction.CostType ?? selectedReaction.source?.CostType ?? "") === "CorePoints") {
-        const mid = selectedReaction.id ?? selectedReaction._id ?? selectedReaction.source?.id ?? selectedReaction.source?._id ?? selectedReaction.name;
-        const staged = getCoreStackCount(reactorActor.id, mid);
+        const staged = Math.max(0, Number(selectedReaction.stagedCore) || 0);
         if (staged > 1) selectedReaction = scaleCoreReactionSelection(selectedReaction, staged);
-        if (staged > 0) setCoreStackCount(reactorActor.id, mid, 0);
     }
 
     // Spend the chosen reaction maneuver's resource cost (e.g. Core Defense's
@@ -362,7 +364,7 @@ function resolveSelectedReaction(reactionWindow, windowEvent) {
     return null;
 }
 
-function normalizeSelectedReaction(selection, candidates) {
+export function normalizeSelectedReaction(selection, candidates) {
     if (!selection) return null;
     if (typeof selection === "object") return selection;
 
@@ -380,7 +382,7 @@ function getReactionWindowTimeoutMs() {
     return safeSeconds * 1000;
 }
 
-function createReactionSelectionController(candidates) {
+export function createReactionSelectionController(candidates) {
     let settled = false;
     let resolveSelection = null;
 
@@ -397,10 +399,16 @@ function createReactionSelectionController(candidates) {
 
     return {
         selectionPromise,
-        selectReaction(selection) {
+        // `meta.stagedCore` (from the HUD commit) is attached to the resolved
+        // candidate so the Core-stacking scaler can read it from the selection
+        // itself instead of reaching into HUD state (ADR-0004). Relayed windows
+        // resolve with a bare id and carry no staged count — Core stacking is
+        // a local-window feature, matching the prompt UI.
+        selectReaction(selection, meta = {}) {
             const normalized = normalizeSelectedReaction(selection, candidates);
             if (!normalized) return false;
-            return settle(normalized);
+            const stagedCore = Math.max(0, Number(meta?.stagedCore) || 0);
+            return settle(stagedCore > 0 ? { ...normalized, stagedCore } : normalized);
         },
         passReaction() {
             return settle(null);
@@ -408,7 +416,7 @@ function createReactionSelectionController(candidates) {
     };
 }
 
-async function waitForReactionSelection({ reactionWindow, selectionController }) {
+export async function waitForReactionSelection({ reactionWindow, selectionController }) {
     const timeoutMs = Math.max(0, Number(reactionWindow?.timeoutMs) || 0);
     if (timeoutMs === 0) {
         selectionController.passReaction();

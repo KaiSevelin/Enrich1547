@@ -1,4 +1,7 @@
-﻿// Modifier keys for roll buttons. ALT (or SHIFT, a reliable alternate) → advantage;
+﻿import { getCoreStackCount, setCoreStackCount } from "./hud-state.js";
+import { rollToChat } from "../lib/roll-chat.mjs";
+
+// Modifier keys for roll buttons. ALT (or SHIFT, a reliable alternate) → advantage;
 // CTRL/META → disadvantage. Event keys are primary; game.keyboard is a defensive fallback
 // for the case where the synthesized event loses modifier state.
 function resolveRollModifier(event) {
@@ -43,7 +46,6 @@ export function bindHudInteractions(root, token, deps = {}) {
         getSelectedReactionChoiceId,
         toggleSelectedReactionChoiceId,
         clearHudReactionWindow,
-        getActiveDamageTakenWindow,
         clearHudDamageTakenWindow,
         releaseDeferredPostWindowsIntoHud,
         getDiceTabAttackSelection,
@@ -81,7 +83,6 @@ export function bindHudInteractions(root, token, deps = {}) {
         executeWeaponReadyAction,
         executeItemUnequipAction,
         sanitizeCounterRollDice,
-        Roll,
         ChatMessage,
         getAttackDiceTabOptions,
     } = deps;
@@ -133,33 +134,33 @@ export function bindHudInteractions(root, token, deps = {}) {
 
     for (const select of root.querySelectorAll("[data-hud-inventory-filter]")) {
         select.addEventListener("change", (event) => {
-            HUD_STATE.inventoryFilter = event.currentTarget.value || "all";
+            HUD_STATE.view.inventoryFilter = event.currentTarget.value || "all";
             void renderHudForSelection();
         });
     }
     for (const button of root.querySelectorAll("[data-hud-category]")) {
         button.addEventListener("click", (event) => {
             const category = event.currentTarget.dataset.hudCategory;
-            if (!category || category === HUD_STATE.activeCategory) return;
-            HUD_STATE.activeCategory = category;
+            if (!category || category === HUD_STATE.view.activeCategory) return;
+            HUD_STATE.view.activeCategory = category;
             void renderHudForSelection();
         });
     }
     for (const select of root.querySelectorAll("[data-hud-maneuver-filter]")) {
         select.addEventListener("change", (event) => {
-            HUD_STATE.maneuverFilter = event.currentTarget.value || "all";
+            HUD_STATE.view.maneuverFilter = event.currentTarget.value || "all";
             void renderHudForSelection();
         });
     }
     for (const checkbox of root.querySelectorAll("[data-hud-maneuver-show-all]")) {
         checkbox.addEventListener("change", (event) => {
-            HUD_STATE.maneuverShowAll = !!event.currentTarget.checked;
+            HUD_STATE.view.maneuverShowAll = !!event.currentTarget.checked;
             void renderHudForSelection();
         });
     }
     for (const button of root.querySelectorAll("[data-hud-collapse-toggle]")) {
         button.addEventListener("click", () => {
-            HUD_STATE.collapsed = !HUD_STATE.collapsed;
+            HUD_STATE.view.collapsed = !HUD_STATE.view.collapsed;
             void renderHudForSelection();
         });
     }
@@ -167,11 +168,11 @@ export function bindHudInteractions(root, token, deps = {}) {
         button.addEventListener("click", (event) => {
             const weaponId = event.currentTarget.dataset.hudWeaponRange;
             if (!weaponId) return;
-            HUD_STATE.weaponRangeShownIds = { ...(HUD_STATE.weaponRangeShownIds ?? {}) };
-            if (HUD_STATE.weaponRangeShownIds[weaponId]) {
-                delete HUD_STATE.weaponRangeShownIds[weaponId];
+            HUD_STATE.view.weaponRangeShownIds = { ...(HUD_STATE.view.weaponRangeShownIds ?? {}) };
+            if (HUD_STATE.view.weaponRangeShownIds[weaponId]) {
+                delete HUD_STATE.view.weaponRangeShownIds[weaponId];
             } else {
-                HUD_STATE.weaponRangeShownIds[weaponId] = true;
+                HUD_STATE.view.weaponRangeShownIds[weaponId] = true;
             }
             void renderHudForSelection();
         });
@@ -219,9 +220,13 @@ export function bindHudInteractions(root, token, deps = {}) {
             const selection = getDiceTabAttackSelection(token.actor.id);
             const terms = (getAttackDiceTabOptions?.() ?? []).flatMap((option) => Array.from({ length: Math.max(0, Number(selection?.[option.key] ?? 0) || 0) }, () => `1d${option.code}`));
             if (!terms.length) return;
-            const roll = await new Roll(terms.join(" + ")).evaluate();
-            const speaker = ChatMessage.getSpeaker({ actor: token.actor, token: token.document });
-            await roll.toMessage({ speaker, flavor: "Dice Tab Attack Dice" });
+            await rollToChat({
+                formula: terms.join(" + "),
+                speaker: ChatMessage.getSpeaker({ actor: token.actor, token: token.document }),
+                flavor: "Dice Tab Attack Dice",
+                rollMode: "default",
+                waitForTotals: false,
+            });
         });
     }
     for (const button of root.querySelectorAll("[data-hud-dice-attack-add]")) {
@@ -249,9 +254,13 @@ export function bindHudInteractions(root, token, deps = {}) {
             if (!token?.actor || button.disabled) return;
             const count = Math.max(0, Number(getDiceTabSkillDice(token.actor.id)) || 0);
             if (count <= 0) return;
-            const roll = await new Roll(`${count}d6`).evaluate();
-            const speaker = ChatMessage.getSpeaker({ actor: token.actor, token: token.document });
-            await roll.toMessage({ speaker, flavor: "Dice Tab D6" });
+            await rollToChat({
+                formula: `${count}d6`,
+                speaker: ChatMessage.getSpeaker({ actor: token.actor, token: token.document }),
+                flavor: "Dice Tab D6",
+                rollMode: "default",
+                waitForTotals: false,
+            });
         });
     }
     for (const button of root.querySelectorAll("[data-hud-dice-skill-add]")) {
@@ -297,7 +306,15 @@ export function bindHudInteractions(root, token, deps = {}) {
                 ui.notifications?.warn?.("Select a reaction first.");
                 return;
             }
-            reactionWindow.selectReaction(selectedId);
+            // Staged Core Points ride the selection payload (ADR-0004) — the
+            // reaction service no longer reaches into HUD state for them. The
+            // stack is HUD-local: clear ONLY the committed reaction's own stack
+            // (a blanket clear wiped Core points staged on OTHER maneuvers,
+            // e.g. a Core Attack prepared for the actor's upcoming turn).
+            const reactorId = token?.actor?.id ?? reactionWindow.actor?.id ?? null;
+            const stagedCore = reactorId ? getCoreStackCount(reactorId, selectedId) : 0;
+            reactionWindow.selectReaction(selectedId, { stagedCore });
+            if (reactorId && stagedCore > 0) setCoreStackCount(reactorId, selectedId, 0);
             clearHudReactionWindow();
             void renderHudForSelection();
         });
@@ -315,22 +332,6 @@ export function bindHudInteractions(root, token, deps = {}) {
         button.addEventListener("click", () => {
             clearHudDamageTakenWindow();
             releaseDeferredPostWindowsIntoHud?.();
-            void renderHudForSelection();
-        });
-    }
-    for (const button of root.querySelectorAll("[data-hud-safe-counterattack]")) {
-        button.addEventListener("click", async () => {
-            const damageWindow = getActiveDamageTakenWindow();
-            if (!damageWindow || typeof damageWindow.commitSafeCounterattack !== "function") return;
-            try {
-                await damageWindow.commitSafeCounterattack();
-                clearHudDamageTakenWindow();
-                releaseDeferredPostWindowsIntoHud?.();
-                ui.notifications?.info?.("Safe counterattack declared.");
-            } catch (error) {
-                ui.notifications?.warn?.(error?.message || "Could not declare a safe counterattack.");
-                return;
-            }
             void renderHudForSelection();
         });
     }
@@ -393,8 +394,8 @@ export function bindHudInteractions(root, token, deps = {}) {
     for (const button of root.querySelectorAll("[data-hud-maneuver-group]")) {
         button.addEventListener("click", (event) => {
             const group = event.currentTarget.dataset.hudManeuverGroup;
-            if (!group || group === HUD_STATE.activeManeuverGroup) return;
-            HUD_STATE.activeManeuverGroup = group;
+            if (!group || group === HUD_STATE.view.activeManeuverGroup) return;
+            HUD_STATE.view.activeManeuverGroup = group;
             void renderHudForSelection();
         });
     }
@@ -562,12 +563,12 @@ export function bindHudInteractions(root, token, deps = {}) {
             const context = buildHudActionContext(token.actor, token);
             const weaponSummary = context.summary.equippedWeapons.find((entry) => entry.id === weaponId) ?? null;
             const nextProfile = weaponSummary?.attackProfiles?.find((profile) => profile.key === profileKey) ?? null;
-            const selectedAmmoId = HUD_STATE.selectedAmmoByWeapon?.[weaponId] ?? null;
+            const selectedAmmoId = HUD_STATE.view.selectedAmmoByWeapon?.[weaponId] ?? null;
             if (weaponSummary && nextProfile && selectedAmmoId) {
                 const selectedAmmo = weaponSummary.compatibleAmmo.find((ammo) => ammo.id === selectedAmmoId) ?? null;
                 const allowedAmmoTypes = Array.isArray(nextProfile.allowedAmmoTypes) ? nextProfile.allowedAmmoTypes : [];
                 if (selectedAmmo && allowedAmmoTypes.length && !allowedAmmoTypes.includes(selectedAmmo.ammoType)) {
-                    delete HUD_STATE.selectedAmmoByWeapon[weaponId];
+                    delete HUD_STATE.view.selectedAmmoByWeapon[weaponId];
                 }
             }
 
@@ -582,19 +583,19 @@ export function bindHudInteractions(root, token, deps = {}) {
             const weaponId = event.currentTarget.dataset.hudWeaponAmmo;
             const ammoId = event.currentTarget.dataset.hudAmmoId;
             if (!weaponId || !ammoId || !token?.actor) return;
-            HUD_STATE.selectedAmmoByWeapon[weaponId] = ammoId;
+            HUD_STATE.view.selectedAmmoByWeapon[weaponId] = ammoId;
             void renderHudForSelection();
         });
     }
     for (const input of root.querySelectorAll("[data-hud-counter-enabled]")) {
         input.addEventListener("change", (event) => {
-            HUD_STATE.counterRollEnabled = Boolean(event.currentTarget.checked);
+            HUD_STATE.view.counterRollEnabled = Boolean(event.currentTarget.checked);
         });
     }
     for (const input of root.querySelectorAll("[data-hud-counter-dice]")) {
         input.addEventListener("change", (event) => {
-            HUD_STATE.counterRollDice = sanitizeCounterRollDice(event.currentTarget.value);
-            event.currentTarget.value = String(HUD_STATE.counterRollDice);
+            HUD_STATE.view.counterRollDice = sanitizeCounterRollDice(event.currentTarget.value);
+            event.currentTarget.value = String(HUD_STATE.view.counterRollDice);
         });
     }
     // Checks header: radio mode picker + per-mode selection. Mode change
@@ -602,35 +603,35 @@ export function bindHudInteractions(root, token, deps = {}) {
     for (const input of root.querySelectorAll("[data-hud-check-mode]")) {
         input.addEventListener("change", (event) => {
             if (!event.currentTarget.checked) return;
-            HUD_STATE.checkMode = String(event.currentTarget.value || "manual");
+            HUD_STATE.view.checkMode = String(event.currentTarget.value || "manual");
             void renderHudForSelection();
         });
     }
     for (const select of root.querySelectorAll("[data-hud-check-stat]")) {
         select.addEventListener("change", (event) => {
-            HUD_STATE.checkStatTarget = String(event.currentTarget.value || "");
+            HUD_STATE.view.checkStatTarget = String(event.currentTarget.value || "");
         });
     }
     for (const input of root.querySelectorAll("[data-hud-check-skill]")) {
         input.addEventListener("change", (event) => {
             if (!event.currentTarget.checked) return;
-            HUD_STATE.checkSkillTarget = String(event.currentTarget.value || "");
+            HUD_STATE.view.checkSkillTarget = String(event.currentTarget.value || "");
         });
     }
     const generalDifficultyToDice = { Trivial: 1, Easy: 2, Average: 3, Hard: 4, Rough: 5 };
     for (const select of root.querySelectorAll("[data-hud-check-difficulty]")) {
         select.addEventListener("change", (event) => {
             const value = String(event.currentTarget.value || "Average");
-            HUD_STATE.checkGeneralDifficulty = value;
+            HUD_STATE.view.checkGeneralDifficulty = value;
             // Difficulty preset overrides the numeric so they stay in sync.
-            HUD_STATE.checkGeneralDice = generalDifficultyToDice[value] ?? 3;
+            HUD_STATE.view.checkGeneralDice = generalDifficultyToDice[value] ?? 3;
             void renderHudForSelection();
         });
     }
     for (const input of root.querySelectorAll("[data-hud-check-general-dice]")) {
         input.addEventListener("change", (event) => {
-            HUD_STATE.checkGeneralDice = sanitizeCounterRollDice(event.currentTarget.value);
-            event.currentTarget.value = String(HUD_STATE.checkGeneralDice);
+            HUD_STATE.view.checkGeneralDice = sanitizeCounterRollDice(event.currentTarget.value);
+            event.currentTarget.value = String(HUD_STATE.view.checkGeneralDice);
         });
     }
 }

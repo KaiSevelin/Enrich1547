@@ -16,14 +16,34 @@ This spec is descriptive first:
 
 ## Architecture Overview
 
-The module is currently organized around these runtime areas:
+*(Refreshed 2026-07-11 to the post-ADR-0004 as-built structure. The module
+shapes and their rules live in ADR-0002/0003/0004; the glossary and per-module
+tables live in CONTEXT.md. This spec is the navigable overview of who owns
+what and who may import whom.)*
 
-- HUD orchestration and presentation
-- combat orchestration and state transitions
-- maneuver legality and filtering
-- reaction timing and prompt flow
-- module setup/import and content projection
-- validation and deployment support
+The module is organized in layers, lowest first:
+
+- `lib/` — dependency-free utilities (positioning math, constants,
+  `roll-chat.mjs` — the ONE roll→chat→totals path).
+- `combat/` — pure modules, patch-returners, and phased functions
+  (ADR-0002/0003 shapes). No `game.*`/`Hooks` except the documented glue
+  files (`.js` suffix: movement-reactions, defense-roll, defense-summary,
+  ranged-cover, facing helpers).
+- `services/` — Foundry-side orchestrators: apply patches, emit events,
+  register hooks, expose the module API. Never import from `hud/`.
+- `combat-tracker/` — the side domain: side assignment/labels/state
+  (side-tracker) and the Side-Ready turn flow (side-turn-flow).
+- `hud/` — presentation + local interaction state. May import combat/,
+  services/ APIs, lib/.
+- `settings/`, `migrations/`, `validation/` — setup, data, safety nets.
+
+The three module shapes (ADR-0002/0003, summarized):
+
+- **Pure module** — inputs in, outputs out; tested with literal fixtures.
+- **Patch-returner** — pure `planX(...) → {patches, result}`; the patches
+  are applied by the orchestrator through the patch transport.
+- **Phased function** — `async fooPhased(opts, run)`; imperative control
+  flow that delegates every Foundry touch to the injected `run`.
 
 High-level responsibility split:
 
@@ -32,18 +52,33 @@ High-level responsibility split:
 - Foundry documents and flags hold committed game state
 - local HUD state holds only transient client-side interaction state
 
+### The Exchange pipeline (ADR-0004)
+
+One entry point owns the attack skeleton — declare → reaction → attack roll
+→ defense roll → resolve → result card: `resolveExchangePhased` in
+`combat/lifecycle-flow.mjs`, exposed as `api.combat.resolveExchange`.
+Callers pick a preset (`weapon` / `safe-counter` / `interception` /
+`free-shot`) and supply only their decoration (attack formula callback,
+card extras). Cover, facing, and rider text run before/after the pipeline
+in the caller — never inside it. Choke round attacks stay declare-only.
+
 ## Responsibility Rules
 
 ### Local HUD State
 
-Local HUD state may track:
+`HUD_STATE` is split in two tiers (ADR-0004):
 
-- active tab/category
-- selected maneuver buttons before commit
-- local reaction or post selection before commit
-- inventory filter choice
-- selected ammo chip before reload
-- collapsed or expanded HUD state
+- **View state** (`HUD_STATE.view.*`) — harmless UI toggles with no
+  invariants: active tab/category, filters, collapse, check-mode, ammo
+  chip, range-pill toggles. Written freely by bindings.
+- **Window state** (top-level: reactionWindow, damageTakenWindow,
+  postManeuverQueue, deferred windows, selections) — invariant-carrying,
+  refresh-fragile exchange state. Mutated ONLY through the exported
+  setters in `hud-state.js` (one mutation point; transitions are
+  unit-tested in `hud-window-state.test.mjs`).
+
+Render never mutates state: contextual defaults (the maneuver-filter
+follow) are applied BEFORE render via `syncManeuverFilterContext`.
 
 Local HUD state must not be treated as authoritative combat truth.
 
@@ -83,6 +118,34 @@ It should not become the main home for:
 - large rendering trees
 - large action execution blocks
 - large DOM binding blocks
+
+Responsibilities extracted from it in the 2026-07-11 split (ADR-0004) —
+do not let them creep back:
+
+- weapon/ammo/attack-profile parsing + `getWeaponAttackState` →
+  `combat/weapon-state.mjs`
+- Side-Ready / side-advance flow + its socket →
+  `combat-tracker/side-turn-flow.js`
+- the canvas threat/range overlay (PIXI) → `hud/threat-overlay.js`
+  (weapon SELECTION stays here; the overlay receives the selectors
+  per call)
+
+### [threat-overlay.js](/c:/temp/Enrich%201547/modules/1547core/scripts/hud/threat-overlay.js)
+
+This module owns the canvas threat/range overlay.
+
+It should own:
+
+- threat cone / range band / rear-vulnerability tile geometry
+- the PIXI layer lifecycle (`renderThreatOverlay(token, selectors)` /
+  `clearThreatOverlay()`)
+- shot-lane and cover-odds badge drawing
+
+It should not own:
+
+- weapon selection (injected: getThreatSource / getRangedSource /
+  getPrimaryTargetToken)
+- HUD DOM or state
 
 ### [hud-state.js](/c:/temp/Enrich%201547/modules/1547core/scripts/hud/hud-state.js)
 
@@ -220,21 +283,80 @@ It should not own:
 
 ### [combat-resolver-service.js](/c:/temp/Enrich%201547/modules/1547core/scripts/services/combat-resolver-service.js)
 
-This is the main combat orchestration service.
+This is the combat orchestrator (~800 lines post-ADR-0004).
 
 It should own:
 
-- declaring attacks and moves
-- ammo loading and ammo spending behavior
-- attack outcome normalization
-- committed full-turn and post-maneuver processing
-- persistent-effect application and expiry helpers
-- generated attack/counterattack execution paths
-- shared combat payloads emitted to the event system
+- the public combat API (`api.combat.*`) and hook registration
+- thin wrappers binding the phased functions to the live runner
+  (`runPhases`) and Foundry-glue deps: declareAttack, declareMovement,
+  resolveAttackOutcome, **resolveExchange**, executeSafeCounterattack
+- the `normalizeWeapon` unarmed-fallback + default-asset builders
+- the status-effect writer, escape commit, choke round attacks
+- post-window closure decoration
+
+It should NOT own (extracted, ADR-0004):
+
+- the patch dispatcher / GM routing → `services/patch-transport.js`
+- the post-maneuver effect interpreter →
+  `combat/post-maneuver-effects.mjs`
+- roll+chat helpers → `lib/roll-chat.mjs`, `combat/defense-roll.js`
 
 It should be treated as authoritative for committed combat transitions.
 
 It should avoid taking on HUD-specific concerns.
+
+### [patch-transport.js](/c:/temp/Enrich%201547/modules/1547core/scripts/services/patch-transport.js)
+
+This module owns HOW a Patch becomes a Foundry write, and WHERE it runs.
+
+It should own:
+
+- the closed `applyPatch` switch over patch kinds (new kinds: one line
+  here + an update to ADR-0002's union list)
+- write authority: `canApplyPatchLocally`, `isDesignatedPatchGM`
+  (decision table unit-tested in `patch-authority.test.mjs`)
+- the `patch-apply` / `patch-ack` socket protocol and `applyPatches`
+  (local-or-routed, `awaitRemote` ack round-trips)
+
+It must stay domain-free: the two domain-flavored kinds
+(`actor.applyCondition`, `actor.statusEffect`) are injected by the combat
+resolver via `configurePatchTransport` at registration.
+
+### [combat/lifecycle-flow.mjs](/c:/temp/Enrich%201547/modules/1547core/scripts/combat/lifecycle-flow.mjs)
+
+This module owns the phased combat flows (ADR-0003): declareAttackPhased,
+declareMovementPhased, resolveAttackOutcomePhased, the safe-counterattack
+declaration, and the Exchange pipeline `resolveExchangePhased` +
+`buildExchangeResultCard`. It never touches Foundry — every effect goes
+through the injected `run` or the injected deps.
+
+### [combat/weapon-state.mjs](/c:/temp/Enrich%201547/modules/1547core/scripts/combat/weapon-state.mjs)
+
+This pure module owns the attack-legality surface the HUD displays:
+weapon/ammo/attack-profile parsing, range bands and reach,
+`getWeaponAttackState` verdicts, and attack-formula building. Every
+exchange enters battle flow through this gate (`weapon-state.test.mjs`).
+
+### [combat/defense-roll.js](/c:/temp/Enrich%201547/modules/1547core/scripts/combat/defense-roll.js)
+
+The ONE defense-side module: equipped-armor extraction, the defense-pool
+formula (armor + condition Risk dice + reaction Multiplier dice), and
+`rollDefenseForActor`. Injected into the Exchange pipeline.
+
+### [combat/post-maneuver-effects.mjs](/c:/temp/Enrich%201547/modules/1547core/scripts/combat/post-maneuver-effects.mjs)
+
+The phased post-maneuver effect interpreter: condition apply, automated
+rotate/push (ruling 2026-07-11), Core Restore, Convert, follow-up safe
+attack. Pure math (`planPushPath`, `nextFacingRotation`,
+`computeConvertBreakdown`) is exported and unit-tested.
+
+### [combat-tracker/side-turn-flow.js](/c:/temp/Enrich%201547/modules/1547core/scripts/combat-tracker/side-turn-flow.js)
+
+The Side-Ready turn flow: next-side computation, the GM-only combat
+advance (players request it over the socket), and the Side Ready
+announcement/confirmation. Lives with the side domain (side-tracker,
+victory detection), not the HUD — the HUD only hosts the button.
 
 ### [combat/maneuver-legality.mjs](/c:/temp/Enrich%201547/modules/1547core/scripts/combat/maneuver-legality.mjs)
 
@@ -268,6 +390,9 @@ It should not own:
 
 - HUD rendering details
 - generic attack preview rendering
+- reads of HUD state (removed 2026-07-11: the staged Core count now
+  arrives ON the selection — `selectReaction(id, { stagedCore })`; the
+  HUD clears its own stack at commit)
 
 ### [combat-events.js](/c:/temp/Enrich%201547/modules/1547core/scripts/services/combat-events.js)
 
@@ -320,17 +445,27 @@ old one.
 
 ## Dependency Direction
 
-Preferred dependency direction:
+Layer rules (enforced by convention; the one known violation —
+reaction-service importing hud-state — was removed 2026-07-11, the staged
+Core count now rides the reaction-selection payload):
 
-- `actor-hud.js` depends on HUD submodules
-- HUD submodules may depend on injected helpers from `actor-hud.js`
-- HUD modules may call service APIs through injected dependencies or module API access
-- service modules must not depend on HUD modules
+- `lib/` imports nothing above it.
+- `combat/` pure modules import other combat modules, `lib/`, and the
+  `COMBAT_EVENTS` enum only. The documented `.js` glue files in combat/
+  may read Foundry globals but must not import from `hud/`.
+- `services/` import `combat/`, `lib/`, other services. **Never `hud/`.**
+- `combat-tracker/` sits beside services (side domain); combat/ glue may
+  import it (side lookups), and it imports combat/ pure helpers — keep new
+  cross-links one-way per file.
+- `hud/` may import everything below; cross-HUD flow goes through
+  `actor-hud.js`'s deps binding or direct same-layer imports.
 
 In other words:
 
 - services should be usable without the HUD
 - the HUD may depend on services, but not the reverse
+- everything under `combat/` (minus glue) must run headless in node —
+  that is what the test suite executes
 
 ## Current Practical Boundaries
 
@@ -357,30 +492,19 @@ For future multiplayer and socket work:
 - prompt routing across clients should use coordination mechanisms such as sockets
 - sockets should coordinate who sees a prompt, not replace authoritative state storage
 
-## Next Recommended Refactor Area
+## Refactor History and Current State
 
-The HUD split is now in a good place.
+- The shared combat normalization this spec once recommended shipped as
+  `combat/normalisation.mjs` (ADR-0002 carve-up, 2026-05-25).
+- The phased-function shape for cancellable flows shipped as
+  `combat/lifecycle-flow.mjs` (ADR-0003).
+- The 2026-07-11 round (ADR-0004) shipped the Exchange pipeline, the
+  patch transport, the actor-hud three-way split, the HUD_STATE
+  view/window split, and the roll-chat sweep.
 
-The next recommended architecture cleanup is shared combat normalization.
-
-A likely next module would be something like:
-
-- `combat-normalizers.js`
-
-It should centralize repeated logic for:
-
-- weapon normalization
-- ammo normalization
-- profile resolution
-- range-band application
-- persistent-effect normalization
-- defense-state normalization
-
-That would reduce drift between:
-
-- HUD summary code
-- legality code
-- combat resolution code
+What intentionally remains outside unit coverage (live two-client test
+list): the socket transport actually delivering, Dice So Nice timing,
+and canvas geometry in a real scene.
 
 ## Maintenance Rule
 
@@ -388,13 +512,24 @@ When adding a new feature, put it in the narrowest responsible module first.
 
 Default guidance:
 
-- if it is temporary local HUD choice state: `hud-state.js`
+- if it is temporary local HUD choice state: `hud-state.js` (view vs
+  window tier — see Local HUD State)
 - if it is actor-to-HUD data shaping: `hud-summary.js`
+- if it is weapon/ammo/range/attack-state parsing: `combat/weapon-state.mjs`
 - if it is action evaluation or preview: `hud-evaluation.js`
-- if it is action execution: `hud-actions.js`
-- if it is HTML generation: `hud-render.js`
+- if it is action execution: `hud-actions.js` (attack execution =
+  decoration around `resolveExchange`, never a second skeleton)
+- if it is HTML generation: `hud-render.js` (reads state, never writes)
 - if it is DOM wiring: `hud-bindings.js`
-- if it is committed combat logic: combat service modules
+- if it is canvas overlay drawing: `hud/threat-overlay.js`
+- if it rolls dice to chat: `lib/roll-chat.mjs` (never a new
+  `new Roll(...).toMessage(...)` copy)
+- if it is combat rules math: a pure `combat/` module (+ a test)
+- if it mutates Foundry docs from combat logic: a patch-returner +
+  the patch transport
+- if it is a multi-step flow with events: a phased function in
+  `combat/lifecycle-flow.mjs` (or its own combat/ flow module)
+- if it is side/turn order logic: `combat-tracker/`
 - if it is setup/import logic: settings module
 
 If a feature naturally spans several layers, keep each layer focused instead of

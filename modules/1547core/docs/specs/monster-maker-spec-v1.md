@@ -353,7 +353,7 @@ The combat engine reads `actual.*`.
   consumed by ItemGrant Changes.
 - `combat-rules-guide.md` — for action economy, dice pools, and where
   `actual.*` values are read at play time.
-- `combat-spec-v2.md` — for the runtime combat model that operates on the
+- `battle-flow-spec-v1.md` — for the runtime combat model that operates on the
   output of this pipeline.
 - The skill tree DAG used by `Skill` Changes lives in the separate
   `skilltreehelper` module's `data/default.json`. Skill Changes apply with a

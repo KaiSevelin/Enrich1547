@@ -83,6 +83,11 @@ const SERVICE_FILES = [
     "monster-image-resolver-service.js",
     "rolltable-resolution-service.js",
     "combat-resolver-service.js",
+    "patch-transport.js",
+    "spell-casting-service.js",
+    "ritual-execution-service.js",
+    "ritual-generation-service.js",
+    "usage-effect-action-resolver.js",
     "csb-container-helpers.mjs",
     "composition-service.mjs",
     "monster-wizard-service.js",
@@ -125,7 +130,7 @@ const DICE_FILES = [
 ];
 
 const COMBAT_FILES = [
-    "resolver.mjs",
+    // resolver.mjs deleted 2026-07-11 (ADR-0004): dead parallel damage model.
     "pool-builder.mjs",
     "maneuver-legality.mjs",
     "ammo-state.mjs",
@@ -136,6 +141,9 @@ const COMBAT_FILES = [
     "maneuver-state.mjs",
     "attack-lifecycle.mjs",
     "lifecycle-flow.mjs",
+    "weapon-state.mjs",
+    "post-maneuver-effects.mjs",
+    "escape-state.mjs",
     // Side-model, cover, reaction-economy and turn-cue modules (no side effects at
     // import; none pull in dice1547 / dice-so-nice).
     "activation-state.mjs",

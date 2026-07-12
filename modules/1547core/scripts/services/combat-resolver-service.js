@@ -1,10 +1,8 @@
 ﻿import { COMBAT_EVENTS, emitCombatEvent, onCombatEvent } from "./combat-events.js";
 import { applyCondition, removeCondition, getActiveConditions, CONDITIONS, getConditionInflictorId, hasCondition } from "./condition-registry.js";
-import { evaluateManeuverLegality, getLegalManeuvers } from "../combat/maneuver-legality.mjs";
 import { buildDefenderPool, toFoundryFormula } from "../combat/pool-builder.mjs";
 import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 import {
-    normalizeManeuver,
     normalizeWeapon as normalizeWeaponPure,
     resolveSelectedWeaponProfile,
 } from "../combat/normalisation.mjs";
@@ -31,7 +29,18 @@ import {
     executeResolvedReactionPhased,
     executeSafeCounterattackPhased,
     resolveAttackOutcomePhased,
+    resolveExchangePhased,
 } from "../combat/lifecycle-flow.mjs";
+import { rollToChat } from "../lib/roll-chat.mjs";
+import { applyPostManeuverEffectPhased } from "../combat/post-maneuver-effects.mjs";
+import { rollDefenseForActor } from "../combat/defense-roll.js";
+import {
+    configurePatchTransport,
+    bindPatchSocket,
+    applyPatches,
+    isDesignatedPatchGM,
+    resolveActorById,
+} from "./patch-transport.js";
 import {
     buildPendingAttack as buildPendingAttackPure,
     buildPendingMove as buildPendingMovePure,
@@ -88,6 +97,9 @@ export function registerCombatResolverService() {
     const module = game.modules.get(MODULE_ID);
     if (!module) return;
 
+    // The transport is domain-free; the combat resolver owns the two
+    // domain-flavored patch kinds and injects their handlers here (ADR-0004).
+    configurePatchTransport({ applyCondition, setActorStatusEffect });
     bindPatchSocket();
     bindChokeHoldRoundAttacks();
 
@@ -107,6 +119,7 @@ export function registerCombatResolverService() {
             declareMovement,
             loadWeaponAmmo,
             resolveAttackOutcome,
+            resolveExchange,
             executeSafeCounterattack,
             markReactionUsed,
             markMovementReacted,
@@ -308,146 +321,32 @@ export async function commitPostManeuver(options = {}) {
     return { ...result, commitEvent };
 }
 
-function postManeuverConditionName(effect = {}) {
-    return String(effect.applyCondition ?? effect.upgradeCondition ?? "").trim();
-}
-
-function describePostManeuverEffect(effect = {}) {
-    const parts = [];
-    if (effect.createSecondSafeAttack || effect.createFreeSafeAttack) parts.push("Follow-up safe attack");
-    const condition = postManeuverConditionName(effect);
-    if (condition) parts.push(`Applies condition: <strong>${condition}</strong>`);
-    if (Number(effect.addDisadvantage ?? 0) > 0) parts.push(`+${effect.addDisadvantage} disadvantage`);
-    if (Number(effect.addDisadvantageToTargetAttack ?? 0) > 0) parts.push(`+${effect.addDisadvantageToTargetAttack} disadvantage to target's attacks`);
-    if (Number(effect.addDisadvantageToTargetDefense ?? 0) > 0) parts.push(`+${effect.addDisadvantageToTargetDefense} disadvantage to target's defence`);
-    if (Number(effect.addMainDice ?? 0) > 0) parts.push(`+${effect.addMainDice} main die`);
-    if (Number(effect.addDamage ?? 0) > 0) parts.push(`+${effect.addDamage} damage`);
-    if (Number(effect.recoverCorePoints ?? 0) > 0) parts.push(`Recover ${effect.recoverCorePoints} Core point`);
-    const ongoing = String(effect.ongoingDamagePerTurn ?? "").trim();
-    if (ongoing) parts.push(`Ongoing damage: ${ongoing}/turn (GM applies)`);
-    if (effect.disarmWeapon) parts.push(`Disarm — drop ${Number(effect.placeDroppedWeaponSquares ?? 0) || 0} sq away (GM applies)`);
-    if (Number(effect.pushTargetSquares ?? 0) > 0) parts.push(`Push ${effect.pushTargetSquares} sq ${String(effect.direction ?? "").replace(/-/g, " ")} (GM applies)`);
-    if (effect.placeTargetAdjacent) parts.push("Place target adjacent (GM applies)");
-    if (Number(effect.rotateTargetFacingSteps ?? 0) > 0) parts.push(`Rotate target facing ${effect.rotateTargetFacingSteps} step (GM applies)`);
-    if (Array.isArray(effect.chooseOne) && effect.chooseOne.length) parts.push(`Choose one: ${effect.chooseOne.map((c) => String(c).replace(/-/g, " ")).join(" / ")} (GM applies)`);
-    if (effect.swallowTarget) parts.push("Swallow target (GM applies)");
-    return parts.join("; ");
-}
-
-// Run a committed post-maneuver's effect. A follow-up "safe attack" maneuver
-// (e.g. Redouble) declares a fresh safe attack; every commit posts a chat card so
-// the table sees it landed. Effects we don't auto-apply (statuses/tags) are named
-// in the card for the GM to apply — manual economy.
+// Post-maneuver effect interpreter moved to combat/post-maneuver-effects.mjs
+// (ADR-0004). This wrapper binds the phased runner + Foundry-glue deps.
 async function applyPostManeuverEffect(options = {}) {
-    const maneuver = options.maneuver ?? null;
-    const effect = maneuver?.effectData ?? {};
-    const actor = options.actor ?? null;
-    const pendingAttack = options.pendingAttack ?? null;
-    const target = options.target ?? pendingAttack?.target ?? null;
-    const esc = (value) => foundry.utils.escapeHTML(String(value ?? ""));
-
-    try {
-        const ChatMessageCls = globalThis.ChatMessage;
-        // detail is built from trusted maneuver effectData (not user input) and
-        // contains light markup (<strong>), so it is intentionally not escaped.
-        const detail = describePostManeuverEffect(effect);
-        await ChatMessageCls?.create?.({
-            speaker: ChatMessageCls.getSpeaker({ actor }),
-            content: `<strong>Critical Maneuver — ${esc(maneuver?.name ?? "Maneuver")}</strong>`
-                + `<br>${esc(actor?.name ?? "Combatant")}${target ? ` &rarr; ${esc(target.name ?? "target")}` : ""}`
-                + (detail ? `<br>${detail}` : ""),
-        });
-    } catch (_err) { /* non-fatal */ }
-
-    // Auto-apply the condition to the target (Lock -> locked, Throw -> prone,
-    // Constrict -> grappled, Choke -> choking-hold). Routed through the patch
-    // dispatcher so it lands even when the acting client can't write the target.
-    const conditionName = postManeuverConditionName(effect);
-    if (conditionName && target?.id) {
-        try {
-            // inflictorId = the attacker, so an opposed escape can roll against them.
-            await applyPatches([{ kind: "actor.applyCondition", actorId: target.id, name: conditionName, inflictorId: actor?.id ?? "" }]);
-        } catch (err) {
-            console.error("1547core | post-maneuver condition apply failed", err);
-        }
-    }
-
-    // Core Restore: recover Core Points by decrementing SpentCorePoints
-    // (floored at 0) — the crit cost was already spent by planCommitPostManeuver.
-    const recoverCore = Number(effect.recoverCorePoints ?? 0) || 0;
-    if (recoverCore > 0 && actor?.id) {
-        const currentSpent = Number(actor.system?.props?.SpentCorePoints ?? 0) || 0;
-        const nextSpent = Math.max(0, currentSpent - recoverCore);
-        if (nextSpent !== currentSpent) {
-            await applyPatches([{ kind: "actor.update", actorId: actor.id, data: { "system.props.SpentCorePoints": nextSpent } }]);
-        }
-    }
-
-    // Convert: turn the attack's critical points into extra damage at
-    // `convertCriticalPointsToDamage` per point. The commit step already spent
-    // CostAmount; zero out whatever crit remains so the FULL pool is converted,
-    // and card the total for the GM to apply (manual economy).
-    const critToDamageRate = Number(effect.convertCriticalPointsToDamage ?? 0) || 0;
-    if (critToDamageRate > 0 && actor?.id) {
-        const critCount = Math.max(0, Number(options.currentCriticalPoints ?? 0) || 0);
-        const convertedDamage = critToDamageRate * critCount;
-        if (Number(actor.system?.props?.CriticalPoints ?? 0) > 0) {
-            await applyPatches([{ kind: "actor.update", actorId: actor.id, data: { "system.props.CriticalPoints": 0 } }]);
-        }
-        if (convertedDamage > 0) {
-            // Converted damage is treated like ordinary attack damage: it is added
-            // to the attack's raw damage and re-matched against the defender's
-            // protection. Only the extra that now gets THROUGH (over what the base
-            // attack already dealt) is applied. e.g. 1 dmg + 1 crit vs 2 defence =
-            // 0 through. Routed through the dispatcher so it lands cross-client.
-            const rawDamage = Number(options.attackDamage ?? 0) || 0;
-            const protection = Number(options.attackProtection ?? 0) || 0;
-            const alreadyThrough = Math.max(0, rawDamage - protection);
-            const nowThrough = Math.max(0, rawDamage + convertedDamage - protection);
-            const additionalDamage = Math.max(0, nowThrough - alreadyThrough);
-            let hpNote = "";
-            if (target?.id && additionalDamage > 0) {
+    return applyPostManeuverEffectPhased(options, runPhases, {
+        postCard: async (actor, content) => {
+            const CM = globalThis.ChatMessage;
+            await CM?.create?.({ speaker: CM.getSpeaker({ actor }), content });
+        },
+        applyDamageAwaited: async (target, amount) => {
+            const { patches, result } = planApplyDamage(target, amount);
+            if (patches.length) await applyPatches(patches, { awaitRemote: true });
+            return result;
+        },
+        declareAttack,
+        getActorActiveTokenDocument,
+        gridSize: () => Number(globalThis.canvas?.grid?.size) || 100,
+        buildCollisionTester: (tokenDoc) => {
+            const placeable = tokenDoc?.object ?? null;
+            if (!placeable?.checkCollision) return null;
+            return (fromCenter, toCenter) => {
                 try {
-                    const { patches, result } = planApplyDamage(target, additionalDamage);
-                    if (patches.length) await applyPatches(patches, { awaitRemote: true });
-                    hpNote = ` — ${esc(target.name ?? "target")} now ${result.currentHitPoints} HP`
-                        + (result.isDead ? " (dead)" : result.isUnconscious ? " (unconscious)" : "");
-                } catch (err) {
-                    console.error("1547core | Convert damage apply failed", err);
-                }
-            } else if (additionalDamage <= 0) {
-                hpNote = " — stopped by the defence (nothing gets through)";
-            }
-            try {
-                const CM = globalThis.ChatMessage;
-                await CM?.create?.({
-                    speaker: CM.getSpeaker({ actor }),
-                    content: `<strong>Convert — ${esc(maneuver?.name ?? "Convert")}</strong>`
-                        + `<br>${esc(actor?.name ?? "Combatant")} converts ${critCount} critical point${critCount === 1 ? "" : "s"} into +${convertedDamage} damage`
-                        + ` (vs ${protection} defence): <strong>${additionalDamage} through</strong>`
-                        + (target ? ` to ${esc(target.name ?? "target")}` : "") + hpNote + ".",
-                });
-            } catch (_e) { /* non-fatal */ }
-        }
-    }
-
-    if ((effect.createSecondSafeAttack || effect.createFreeSafeAttack) && actor && target && pendingAttack?.profile) {
-        try {
-            await declareAttack({
-                actor,
-                target,
-                targets: [target],
-                weapon: pendingAttack.weapon?.itemDocument ?? pendingAttack.weapon,
-                profile: pendingAttack.profile,
-                forceSafeAttack: true,
-                extraEffectData: effect,
-                // Mark it generated so it doesn't itself open a reaction window.
-                generatedByReaction: maneuver?.name ?? "post-maneuver",
-            });
-        } catch (err) {
-            console.error("1547core | post-maneuver follow-up attack failed", err);
-        }
-    }
+                    return placeable.checkCollision(toCenter, { origin: fromCenter, type: "move", mode: "any" }) ?? false;
+                } catch (_e) { return true; }
+            };
+        },
+    });
 }
 
 // ─── Effect runner per ADR-0003 ────────────────────────────────────────────
@@ -470,9 +369,21 @@ async function runPhases({ phase, patches = [], event = null, awaitRemote = fals
 // Thin orchestrator wrappers binding the runner + Foundry-glue deps.
 // Public API shape preserved exactly.
 
+// Multi-target is deferred (ruling 2026-07-11): single-target is the only
+// supported mode — reactions, crits and damage windows are all specified
+// per one defender. Clamp an API caller's extra targets to the first.
+function clampToSingleTarget(options = {}) {
+    let { target, targets } = options;
+    if (!Array.isArray(targets) || targets.length <= 1) return options;
+    ui?.notifications?.warn?.("Multi-target attacks are not supported yet — resolving against the first target only.");
+    targets = targets.slice(0, 1);
+    target = target ?? targets[0];
+    return { ...options, target, targets };
+}
+
 export async function declareAttack(options = {}) {
     return declareAttackPhased({
-        ...options,
+        ...clampToSingleTarget(options),
         normalizeWeapon,
         buildAttackReactionCandidates,
     }, runPhases);
@@ -482,6 +393,26 @@ export async function declareMovement(options = {}) {
     return declareMovementPhased({
         ...options,
         buildThreatReactionCandidates,
+    }, runPhases);
+}
+
+// The Exchange pipeline (ADR-0004): binds the phased skeleton to the live
+// runner + Foundry-glue deps. Callers supply mode/declare/buildAttackRoll/card;
+// everything Foundry-shaped is injected here, exactly once.
+export async function resolveExchange(options = {}) {
+    return resolveExchangePhased({
+        ...options,
+        declare: options.mode === "weapon" && options.declare ? clampToSingleTarget(options.declare) : options.declare,
+        deps: {
+            rollToChat,
+            rollDefenseForActor,
+            resolveOutcome: resolveAttackOutcome,
+            postChat: (message) => globalThis.ChatMessage?.create?.(message),
+            normalizeWeapon,
+            buildAttackReactionCandidates,
+            getActorReactionWeapon,
+            ...(options.deps ?? {}),
+        },
     }, runPhases);
 }
 
@@ -764,153 +695,17 @@ function isWeaponSource(source) {
 
 // ────────────────────────────────────────────────── Patch dispatch ──
 //
-// Patch-returner modules (ammo-state.mjs, future ammo/hp/persistent-
-// effects modules) return arrays of patch descriptors. This dispatcher
-// is the single place that translates them into Foundry mutations.
-// Per CONTEXT.md + ADR-0001, patch shape is a discriminated union:
-//
-//   { kind: "actor.update",       actorId, data }
-//   { kind: "item.update",        actorId, itemId, data }
-//   { kind: "actor.setFlag",      actorId, scope, key, value }
-//   { kind: "actor.statusEffect", actorId, keyword, active }
-//
-// Only "item.update" is consumed today (by ammo-state); the others are
-// in the shape contract so later patch-returner modules slot in.
+// The applyPatch dispatcher, GM patch authority and socket routing live in
+// services/patch-transport.js (ADR-0004; amends ADR-0002's location note).
+// The two domain-flavored patch kinds (actor.applyCondition,
+// actor.statusEffect) are injected there at registration — see
+// configurePatchTransport in registerCombatResolverService.
 
-// Resolve an actor by id, preferring a token-bound actor in the current scene.
-// Unlinked tokens have a synthetic actor whose items differ from the world
-// prototype's; updating game.actors.get(actorId).items there silently no-ops
-// because the token's items aren't on the prototype. Linked tokens resolve to
-// the same actor either way, so token-first is safe in both cases.
-function resolveActorById(actorId) {
-    if (!actorId) return null;
-    const tokenActor = canvas?.tokens?.placeables?.find?.((token) => token?.actor?.id === actorId)?.actor;
-    return tokenActor ?? game.actors?.get?.(actorId) ?? null;
-}
-
-function resolveTokenById(tokenId, sceneId) {
-    if (!tokenId) return null;
-    const scene = sceneId ? game.scenes?.get?.(sceneId) : (canvas?.scene ?? null);
-    return scene?.tokens?.get?.(tokenId)
-        ?? canvas?.tokens?.get?.(tokenId)?.document
-        ?? null;
-}
-
-async function applyPatch(patch) {
-    if (!patch || !patch.kind) return;
-    switch (patch.kind) {
-        case "actor.update": {
-            const actor = resolveActorById(patch.actorId);
-            if (actor?.update) await actor.update(patch.data);
-            return;
-        }
-        case "item.update": {
-            const actor = resolveActorById(patch.actorId);
-            const item = actor?.items?.get?.(patch.itemId);
-            if (item?.update) await item.update(patch.data);
-            return;
-        }
-        case "item.delete": {
-            const actor = resolveActorById(patch.actorId);
-            const ids = Array.isArray(patch.itemIds) ? patch.itemIds : (patch.itemId ? [patch.itemId] : []);
-            const existingIds = ids.filter((id) => actor?.items?.get?.(id));
-            if (actor?.deleteEmbeddedDocuments && existingIds.length) {
-                await actor.deleteEmbeddedDocuments("Item", existingIds);
-            }
-            return;
-        }
-        case "actor.setFlag": {
-            const actor = resolveActorById(patch.actorId);
-            if (actor?.setFlag) await actor.setFlag(patch.scope, patch.key, patch.value);
-            return;
-        }
-        case "actor.statusEffect": {
-            const actor = resolveActorById(patch.actorId);
-            if (actor) await setActorStatusEffect(actor, patch.keyword, patch.active);
-            return;
-        }
-        case "actor.applyCondition": {
-            const actor = resolveActorById(patch.actorId);
-            if (actor && patch.name) await applyCondition(actor, patch.name, { inflictorId: patch.inflictorId ?? "", ...(patch.options ?? {}) });
-            return;
-        }
-        case "token.update": {
-            const token = resolveTokenById(patch.tokenId, patch.sceneId);
-            if (token?.update) await token.update(patch.data ?? {}, patch.options ?? {});
-            return;
-        }
-        case "combatant.update": {
-            const combat = patch.combatId ? game.combats?.get?.(patch.combatId) : game.combat;
-            const combatant = combat?.combatants?.get?.(patch.combatantId);
-            if (combatant?.update) await combatant.update(patch.data ?? {});
-            return;
-        }
-        default:
-            console.warn(`${MODULE_ID} | applyPatch: unknown patch kind "${patch.kind}"`);
-    }
-}
-
-/* ---- Patch authority (combat-architecture-evolution-spec, Move 1) -------- */
-// Combat resolution runs on whoever is acting (often the GM, but a player when
-// they attack). Writes must land on a client that can write the target. The GM
-// can write anything; a player can write only actors they own. Patches a player
-// can't apply are routed to the designated GM over the socket, who applies them.
-const PATCH_CHANNEL = `module.${MODULE_ID}`;
-const PATCH_APPLY_TYPE = "patch-apply";
-const PATCH_ACK_TYPE = "patch-ack";
-const PATCH_ACK_TIMEOUT_MS = 5000;
-let patchSocketBound = false;
-// awaitRemote round-trips: ackId -> resolver that settles the awaiting promise.
-const pendingPatchAcks = new Map();
-
-// The single GM that applies routed patches (avoids double-apply with >1 GM).
-function isDesignatedPatchGM() {
-    if (!game.user?.isGM) return false;
-    const activeGM = game.users?.activeGM;
-    if (activeGM) return activeGM.id === game.user.id;
-    const gms = Array.from(game.users ?? [])
-        .filter((u) => u.active && u.isGM)
-        .sort((a, b) => String(a.id).localeCompare(String(b.id)));
-    return !gms.length || gms[0].id === game.user.id;
-}
-
-function canApplyPatchLocally(patch) {
-    if (game.user?.isGM) return true;
-    if (patch?.kind === "combatant.update") return false; // the Combat doc is GM-only
-    if (patch?.kind === "token.update") {
-        const token = resolveTokenById(patch.tokenId, patch.sceneId);
-        return !!token?.actor?.isOwner;
-    }
-    const actor = resolveActorById(patch?.actorId);
-    return !!actor?.isOwner;
-}
-
-function bindPatchSocket() {
-    if (patchSocketBound || !game?.socket) return;
-    patchSocketBound = true;
-    game.socket.on(PATCH_CHANNEL, (msg) => {
-        if (!msg || typeof msg !== "object") return;
-        // Requester side: the GM acked an awaited routed apply — settle the wait.
-        if (msg.type === PATCH_ACK_TYPE) {
-            if (msg.toUserId && msg.toUserId !== game.user?.id) return;
-            const settle = pendingPatchAcks.get(msg.ackId);
-            if (settle) settle();
-            return;
-        }
-        if (msg.type !== PATCH_APPLY_TYPE || !isDesignatedPatchGM()) return;
-        void (async () => {
-            for (const patch of Array.isArray(msg.patches) ? msg.patches : []) {
-                try { await applyPatch(patch); }
-                catch (err) { console.error(`${MODULE_ID} | routed patch failed`, patch, err); }
-            }
-            // Only the awaitRemote path stamps an ackId — ack it back once the
-            // routed writes have actually landed so the requester can read state.
-            if (msg.ackId && msg.fromUserId) {
-                try { game.socket?.emit(PATCH_CHANNEL, { type: PATCH_ACK_TYPE, ackId: msg.ackId, toUserId: msg.fromUserId }); }
-                catch (err) { console.error(`${MODULE_ID} | could not ack routed patches`, err); }
-            }
-        })();
-    });
+// The actor's token document on the active scene (linked first, then any).
+function getActorActiveTokenDocument(actorLike) {
+    const tokens = actorLike?.getActiveTokens?.(true) ?? [];
+    const fallback = tokens.length ? tokens : (actorLike?.getActiveTokens?.() ?? []);
+    return fallback[0]?.document ?? null;
 }
 
 // ── Choking Hold per-round attack ────────────────────────────────────────────
@@ -964,39 +759,6 @@ async function declareChokeAttack(inflictor, victim) {
     }
 }
 
-async function applyPatches(patches = [], { awaitRemote = false } = {}) {
-    const list = Array.isArray(patches) ? patches.filter(Boolean) : [];
-    const remote = [];
-    for (const patch of list) {
-        if (canApplyPatchLocally(patch)) await applyPatch(patch);
-        else remote.push(patch); // preserves per-actor order (one actor's patches stay together)
-    }
-    if (!remote.length) return;
-    // A player can't write actors they don't own (e.g. attacking a GM NPC) — hand
-    // those patches to the designated GM. Default is fire-and-forget: combat reads
-    // outcomes from the rolls, not the written docs, so it needn't await the apply.
-    const message = { type: PATCH_APPLY_TYPE, patches: remote };
-    if (!awaitRemote) {
-        try { game.socket?.emit(PATCH_CHANNEL, message); }
-        catch (err) { console.error(`${MODULE_ID} | could not route patches to GM`, err); }
-        return;
-    }
-    // awaitRemote: a later phase reads back the written state, so wait for the GM
-    // to confirm the apply. A timeout backstop guarantees we never hang on an
-    // absent/asleep GM — the resolution then proceeds as it would fire-and-forget.
-    const ackId = foundry.utils.randomID();
-    message.ackId = ackId;
-    message.fromUserId = game.user?.id ?? null;
-    await new Promise((resolve) => {
-        let settled = false;
-        const settle = () => { if (settled) return; settled = true; pendingPatchAcks.delete(ackId); resolve(); };
-        pendingPatchAcks.set(ackId, settle);
-        try { game.socket?.emit(PATCH_CHANNEL, message); }
-        catch (err) { console.error(`${MODULE_ID} | could not route patches to GM`, err); settle(); return; }
-        setTimeout(settle, PATCH_ACK_TIMEOUT_MS);
-    });
-}
-
 // Thin wrappers around the patch-returners in combat/maneuver-state.mjs.
 async function spendActorManeuverCost(actor, maneuver) {
     const { patches, result } = planSpendActorManeuverCost(actor, maneuver);
@@ -1019,53 +781,25 @@ async function markMovementReacted(reactor, mover) {
 
 // Roll + resolve a free attack that was only *declared* (e.g. an overwatch /
 // opportunity shot from a threat reaction; executeResolvedReactionPhased declares
-// but doesn't resolve). Rolls the attacker's profile, the target's armour, then
-// resolveAttackOutcome — writes route to the GM via the dispatcher.
-async function rollPublicTotals(formula, speaker, flavor) {
-    if (!formula) return null;
-    const RollCls = globalThis.Roll;
-    const roll = await new RollCls(formula).evaluate();
-    const publicMode = globalThis.CONST?.DICE_ROLL_MODES?.PUBLIC ?? "publicroll";
-    await roll.toMessage({ speaker, flavor }, { rollMode: publicMode });
-    const computeRollTotals = game.modules.get(MODULE_ID)?.api?.computeRollTotals;
-    return typeof computeRollTotals === "function" ? computeRollTotals([roll]) : null;
-}
-
-function actorDefenseFormula(actor) {
-    const armor = (actor?.items?.contents ?? actor?.items ?? [])
-        .map((item) => {
-            const props = item?.system?.props ?? {};
-            const sourceData = item?.flags?.["1547Core"]?.sourceData ?? item?.flags?.["1547core"]?.sourceData ?? {};
-            const equipped = props.Equipped === true || Number(props.Equipped) === 1
-                || String(props.Equipped ?? "").trim().toLowerCase() === "true" || sourceData?.equipped === true;
-            if (!equipped) return null;
-            const dice = Array.isArray(sourceData?.defenseDice)
-                ? [...sourceData.defenseDice]
-                : String(props.Defense ?? "").split(",").map((e) => e.trim()).filter(Boolean);
-            return dice.length ? dice : null;
-        })
-        .filter(Boolean)[0] ?? buildDefenderPool(undefined);
-    return toFoundryFormula(armor);
-}
-
+// but doesn't resolve). One Exchange pipeline call in "free-shot" mode — the
+// roll-and-card path and the defense roll come from the shared deps (ADR-0004).
 async function resolveFreeAttack(pendingAttack) {
     const attacker = pendingAttack?.actor ?? null;
     const target = pendingAttack?.target ?? null;
     if (!attacker || !target) return;
-    const dice = Array.isArray(pendingAttack?.profile?.dice) ? pendingAttack.profile.dice : [];
-    const formula = toFoundryFormula(dice);
+    const formula = toFoundryFormula(Array.isArray(pendingAttack?.profile?.dice) ? pendingAttack.profile.dice : []);
     if (!formula) return;
     const ChatMessageCls = globalThis.ChatMessage;
-    const aTok = attacker.getActiveTokens?.(true)?.[0] ?? null;
-    const tTok = target.getActiveTokens?.(true)?.[0] ?? null;
-    const speaker = ChatMessageCls.getSpeaker({ actor: attacker, token: aTok?.document });
-    const attackRoll = await rollPublicTotals(formula, speaker, `Reaction Attack<br>${attacker.name ?? "Attacker"} -> ${target.name ?? "Target"}`);
-    if (!attackRoll) return;
-    const defenseRoll = await rollPublicTotals(actorDefenseFormula(target), ChatMessageCls.getSpeaker({ actor: target, token: tTok?.document }), `Defense<br>${target.name ?? "Target"}`);
-    const resolved = await resolveAttackOutcome({ pendingAttack, attackRoll, defenseRoll });
-    await ChatMessageCls.create({
-        speaker,
-        content: `<strong>Reaction Attack</strong><br>${attacker.name ?? "Attacker"} -> ${target.name ?? "Target"}<br>Damage: ${attackRoll.damage ?? 0}<br>Protection: ${defenseRoll?.protection ?? 0}<br>Applied: ${resolved?.damageApplied ?? 0}`,
+    const attackerToken = attacker.getActiveTokens?.(true)?.[0] ?? null;
+    await resolveExchange({
+        mode: "free-shot",
+        pendingAttack,
+        buildAttackRoll: () => ({
+            formula,
+            speaker: ChatMessageCls.getSpeaker({ actor: attacker, token: attackerToken?.document }),
+            flavor: `Reaction Attack<br>${attacker.name ?? "Attacker"} -> ${target.name ?? "Target"}`,
+        }),
+        card: { title: "Reaction Attack" },
     });
 }
 

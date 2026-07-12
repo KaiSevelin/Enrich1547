@@ -3,6 +3,7 @@ import {
     formatDiceTerm,
     parseDiceTerm,
 } from "../utils/dice.js";
+import { rollToChat } from "../lib/roll-chat.mjs";
 
 export function register1547DialogHooks() {
     Hooks.on("renderDialog", (_app, html) => {
@@ -125,10 +126,12 @@ export async function show1547RollDialog(formulas, titleLabel = "@1547") {
 
 async function rollCombinedToChat(combinedFormula, titleLabel, terms) {
     try {
-        const roll = await new Roll(combinedFormula).evaluate();
-        await roll.toMessage({
-            flavor: `${titleLabel}: ${terms.join(" + ")}`,
+        await rollToChat({
+            formula: combinedFormula,
             speaker: ChatMessage.getSpeaker(),
+            flavor: `${titleLabel}: ${terms.join(" + ")}`,
+            rollMode: "default",
+            waitForTotals: false,
         });
     } catch (error) {
         console.error(error);

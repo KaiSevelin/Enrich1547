@@ -22,6 +22,7 @@
 
 import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 import { statDice, statMod, escapeHtml } from "../lib/foundry-utils.mjs";
+import { numProp, skillDiceShift, marksFromExchange, socialPoolFormula } from "./social-math.mjs";
 import { promptAddDrive } from "../chargen/drive-prompts.js";
 import {
     buildAlarmContext, defaultAlarm, ALARM_MAX_LEVEL,
@@ -55,18 +56,8 @@ function actorOf(side) {
     return uuid ? fromUuidSync(uuid) : null;
 }
 
-function numProp(props, key) {
-    const v = props?.[key];
-    if (v === undefined || v === null || v === "") return null;
-    const n = Number(v);
-    return Number.isNaN(n) ? null : n;
-}
-function skillDiceShift(props) {
-    const explicit = numProp(props, "DiceShift");
-    if (explicit !== null) return explicit;
-    const lvl = numProp(props, "CurrentLevel") ?? 0;
-    return numProp(props, `Level${lvl}DiceShift`) ?? 0;
-}
+// numProp / skillDiceShift / marksFromExchange / socialPoolFormula moved to
+// social-math.mjs (pure, unit-tested) — imported at the top of this file.
 function actorSkills(actor) {
     return [...(actor?.items ?? [])]
         .filter((i) => i.system?.template === SKILL_TEMPLATE_ID)
@@ -77,11 +68,6 @@ function drivesTooltip(actor) {
     const lines = String(actorProps(actor).Drives ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
     return lines.length ? `Drives:\n${lines.join("\n")}` : "No drives.";
 }
-function marksFromExchange(winnerTotal, loserTotal) {
-    if (winnerTotal <= loserTotal) return 0;
-    return winnerTotal > 2 * loserTotal ? 2 : 1;
-}
-
 /* ---------------------------------------- */
 /*  Rolling                                 */
 /* ---------------------------------------- */
@@ -89,9 +75,7 @@ function marksFromExchange(winnerTotal, loserTotal) {
 // The lowest possible roll is 1d6 with no modifier — a 0-or-negative pool
 // (untrained, heavy disadvantage) still rolls a single die, never a flat 0.
 async function rollPool(dice, mod) {
-    const d = Math.max(0, Number(dice) || 0);
-    const m = Number(mod) || 0;
-    const formula = d >= 1 ? (m ? `${d}d6 + ${m}` : `${d}d6`) : "1d6";
+    const formula = socialPoolFormula(dice, mod);
     const roll = await new Roll(formula).evaluate();
     if (game.dice3d?.showForRoll) { try { await game.dice3d.showForRoll(roll, game.user, true); } catch { /* non-fatal */ } }
     return { roll, total: Number(roll.total) || 0, formula };

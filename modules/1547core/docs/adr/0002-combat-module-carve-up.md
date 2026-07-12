@@ -1,6 +1,9 @@
 # ADR-0002: Combat module carve-up — patch-returners + lifecycle events
 
-**Status**: accepted
+**Status**: accepted (amended by ADR-0004, 2026-07-11: the `applyPatch`
+dispatcher moves to `services/patch-transport.js` with injected domain
+handlers; `combat/resolver.mjs` is deleted from the pure-module list.
+The patch union, closed-shape rule, and `plan*` conventions are unchanged.)
 **Date**: 2026-05-25
 **Replaces / extends**: nothing
 **Context for**: anything touching `services/combat-resolver-service.js`,

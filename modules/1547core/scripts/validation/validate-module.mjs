@@ -8,6 +8,7 @@ const SCRIPTS_DIR = path.join(ROOT, "scripts");
 const MODULE_JSON = path.join(ROOT, "module.json");
 const HUD_FILE = path.join(ROOT, "scripts", "hud", "actor-hud.js");
 const HUD_ACTIONS_FILE = path.join(ROOT, "scripts", "hud", "hud-actions.js");
+const WEAPON_STATE_FILE = path.join(ROOT, "scripts", "combat", "weapon-state.mjs");
 
 const failures = [];
 const passes = [];
@@ -179,9 +180,24 @@ function checkHudStructure() {
   const hud = fs.readFileSync(HUD_FILE, "utf8");
   const hudActions = fs.readFileSync(HUD_ACTIONS_FILE, "utf8");
 
+  // Weapon/ammo parsing + getWeaponAttackState moved to combat/weapon-state.mjs
+  // (ADR-0004) — validate the markers there.
+  const weaponState = fs.readFileSync(WEAPON_STATE_FILE, "utf8");
+  const weaponStateMarkers = [
+    "export function getAmmoSummary(item) {",
+    "export function getWeaponAttackState(weapon, {"
+  ];
+  let previousWeaponIndex = -1;
+  for (const marker of weaponStateMarkers) {
+    const index = weaponState.indexOf(marker);
+    assert(index !== -1, `weapon-state marker exists: ${marker}`);
+    if (index !== -1) {
+      assert(index > previousWeaponIndex, `weapon-state marker order ok: ${marker}`);
+      previousWeaponIndex = index;
+    }
+  }
+
   const actorHudMarkers = [
-    "function getAmmoSummary(item) {",
-    "function getWeaponAttackState(weapon, {",
     "function getThreatSource(actor) {",
     "function getRangedSource(actor) {",
     "export function register1547ActorHud() {"
@@ -221,8 +237,8 @@ function checkHudStructure() {
   const duplicatedThreatSource = (hud.match(/function getThreatSource\(actor\) \{/g) || []).length;
   assert(duplicatedThreatSource === 1, `HUD has one getThreatSource definition (got ${duplicatedThreatSource})`);
 
-  const ammoSummaryBlock = hud.slice(hud.indexOf("function getAmmoSummary(item) {"), hud.indexOf("function getWeaponAttackState(weapon, {"));
-  assert(ammoSummaryBlock.includes('return [addDiceSummary, tagsSummary, modifiersSummary].filter(Boolean).join(" | ");'), "HUD ammo summary returns combined summary text");
+  const ammoSummaryBlock = weaponState.slice(weaponState.indexOf("export function getAmmoSummary(item) {"), weaponState.indexOf("export function getWeaponAttackState(weapon, {"));
+  assert(ammoSummaryBlock.includes('return [addDiceSummary, tagsSummary, modifiersSummary].filter(Boolean).join(" | ");'), "weapon-state ammo summary returns combined summary text");
 }
 function checkDuplicateFunctionDefinitions() {
   const jsFiles = walkFiles(SCRIPTS_DIR, (file) => file.endsWith(".js"));

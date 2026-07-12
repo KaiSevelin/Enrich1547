@@ -34,6 +34,7 @@ import {
     planSpendActorManeuverCost,
     planAppendCommittedManeuverState,
     planPoolSpend,
+    DERIVED_POOL_COSTS,
 } from "./maneuver-state.mjs";
 // COMBAT_EVENTS is a pure enum — importing it doesn't drag in any
 // Foundry deps. The orchestrator does the actual emitCombatEvent call.
@@ -197,6 +198,44 @@ export function collectReservedCosts(maneuvers) {
             costType: maneuver.CostType,
             costAmount: Number(maneuver.CostAmount ?? 0),
         }));
+}
+
+/**
+ * Sum the selected maneuvers' costs per pool and report any pool the actor
+ * cannot cover (ruling 2026-07-11): selection is free and each maneuver's
+ * resource gate only checks its OWN cost, so two maneuvers can individually
+ * pass while their combined total exceeds the pool. The combined total is
+ * validated once, at attack declaration — the alternative (clamping at spend
+ * time) silently grants full effects for partial payment. Unknown pools pass
+ * (guide-not-force, same as the legality gates). Returns
+ * `[{ costType, required, available }]` — empty means affordable.
+ */
+export function findOverCommittedPools(actor, maneuvers = []) {
+    const byType = new Map();
+    for (const reserved of collectReservedCosts(maneuvers ?? [])) {
+        const amount = Math.max(0, Number(reserved.costAmount) || 0);
+        if (!amount || reserved.costType === "CriticalPoints") continue;
+        byType.set(reserved.costType, (byType.get(reserved.costType) ?? 0) + amount);
+    }
+    const props = actor?.system?.props ?? {};
+    const overCommitted = [];
+    for (const [costType, required] of byType) {
+        const poolName = DERIVED_POOL_COSTS[costType];
+        let available;
+        if (poolName) {
+            const max = Number(props[`Max${poolName}Points`]);
+            if (!Number.isFinite(max)) continue;
+            const spent = Number(props[`Spent${poolName}Points`]) || 0;
+            const reservedPoints = Number(props[`Reserved${poolName}Points`]) || 0;
+            available = Math.max(0, max - spent - reservedPoints);
+        } else {
+            const raw = Number(props[costType]);
+            if (!Number.isFinite(raw)) continue;
+            available = Math.max(0, raw);
+        }
+        if (required > available) overCommitted.push({ costType, required, available });
+    }
+    return overCommitted;
 }
 
 /**

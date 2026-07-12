@@ -143,6 +143,43 @@ console.log("\nattack-lifecycle.collectReservedCosts...");
     console.log("  ✓ filters out 'null' and missing CostType");
 }
 
+console.log("\nattack-lifecycle.findOverCommittedPools...");
+{
+    // Derived pool (CorePoints → Max/SpentCorePoints): two 3-cost maneuvers
+    // each pass the per-maneuver gate against a 4-point pool, but the SUM (6)
+    // must be flagged (ruling 2026-07-11: validate at attack declaration).
+    const coreActor = { id: "a1", system: { props: { MaxCorePoints: 4, SpentCorePoints: 0 } } };
+    const two = [
+        { _id: "m1", CostType: "CorePoints", CostAmount: 3 },
+        { _id: "m2", CostType: "CorePoints", CostAmount: 3 },
+    ];
+    const over = al.findOverCommittedPools(coreActor, two);
+    assert.strictEqual(over.length, 1);
+    assert.deepStrictEqual(over[0], { costType: "CorePoints", required: 6, available: 4 });
+    // One maneuver alone is affordable.
+    assert.deepStrictEqual(al.findOverCommittedPools(coreActor, two.slice(0, 1)), []);
+    // Spent points shrink the available pool.
+    const spentActor = { id: "a2", system: { props: { MaxCorePoints: 4, SpentCorePoints: 2 } } };
+    assert.strictEqual(al.findOverCommittedPools(spentActor, two.slice(0, 1)).length, 1);
+    // Legacy raw prop pools (system.props.<CostType>) sum the same way.
+    const rawActor = { id: "a3", system: { props: { StaminaPoints: 3 } } };
+    const rawTwo = [
+        { _id: "s1", CostType: "StaminaPoints", CostAmount: 2 },
+        { _id: "s2", CostType: "StaminaPoints", CostAmount: 2 },
+    ];
+    assert.deepStrictEqual(
+        al.findOverCommittedPools(rawActor, rawTwo),
+        [{ costType: "StaminaPoints", required: 4, available: 3 }]
+    );
+    // Unknown pools and CriticalPoints costs pass (guide-not-force / not a pre cost).
+    assert.deepStrictEqual(al.findOverCommittedPools({ id: "a4", system: { props: {} } }, rawTwo), []);
+    assert.deepStrictEqual(
+        al.findOverCommittedPools(coreActor, [{ _id: "c1", CostType: "CriticalPoints", CostAmount: 99 }]),
+        []
+    );
+    console.log("  ✓ flags summed over-commit per pool (derived + raw), passes unknown pools");
+}
+
 // ────────────────────────────────────────── roll summary ──
 
 console.log("\nattack-lifecycle.normalizeRollSummary...");

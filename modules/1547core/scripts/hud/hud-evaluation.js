@@ -19,16 +19,16 @@
         primaryTarget: targetedTokens[0] ?? null,
         inCombat: Boolean(game.combat?.started),
         combatRound: game.combat?.round ?? null,
-        counterRollEnabled: HUD_STATE.counterRollEnabled,
-        counterRollDice: sanitizeCounterRollDice(HUD_STATE.counterRollDice),
+        counterRollEnabled: HUD_STATE.view.counterRollEnabled,
+        counterRollDice: sanitizeCounterRollDice(HUD_STATE.view.counterRollDice),
         // Skills-tab Checks state: maybeRollCounter reads checkMode + per-mode
         // selection to build the right counter formula. checkTarget is the
         // pre-computed snapshot of the targeted actor's stats + skills.
-        checkMode: String(HUD_STATE.checkMode ?? "manual"),
-        checkStatTarget: String(HUD_STATE.checkStatTarget ?? ""),
-        checkSkillTarget: String(HUD_STATE.checkSkillTarget ?? ""),
-        checkGeneralDifficulty: String(HUD_STATE.checkGeneralDifficulty ?? "Average"),
-        checkGeneralDice: sanitizeCounterRollDice(HUD_STATE.checkGeneralDice ?? 3),
+        checkMode: String(HUD_STATE.view.checkMode ?? "manual"),
+        checkStatTarget: String(HUD_STATE.view.checkStatTarget ?? ""),
+        checkSkillTarget: String(HUD_STATE.view.checkSkillTarget ?? ""),
+        checkGeneralDifficulty: String(HUD_STATE.view.checkGeneralDifficulty ?? "Average"),
+        checkGeneralDice: sanitizeCounterRollDice(HUD_STATE.view.checkGeneralDice ?? 3),
         checkTarget: summary?.checkTarget ?? null,
         summary
     };

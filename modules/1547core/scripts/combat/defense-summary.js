@@ -34,7 +34,9 @@ function buildSummaryPayload(resolvedAttack, attacker, defender) {
         defenseModifiers: {
             addArmorDice: Number(dm.addArmorDice ?? 0) || 0,
             reduceDamageTaken: Number(dm.reduceDamageTaken ?? 0) || 0,
-            safeCounterattack: false, // execution stays on the acting client
+            // Display-only: the counterattack itself is offered/executed by the
+            // acting client's offerSafeCounterattack relay, never this window.
+            safeCounterattack: Boolean(dm.safeCounterattack),
         },
         defenseFollowUpState: {
             lockedParryingWeaponUntil: resolvedAttack?.defenseFollowUpState?.lockedParryingWeaponUntil ?? null,

@@ -53,7 +53,7 @@ function reactorThreatReachSquares(reactor) {
 // side-tracker.resetSideTurnState.
 // Set true (or set the `1547core.debugMovement` world flag) to trace why a move
 // did/didn't spend the movement budget. Logs to the browser console.
-const DEBUG_MOVE = true;
+const DEBUG_MOVE = false;
 function moveLog(...args) {
     if (!DEBUG_MOVE) return;
     try { console.debug(`${MODULE_ID} | move-debug |`, ...args); } catch (_e) { /* ignore */ }
@@ -182,11 +182,19 @@ export function registerMovementReactions() {
         } catch (_err) { /* non-fatal */ }
     });
 
-    Hooks.on("updateToken", (tokenDoc) => {
+    Hooks.on("updateToken", (tokenDoc, _changes, options) => {
         try {
             const id = tokenDoc?.id;
             if (!id) return;
             const newPos = { x: Number(tokenDoc.x) || 0, y: Number(tokenDoc.y) || 0 };
+            // A forced maneuver move (post-maneuver Push) is not the token's own
+            // movement: it spends no budget and provokes no opportunity attacks.
+            // Still record the position so the NEXT real move measures correctly.
+            if (options?.forcedManeuverMove) {
+                lastPos.set(id, newPos);
+                moveLog("skip forced maneuver move", id);
+                return;
+            }
             const oldPos = lastPos.get(id);
             lastPos.set(id, newPos);
             // Detect movement by the actual position delta rather than by whether

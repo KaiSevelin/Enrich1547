@@ -141,7 +141,7 @@ Bad:
 
 - spear thrust: `Weapon`
 - silver knife: `Silver`
-- blessed spear: `Blessed`
+- holy water: `Blessed` unless the harm itself is sacred rather than physical
 
 ### Add qualifiers only when they matter
 
@@ -149,7 +149,8 @@ Good:
 
 - wolf bite: `Piercing` + `NaturalWeapon`
 - blessed arrow: `Piercing` + `Weapon` + `Blessed`
-- sunlight exposure: `Fire` + `Sunlight`
+- sunlight exposure: `Fire` + `Sunlight` or `Blessed` + `Sunlight`, depending
+  on the authored rule meaning
 
 Bad:
 
@@ -207,7 +208,7 @@ Examples:
 - witchfire: `Fire`, qualifiers `Spell`
 - deathly chill: `Cold`, qualifiers `Power`
 - soul draining nightmare: `Soul`, qualifiers `Power`
-- infernal lash: `Corruption`, qualifiers `Power`, `Infernal`
+- infernal lash: `Unholy`, qualifiers `Power`, `Infernal`
 
 ### Hazards
 
@@ -312,6 +313,7 @@ DamageQualifiers:
 ```yaml
 DamageType: Soul
 DamageQualifiers:
+  - Unholy
   - Power
 ```
 

@@ -160,4 +160,4 @@ Why:
 
 - `monster-maker-spec-v1.md`
 - `monster-creation-guide.md`
-- `combat-spec-v2.md`
+- `battle-flow-spec-v1.md`

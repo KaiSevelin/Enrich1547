@@ -1,34 +1,45 @@
 ﻿import { COMBAT_EVENTS, onCombatEvent } from "../services/combat-events.js";
-import { buildAttackPool, toFoundryFormula } from "../combat/pool-builder.mjs";
+import {
+    DICE_TAB_ATTACK_OPTIONS,
+    isUnarmedWeapon,
+    getWeaponReach,
+    getWeaponRangeBands,
+    getChebyshevDistanceSquares,
+    hasReach,
+    hasRangeBands,
+    getWeaponAttackProfiles,
+    getWeaponActiveAttackProfile,
+    buildFoundryAttackRollFormula,
+    getAmmoQuantity,
+    getAmmoType,
+    getAmmoSummary,
+    getWeaponAttackState,
+} from "../combat/weapon-state.mjs";
 import { relayPostManeuverWindow } from "../combat/post-maneuver-relay.js";
-import { laneObstacles } from "../combat/ranged-cover.js";
-import { tokenDescriptor, footprintDistanceSquares } from "../lib/positioning.mjs";
 import { escapeHtml } from "../lib/foundry-utils.mjs";
 import {
     HUD_STATE,
+    getReactionWindowState,
+    setReactionWindowState,
+    clearReactionWindowState,
+    syncManeuverFilterContext,
     getSelectedPreManeuverIds,
     setSelectedPreManeuverIds,
     clearSelectedPreManeuvers,
     toggleSelectedPreManeuver,
     getCoreStackCount,
     adjustCoreStackCount,
-    clearCoreStackCounts,
     getSelectedFullTurnManeuverId,
-    setSelectedFullTurnManeuverId,
     clearSelectedFullTurnManeuver,
     toggleSelectedFullTurnManeuver,
     clearActorManeuverSelections,
     getSelectedReactionChoiceId,
-    setSelectedReactionChoiceId,
     toggleSelectedReactionChoiceId,
     normalizePostManeuverChoiceId,
     getActivePostManeuverWindow,
     queuePostManeuverWindow,
     advancePostManeuverWindow,
-    clearPostManeuverWindows,
-    setDeferredPostManeuverWindows,
     releaseDeferredPostManeuverWindows,
-    clearDeferredPostManeuverWindows,
     getSelectedPostManeuverId,
     toggleSelectedPostManeuver,
     getActiveDamageTakenWindow,
@@ -81,15 +92,9 @@ import {
 } from "./hud-render.js";
 import { bindHudInteractions as bindHudInteractionsFromModule } from "./hud-bindings.js";
 import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
-import {
-    getOrderedCombatants,
-    resolveCombatantSideId,
-    getSideLabel,
-    getActiveSideId,
-    getResolvedSideOrder,
-    persistCombatSideState,
-    resetSideTurnState,
-} from "../combat-tracker/side-tracker.js";
+import { announceSideReady, bindSideAdvanceSocket } from "../combat-tracker/side-turn-flow.js";
+import { renderThreatOverlay, clearThreatOverlay } from "./threat-overlay.js";
+import { rollToChat } from "../lib/roll-chat.mjs";
 
 const HUD_ROOT_ID = "1547core-actor-hud-root";
 const HUD_GAP = 16;
@@ -97,22 +102,6 @@ const HUD_TOP_MARGIN = 16;
 const HUD_MIN_WIDTH = 280;
 const HUD_MAX_WIDTH = 420;
 const HUD_Z_INDEX = 90;
-const THREAT_OVERLAY_LAYER_NAME = "1547core-threat-overlay";
-const THREAT_FILL_COLOR = 0x6FAF72;
-const THREAT_FILL_ALPHA = 0.14;
-const THREAT_STROKE_ALPHA = 0.22;
-const VULNERABILITY_FILL_COLOR = 0xB85A5A;
-const VULNERABILITY_FILL_ALPHA = 0.14;
-const VULNERABILITY_STROKE_ALPHA = 0.22;
-const RANGE_SHORT_FILL_COLOR = 0x4B86C5;
-const RANGE_SHORT_FILL_ALPHA = 0.16;
-const RANGE_SHORT_STROKE_ALPHA = 0.28;
-const RANGE_LONG_FILL_COLOR = 0xC9A14A;
-const RANGE_LONG_FILL_ALPHA = 0.13;
-const RANGE_LONG_STROKE_ALPHA = 0.24;
-const RANGE_MAX_FILL_COLOR = 0x7C8894;
-const RANGE_MAX_FILL_ALPHA = 0.1;
-const RANGE_MAX_STROKE_ALPHA = 0.2;
 const CSB_TEMPLATE_IDS = {
     armor: "uLlgZXz3GlXPFtsj",
     container: "l4j1zT3kpdkZmACQ",
@@ -143,17 +132,6 @@ const MANEUVER_COST_SHORT_LABELS = {
     CorePoints: "CORE",
     CriticalPoints: "CRIT"
 };
-const DICE_TAB_ATTACK_OPTIONS = [
-    { key: "balanced", label: "Balanced", dieName: "Balanced", code: "b", tooltip: "Flexible attack die with steady damage.\n1: Fumble\n2: Blank\n3: Damage 1\n4: Damage 1\n5: Damage 2\n6: Critical" },
-    { key: "control", label: "Control", dieName: "Control", code: "c", tooltip: "Control die with safer pressure and crit chance.\n1: Fumble\n2: Blank\n3: Blank\n4: Damage 1\n5: Critical\n6: Critical" },
-    { key: "grace", label: "Grace", dieName: "Grace", code: "g", tooltip: "Clean precision die with low risk.\n1: Blank\n2: Blank\n3: Damage 1\n4: Damage 1\n5: Critical\n6: Critical" },
-    { key: "heavy", label: "Heavy", dieName: "Heavy", code: "h", tooltip: "High-impact die with swingier damage.\n1: Fumble\n2: Fumble\n3: Damage 1\n4: Damage 2\n5: Damage 4\n6: Critical" },
-    { key: "lethality", label: "Lethality", dieName: "Lethality", code: "l", tooltip: "Explosive damage die with sharp upside.\n1: Fumble\n2: Fumble\n3: Damage 2\n4: Damage 3\n5: Damage 5\n6: Critical" },
-    { key: "multiplier", label: "Multiplier", dieName: "Multiplier", code: "x", tooltip: "Adds multiplier potential to a hit.\n1: 0x\n2: Blank\n3: Blank\n4: 2x\n5: 2x\n6: 3x" },
-    { key: "penetration", label: "Penetration", dieName: "Penetration", code: "p", tooltip: "Punches through protection more reliably.\n1: Fumble\n2: Blank\n3: Damage 1\n4: Damage 1\n5: Damage 3\n6: Critical" },
-    { key: "risk", label: "Risk", dieName: "Risk", code: "r", tooltip: "Volatile die with danger and payoff.\n1: 0x\n2: Fumble\n3: Fumble\n4: Blank\n5: Damage 2\n6: Critical" },
-];
-
 function getAttackDiceTabOptions() {
     return DICE_TAB_ATTACK_OPTIONS.map((option) => ({ ...option }));
 }
@@ -598,452 +576,6 @@ function getPlayerFacingItemGroup(item) {
     return "Unknown";
 }
 
-function isUnarmedWeapon(item) {
-    const itemProps = item?.system?.props ?? {};
-    const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-    const weaponType = itemProps.WeaponType ?? sourceData.category ?? "";
-    return String(weaponType).toLowerCase() === "unarmed";
-}
-
-function getWeaponReach(item) {
-    const itemProps = item?.system?.props ?? {};
-    const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-    const propReach = {
-        minReach: getNumericProp(itemProps, ["MinReach"]),
-        maxReach: getNumericProp(itemProps, ["MaxReach"])
-    };
-    const sourceReach = {
-        minReach: getNumericProp(sourceData, ["minReach"]),
-        maxReach: getNumericProp(sourceData, ["maxReach"])
-    };
-    const propHasReach = Number.isFinite(propReach.minReach) && Number.isFinite(propReach.maxReach) && propReach.maxReach > 0;
-    const sourceHasReach = Number.isFinite(sourceReach.minReach) && Number.isFinite(sourceReach.maxReach) && sourceReach.maxReach > 0;
-    const propLooksLikeTemplateDefault = propReach.minReach === 1 && propReach.maxReach === 1;
-    const shouldPreferSource = sourceHasReach && (!propHasReach || (propLooksLikeTemplateDefault && (sourceReach.minReach !== 1 || sourceReach.maxReach !== 1)));
-    const minReach = shouldPreferSource ? sourceReach.minReach : (propReach.minReach ?? sourceReach.minReach ?? null);
-    const maxReach = shouldPreferSource ? sourceReach.maxReach : (propReach.maxReach ?? sourceReach.maxReach ?? null);
-    return {
-        minReach,
-        maxReach
-    };
-}
-
-function parseJsonProp(value, fallback = null) {
-    if (typeof value !== "string" || value.trim() === "") return fallback;
-    try {
-        return JSON.parse(value);
-    } catch {
-        return fallback;
-    }
-}
-
-function parseListProp(value) {
-    if (Array.isArray(value)) return value.filter(Boolean);
-    if (typeof value !== "string") return [];
-    return value.split(",").map((entry) => entry.trim()).filter(Boolean);
-}
-
-function getAmmoRangeData(item) {
-    const itemProps = item?.system?.props ?? {};
-    const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-    const loadedAmmoId = String(itemProps.LoadedAmmoId ?? sourceData.loadedAmmoId ?? "").trim();
-    if (!loadedAmmoId) {
-        return { range: null };
-    }
-    const ammoItem = item?.parent?.items?.get?.(loadedAmmoId) ?? null;
-    const ammoProps = ammoItem?.system?.props ?? {};
-    const ammoSource = ammoItem?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? ammoItem?.flags?.[MODULE_ID]?.sourceData ?? ammoItem ?? null;
-    if (!ammoSource && !ammoItem) {
-        return { range: null };
-    }
-    const sourceRange = ammoSource?.range ?? null;
-    const explicitRange = (
-        ammoProps.RangeShort !== undefined
-        || ammoProps.RangeMedium !== undefined
-        || ammoProps.RangeLong !== undefined
-    )
-        ? {
-            mode: isTruthyLike(ammoProps.RangeModeOverride) ? "override" : "modify",
-            shortRange: Number(ammoProps.RangeShort),
-            longRange: Number(ammoProps.RangeMedium),
-            maxRange: Number(ammoProps.RangeLong)
-        }
-        : null;
-    const propRange = parseJsonProp(ammoProps.Range, null);
-    const legacyOverride = ammoSource?.rangeOverride ?? parseJsonProp(ammoProps.RangeOverride, null);
-    const legacyModifier = ammoSource?.rangeModifier ?? parseJsonProp(ammoProps.RangeModifier, null);
-    const range = sourceRange ?? explicitRange ?? propRange
-        ?? (legacyOverride ? { mode: "override", ...legacyOverride } : null)
-        ?? (legacyModifier ? { mode: "modify", ...legacyModifier } : null);
-    if (!range || typeof range !== "object") {
-        return { range: null };
-    }
-    return {
-        range: {
-            mode: String(range.mode ?? "modify").trim().toLowerCase() === "override" ? "override" : "modify",
-            shortRange: Number(range.shortRange),
-            longRange: Number(range.longRange),
-            maxRange: Number(range.maxRange)
-        }
-    };
-}
-
-function normalizeRangeBandOrder(rangeBands) {
-    let shortRange = Number.isFinite(rangeBands.shortRange) ? Math.max(0, rangeBands.shortRange) : null;
-    let longRange = Number.isFinite(rangeBands.longRange) ? Math.max(0, rangeBands.longRange) : null;
-    let maxRange = Number.isFinite(rangeBands.maxRange) ? Math.max(0, rangeBands.maxRange) : null;
-    if (Number.isFinite(shortRange) && Number.isFinite(longRange) && longRange < shortRange) longRange = shortRange;
-    if (Number.isFinite(longRange) && Number.isFinite(maxRange) && maxRange < longRange) maxRange = longRange;
-    if (!Number.isFinite(longRange) && Number.isFinite(shortRange)) longRange = shortRange;
-    if (!Number.isFinite(maxRange) && Number.isFinite(longRange)) maxRange = longRange;
-    return { shortRange, longRange, maxRange };
-}
-
-function applyAmmoRangeBands(rangeBands, ammoRangeData) {
-    const range = ammoRangeData?.range ?? null;
-    if (range && typeof range === "object") {
-        if (range.mode === "override") {
-            return normalizeRangeBandOrder({
-                shortRange: range.shortRange,
-                longRange: range.longRange,
-                maxRange: range.maxRange
-            });
-        }
-        return normalizeRangeBandOrder({
-            shortRange: (Number.isFinite(rangeBands.shortRange) ? rangeBands.shortRange : 0) + (Number(range.shortRange) || 0),
-            longRange: (Number.isFinite(rangeBands.longRange) ? rangeBands.longRange : (Number.isFinite(rangeBands.shortRange) ? rangeBands.shortRange : 0)) + (Number(range.longRange) || 0),
-            maxRange: (Number.isFinite(rangeBands.maxRange) ? rangeBands.maxRange : (Number.isFinite(rangeBands.longRange) ? rangeBands.longRange : 0)) + (Number(range.maxRange) || 0)
-        });
-    }
-    return normalizeRangeBandOrder(rangeBands);
-}
-
-function getWeaponRangeBands(item) {
-    const itemProps = item?.system?.props ?? {};
-    const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-    const propRangeBands = {
-        shortRange: getNumericProp(itemProps, ["ShortRange"]),
-        longRange: getNumericProp(itemProps, ["LongRange"]),
-        maxRange: getNumericProp(itemProps, ["MaxRange"])
-    };
-    const sourceRangeBands = {
-        shortRange: getNumericProp(sourceData, ["shortRange"]),
-        longRange: getNumericProp(sourceData, ["longRange"]),
-        maxRange: getNumericProp(sourceData, ["maxRange"])
-    };
-    const propHasUsableRange = [propRangeBands.shortRange, propRangeBands.longRange, propRangeBands.maxRange]
-        .some((value) => Number.isFinite(value) && value > 0);
-    const sourceHasUsableRange = [sourceRangeBands.shortRange, sourceRangeBands.longRange, sourceRangeBands.maxRange]
-        .some((value) => Number.isFinite(value) && value > 0);
-    const baseRangeBands = propHasUsableRange
-        ? propRangeBands
-        : (sourceHasUsableRange ? sourceRangeBands : {
-            shortRange: null,
-            longRange: null,
-            maxRange: null
-        });
-    return applyAmmoRangeBands(baseRangeBands, getAmmoRangeData(item));
-}
-
-function getChebyshevDistanceSquares(sourceToken, targetToken) {
-    // Nearest-edge footprint distance (battle-flow-spec §12 #4): correct for large
-    // tokens and diagonals, and identical to center-Chebyshev for 1×1 pairs.
-    const a = tokenDescriptor(sourceToken);
-    const b = tokenDescriptor(targetToken);
-    if (a && b) return footprintDistanceSquares(a, b);
-    // Fallback: center-to-center if descriptors are unavailable.
-    const source = sourceToken?.center ?? null;
-    const target = targetToken?.center ?? null;
-    const size = Number(canvas?.dimensions?.size) || 0;
-    if (!source || !target || size <= 0) return null;
-    const dx = Math.abs(Number(target.x) - Number(source.x));
-    const dy = Math.abs(Number(target.y) - Number(source.y));
-    return Math.round(Math.max(dx, dy) / size);
-}
-function hasUsableRangeBands(rangeBands = {}) {
-    return [rangeBands.shortRange, rangeBands.longRange, rangeBands.maxRange]
-        .some((value) => Number.isFinite(value) && value > 0);
-}
-
-function hasReach(item) {
-    const { minReach, maxReach } = getWeaponReach(item);
-    return Number.isFinite(minReach) && Number.isFinite(maxReach) && maxReach >= minReach && maxReach > 0;
-}
-
-function hasRangeBands(item) {
-    const { shortRange, longRange, maxRange } = getWeaponRangeBands(item);
-    return Number.isFinite(shortRange)
-        && Number.isFinite(longRange)
-        && Number.isFinite(maxRange)
-        && shortRange > 0
-        && longRange >= shortRange
-        && maxRange >= longRange;
-}
-
-function getAvailableWeaponAttackProfiles(itemProps = {}) {
-    return [
-        { key: "Attack", label: "Default", formula: String(itemProps.Attack ?? "").trim() },
-        { key: "AttackB", label: "Alternative 1", formula: String(itemProps.AttackB ?? "").trim() },
-        { key: "AttackC", label: "Alternative 2", formula: String(itemProps.AttackC ?? "").trim() }
-    ].filter((profile) => profile.formula !== "");
-}
-
-function getWeaponAttackProfiles(item) {
-    const itemProps = item?.system?.props ?? {};
-    const sourceProfiles = Array.isArray(item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData?.attackProfiles)
-        ? item.flags[SOURCE_FLAG_SCOPE].sourceData.attackProfiles
-        : [];
-    const profileKeys = ["Attack", "AttackB", "AttackC"];
-
-    return profileKeys.map((key, index) => {
-        const formula = String(itemProps[key] ?? "").trim();
-        if (!formula) return null;
-        const sourceProfile = sourceProfiles[index] ?? null;
-        const allowedAmmoText = String(itemProps[`${key}Ammo`] ?? "").trim();
-        return {
-            key,
-            index,
-            label: sourceProfile?.name ?? (index === 0 ? "Default" : `Alternative ${index}`),
-            formula,
-            dice: Array.isArray(sourceProfile?.dice) ? [...sourceProfile.dice] : [],
-            attackType: sourceProfile?.attackType ?? null,
-            profileId: sourceProfile?.id ?? null,
-            allowedAmmoTypes: allowedAmmoText
-                ? allowedAmmoText.split(",").map((entry) => entry.trim()).filter(Boolean)
-                : [],
-            allowedAmmoText
-        };
-    }).filter(Boolean);
-}
-
-function getWeaponActiveAttackProfile(item) {
-    const itemProps = item?.system?.props ?? {};
-    const availableProfiles = getWeaponAttackProfiles(item);
-    const selectedKey = String(itemProps.ActiveAttackProfile ?? "").trim();
-    return availableProfiles.find((profile) => profile.key === selectedKey)
-        ?? availableProfiles[0]
-        ?? null;
-}
-
-function buildFoundryAttackRollFormula(profile, rollContext = {}) {
-    const baseDice = Array.isArray(profile?.dice) ? [...profile.dice] : [];
-    if (!baseDice.length) return "";
-
-    const advantageCount = Math.max(0, Number(rollContext?.advantageDice) || 0);
-    const riskDice = Math.max(0, Number(rollContext?.riskDice) || 0);
-    const addMainDice = Math.max(0, Number(rollContext?.addMainDice) || 0);
-    const addMultiplierDice = Math.max(0, Number(rollContext?.addMultiplierDice) || 0);
-    const extraDiceCounts = rollContext?.extraDiceCounts ?? {};
-    const ammoAddDice = Array.isArray(rollContext?.ammoAddDice) ? rollContext.ammoAddDice : [];
-
-    const extraDice = [];
-    for (const option of DICE_TAB_ATTACK_OPTIONS) {
-        const count = Math.max(0, Number(extraDiceCounts?.[option.key] ?? 0) || 0);
-        for (let index = 0; index < count; index += 1) {
-            extraDice.push(option.dieName);
-        }
-    }
-
-    const pool = buildAttackPool(baseDice, {
-        advantageCount,
-        addMainDice,
-        addMultiplierDice,
-        addRiskDice: riskDice,
-        extraDice,
-        ammoAddDice
-    });
-
-    return toFoundryFormula(pool);
-}
-
-function getAmmoQuantity(item) {
-    const itemProps = item?.system?.props ?? {};
-    const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-    return getNumericProp(itemProps, ["Quantity"])
-        ?? getNumericProp(sourceData, ["quantity"])
-        ?? 0;
-}
-
-function getAmmoType(item) {
-    const itemProps = item?.system?.props ?? {};
-    const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-    return getStringProp(itemProps, ["AmmoType"])
-        || getStringProp(sourceData, ["ammoType"])
-        || "";
-}
-
-function getAmmoSummary(item) {
-    const itemProps = item?.system?.props ?? {};
-    const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-    const sourceAddDice = Array.isArray(sourceData?.addDice) ? sourceData.addDice.join(", ") : "";
-    const sourceTags = Array.isArray(sourceData?.tags) ? sourceData.tags.join(", ") : "";
-    const sourceModifiers = Array.isArray(sourceData?.resultModifiers) && sourceData.resultModifiers.length
-        ? JSON.stringify(sourceData.resultModifiers)
-        : "";
-    const addDiceSummary = getStringProp(itemProps, ["AddDiceSummary", "AddDice"]) || sourceAddDice;
-    const tagsSummary = getStringProp(itemProps, ["TagsSummary", "Tags"]) || sourceTags;
-    const parsedModifiers = parseJsonProp(itemProps.ResultModifiers, null);
-    const modifiersSummary = getStringProp(itemProps, ["ResultModifiersSummary"]) || (parsedModifiers ? JSON.stringify(parsedModifiers) : sourceModifiers);
-    return [addDiceSummary, tagsSummary, modifiersSummary].filter(Boolean).join(" | ");
-}
-
-function getAmmoAddDice(item) {
-    const itemProps = item?.system?.props ?? {};
-    const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
-    if (Array.isArray(sourceData?.addDice)) {
-        return sourceData.addDice.filter((die) => typeof die === "string" && die.trim()).map((die) => die.trim());
-    }
-    const addDiceString = getStringProp(itemProps, ["AddDice", "AddDiceSummary"]);
-    if (!addDiceString) return [];
-    return addDiceString.split(",").map((entry) => String(entry ?? "").trim()).filter(Boolean);
-}
-
-function getWeaponAttackState(weapon, {
-    token = null,
-    primaryTarget = null,
-    targetCount = 0,
-    attacksRemaining = null
-} = {}) {
-    if (!weapon) {
-        return {
-            status: "invalid",
-            label: "No weapon",
-            reason: "Weapon is unavailable.",
-            distanceSquares: null
-        };
-    }
-    if (Number.isFinite(attacksRemaining) && attacksRemaining <= 0) {
-        return {
-            status: "invalid",
-            label: "No attacks remaining",
-            reason: "This actor has no attacks remaining this turn.",
-            distanceSquares: null
-        };
-    }
-    if (!weapon.equipped) {
-        return {
-            status: "invalid",
-            label: "Not equipped",
-            reason: "Weapon is not equipped.",
-            distanceSquares: null
-        };
-    }
-    if (weapon.usesAmmo) {
-        if (!weapon.loadedAmmoId) {
-            return {
-                status: "invalid",
-                label: "No ammo loaded",
-                reason: "Load compatible ammunition first.",
-                distanceSquares: null
-            };
-        }
-        if (!Number.isFinite(weapon.loadedAmmoQuantity) || weapon.loadedAmmoQuantity <= 0) {
-            return {
-                status: "invalid",
-                label: "Ammo depleted",
-                reason: "The loaded ammunition stack is empty.",
-                distanceSquares: null
-            };
-        }
-        if (Array.isArray(weapon.activeAttackAllowedAmmoTypes) && weapon.activeAttackAllowedAmmoTypes.length) {
-            if (!weapon.loadedAmmoType || !weapon.activeAttackAllowedAmmoTypes.includes(weapon.loadedAmmoType)) {
-                return {
-                    status: "invalid",
-                    label: "Wrong ammo",
-                    reason: "Loaded ammunition is not compatible with the active attack profile.",
-                    distanceSquares: null
-                };
-            }
-        }
-    }
-    if (targetCount > 1 && !weapon.canTargetMultiple) {
-        return {
-            status: "invalid",
-            label: "Multiple targets marked",
-            reason: "This weapon can only declare attacks against a single target.",
-            distanceSquares: null
-        };
-    }
-    if (!primaryTarget) {
-        return {
-            status: "valid",
-            label: "No target",
-            reason: "Click Attack to roll this weapon to chat without declaring a target.",
-            distanceSquares: null,
-            previewOnly: true
-        };
-    }
-
-    const distanceSquares = getChebyshevDistanceSquares(token, primaryTarget);
-    if (!Number.isFinite(distanceSquares)) {
-        return {
-            status: "valid",
-            label: "Target selected",
-            reason: "Could not measure target distance.",
-            distanceSquares: null
-        };
-    }
-
-    const usesDistanceBands = weapon.activeAttackType === "ranged"
-        || weapon.activeAttackType === "thrown"
-        || hasUsableRangeBands(weapon);
-
-    if (usesDistanceBands) {
-        if (Number.isFinite(weapon.shortRange) && distanceSquares <= weapon.shortRange) {
-            return {
-                status: "valid",
-                label: `Short range (${distanceSquares})`,
-                reason: "Attack is legal at normal range.",
-                distanceSquares
-            };
-        }
-        if (Number.isFinite(weapon.longRange) && distanceSquares <= weapon.longRange) {
-            return {
-                status: "valid",
-                label: `Long range (${distanceSquares})`,
-                reason: "Attack is legal but disadvantaged at long range.",
-                distanceSquares
-            };
-        }
-        if (Number.isFinite(weapon.maxRange) && distanceSquares <= weapon.maxRange) {
-            return {
-                status: "invalid",
-                label: `Beyond long range (${distanceSquares})`,
-                reason: "Direct attacks are not legal beyond long range.",
-                distanceSquares
-            };
-        }
-        return {
-            status: "invalid",
-            label: `Out of range (${distanceSquares})`,
-            reason: "Target is beyond maximum range.",
-            distanceSquares
-        };
-    }
-
-    // Melee default: most weapon datasets don't specify MinReach /
-    // MaxReach explicitly (buildWeaponProps writes "" when the source
-    // omits them). For a melee weapon with no usable range bands and
-    // no explicit reach, fall back to (1, 1) — the canonical melee
-    // default, matching DEFAULT_UNARMED_WEAPON_SOURCE.
-    const minReach = Number.isFinite(weapon.minReach) ? weapon.minReach : 1;
-    const maxReach = Number.isFinite(weapon.maxReach) ? weapon.maxReach : 1;
-    if (distanceSquares >= minReach && distanceSquares <= maxReach) {
-        return {
-            status: "valid",
-            label: `In reach (${distanceSquares})`,
-            reason: "Target is within melee reach.",
-            distanceSquares
-        };
-    }
-    return {
-        status: "invalid",
-        label: `Out of reach (${distanceSquares})`,
-        reason: "Target is not within melee reach.",
-        distanceSquares
-    };
-}
-
 function getThreatSource(actor) {
     const weapons = getActorItems(actor).filter(isWeaponItem);
     const nonUnarmed = weapons.filter((item) => !isUnarmedWeapon(item));
@@ -1078,329 +610,18 @@ function getThreatSource(actor) {
     };
 }
 
+// Overlay wrapper: binds this file's weapon selectors into the extracted
+// threat-overlay renderer (hud/threat-overlay.js, ADR-0004).
+function showThreatOverlay(token) {
+    renderThreatOverlay(token, { getThreatSource, getRangedSource, getPrimaryTargetToken });
+}
+
 function getRangedSource(actor) {
     const weapons = getActorItems(actor).filter(isWeaponItem);
     const equippedRangedWeapon = weapons.find((item) => Boolean(item?.system?.props?.Equipped) && hasRangeBands(item));
     if (equippedRangedWeapon) return equippedRangedWeapon;
 
     return weapons.find(hasRangeBands) ?? null;
-}
-
-function getFacingDirection(token) {
-    const rotation = ((Number(token?.document?.rotation) || 0) % 360 + 360) % 360;
-    const snapped = Math.round(rotation / 45) * 45 % 360;
-    switch (snapped) {
-        case 45:
-            return "SW";
-        case 90:
-            return "W";
-        case 135:
-            return "NW";
-        case 180:
-            return "N";
-        case 225:
-            return "NE";
-        case 270:
-            return "E";
-        case 315:
-            return "SE";
-        case 0:
-        default:
-            return "S";
-    }
-}
-
-function getOppositeFacingDirection(facing) {
-    switch (facing) {
-        case "N":
-            return "S";
-        case "NE":
-            return "SW";
-        case "E":
-            return "W";
-        case "SE":
-            return "NW";
-        case "S":
-            return "N";
-        case "SW":
-            return "NE";
-        case "W":
-            return "E";
-        case "NW":
-            return "SE";
-        default:
-            return "S";
-    }
-}
-
-function getThreatTiles(token, minReach, maxReach) {
-    const gridSize = Number(canvas?.grid?.size) || Number(canvas?.dimensions?.size) || 100;
-    const sceneWidth = Number(canvas?.dimensions?.width) || 0;
-    const sceneHeight = Number(canvas?.dimensions?.height) || 0;
-    const startCol = Math.round((Number(token?.document?.x) || 0) / gridSize);
-    const startRow = Math.round((Number(token?.document?.y) || 0) / gridSize);
-    const facing = getFacingDirection(token);
-    const tiles = [];
-    const inFacingMask = (dx, dy, distance) => {
-        switch (facing) {
-            case "N":
-                return dy === -distance && Math.abs(dx) <= distance;
-            case "S":
-                return dy === distance && Math.abs(dx) <= distance;
-            case "E":
-                return dx === distance && Math.abs(dy) <= distance;
-            case "W":
-                return dx === -distance && Math.abs(dy) <= distance;
-            case "NE":
-                return dx >= 0 && dy <= 0 && Math.max(dx, -dy) === distance;
-            case "NW":
-                return dx <= 0 && dy <= 0 && Math.max(-dx, -dy) === distance;
-            case "SE":
-                return dx >= 0 && dy >= 0 && Math.max(dx, dy) === distance;
-            case "SW":
-                return dx <= 0 && dy >= 0 && Math.max(-dx, dy) === distance;
-            default:
-                return false;
-        }
-    };
-
-    for (let distance = minReach; distance <= maxReach; distance += 1) {
-        for (let dy = -distance; dy <= distance; dy += 1) {
-            for (let dx = -distance; dx <= distance; dx += 1) {
-                if (Math.max(Math.abs(dx), Math.abs(dy)) !== distance) continue;
-                if (!inFacingMask(dx, dy, distance)) continue;
-                tiles.push({ col: startCol + dx, row: startRow + dy });
-            }
-        }
-    }
-
-    const seen = new Set();
-    return tiles.filter(({ col, row }) => {
-        const x = col * gridSize;
-        const y = row * gridSize;
-        if (col < 0 || row < 0 || x >= sceneWidth || y >= sceneHeight) return false;
-        const key = `${col}:${row}`;
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-    }).map(({ col, row }) => ({
-        x: col * gridSize,
-        y: row * gridSize,
-        size: gridSize
-    }));
-}
-
-function getDistanceTiles(token, minDistance, maxDistance) {
-    const gridSize = Number(canvas?.grid?.size) || Number(canvas?.dimensions?.size) || 100;
-    const sceneWidth = Number(canvas?.dimensions?.width) || 0;
-    const sceneHeight = Number(canvas?.dimensions?.height) || 0;
-    const startCol = Math.round((Number(token?.document?.x) || 0) / gridSize);
-    const startRow = Math.round((Number(token?.document?.y) || 0) / gridSize);
-    const tiles = [];
-
-    for (let dy = -maxDistance; dy <= maxDistance; dy += 1) {
-        for (let dx = -maxDistance; dx <= maxDistance; dx += 1) {
-            const distance = Math.max(Math.abs(dx), Math.abs(dy));
-            if (distance < minDistance || distance > maxDistance || distance === 0) continue;
-            tiles.push({ col: startCol + dx, row: startRow + dy });
-        }
-    }
-
-    const seen = new Set();
-    return tiles.filter(({ col, row }) => {
-        const x = col * gridSize;
-        const y = row * gridSize;
-        if (col < 0 || row < 0 || x >= sceneWidth || y >= sceneHeight) return false;
-        const key = `${col}:${row}`;
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-    }).map(({ col, row }) => ({
-        x: col * gridSize,
-        y: row * gridSize,
-        size: gridSize
-    }));
-}
-
-function getRangeBandTiles(token, shortRange, longRange, maxRange) {
-    return {
-        shortTiles: getDistanceTiles(token, 1, shortRange),
-        longTiles: longRange > shortRange ? getDistanceTiles(token, shortRange + 1, longRange) : [],
-        maxTiles: maxRange > longRange ? getDistanceTiles(token, longRange + 1, maxRange) : []
-    };
-}
-
-function getVulnerabilityTiles(token) {
-    const facing = getFacingDirection(token);
-    const oppositeFacing = getOppositeFacingDirection(facing);
-    const originalRotation = token?.document?.rotation;
-    const fakeToken = {
-        ...token,
-        document: {
-            ...token.document,
-            rotation: (() => {
-                switch (oppositeFacing) {
-                    case "N": return 180;
-                    case "NE": return 225;
-                    case "E": return 270;
-                    case "SE": return 315;
-                    case "S": return 0;
-                    case "SW": return 45;
-                    case "W": return 90;
-                    case "NW": return 135;
-                    default: return originalRotation ?? 0;
-                }
-            })()
-        }
-    };
-    return getThreatTiles(fakeToken, 1, 1);
-}
-
-function drawOverlayTiles(graphics, tiles, color, fillAlpha, strokeAlpha) {
-    for (const tile of tiles) {
-        graphics
-            .beginFill(color, fillAlpha)
-            .lineStyle(1, color, strokeAlpha)
-            .drawRect(tile.x, tile.y, tile.size, tile.size)
-            .endFill();
-    }
-}
-
-function ensureThreatOverlayLayer() {
-    if (!canvas?.tokens) return null;
-    let layer = canvas.tokens.getChildByName(THREAT_OVERLAY_LAYER_NAME);
-    if (!layer) {
-        layer = new PIXI.Container();
-        layer.name = THREAT_OVERLAY_LAYER_NAME;
-        layer.eventMode = "none";
-        canvas.tokens.addChild(layer);
-    }
-    return layer;
-}
-
-function clearThreatOverlay() {
-    const layer = canvas?.tokens?.getChildByName?.(THREAT_OVERLAY_LAYER_NAME);
-    if (layer) {
-        layer.removeChildren();
-        layer.visible = false;
-    }
-}
-
-function renderThreatOverlay(token) {
-    const layer = ensureThreatOverlayLayer();
-    if (!layer || !token?.actor) return;
-
-    layer.removeChildren();
-
-    const graphics = new PIXI.Graphics();
-    let hasOverlay = false;
-    // PIXI.Text badges live as direct children of the layer (Text can't go in a
-    // Graphics); collected here and added ON TOP of the graphics at the end.
-    const laneBadges = [];
-
-    const rangedSource = getRangedSource(token.actor);
-    const { shortRange, longRange, maxRange } = getWeaponRangeBands(rangedSource);
-    if (Number.isFinite(shortRange) && Number.isFinite(longRange) && Number.isFinite(maxRange)) {
-        const { shortTiles, longTiles, maxTiles } = getRangeBandTiles(token, shortRange, longRange, maxRange);
-        if (maxTiles.length) {
-            drawOverlayTiles(graphics, maxTiles, RANGE_MAX_FILL_COLOR, RANGE_MAX_FILL_ALPHA, RANGE_MAX_STROKE_ALPHA);
-            hasOverlay = true;
-        }
-        if (longTiles.length) {
-            drawOverlayTiles(graphics, longTiles, RANGE_LONG_FILL_COLOR, RANGE_LONG_FILL_ALPHA, RANGE_LONG_STROKE_ALPHA);
-            hasOverlay = true;
-        }
-        if (shortTiles.length) {
-            drawOverlayTiles(graphics, shortTiles, RANGE_SHORT_FILL_COLOR, RANGE_SHORT_FILL_ALPHA, RANGE_SHORT_STROKE_ALPHA);
-            hasOverlay = true;
-        }
-    }
-
-    // At-risk cover markers: ring other tokens within the weapon's max range —
-    // "things you might hit by shooting this way" (cover-spec interception risk).
-    if (Number.isFinite(maxRange) && maxRange > 0) {
-        const grid = Number(canvas?.grid?.size) || Number(canvas?.dimensions?.size) || 100;
-        const sc = token.center;
-        if (sc) {
-            for (const other of (canvas?.tokens?.placeables ?? [])) {
-                if (!other || other === token || other.id === token.id || other.document?.hidden) continue;
-                const oc = other.center;
-                if (!oc) continue;
-                const dist = Math.round(Math.max(Math.abs(oc.x - sc.x), Math.abs(oc.y - sc.y)) / grid);
-                if (dist < 1 || dist > maxRange) continue;
-                const radius = (Math.max(other.w || grid, other.h || grid) / 2) + 4;
-                graphics.lineStyle(3, 0xff5555, 0.9).drawCircle(oc.x, oc.y, radius);
-                hasOverlay = true;
-            }
-        }
-    }
-
-    // Ranged-shot lane (ranged-shot-visualization-spec Phase 1): when this token is a
-    // ranged shooter with a current target, draw the shot lane tinted by range band, a
-    // "n/6" cover-odds badge over each obstacle in the lane (ally badges red), and the
-    // target's rear cone (where the +1 lands). Pure presentation; reuses laneObstacles.
-    if (rangedSource && Number.isFinite(maxRange) && maxRange > 0) {
-        const target = getPrimaryTargetToken();
-        const sc = token.center;
-        const tc = target?.center;
-        if (target && target !== token && target.id !== token.id && sc && tc) {
-            const dist = getChebyshevDistanceSquares(token, target);
-            const laneColor = !Number.isFinite(dist) || dist <= shortRange
-                ? RANGE_SHORT_FILL_COLOR
-                : dist <= longRange ? RANGE_LONG_FILL_COLOR : RANGE_MAX_FILL_COLOR;
-            graphics.lineStyle(3, laneColor, 0.85).moveTo(sc.x, sc.y).lineTo(tc.x, tc.y);
-            hasOverlay = true;
-
-            const grid = Number(canvas?.grid?.size) || Number(canvas?.dimensions?.size) || 100;
-            for (const obstacle of laneObstacles(token, target)) {
-                const obstacleToken = canvas?.tokens?.get?.(obstacle.id);
-                const oc = obstacleToken?.center;
-                if (!oc) continue;
-                const ally = obstacleToken.document?.disposition === token.document?.disposition;
-                const badge = new PIXI.Text(`${obstacle.blockValue}/6`, {
-                    fontFamily: "sans-serif",
-                    fontSize: Math.round(grid * 0.28),
-                    fill: ally ? 0xff5555 : 0xffffff,
-                    stroke: 0x000000,
-                    strokeThickness: 3,
-                });
-                badge.anchor.set(0.5, 0.5);
-                badge.position.set(oc.x, oc.y);
-                laneBadges.push(badge);
-            }
-
-            // Target's rear cone — reuse the vulnerability colour to show the +1 is available.
-            const rearTiles = getVulnerabilityTiles(target);
-            if (rearTiles.length) {
-                drawOverlayTiles(graphics, rearTiles, VULNERABILITY_FILL_COLOR, VULNERABILITY_FILL_ALPHA, VULNERABILITY_STROKE_ALPHA);
-            }
-        }
-    }
-
-    const threatSource = getThreatSource(token.actor);
-    const { minReach, maxReach } = getWeaponReach(threatSource);
-    if (Number.isFinite(minReach) && Number.isFinite(maxReach) && maxReach >= minReach && maxReach >= 1) {
-        const tiles = getThreatTiles(token, minReach, maxReach);
-        if (tiles.length) {
-            drawOverlayTiles(graphics, tiles, THREAT_FILL_COLOR, THREAT_FILL_ALPHA, THREAT_STROKE_ALPHA);
-            hasOverlay = true;
-        }
-
-        const vulnerabilityTiles = getVulnerabilityTiles(token);
-        if (vulnerabilityTiles.length) {
-            drawOverlayTiles(graphics, vulnerabilityTiles, VULNERABILITY_FILL_COLOR, VULNERABILITY_FILL_ALPHA, VULNERABILITY_STROKE_ALPHA);
-            hasOverlay = true;
-        }
-    }
-
-    if (!hasOverlay) {
-        layer.visible = false;
-        return;
-    }
-
-    layer.addChild(graphics);
-    for (const badge of laneBadges) layer.addChild(badge); // on top of the graphics
-    layer.visible = true;
 }
 
 function formatFormula(dice, mod) {
@@ -1420,8 +641,10 @@ function formatRangeSummary({ shortRange, longRange, maxRange }) {
     return `${shortRange} / ${longRange} / ${maxRange}`;
 }
 
+// Window STATE transitions live in hud-state.js (set/clearReactionWindowState,
+// ADR-0004 — one mutation point); this file adds the UI side effects (ticker).
 function getActiveReactionWindow() {
-    const reactionWindow = HUD_STATE.reactionWindow;
+    const reactionWindow = getReactionWindowState();
     if (!reactionWindow) return null;
     if (Number.isFinite(reactionWindow.expiresAt) && Date.now() > reactionWindow.expiresAt) {
         clearHudReactionWindow();
@@ -1431,13 +654,12 @@ function getActiveReactionWindow() {
 }
 
 function setHudReactionWindow(reactionWindow) {
-    HUD_STATE.reactionWindow = reactionWindow;
+    setReactionWindowState(reactionWindow);
     startReactionHudTicker();
 }
 
 function clearHudReactionWindow() {
-    HUD_STATE.reactionWindow = null;
-    HUD_STATE.selectedReactionChoiceId = null;
+    clearReactionWindowState();
     stopReactionHudTicker();
 }
 
@@ -1459,7 +681,7 @@ function clearHudReactionWindow() {
  */
 function startReactionHudTicker() {
     if (reactionHudTicker) return;
-    const window_ = HUD_STATE.reactionWindow;
+    const window_ = getReactionWindowState();
     const expiresAt = Number(window_?.expiresAt);
     if (!Number.isFinite(expiresAt)) return;
     const delay = Math.max(0, expiresAt - Date.now());
@@ -1502,6 +724,10 @@ function buildReactionPrompt() {
         getManeuverTimingSummary,
         buildManeuverDetailLine,
         getCoreStackCount,
+        // The REACTOR is the actor whose HUD is showing — reactionWindow.actor
+        // is the ATTACKER for attack windows, so keying Core staging off it
+        // read the wrong pool (and clamped the gem stepper to 0).
+        getReactorActor: () => getSelectedToken()?.actor ?? null,
         escapeHtml,
     });
 }
@@ -1524,7 +750,7 @@ function buildPostManeuverPrompt() {
     });
 }
 function getStatPreview(data) {
-    return data.stats.find((stat) => stat.label === HUD_STATE.activeStatPreview) ?? data.stats[0] ?? null;
+    return data.stats.find((stat) => stat.label === HUD_STATE.view.activeStatPreview) ?? data.stats[0] ?? null;
 }
 
 function buildStatPreview(previewStat, rollContext) {
@@ -1656,13 +882,10 @@ async function runHudAction(descriptor, context) {
         HUD_STATE,
         game,
         ui,
-        Roll,
         ChatMessage,
         escapeHtml,
         maybeRollCounter,
         summarizeActor,
-        summarizeManeuverEffects,
-        buildWeaponRollContext,
         buildFoundryAttackRollFormula,
         getWeaponAttackState,
         clearActorManeuverSelections,
@@ -1876,7 +1099,13 @@ async function renderHudForSelection() {
 
     root.dataset.actorId = token.actor.id;
     try {
-        root.innerHTML = buildHudHtml(summarizeActor(token.actor, token));
+        const summary = summarizeActor(token.actor, token);
+        // Context-follow happens here, BEFORE render — render is a pure read
+        // of HUD_STATE (ADR-0004).
+        syncManeuverFilterContext(getActiveReactionWindow()
+            ? "reaction"
+            : (Number(summary.criticalPoints ?? 0) > 0 ? "post" : "all"));
+        root.innerHTML = buildHudHtml(summary);
     } catch (err) {
         // TEMP DIAGNOSTIC (0.3.119) — see register1547ActorHud.
         console.error("1547core DIAG | HUD render failed for", {
@@ -1888,8 +1117,8 @@ async function renderHudForSelection() {
     applyHudPlacement(root);
     // Persist the canvas range overlay (with at-risk cover markers) while a
     // weapon's "show range" toggle is on; otherwise clear it.
-    if (Object.values(HUD_STATE.weaponRangeShownIds ?? {}).some(Boolean)) {
-        renderThreatOverlay(token);
+    if (Object.values(HUD_STATE.view.weaponRangeShownIds ?? {}).some(Boolean)) {
+        showThreatOverlay(token);
     } else {
         clearThreatOverlay();
     }
@@ -1902,19 +1131,16 @@ async function renderHudForSelection() {
         getSelectedReactionChoiceId,
         toggleSelectedReactionChoiceId,
         clearHudReactionWindow,
-        getActiveDamageTakenWindow,
         clearHudDamageTakenWindow,
         releaseDeferredPostWindowsIntoHud,
         getDiceTabAttackSelection,
         setDiceTabAttackSelectionCount,
         clearDiceTabAttackSelection,
-        getPendingNextAttackDice,
         setPendingNextAttackDice,
         clearPendingNextAttackDice,
         getDiceTabSkillDice,
         setDiceTabSkillDice,
         clearDiceTabSkillDice,
-        getPendingNextSkillDice,
         setPendingNextSkillDice,
         clearPendingNextSkillDice,
         clearIgnoredCostManeuver,
@@ -1930,7 +1156,6 @@ async function renderHudForSelection() {
         toggleSelectedPreManeuver,
         clearSelectedPreManeuvers,
         adjustCoreStackCount,
-        clearCoreStackCounts,
         toggleSelectedFullTurnManeuver,
         summarizeActor,
         executeSelectedFullTurnManeuver,
@@ -1943,7 +1168,6 @@ async function renderHudForSelection() {
         executeWeaponReadyAction,
         executeItemUnequipAction,
         sanitizeCounterRollDice,
-        Roll,
         ChatMessage,
         getAttackDiceTabOptions,
     });
@@ -1983,160 +1207,19 @@ async function maybeRollCounter(context, label, playerTotal) {
     }
     if (!counterFormula) return;
 
-    const counterRoll = await new Roll(counterFormula).evaluate();
-    const speaker = ChatMessage.getSpeaker({ actor: context.actor, token: context.token?.document });
-    const success = Number(playerTotal) >= Number(counterRoll.total);
-    const resultText = success ? "Success" : "Failure";
-
-    await counterRoll.toMessage({
-        speaker,
-        flavor: `${label} Counter Roll<br>Difficulty: ${escapeHtml(counterContext)}<br>Player Total: ${escapeHtml(playerTotal)}<br>Outcome: ${resultText}`
+    await rollToChat({
+        formula: counterFormula,
+        speaker: ChatMessage.getSpeaker({ actor: context.actor, token: context.token?.document }),
+        // Flavor needs the evaluated roll (success vs the player total).
+        flavor: (counterRoll) => {
+            const resultText = Number(playerTotal) >= Number(counterRoll.total) ? "Success" : "Failure";
+            return `${label} Counter Roll<br>Difficulty: ${escapeHtml(counterContext)}<br>Player Total: ${escapeHtml(playerTotal)}<br>Outcome: ${resultText}`;
+        },
+        rollMode: "default",
+        waitForTotals: false,
     });
 
-    HUD_STATE.counterRollEnabled = false;
-}
-
-const SIDE_READY_CONFIRM_SETTING = "showSideReadyConfirmation";
-
-function getFirstCombatantIndexForSide(combat, sideId) {
-    const turns = Array.isArray(combat?.turns) ? combat.turns : [];
-    return turns.findIndex((combatant) => !combatant?.defeated && resolveCombatantSideId(combatant) === sideId);
-}
-
-function getNextStoredSideTurnState(combat) {
-    const orderedCombatants = getOrderedCombatants(combat).filter((combatant) => !combatant?.defeated);
-    if (!orderedCombatants.length) return null;
-
-    const sideOrder = getResolvedSideOrder(combat, orderedCombatants);
-    if (!sideOrder.length) return null;
-
-    const currentSideId = getActiveSideId(combat, orderedCombatants) || sideOrder[0] || "";
-    const currentIndex = Math.max(0, sideOrder.indexOf(currentSideId));
-
-    for (let offset = 1; offset <= sideOrder.length; offset += 1) {
-        const sideIndex = (currentIndex + offset) % sideOrder.length;
-        const nextSideId = sideOrder[sideIndex];
-        const nextCombatant = orderedCombatants.find((combatant) => resolveCombatantSideId(combatant) === nextSideId) ?? null;
-        const nextTurnIndex = getFirstCombatantIndexForSide(combat, nextSideId);
-        if (!nextCombatant || nextTurnIndex < 0) continue;
-        return {
-            activeSideId: nextSideId,
-            sideLabel: getSideLabel(nextSideId),
-            combatant: nextCombatant,
-            turn: nextTurnIndex,
-            round: sideIndex <= currentIndex ? (Number(combat.round) || 1) + 1 : (Number(combat.round) || 1),
-            wrapped: sideIndex <= currentIndex,
-        };
-    }
-
-    return null;
-}
-
-async function advanceCombatToNextSide(combat) {
-    if (!combat?.update) return null;
-    const nextState = getNextStoredSideTurnState(combat);
-    if (!nextState) return null;
-    await combat.update({
-        round: nextState.round,
-        turn: nextState.turn,
-    });
-    await combat.setFlag(MODULE_ID, "activeSideId", nextState.activeSideId);
-    await combat.setFlag(MODULE_ID, "roundNumber", nextState.round);
-    await persistCombatSideState(combat);
-    // The side whose window just opened restores its per-turn resources
-    // (movement budget + full-turn action).
-    await resetSideTurnState(combat, nextState.activeSideId);
-    return nextState;
-}
-
-async function confirmSideReady(nextState) {
-    const showConfirmation = game.settings.get(MODULE_ID, SIDE_READY_CONFIRM_SETTING) !== false;
-    if (!showConfirmation) return true;
-
-    return await new Promise((resolve) => {
-        let settled = false;
-        const content = "<form class=\"combat-side-ready-confirm\">"
-            + "<div class=\"combat-side-ready-confirm__eyebrow\">Side Transition</div>"
-            + "<div class=\"combat-side-ready-confirm__title\">This ends the turn for the whole side.</div>"
-            + "<div class=\"combat-side-ready-confirm__body\">Any actor on the currently active side will lose the rest of this side activation.</div>"
-            + "<div class=\"combat-side-ready-confirm__next\"><span class=\"combat-side-ready-confirm__next-label\">Next active side</span><strong>" + escapeHtml(nextState?.sideLabel || nextState?.combatant?.name || "Next side") + "</strong></div>"
-            + "<label class=\"combat-side-ready-confirm__toggle\">"
-            + "<input type=\"checkbox\" name=\"hideAgain\" />"
-            + "<span>Do not show again</span>"
-            + "</label>"
-            + "</form>";
-        const dialog = new Dialog({
-            title: "End Whole Side Turn?",
-            content,
-            buttons: {
-                confirm: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: "End Side Turn",
-                    callback: async (html) => {
-                        const hideAgain = html.find('[name="hideAgain"]')[0]?.checked === true;
-                        if (hideAgain) {
-                            await game.settings.set(MODULE_ID, SIDE_READY_CONFIRM_SETTING, false);
-                        }
-                        settled = true;
-                        resolve(true);
-                    },
-                },
-                cancel: {
-                    label: "Cancel",
-                    callback: () => {
-                        settled = true;
-                        resolve(false);
-                    },
-                },
-            },
-            default: "cancel",
-            close: () => {
-                if (!settled) resolve(false);
-            },
-        });
-        dialog.render(true);
-    });
-}
-
-async function announceSideReady(actor, token) {
-    if (!game.combat?.started) {
-        ui.notifications?.warn?.("Combat is not active.");
-        return;
-    }
-
-    const nextPreview = getNextStoredSideTurnState(game.combat);
-    if (!nextPreview) {
-        ui.notifications?.warn?.("No next side could be resolved.");
-        return;
-    }
-
-    const confirmed = await confirmSideReady(nextPreview);
-    if (!confirmed) return;
-
-    const speaker = ChatMessage.getSpeaker({ actor, token: token?.document });
-    const callerName = game.user?.name || "A player";
-    const actorName = token?.name || actor?.name || "Selected actor";
-    const targetCount = Array.from(game.user?.targets ?? []).length;
-    const targetText = targetCount > 0
-        ? "<br>Current targets marked in Foundry: " + escapeHtml(targetCount)
-        : "";
-
-    const nextName = nextPreview?.sideLabel || nextPreview?.combatant?.name || nextPreview?.combatant?.actor?.name || "next side";
-    const roundText = nextPreview?.wrapped ? "<br>Combat advances to a new round." : "";
-    const sideText = "<br><strong>Next active side:</strong> " + escapeHtml(nextName);
-
-    await ChatMessage.create({
-        speaker,
-        content: "<strong>" + escapeHtml(callerName) + "</strong> calls <strong>Side Ready</strong> for " + escapeHtml(actorName) + "." + targetText + sideText + roundText
-    });
-
-    // Advancing the combat writes to the Combat doc, which only the GM may do.
-    // The GM does it directly; a player asks the GM over the socket.
-    if (game.user?.isGM) {
-        await advanceCombatToNextSide(game.combat);
-    } else {
-        game.socket?.emit(`module.${MODULE_ID}`, { type: "side-advance-request", userId: game.user?.id });
-    }
+    HUD_STATE.view.counterRollEnabled = false;
 }
 
 function rerenderHudIfViewingActor(actorId) {
@@ -2168,29 +1251,6 @@ function releaseDeferredPostWindowsIntoHud() {
 // init pass, hot reload, or world reload without a page refresh would otherwise
 // double every hook and re-render twice per event).
 let hudRegistered = false;
-
-// GM-side listener: a player asked to advance the side (they can't write the
-// Combat doc themselves). Only the GM acts on it.
-let sideAdvanceSocketBound = false;
-function bindSideAdvanceSocket() {
-    if (sideAdvanceSocketBound || !game?.socket) return;
-    sideAdvanceSocketBound = true;
-    game.socket.on(`module.${MODULE_ID}`, (msg) => {
-        if (msg?.type !== "side-advance-request" || !game.user?.isGM) return;
-        if (!game.combat?.started) return;
-        void (async () => {
-            const who = game.users?.get(msg.userId)?.name || "A player";
-            try {
-                const next = await advanceCombatToNextSide(game.combat);
-                if (next) ui.notifications?.info?.(`${who} called Side Ready — now: ${next.sideLabel || "next side"}.`);
-                else ui.notifications?.warn?.(`${who} called Side Ready but no next side could be resolved.`);
-            } catch (err) {
-                ui.notifications?.error?.(`Could not advance the side for ${who}.`);
-                console.error("1547core | side-advance failed", err);
-            }
-        })();
-    });
-}
 
 export function register1547ActorHud() {
     if (hudRegistered) return;
@@ -2243,7 +1303,7 @@ export function register1547ActorHud() {
     Hooks.on("controlToken", () => void renderHudForSelection());
     Hooks.on("hoverToken", (token, hovered) => {
         if (hovered) {
-            renderThreatOverlay(token);
+            showThreatOverlay(token);
             return;
         }
         clearThreatOverlay();
@@ -2275,7 +1335,7 @@ export function register1547ActorHud() {
         // Refresh the overlay so the ranged-shot lane / cover badges / rear marker
         // track the new target (the lane is anchored on the selected shooter).
         const selectedToken = getSelectedToken();
-        if (selectedToken) renderThreatOverlay(selectedToken);
+        if (selectedToken) showThreatOverlay(selectedToken);
     });
     Hooks.on("updateToken", (document) => {
         const selectedToken = getSelectedToken();
@@ -2284,11 +1344,11 @@ export function register1547ActorHud() {
             void renderHudForSelection();
         }
         if (selectedToken?.document?.id === document.id) {
-            renderThreatOverlay(selectedToken);
+            showThreatOverlay(selectedToken);
             return;
         }
         if (canvas?.tokens?.hover?.document?.id === document.id) {
-            renderThreatOverlay(canvas.tokens.hover);
+            showThreatOverlay(canvas.tokens.hover);
         }
     });
     Hooks.on("refreshToken", (token) => {
@@ -2298,7 +1358,7 @@ export function register1547ActorHud() {
             void renderHudForSelection();
         }
         if (selectedToken?.id === token?.id || canvas?.tokens?.hover?.id === token?.id) {
-            renderThreatOverlay(token);
+            showThreatOverlay(token);
         }
     });
     Hooks.on("renderSceneNavigation", scheduleHudRerender);

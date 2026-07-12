@@ -404,8 +404,8 @@ export function summarizeActor(actor, token, deps = {}) {
         // selection is honoured only while it remains compatible; otherwise we
         // fall back to the loaded round. Consumers (hud-actions) re-validate the
         // stored value the same way before acting on it.
-        const selectedAmmoId = compatibleAmmo.some((ammo) => ammo.id === HUD_STATE.selectedAmmoByWeapon?.[item.id])
-            ? HUD_STATE.selectedAmmoByWeapon[item.id]
+        const selectedAmmoId = compatibleAmmo.some((ammo) => ammo.id === HUD_STATE.view.selectedAmmoByWeapon?.[item.id])
+            ? HUD_STATE.view.selectedAmmoByWeapon[item.id]
             : (loadedAmmoId || null);
         const selectedAmmo = selectedAmmoId ? ammoItems.find((ammo) => ammo.id === selectedAmmoId) ?? null : null;
         const weaponModifierNames = getAttachedModifierNames(item, items);

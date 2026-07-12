@@ -1,6 +1,7 @@
 ﻿import { assignSides, orderSidesByInitiative } from "../combat/side-assignment.mjs";
 import { getMovementBudget } from "../combat/movement-budget.mjs";
 import { ACTOR_TYPES } from "../lib/build-helpers.mjs";
+import { isDesignatedPatchGM } from "../services/patch-transport.js";
 
 const MODULE_ID = "1547core";
 // The monster/NPC actor types. Anything else (incl. "Player" and untyped) is a PC.
@@ -528,6 +529,70 @@ export async function applyCombatStartSidesAndInitiative(combat) {
     await postSideInitiativeMessage(sideOrder, rollsBySide);
 }
 
+/**
+ * Victory detection (ruling 2026-07-11): when only one side still has
+ * non-defeated combatants, post a victory chat banner and ask the GM whether
+ * to end the combat. Never auto-ends — reinforcements, surrender or capture
+ * scenes stay possible, so the GM keeps the decision. Guarded by a combat
+ * flag so declining doesn't re-prompt on every later update; the flag clears
+ * if a second side comes back (revive / reinforcement).
+ */
+// Synchronous re-entry guard for the victory prompt. The persisted flag alone
+// races: two defeated-updates in one batch both read the flag as false before
+// the first setFlag's server round-trip lands, stacking duplicate banners and
+// dialogs (and a second combat.delete() throw). The in-memory set closes that
+// window; the flag still covers reloads.
+const victoryPromptedCombatIds = new Set();
+
+async function checkForSideVictory(combat) {
+    // Designated GM only — with two GMs logged in, a plain isGM gate would
+    // run the whole flow (banner + dialog + delete) once per GM client.
+    if (!isDesignatedPatchGM() || !combat?.started) return;
+    const combatants = combat.combatants?.contents ?? [];
+    const allSides = new Set();
+    const livingSides = new Set();
+    for (const combatant of combatants) {
+        const sideId = resolveCombatantSideId(combatant);
+        if (!sideId) continue;
+        allSides.add(sideId);
+        if (!combatant.defeated) livingSides.add(sideId);
+    }
+    if (allSides.size < 2) return;
+
+    const announced = combat.getFlag(MODULE_ID, "victoryAnnounced") === true;
+    if (livingSides.size !== 1) {
+        victoryPromptedCombatIds.delete(combat.id);
+        if (announced) await combat.unsetFlag(MODULE_ID, "victoryAnnounced");
+        return;
+    }
+    if (announced || victoryPromptedCombatIds.has(combat.id)) return;
+    // Guard synchronously BEFORE the first await — a second defeated-update in
+    // the same batch re-enters here before any setFlag round-trip completes.
+    victoryPromptedCombatIds.add(combat.id);
+    await combat.setFlag(MODULE_ID, "victoryAnnounced", true);
+
+    const winnerLabel = getSideLabel([...livingSides][0]);
+    const loserLabels = [...allSides]
+        .filter((sideId) => !livingSides.has(sideId))
+        .map(getSideLabel)
+        .join(", ");
+    try {
+        await ChatMessage.create({
+            content: `<strong>Victory — ${escapeHtml(winnerLabel)}</strong><br>${escapeHtml(loserLabels || "The other side")} has no combatants left standing.`,
+        });
+    } catch (error) {
+        console.error(`${MODULE_ID} | victory banner failed`, error);
+    }
+    const shouldEnd = await Dialog.confirm({
+        title: "End Combat?",
+        content: `<p><strong>${escapeHtml(winnerLabel)}</strong> is the only side left standing. End the combat?</p>`,
+        defaultYes: false,
+    });
+    // Our dialog already confirmed — delete directly instead of
+    // combat.endCombat(), which would pop a second confirmation.
+    if (shouldEnd) await combat.delete();
+}
+
 export function register1547CombatTrackerSideGroups() {
     Hooks.on("createCombat", (combat) => {
         void persistCombatSideState(combat);
@@ -553,8 +618,11 @@ export function register1547CombatTrackerSideGroups() {
     Hooks.on("deleteCombatant", (combatant) => {
         if (combatant.combat) void persistCombatSideState(combatant.combat);
     });
-    Hooks.on("updateCombatant", (combatant) => {
+    Hooks.on("updateCombatant", (combatant, changes) => {
         if (combatant.combat) void persistCombatSideState(combatant.combat);
+        // Victory check rides the defeated-flag sync (the resolver routes
+        // combatant.update({defeated}) through the GM, so this fires there).
+        if (changes && "defeated" in changes) void checkForSideVictory(combatant.combat);
     });
     Hooks.on("updateCombat", (combat, changes) => {
         // Native turn/round navigation only — flag-only updates (our own

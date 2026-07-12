@@ -159,7 +159,7 @@ function buildEquippedTree(data, deps = {}) {
             const hasReach = Number(weapon.minReach) > 0 || Number(weapon.maxReach) > 0;
             const hasRangeBands = Number(weapon.shortRange) > 0 || Number(weapon.longRange) > 0 || Number(weapon.maxRange) > 0;
             const hasRangeOrReach = hasReach || hasRangeBands;
-            const rangeShown = Boolean(deps.HUD_STATE?.weaponRangeShownIds?.[weapon.id]);
+            const rangeShown = Boolean(deps.HUD_STATE?.view?.weaponRangeShownIds?.[weapon.id]);
             const rangePills = (() => {
                 const parts = [];
                 if (hasReach) {
@@ -291,8 +291,8 @@ function buildEquippedTree(data, deps = {}) {
 function buildInventoryTree(data, deps = {}) {
     const { HUD_STATE, getInventoryFilterOptions, normalizeInventoryFilterValue, matchesInventoryFilter, escapeHtml } = deps;
     const filterOptions = getInventoryFilterOptions();
-    const activeFilter = filterOptions.some((option) => option.normalizedValue === normalizeInventoryFilterValue(HUD_STATE.inventoryFilter))
-        ? HUD_STATE.inventoryFilter
+    const activeFilter = filterOptions.some((option) => option.normalizedValue === normalizeInventoryFilterValue(HUD_STATE.view.inventoryFilter))
+        ? HUD_STATE.view.inventoryFilter
         : "all";
     const filteredItems = data.inventory.filter((item) => matchesInventoryFilter(item, activeFilter));
     const inventoryGroups = groupEntries(filteredItems, (item) => item.group || "Other Gear");
@@ -379,7 +379,7 @@ function buildChecksHeader(data, deps = {}) {
     const target = data.checkTarget ?? { name: null, count: 0, stats: [], skills: [] };
     const hasTarget = (target.count ?? 0) > 0;
     const hasSingleTarget = (target.count ?? 0) === 1;
-    const requestedMode = String(HUD_STATE.checkMode ?? "manual");
+    const requestedMode = String(HUD_STATE.view.checkMode ?? "manual");
     // Coerce to a legal mode if the saved choice is no longer available
     // (e.g. Stat selected but the target dropped). Falls back to Manual.
     const allowed = {
@@ -405,8 +405,8 @@ function buildChecksHeader(data, deps = {}) {
 
     let expansion = "";
     if (mode === "stat") {
-        const currentStat = HUD_STATE.checkStatTarget && target.stats.some((s) => s.label === HUD_STATE.checkStatTarget)
-            ? HUD_STATE.checkStatTarget
+        const currentStat = HUD_STATE.view.checkStatTarget && target.stats.some((s) => s.label === HUD_STATE.view.checkStatTarget)
+            ? HUD_STATE.view.checkStatTarget
             : (target.stats[0]?.label ?? "");
         const statOptions = target.stats.map((s) => `
             <option value="${escapeHtml(s.label)}"${currentStat === s.label ? " selected" : ""}>${escapeHtml(s.label)}</option>
@@ -426,7 +426,7 @@ function buildChecksHeader(data, deps = {}) {
         const skillRows = checkableSkills.length
             ? checkableSkills.map((s) => `
                 <label class="hud-check-skill-row">
-                    <input type="radio" name="hud-check-target-skill" value="${escapeHtml(s.name)}"${HUD_STATE.checkSkillTarget === s.name ? " checked" : ""} data-hud-check-skill="${escapeHtml(s.name)}">
+                    <input type="radio" name="hud-check-target-skill" value="${escapeHtml(s.name)}"${HUD_STATE.view.checkSkillTarget === s.name ? " checked" : ""} data-hud-check-skill="${escapeHtml(s.name)}">
                     <span>${escapeHtml(s.name)}</span>
                 </label>
             `).join("")
@@ -445,11 +445,11 @@ function buildChecksHeader(data, deps = {}) {
             { key: "Hard", dice: 4 },
             { key: "Rough", dice: 5 },
         ];
-        const currentDiff = difficulties.some((d) => d.key === HUD_STATE.checkGeneralDifficulty)
-            ? HUD_STATE.checkGeneralDifficulty
+        const currentDiff = difficulties.some((d) => d.key === HUD_STATE.view.checkGeneralDifficulty)
+            ? HUD_STATE.view.checkGeneralDifficulty
             : "Average";
         const diffOptions = difficulties.map((d) => `<option value="${d.key}"${currentDiff === d.key ? " selected" : ""}>${d.key}</option>`).join("");
-        const diceValue = sanitizeCounterRollDice(HUD_STATE.checkGeneralDice ?? 3);
+        const diceValue = sanitizeCounterRollDice(HUD_STATE.view.checkGeneralDice ?? 3);
         expansion = `
             <div class="hud-check-expansion">
                 <label class="hud-counter-roll-config">
@@ -645,22 +645,15 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                 const postWindow = deps.getActivePostManeuverWindow ? deps.getActivePostManeuverWindow() : null;
                 const maneuverFilterOptions = deps.getManeuverFilterOptions ? deps.getManeuverFilterOptions() : [{ value: "all", label: "All" }];
                 // Contextual default: reactions when a reaction window is open,
-                // criticals when the actor has critical points to spend, preparations
-                // while in combat, else all. The filter follows context changes; a
-                // manual pick sticks until the context next changes.
-                // Default view shows all maneuvers (pre + full-turn to the fore,
-                // passives in their own group); reaction/critical windows still
-                // switch the filter contextually.
-                const contextualFilter = reactionWindow ? "reaction"
-                    : (Number(data.criticalPoints ?? 0) > 0 ? "post" : "all");
-                if (HUD_STATE.maneuverFilterContext !== contextualFilter) {
-                    HUD_STATE.maneuverFilter = contextualFilter;
-                    HUD_STATE.maneuverFilterContext = contextualFilter;
-                }
-                const activeFilter = maneuverFilterOptions.some((option) => option.value === (HUD_STATE.maneuverFilter || "all"))
-                    ? HUD_STATE.maneuverFilter
+                // criticals when the actor has critical points to spend, else all.
+                // The filter follows context changes; a manual pick sticks until
+                // the context next changes. The context-follow WRITE happens
+                // BEFORE render, in actor-hud's syncManeuverFilterContext —
+                // render never mutates state (ADR-0004); this is a pure read.
+                const activeFilter = maneuverFilterOptions.some((option) => option.value === (HUD_STATE.view.maneuverFilter || "all"))
+                    ? HUD_STATE.view.maneuverFilter
                     : "all";
-                const reactionList = (reactionWindow?.reactionCandidates ?? []).map((candidate) => ({
+                const reactionList = (reactionWindow?.candidates ?? []).map((candidate) => ({
                     id: candidate.id ?? candidate._id ?? candidate.name,
                     name: candidate.name ?? "Reaction",
                     timingKey: "reaction",
@@ -699,7 +692,7 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
                 // Default behaviour hides anything not currently usable so the
                 // list stays short; the "View all" checkbox below relaxes the
                 // gate when the player wants the full menu (browse mode).
-                const showAll = HUD_STATE?.maneuverShowAll === true;
+                const showAll = HUD_STATE?.view?.maneuverShowAll === true;
                 const filtered = allManeuvers
                     .filter((maneuver) => maneuver?.isEscape || maneuver?.isPassive || (deps.matchesManeuverFilter ? deps.matchesManeuverFilter(maneuver, activeFilter) : true))
                     .filter((maneuver) => maneuver?.isEscape || maneuver?.isPassive || showAll || maneuver?.usable === true);
@@ -796,9 +789,9 @@ export function buildHudHtml(data, deps = {}) {
     const reactionPromptOpen = Boolean(deps.getActiveReactionWindow?.());
     const postPromptOpen = Boolean(deps.getActivePostManeuverWindow?.());
     const forcedCategory = (reactionPromptOpen || postPromptOpen) ? "maneuvers" : "";
-    const preferredCategory = data.isCombatActive && HUD_STATE.activeCategory === "overview"
+    const preferredCategory = data.isCombatActive && HUD_STATE.view.activeCategory === "overview"
         ? "equipped"
-        : HUD_STATE.activeCategory;
+        : HUD_STATE.view.activeCategory;
     const activeCategory = forcedCategory || (
         categories.some((category) => category.key === preferredCategory)
             ? preferredCategory
@@ -842,7 +835,7 @@ export function buildHudHtml(data, deps = {}) {
 
     return `
         ${promptHtml}
-        <section class="hud-shell${HUD_STATE.collapsed ? " is-collapsed" : ""}">
+        <section class="hud-shell${HUD_STATE.view.collapsed ? " is-collapsed" : ""}">
             <header class="hud-header">
                 <img class="hud-portrait" src="${escapeHtml(data.actorImg)}" alt="${escapeHtml(data.tokenName)}">
                 <div class="hud-header-text">
@@ -856,14 +849,14 @@ export function buildHudHtml(data, deps = {}) {
                     type="button"
                     class="hud-collapse-button"
                     data-hud-collapse-toggle
-                    title="${HUD_STATE.collapsed ? "Expand HUD" : "Collapse HUD"}"
-                    aria-label="${HUD_STATE.collapsed ? "Expand HUD" : "Collapse HUD"}"
+                    title="${HUD_STATE.view.collapsed ? "Expand HUD" : "Collapse HUD"}"
+                    aria-label="${HUD_STATE.view.collapsed ? "Expand HUD" : "Collapse HUD"}"
                 >
-                    <i class="fa-solid ${HUD_STATE.collapsed ? "fa-angles-right" : "fa-angles-left"}"></i>
+                    <i class="fa-solid ${HUD_STATE.view.collapsed ? "fa-angles-right" : "fa-angles-left"}"></i>
                 </button>
             </header>
 
-            ${HUD_STATE.collapsed ? "" : `
+            ${HUD_STATE.view.collapsed ? "" : `
             <section class="hud-section">
                 <div class="hud-category-row">${categoryTabs}</div>
             </section>

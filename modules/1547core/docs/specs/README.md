@@ -11,8 +11,6 @@ Current documents:
 - `change-carrier-schema-spec-v1.md`
 - `combat-rules-guide.md`
 - `combat-resolution-loop-spec-v1.md`
-- `combat-spec-v2.md`
-- `combat-state-machine-v1.md`
 - `cover-spec-v1.md`
 - `chargen-spec-v1.md`
 - `chargen-dexterity-your-nature-table-draft-v1.md`

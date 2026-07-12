@@ -241,7 +241,6 @@ console.log("\nexecuteSafeCounterattackPhased...");
         () => executeSafeCounterattackPhased({
             pendingAttack: { target: fakeActor({ id: "d" }), actor: fakeActor({ id: "a" }), metadata: {} },
             defenseReaction: null,
-            currentDamageTakenReaction: null,
             getActorReactionWeapon: () => null,
         }, makeFakeRun()),
         /No safe counterattack is available/

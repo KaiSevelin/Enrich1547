@@ -1,47 +1,95 @@
 ﻿export const HUD_STATE = {
-    activeCategory: "overview",
-    activeManeuverGroup: "",
-    activeStatPreview: "",
-    counterRollEnabled: false,
-    counterRollDice: 1,
-    // Skills tab "Checks" header: which counter-roll mode the player chose,
-    // plus the per-mode selection. Manual = no counter; Stat = counter is
-    // target's chosen stat formula; Skill = counter is target's chosen skill
-    // formula; General = counter is N d6 picked via difficulty preset + numeric.
-    checkMode: "manual",
-    checkStatTarget: "Strength",
-    checkSkillTarget: "",
-    checkGeneralDifficulty: "Average",
-    checkGeneralDice: 3,
-    collapsed: false,
+    // ── View state (ADR-0004) ────────────────────────────────────────────
+    // Harmless UI toggles with no invariants: written freely as
+    // HUD_STATE.view.<field> by render/bindings. If a field grows an
+    // invariant, promote it OUT of view and give it a setter below.
+    view: {
+        activeCategory: "overview",
+        activeManeuverGroup: "",
+        activeStatPreview: "",
+        counterRollEnabled: false,
+        counterRollDice: 1,
+        // Skills tab "Checks" header: which counter-roll mode the player chose,
+        // plus the per-mode selection. Manual = no counter; Stat = counter is
+        // target's chosen stat formula; Skill = counter is target's chosen skill
+        // formula; General = counter is N d6 picked via difficulty preset + numeric.
+        checkMode: "manual",
+        checkStatTarget: "Strength",
+        checkSkillTarget: "",
+        checkGeneralDifficulty: "Average",
+        checkGeneralDice: 3,
+        collapsed: false,
+        selectedAmmoByWeapon: {},
+        // Per-weapon toggle for the inline range-band pills. Off by default so two
+        // ranged weapons don't both crowd their range numbers into the equipped
+        // tab; click the Range button on a weapon row to reveal that weapon's
+        // bands.
+        weaponRangeShownIds: {},
+        inventoryFilter: "all",
+        maneuverFilter: "all",
+        // The contextual default last applied to maneuverFilter (reaction/post/pre/all);
+        // when the context changes, the filter follows it.
+        maneuverFilterContext: null,
+        maneuverShowAll: false,
+    },
+
+    // ── Window state (ADR-0004) ──────────────────────────────────────────
+    // Invariant-carrying, refresh-fragile exchange state (crit windows expire
+    // with these — accepted ruling 2026-07-11). Mutated ONLY through the
+    // exported setters below — one mutation point makes the accepted
+    // fragility auditable. Do not write these fields raw.
     reactionWindow: null,
     damageTakenWindow: null,
-    selectedAmmoByWeapon: {},
-    // Per-weapon toggle for the inline range-band pills. Off by default so two
-    // ranged weapons don't both crowd their range numbers into the equipped
-    // tab; click the Range button on a weapon row to reveal that weapon's
-    // bands.
-    weaponRangeShownIds: {},
-    inventoryFilter: "all",
-    maneuverFilter: "all",
-    // The contextual default last applied to maneuverFilter (reaction/post/pre/all);
-    // when the context changes, the filter follows it (see hud-render maneuvers case).
-    maneuverFilterContext: null,
-    maneuverShowAll: false,
+    postManeuverQueue: [],
+    deferredPostManeuverWindows: [],
+    selectedPostManeuverIdByWindow: {},
+    selectedReactionChoiceId: null,
+
+    // ── Per-actor selection maps (existing accessor discipline) ──────────
     selectedPreManeuverIdsByActor: {},
     selectedFullTurnManeuverIdByActor: {},
     ignoredCostManeuverIdsByActor: {},
     // Core-maneuver stacking: actorId -> { maneuverId -> Core Points spent }.
     coreStackCountByActor: {},
-    postManeuverQueue: [],
-    deferredPostManeuverWindows: [],
-    selectedPostManeuverIdByWindow: {},
-    selectedReactionChoiceId: null,
     diceTabAttackSelectionByActor: {},
     pendingNextAttackDiceByActor: {},
     diceTabSkillDiceByActor: {},
     pendingNextSkillDiceByActor: {},
 };
+
+// Contextual maneuver-filter follow: reaction window open → "reaction",
+// crit points to spend → "post", else "all". Called BEFORE render (render
+// never mutates state — ADR-0004). A manual filter pick sticks until the
+// context next changes.
+export function syncManeuverFilterContext(contextualFilter) {
+    const next = String(contextualFilter ?? "all");
+    if (HUD_STATE.view.maneuverFilterContext === next) return;
+    HUD_STATE.view.maneuverFilter = next;
+    HUD_STATE.view.maneuverFilterContext = next;
+}
+
+// ── Reaction window (one mutation point) ─────────────────────────────────
+// The ticker/render side effects stay in actor-hud; these own the STATE
+// transitions: opening a window resets the choice selection, closing clears
+// both. Returns the previous window so callers can stop tickers for it.
+
+export function getReactionWindowState() {
+    return HUD_STATE.reactionWindow ?? null;
+}
+
+export function setReactionWindowState(reactionWindow) {
+    const previous = HUD_STATE.reactionWindow ?? null;
+    HUD_STATE.reactionWindow = reactionWindow ?? null;
+    HUD_STATE.selectedReactionChoiceId = null;
+    return previous;
+}
+
+export function clearReactionWindowState() {
+    const previous = HUD_STATE.reactionWindow ?? null;
+    HUD_STATE.reactionWindow = null;
+    HUD_STATE.selectedReactionChoiceId = null;
+    return previous;
+}
 
 function normalizeActorKey(actorId) {
     return String(actorId ?? "").trim();

@@ -100,8 +100,9 @@ Authored against `docs/specs/monster-maker-spec-v1.md` and
 
 ## Combat domain
 
-Authored against `docs/specs/combat-spec-v2.md`,
-`combat-resolution-loop-spec-v1.md`, `combat-state-machine-v1.md`.
+Authored against `docs/specs/battle-flow-spec-v1.md` (the as-built single
+source of truth; the older combat-spec-v2 / combat-state-machine specs were
+deleted 2026-07-11 as diverging) and `combat-resolution-loop-spec-v1.md`.
 
 - **PendingAttack** — descriptor built by `buildPendingAttack`. Carries
   attacker, target, weapon, profile, loaded ammo, selected
@@ -133,6 +134,26 @@ Authored against `docs/specs/combat-spec-v2.md`,
   via `planConsumePersistentEffect` (patch-returner).
 - **Safe attack** — counter-attack window that follows a successful
   defensive reaction. Free of normal action-economy cost.
+- **Exchange** — one full attack resolution: declare → reaction →
+  attack roll → defense roll → resolveAttackOutcome → result card.
+- **Exchange pipeline** — the single entry point for an Exchange:
+  `resolveExchangePhased(opts, run)` in `combat/lifecycle-flow.mjs`
+  (ADR-0004). Callers pick a named preset (`weapon` / `safe-counter` /
+  `interception` / `free-shot`) which expands to private capability
+  flags. Choke round attacks are declare-only and sit outside it.
+  Decoration (ranged cover, facing, riders) runs before/after the
+  pipeline, never inside.
+- **Patch transport** — `services/patch-transport.js` (ADR-0004): the
+  `applyPatch`/`applyPatches` dispatcher, GM patch authority
+  (`isDesignatedPatchGM`/`canApplyPatchLocally`), and the
+  `patch-apply`/`patch-ack` socket protocol. Keeps ADR-0002's closed
+  switch; the two domain-flavored kinds (`actor.applyCondition`,
+  `actor.statusEffect`) are injected handlers supplied by the combat
+  resolver at registration.
+- **Roll-chat helper** — `lib/roll-chat.mjs`
+  (`rollToChat({formula, speaker, flavor, mode}) → totals`): the one
+  roll→chat→totals path. All subsystems use it (full sweep per
+  ADR-0004); the Exchange pipeline receives it as an injected dep.
 
 ### Combat module layout (post-ADR-0002)
 
@@ -147,15 +168,22 @@ Pure / patch-returner modules under `scripts/combat/`:
 | `hp-state.mjs` | `getActorCurrentHitPoints` + `planApplyDamage` (HP patch + 3 status-effect patches). |
 | `reaction-candidates.mjs` | Pure builders for threat / overwatch / attack reaction candidates. |
 | `maneuver-state.mjs` | `buildCommittedManeuverRecord` (pure) + `planSpendActorManeuverCost` + `planAppendCommittedManeuverState`. |
-| `attack-lifecycle.mjs` | Pure attack-lifecycle: `buildPendingAttack`, `buildPendingMove`, `planApplyDefenseFollowUpState`, `planCommitPostManeuver`, `planCommitFullTurnManeuver`, plus all modifier-summary helpers, `actorHasEquippedArmor`, `PENDING_ATTACK_KIND`, `isPendingAttack`, `normalizeRollSummary`. |
-| `resolver.mjs` | Pure damage math (existed pre-carve-up). |
+| `attack-lifecycle.mjs` | Pure attack-lifecycle: `buildPendingAttack`, `buildPendingMove`, `planApplyDefenseFollowUpState`, `planCommitPostManeuver`, `planCommitFullTurnManeuver`, plus all modifier-summary helpers, `actorHasEquippedArmor`, `PENDING_ATTACK_KIND`, `isPendingAttack`, `normalizeRollSummary`, `findOverCommittedPools`. |
 | `pool-builder.mjs` | Pure dice-pool construction (existed pre-carve-up). |
+| `weapon-state.mjs` | (ADR-0004) Pure weapon/ammo/attack-profile parsing + `getWeaponAttackState` — the HUD's attack-legality surface, extracted from actor-hud. |
+| `post-maneuver-effects.mjs` | (ADR-0004) Phased post-maneuver effect interpreter (`applyPostManeuverEffectPhased`) + pure `planPushPath` / `nextFacingRotation` / `computeConvertBreakdown` / card describer. |
+| `defense-roll.js` | (ADR-0004) The ONE defense-side module: equipped-armor extraction, defense-pool formula, `rollDefenseForActor` (was copied 3×). |
+
+(`resolver.mjs` — the pre-carve-up pool-vs-pool damage model — was deleted
+2026-07-11 per ADR-0004: never wired into the live path and its multiplier
+semantics diverged.)
 
 Orchestrator in `services/`:
 
 | Module | Role |
 |---|---|
-| `combat-resolver-service.js` | Foundry-glue orchestrator (~900 lines): patch dispatcher, public combat API, hook registration, `normalizeWeapon` unarmed-fallback wrapper, status-effect mutator, and the imperative event flows (`declareAttack`, `declareMovement`, `resolveAttackOutcome`, `executeResolvedReaction`, `executeSafeCounterattack`) that have cancellable-event semantics making them unsuitable for the patch-returner pattern. |
+| `combat-resolver-service.js` | Foundry-glue orchestrator (~800 lines post-ADR-0004): public combat API, phased-function wrappers (incl. `resolveExchange`), hook registration, `normalizeWeapon` unarmed-fallback wrapper, status-effect mutator, choke round attacks, escape commit. |
+| `patch-transport.js` | (ADR-0004) The `applyPatch` dispatcher, GM patch authority + `patch-apply`/`patch-ack` socket routing. Domain kinds (`applyCondition`, `setActorStatusEffect`) injected via `configurePatchTransport`. |
 | `combat-events.js` | Thin enum + wrapper over `event-bus.js`. |
 | `event-bus.js` | Generic priority-ordered pub/sub. |
 | `reaction-service.js` | Reaction-window orchestration. Listens on combat events; opens windows; emits `REACTION_RESOLVED`. |
@@ -167,6 +195,13 @@ Orchestrator in `services/`:
   `summarizeActor(actor, token, deps)`. The HUD's source of truth.
   Built in `hud/hud-summary.js` (~800 lines, the data aggregation
   seam).
+- **Window state** — the invariant-carrying HUD_STATE fields
+  (reactionWindow, damageTakenWindow, postManeuverQueue, deferred
+  release, tickers). Mutated ONLY through hud-state.js setters
+  (ADR-0004) — one mutation point, testable transitions.
+- **View state** — `HUD_STATE.view`: the harmless UI toggles
+  (filters, collapse, check-mode, …). Plain object, written freely.
+  Render never mutates window state or per-actor maps.
 - **Action descriptor** — `{ actionType, sourceType, sourceId, label,
   ...}` describing a HUD button's intent. Created by
   `hud/hud-evaluation.js`.
