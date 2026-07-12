@@ -154,6 +154,7 @@ async function triggerMovementThreats({ combat, mover, moverSide, oldPos, newPos
 export function registerMovementReactions() {
     const Hooks = globalThis.Hooks;
     if (!Hooks?.on) return;
+    moveLog("registerMovementReactions: binding updateToken/preUpdateToken hooks");
 
     const seed = () => {
         lastPos.clear();
@@ -185,9 +186,12 @@ export function registerMovementReactions() {
         } catch (_err) { /* non-fatal */ }
     });
 
-    Hooks.on("updateToken", (tokenDoc, _changes, options) => {
+    Hooks.on("updateToken", (tokenDoc, changes, options) => {
         try {
             const id = tokenDoc?.id;
+            // Entry trace (before any bail) — tells us whether the hook fires at
+            // all on a drag, and what the change diff carried.
+            moveLog("updateToken FIRED", { id, name: tokenDoc?.name, changeKeys: Object.keys(changes ?? {}), x: tokenDoc?.x, y: tokenDoc?.y, isGM: globalThis.game?.user?.isGM });
             if (!id) return;
             const newPos = { x: Number(tokenDoc.x) || 0, y: Number(tokenDoc.y) || 0 };
             // A forced maneuver move (post-maneuver Push) is not the token's own

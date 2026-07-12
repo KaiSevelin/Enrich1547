@@ -513,13 +513,14 @@ async function resolveManualSpell(spell, sourceToken, options = {}) {
         case "Faith Manipulation": {
             const targetToken = requireTargetToken(spell, options);
             const lossRoll = await evaluateRollFormula("1d3");
-            // AvailableCorePoints is the LIVE Core pool (2026-07-12) —
-            // `CorePoints` itself is a CSB computed "X / Y" label.
-            const nextCore = await applyNumericPropDelta(targetToken.actor, "system.props.AvailableCorePoints", -lossRoll.total);
+            // Losing Core = INCREMENTING the stored SpentCorePoints (Available
+            // = Max − Spent − Reserved recomputes down). AvailableCorePoints /
+            // CorePoints are CSB computed labels, not stored fields.
+            const nextSpent = await applyNumericPropDelta(targetToken.actor, "system.props.SpentCorePoints", lossRoll.total);
             return {
                 ok: true,
                 outcome: "manual",
-                detailText: `Target loses ${lossRoll.total} Core Points and now has ${Math.max(0, nextCore)}.`,
+                detailText: `Target loses ${lossRoll.total} Core Points (spent is now ${nextSpent}).`,
                 manualResolved: true,
             };
         }

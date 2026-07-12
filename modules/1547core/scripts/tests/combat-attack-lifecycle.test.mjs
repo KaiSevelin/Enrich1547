@@ -145,11 +145,10 @@ console.log("\nattack-lifecycle.collectReservedCosts...");
 
 console.log("\nattack-lifecycle.findOverCommittedPools...");
 {
-    // Core costs read the LIVE `AvailableCorePoints` pool (2026-07-12; the
-    // `CorePoints` prop is a computed label): two 3-cost maneuvers each
-    // pass the per-maneuver gate against a 4-point pool, but the SUM (6)
+    // Core is a derived pool (Max − Spent − Reserved): two 3-cost maneuvers
+    // each pass the per-maneuver gate against a 4-point pool, but the SUM (6)
     // must be flagged (ruling 2026-07-11: validate at attack declaration).
-    const coreActor = { id: "a1", system: { props: { AvailableCorePoints: 4 } } };
+    const coreActor = { id: "a1", system: { props: { MaxCorePoints: 4, SpentCorePoints: 0 } } };
     const two = [
         { _id: "m1", CostType: "CorePoints", CostAmount: 3 },
         { _id: "m2", CostType: "CorePoints", CostAmount: 3 },
@@ -159,8 +158,8 @@ console.log("\nattack-lifecycle.findOverCommittedPools...");
     assert.deepStrictEqual(over[0], { costType: "CorePoints", required: 6, available: 4 });
     // One maneuver alone is affordable.
     assert.deepStrictEqual(al.findOverCommittedPools(coreActor, two.slice(0, 1)), []);
-    // A partially spent live pool shrinks availability.
-    const spentActor = { id: "a2", system: { props: { AvailableCorePoints: 2 } } };
+    // Spent points shrink availability (Max 4 − Spent 2 = 2 available).
+    const spentActor = { id: "a2", system: { props: { MaxCorePoints: 4, SpentCorePoints: 2 } } };
     assert.strictEqual(al.findOverCommittedPools(spentActor, two.slice(0, 1)).length, 1);
     // Other raw prop pools (system.props.<CostType>) sum the same way.
     const rawActor = { id: "a3", system: { props: { StaminaPoints: 3 } } };
@@ -295,24 +294,25 @@ console.log("\nmaneuver-state.planSpendActorManeuverCost...");
     console.log("  ✓ clamped at 0 when cost exceeds available");
 }
 
-// CorePoints costs spend the LIVE `AvailableCorePoints` pool (2026-07-12):
-// `CorePoints` itself is a CSB computed "X / Y" label CSB recomputes right
-// back, and the older SpentCorePoints field was equally phantom.
+// Core spends the DERIVED pool by INCREMENTING the stored SpentCorePoints
+// field (2026-07-12c, confirmed against the actor template): CorePoints and
+// AvailableCorePoints are CSB computed labels; SpentCorePoints is the only
+// stored/writable field, and Available = Max − Spent − Reserved recomputes.
 {
-    const actor = { id: "a", system: { props: { AvailableCorePoints: 4, MaxCorePoints: 4 } } };
+    const actor = { id: "a", system: { props: { SpentCorePoints: 1, MaxCorePoints: 5 } } };
     const { patches, result } = ms.planSpendActorManeuverCost(actor, { CostType: "CorePoints", CostAmount: 2 });
-    assert.strictEqual(patches[0].data["system.props.AvailableCorePoints"], 2,
-        "Core spend decrements AvailableCorePoints (4 - 2)");
-    assert.strictEqual(result.nextValue, 2);
-    console.log("  ✓ CorePoints spend decrements the live AvailableCorePoints pool");
+    assert.strictEqual(patches[0].data["system.props.SpentCorePoints"], 3,
+        "Core spend increments SpentCorePoints (1 + 2)");
+    assert.strictEqual(result.nextValue, 3);
+    console.log("  ✓ CorePoints spend increments SpentCorePoints (derived pool)");
 }
 
 {
-    const actor = { id: "a", system: { props: { AvailableCorePoints: 1 } } };
+    const actor = { id: "a", system: { props: { SpentCorePoints: 4, MaxCorePoints: 5 } } };
     const out = ms.planSpendActorManeuverCost(actor, { CostType: "CorePoints", CostAmount: 3 });
-    assert.strictEqual(out.patches[0].data["system.props.AvailableCorePoints"], 0,
-        "clamped at 0 when cost exceeds the pool");
-    console.log("  ✓ CorePoints spend clamps at 0");
+    assert.strictEqual(out.patches[0].data["system.props.SpentCorePoints"], 5,
+        "clamped to MaxCorePoints");
+    console.log("  ✓ CorePoints spend clamps to MaxCorePoints");
 }
 
 console.log("\nmaneuver-state.planAppendCommittedManeuverState...");

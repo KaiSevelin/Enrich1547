@@ -231,22 +231,19 @@ export async function applyPostManeuverEffectPhased(options = {}, run, deps = {}
         }
     }
 
-    // Core Restore: recover Core Points on the LIVE `AvailableCorePoints`
-    // pool (2026-07-12 — `CorePoints` itself is a CSB computed label, and the
-    // old SpentCorePoints field was phantom), clamped to MaxCorePoints. The
-    // crit cost was already spent by planCommitPostManeuver.
+    // Core Restore: recover Core Points by DECREMENTING the stored
+    // `SpentCorePoints` field (floored at 0) — Available = Max − Spent −
+    // Reserved recomputes up automatically. `AvailableCorePoints` /
+    // `CorePoints` are CSB computed labels and must not be written. The crit
+    // cost was already spent by planCommitPostManeuver.
     const recoverCore = Number(effect.recoverCorePoints ?? 0) || 0;
     if (recoverCore > 0 && actor?.id) {
-        const props = actor.system?.props ?? {};
-        const current = Number(props.AvailableCorePoints ?? 0) || 0;
-        const cap = [props.MaxCorePoints, props.CorePointsMax]
-            .map(Number)
-            .find((value) => Number.isFinite(value) && value > 0);
-        const next = cap != null ? Math.min(current + recoverCore, cap) : current + recoverCore;
-        if (next !== current) {
+        const currentSpent = Number(actor.system?.props?.SpentCorePoints ?? 0) || 0;
+        const nextSpent = Math.max(0, currentSpent - recoverCore);
+        if (nextSpent !== currentSpent) {
             await run({
                 phase: "coreRestore",
-                patches: [{ kind: "actor.update", actorId: actor.id, data: { "system.props.AvailableCorePoints": next } }],
+                patches: [{ kind: "actor.update", actorId: actor.id, data: { "system.props.SpentCorePoints": nextSpent } }],
             });
         }
     }

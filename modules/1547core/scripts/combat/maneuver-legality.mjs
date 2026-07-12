@@ -404,16 +404,13 @@ function passesResourceGate(maneuver, context) {
     if (!resourceName) return true;
 
     const props = actor.system?.props ?? {};
-    // `Available<Name>Points` is the LIVE stored pool (spends decrement it
-    // directly — see maneuver-state POOL_PROP_ALIASES), so it is authoritative
-    // when present and nothing else is subtracted from it. `Max<Name>Points`
-    // alone falls back to the derived model (max − spent − reserved); the
-    // remaining candidates are legacy raw pools. Subtracting Spent/Reserved
-    // props from a live/raw pool would double-count (and stale
-    // SpentCorePoints values from the old phantom model would shrink it).
-    const livePool = firstFiniteNumber([props[`Available${resourceName}Points`]]);
-    const derivedMax = livePool == null ? firstFiniteNumber([props[`Max${resourceName}Points`]]) : null;
-    const total = livePool ?? derivedMax ?? firstFiniteNumber([
+    // Core is a DERIVED pool: Max<Name>Points is the cap and the live balance
+    // is Max − Spent − Reserved (Available<Name>Points is a computed CSB label
+    // of the same expression). When a Max exists, subtract the stored Spent +
+    // Reserved props. The remaining candidates are raw pools spent by direct
+    // decrement — nothing is subtracted from those.
+    const derivedMax = firstFiniteNumber([props[`Max${resourceName}Points`]]);
+    const total = derivedMax ?? firstFiniteNumber([
         props[`${resourceName}Points`],
         props[`${resourceName}PointsMax`],
         props[`${resourceName}MaxPoints`],

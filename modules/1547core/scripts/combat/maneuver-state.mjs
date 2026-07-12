@@ -42,28 +42,41 @@ export function buildCommittedManeuverRecord(maneuver) {
  * maneuver charges. Returns `{ patches: [], result: null }` when the
  * maneuver has no cost (or is otherwise free).
  */
-// Cost types whose LIVE pool lives under a different prop than the cost
-// name. On the actor template, `CorePoints` is a CSB *computed label*
-// (the "11 / 11" string built from AvailableCorePoints / MaxCorePoints) —
-// writing to it is a no-op that CSB recomputes right back ("Core Points
-// reset to max after attack"). The real stored pool is
-// `AvailableCorePoints` (2026-07-12; the earlier derived SpentCorePoints
-// model was equally phantom).
-export const POOL_PROP_ALIASES = { CorePoints: "AvailableCorePoints" };
+// CONFIRMED against the actor template (2026-07-12c). On the sheet the Core
+// pool is a chain of CSB COMPUTED labels that must NOT be written to:
+//   CorePoints          = "AvailableCorePoints / MaxCorePoints"  (display)
+//   AvailableCorePoints = MaxCorePoints - SpentCorePoints - ReservedCorePoints
+//   MaxCorePoints       = sum of stat dice
+// The only STORED, writable field is `SpentCorePoints` (default 0). Spending
+// Core = INCREMENTING SpentCorePoints (clamped to MaxCorePoints); Available
+// recomputes down automatically. Map CostType -> the resource prefix so
+// `Spent<Name>Points` / `Max<Name>Points` resolve. (Earlier builds wrote the
+// computed CorePoints / AvailableCorePoints props — CSB recomputed them right
+// back, the "deducts then resets to max" bug.)
+export const DERIVED_POOL_COSTS = { CorePoints: "Core" };
 
 /**
  * Resolve the single actor prop and its next value for spending `amount`
- * of `costType`: decrement the LIVE pool prop (the alias when one exists,
- * else `system.props.<costType>`), floored at 0. Shared by both the
- * committed-maneuver and reserved-pre-maneuver spend paths.
+ * of `costType`. Derived pools (Core) INCREMENT `Spent<Name>Points` clamped
+ * to `Max<Name>Points`; other costs decrement the raw `system.props.<costType>`
+ * (floored at 0). Shared by the committed-maneuver and reserved-pre-maneuver
+ * spend paths.
  */
 export function planPoolSpend(actor, costType, amount) {
-    const prop = POOL_PROP_ALIASES[costType] ?? costType;
+    const poolName = DERIVED_POOL_COSTS[costType];
+    if (poolName) {
+        const prop = `Spent${poolName}Points`;
+        const previousValue = firstFiniteNumber([actor.system?.props?.[prop]]) ?? 0;
+        const max = firstFiniteNumber([actor.system?.props?.[`Max${poolName}Points`]]);
+        let nextValue = previousValue + amount;
+        if (max != null) nextValue = Math.min(nextValue, max);
+        return { prop, previousValue, nextValue };
+    }
     const previousValue = firstFiniteNumber([
-        actor.system?.props?.[prop],
-        actor.system?.[prop],
+        actor.system?.props?.[costType],
+        actor.system?.[costType],
     ]) ?? 0;
-    return { prop, previousValue, nextValue: Math.max(0, previousValue - amount) };
+    return { prop: costType, previousValue, nextValue: Math.max(0, previousValue - amount) };
 }
 
 export function planSpendActorManeuverCost(actor, maneuver) {
