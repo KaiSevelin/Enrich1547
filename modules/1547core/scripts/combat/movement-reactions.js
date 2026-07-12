@@ -56,10 +56,15 @@ function reactorThreatReachSquares(reactor) {
 const DEBUG_MOVE = false;
 // Runtime toggle (no reload needed): run `CONFIG.debug.combat1547 = true`
 // (or the older move1547) in the console to trace why a move did or didn't
-// spend the movement budget.
+// spend the movement budget. Objects are stringified so the console prints
+// readable values inline (not a collapsed "Object") — makes pasted traces
+// legible.
 function moveLog(...args) {
     if (!DEBUG_MOVE && !globalThis.CONFIG?.debug?.move1547 && !globalThis.CONFIG?.debug?.combat1547) return;
-    try { console.debug(`${MODULE_ID} | move-debug |`, ...args); } catch (_e) { /* ignore */ }
+    const readable = args.map((a) => (a && typeof a === "object")
+        ? (() => { try { return JSON.stringify(a); } catch { return String(a); } })()
+        : a);
+    try { console.debug(`${MODULE_ID} | move-debug |`, ...readable); } catch (_e) { /* ignore */ }
 }
 
 // Spend movement whenever a token actually changes cells: subtract the minimum
@@ -179,21 +184,36 @@ export function registerMovementReactions() {
     // updateToken can measure the delta even on a token's very FIRST move of the
     // session — the canvasReady seed alone can miss late-drawn tokens, which
     // made the first move register as 0 squares.
-    Hooks.on("preUpdateToken", (tokenDoc) => {
+    Hooks.on("preUpdateToken", (tokenDoc, changes) => {
         try {
             const id = tokenDoc?.id;
-            if (id) lastPos.set(id, { x: Number(tokenDoc.x) || 0, y: Number(tokenDoc.y) || 0 });
+            if (!id) return;
+            // Capture the PERSISTED pre-update position from `_source` — the
+            // document's live `x`/`y` may already carry the optimistic drag
+            // position at preUpdate time (newer Foundry), which made "old"
+            // equal "new" and every move read as 0 squares ("no position
+            // delta"). `_source` is the last-saved value until the update commits.
+            const src = tokenDoc._source ?? tokenDoc;
+            lastPos.set(id, { x: Number(src.x) || 0, y: Number(src.y) || 0 });
+            moveLog("preUpdateToken", { id, srcX: src.x, srcY: src.y, liveX: tokenDoc.x, changeX: changes?.x, changeY: changes?.y });
         } catch (_err) { /* non-fatal */ }
     });
 
     Hooks.on("updateToken", (tokenDoc, changes, options) => {
         try {
             const id = tokenDoc?.id;
-            // Entry trace (before any bail) — tells us whether the hook fires at
-            // all on a drag, and what the change diff carried.
-            moveLog("updateToken FIRED", { id, name: tokenDoc?.name, changeKeys: Object.keys(changes ?? {}), x: tokenDoc?.x, y: tokenDoc?.y, isGM: globalThis.game?.user?.isGM });
+            // Prefer the committed destination from the change diff; fall back to
+            // the document's live coords. (Either can be the reliable one across
+            // Foundry versions — using both makes the delta robust.)
+            const newPos = {
+                x: Number(changes?.x ?? tokenDoc?.x) || 0,
+                y: Number(changes?.y ?? tokenDoc?.y) || 0,
+            };
+            // Entry trace (before any bail): does the hook fire, what did the
+            // diff carry, and what old/new positions did we resolve?
+            const oldPosTrace = lastPos.get(id);
+            moveLog("updateToken FIRED", { id, name: tokenDoc?.name, changeKeys: Object.keys(changes ?? {}), oldPos: oldPosTrace, newPos, isGM: globalThis.game?.user?.isGM });
             if (!id) return;
-            const newPos = { x: Number(tokenDoc.x) || 0, y: Number(tokenDoc.y) || 0 };
             // A forced maneuver move (post-maneuver Push) is not the token's own
             // movement: it spends no budget and provokes no opportunity attacks.
             // Still record the position so the NEXT real move measures correctly.

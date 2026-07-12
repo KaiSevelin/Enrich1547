@@ -67,7 +67,12 @@ export function resolveTokenById(tokenId, sceneId) {
 // the actor the display reads.
 function patchLog(...args) {
     if (!globalThis.CONFIG?.debug?.combat1547) return;
-    try { console.debug(`${MODULE_ID} | patch-debug |`, ...args); } catch (_e) { /* ignore */ }
+    // Stringify objects so the console prints readable values inline instead
+    // of a collapsed "Object" (makes pasted traces legible).
+    const readable = args.map((a) => (a && typeof a === "object")
+        ? (() => { try { return JSON.stringify(a); } catch { return String(a); } })()
+        : a);
+    try { console.debug(`${MODULE_ID} | patch-debug |`, ...readable); } catch (_e) { /* ignore */ }
 }
 
 export async function applyPatch(patch) {
