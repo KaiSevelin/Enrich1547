@@ -354,6 +354,15 @@ async function executeWeaponAttackAction(descriptor, context, evaluation, deps =
         // resolve → result card. This caller supplies only its decoration:
         // the reaction-aware attack formula (Face cancels rear advantage) and
         // the rider lines on the card.
+        // Core-spend diagnostic (CONFIG.debug.combat1547): what the HUD is about
+        // to hand the pipeline as selected pre-maneuvers — compare against the
+        // core-debug line from resolveAttackOutcome to see where a cost is lost.
+        if (globalThis.CONFIG?.debug?.combat1547) {
+            try {
+                console.debug("1547core | core-debug | HUD executeWeaponAttack selectedPreManeuvers",
+                    JSON.stringify((currentSummary.selectedPreManeuvers ?? []).map((m) => ({ name: m?.name, CostType: m?.CostType, CostAmount: m?.CostAmount }))));
+            } catch (_e) { /* ignore */ }
+        }
         const exchange = await resolveExchange({
             mode: "weapon",
             declare: {

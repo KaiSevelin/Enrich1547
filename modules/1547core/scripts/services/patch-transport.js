@@ -75,6 +75,18 @@ function patchLog(...args) {
     try { console.debug(`${MODULE_ID} | patch-debug |`, ...readable); } catch (_e) { /* ignore */ }
 }
 
+// Flatten `{system:{props:{RiskPoints:1}}}` → `{"system.props.RiskPoints":1}`
+// so the tracer reads/prints leaf values, not the whole nested tree. Already-
+// dotted keys pass through unchanged.
+function flattenLeafPaths(obj, prefix = "", out = {}) {
+    for (const [k, v] of Object.entries(obj ?? {})) {
+        const path = prefix ? `${prefix}.${k}` : k;
+        if (v && typeof v === "object" && !Array.isArray(v)) flattenLeafPaths(v, path, out);
+        else out[path] = v;
+    }
+    return out;
+}
+
 export async function applyPatch(patch) {
     if (!patch || !patch.kind) return;
     switch (patch.kind) {
@@ -83,11 +95,15 @@ export async function applyPatch(patch) {
             if (actor?.update) {
                 await actor.update(patch.data);
                 if (globalThis.CONFIG?.debug?.combat1547) {
-                    const readBack = Object.fromEntries(Object.keys(patch.data).map((path) => [
+                    // Flatten the patch to leaf dotted paths and read each back —
+                    // avoids dumping the whole `system` object when the patch is
+                    // nested, keeping the trace legible.
+                    const flat = flattenLeafPaths(patch.data);
+                    const readBack = Object.fromEntries(Object.keys(flat).map((path) => [
                         path,
                         globalThis.foundry?.utils?.getProperty?.(actor, path),
                     ]));
-                    patchLog("actor.update", actor.name, `(id ${patch.actorId})`, "wrote", patch.data, "read-back", readBack);
+                    patchLog("actor.update", actor.name, `(id ${patch.actorId})`, "wrote", flat, "read-back", readBack);
                 }
             } else {
                 patchLog("actor.update UNRESOLVED actor", patch.actorId, patch.data);
