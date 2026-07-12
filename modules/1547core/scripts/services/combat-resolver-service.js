@@ -506,6 +506,17 @@ export async function resolveAttackOutcome(options = {}) {
     // here, where the defender's equipped reaction weapon resolves — the
     // weapon gate needs it (Shield requires a Shield-trait weapon).
     const pendingAttack = options.pendingAttack ?? null;
+    // Core-spend diagnostic (CONFIG.debug.combat1547): shows the reserved
+    // pre-maneuver costs and the selected pre-maneuvers reaching resolution —
+    // an empty reservedCosts here means the cost was lost before the spend.
+    if (globalThis.CONFIG?.debug?.combat1547) {
+        try {
+            console.debug(`${MODULE_ID} | core-debug | resolveAttackOutcome`,
+                "actor", pendingAttack?.actor?.name,
+                "reservedCosts", JSON.stringify(pendingAttack?.reservedCosts ?? null),
+                "selectedPre", JSON.stringify((pendingAttack?.selectedPreManeuvers ?? []).map((m) => ({ name: m?.name, CostType: m?.CostType, CostAmount: m?.CostAmount }))));
+        } catch (_e) { /* ignore */ }
+    }
     const defender = pendingAttack?.target ?? null;
     let defenderPassiveDefenseManeuvers = [];
     if (defender) {
