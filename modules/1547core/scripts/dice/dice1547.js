@@ -12,7 +12,7 @@ import {DieRisk} from './risk.js';
 const MODULE_ID = "dice1547";
 // Roll-result flags must be stored under an *active* module scope. The standalone
 // "dice1547" module was consolidated into 1547core, so its id is no longer an
-// active flag scope — writing under it throws. Store under "1547core" instead;
+// active flag scope - writing under it throws. Store under "1547core" instead;
 // reads fall back to the legacy scope for chat messages stamped before this.
 const FLAG_SCOPE = "1547core";
 
@@ -167,7 +167,7 @@ export function register1547Dice() {
         coreModule.api = coreModule.api ?? {};
         coreModule.api.getRollResult = (messageOrId) => {
             const message = typeof messageOrId === "string" ? game.messages.get(messageOrId) : messageOrId;
-            // Read only the active scope — getFlag on the inactive legacy
+            // Read only the active scope - getFlag on the inactive legacy
             // "dice1547" scope logs a "scope not valid" warning on every poll.
             return message?.getFlag(FLAG_SCOPE, "rollResult") ?? null;
         };
@@ -495,7 +495,7 @@ async function applyDiceSoNicePresets(dice3d) {
     // Lazy-load the Dice So Nice API only once DSN is actually present (this runs
     // from the diceSoNiceReady hook). Keeping it out of the module's top-level
     // imports means our custom dice TERMS register even when DSN is absent or slow
-    // to load — a static import there delayed/blocked register1547Dice, which left
+    // to load - a static import there delayed/blocked register1547Dice, which left
     // formulas with our denominations unparseable (ChatMessage.prepareDerivedData
     // -> DiceTerm.fromParseNode crash).
     let DiceSystem;
@@ -508,11 +508,11 @@ async function applyDiceSoNicePresets(dice3d) {
     const system = new DiceSystem("dice1547", "dice1547", "dice1547", "default");
     dice3d.addSystem(system);
 
-    // Two colorsets so attack and defense dice read apart at a glance. The custom
-    // faces are transparent symbols, so a colorset's `background` becomes the
-    // visible face colour: attack dice are white, the two defense dice (Armor,
-    // Evade) light grey. Defensive try/catch — a DSN API mismatch must never block
-    // the geometry presets below (which are what make the denominations rollable).
+    // Register two optional colorsets so attack and defense dice can still use the
+    // old white / grey look if a user chooses them in Dice So Nice. We do *not*
+    // bind presets to these colorsets, because that would lock the custom dice to
+    // fixed face colours and prevent DSN appearance settings from recolouring the
+    // transparent face art.
     try {
         dice3d.addColorset({
             name: "dice1547-attack",
@@ -545,7 +545,6 @@ async function applyDiceSoNicePresets(dice3d) {
     }
     dice3d.addDicePreset({
       type:"db",
-      colorset:"dice1547-attack",
       labels:[ 
         'modules/1547core/images/dice/fumble_balanced_bg.png', 
         'modules/1547core/images/dice/blank_balanced_bg.png', 
@@ -566,7 +565,6 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"da",
-      colorset:"dice1547-defense",
       labels:[
         'modules/1547core/images/dice/fumble_armor_bg.png',
         'modules/1547core/images/dice/blank_armor_bg.png',
@@ -587,7 +585,6 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"dc",
-      colorset:"dice1547-attack",
       labels:[
         'modules/1547core/images/dice/fumble_control_bg.png',
         'modules/1547core/images/dice/blank_control_bg.png',
@@ -608,7 +605,6 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"de",
-      colorset:"dice1547-defense",
       labels:[
         'modules/1547core/images/dice/fumble_evade_bg.png',
         'modules/1547core/images/dice/blank_evade_bg.png',
@@ -629,7 +625,6 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"dg",
-      colorset:"dice1547-attack",
       labels:[
         'modules/1547core/images/dice/blank_finesse_bg.png',
         'modules/1547core/images/dice/blank_finesse_bg.png',
@@ -650,7 +645,6 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"dh",
-      colorset:"dice1547-attack",
       labels:[
         'modules/1547core/images/dice/fumble_heavy_bg.png',
         'modules/1547core/images/dice/fumble_heavy_bg.png',
@@ -671,7 +665,6 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"dx",
-      colorset:"dice1547-attack",
       labels:[
         'modules/1547core/images/dice/0x_multiply_bg.png', 
         'modules/1547core/images/dice/blank_multiply_bg.png',
@@ -692,7 +685,6 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"dl",
-      colorset:"dice1547-attack",
       labels:[
         'modules/1547core/images/dice/fumble_lethal_bg.png',
         'modules/1547core/images/dice/fumble_lethal_bg.png',
@@ -713,7 +705,6 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"dp",
-      colorset:"dice1547-attack",
       labels:[
         'modules/1547core/images/dice/fumble_penetration_bg.png',
         'modules/1547core/images/dice/blank_penetration_bg.png',
@@ -734,7 +725,6 @@ async function applyDiceSoNicePresets(dice3d) {
     });
     dice3d.addDicePreset({
       type:"dr",
-      colorset:"dice1547-attack",
       labels:[
         'modules/1547core/images/dice/0x_risk_bg.png',
         'modules/1547core/images/dice/fumble_risk_bg.png',
@@ -756,10 +746,11 @@ async function applyDiceSoNicePresets(dice3d) {
 }
 
 // Register the dice geometry when Dice So Nice signals readiness, AND apply
-// immediately if it is already ready — this module is imported dynamically, so
+// immediately if it is already ready - this module is imported dynamically, so
 // the import can resolve *after* diceSoNiceReady has fired (notably on a
 // player's client), which previously left the custom dice with no geometry
-// (DiceBox.getVectors → "reading 'shape' of null"). The applied-flag keeps it
+// (DiceBox.getVectors -> "reading 'shape' of null"). The applied-flag keeps it
 // idempotent if both paths run.
 Hooks.once('diceSoNiceReady', (dice3d) => applyDiceSoNicePresets(dice3d));
 if (globalThis.game?.dice3d) applyDiceSoNicePresets(globalThis.game.dice3d);
+
