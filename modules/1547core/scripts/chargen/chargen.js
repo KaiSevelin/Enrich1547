@@ -1,6 +1,7 @@
 import { MODULE_ID, ACTOR_TEMPLATE_ID } from "../lib/constants.mjs";
 import { renderDriveHintHtml, getDriveHintData } from "./drive-prompts.js";
 import { PRIMARY_STATS, statSteps, statFromSteps } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
+import { getDefaultMaxHitPointsFromProps } from "../services/primary-stats.js";
 import { getStatTooltip } from "../hud/stat-info.js";
 import { statRef, humourRef, maneuverRef, itemRef, skillRef, socialRef, luckRef, infoTooltip, stripInfoRefs } from "../enrichers/info-enricher.js";
 import { canonicalHumour } from "../services/humour-info.js";
@@ -5360,15 +5361,12 @@ export class SkillTreeChargenApp extends FormApplication {
 
         // A freshly generated character is otherwise left at 0 current HP. Now that
         // stats are final, set both Max and Current HP. Use the stored MaxHitPoints
-        // when present, else the value derived from stats (STR+STA+DEX dice) — the
-        // raw MaxHitPoints prop is often still unset here, which previously left the
-        // guard failing and HP at 0 even though the sheet showed a derived max.
+        // when present, else the base derived from stats (Str+Dex+Cha dice, shared
+        // with primary-stats) — the raw MaxHitPoints prop is often still unset here,
+        // which previously left the guard failing and HP at 0.
         const hpProps = actor.system?.props ?? {};
         const storedMax = Number(hpProps.MaxHitPoints);
-        const derivedMax = Math.max(0,
-            Number(hpProps.Stats_StrengthDice ?? 1)
-            + Number(hpProps.Stats_StaminaDice ?? 1)
-            + Number(hpProps.Stats_DexterityDice ?? 1));
+        const derivedMax = getDefaultMaxHitPointsFromProps(hpProps);
         const maxHitPoints = Number.isFinite(storedMax) && storedMax > 0 ? storedMax : derivedMax;
         const hpUpdate = maxHitPoints > 0
             ? {

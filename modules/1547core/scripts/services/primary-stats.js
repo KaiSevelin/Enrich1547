@@ -26,10 +26,13 @@ export const PRIMARY_STATS = [
     "Power"
 ];
 
+// Stats whose dice feed the Max HP base (Str + Dex + Cha). Changing one of
+// these adjusts MaxHitPoints by the dice delta — MaxHitPoints is a STORED
+// field now (not a formula), so manual tweaks (injuries, boons) survive.
 export const HIT_POINT_DRIVING_STATS = [
     "Strength",
-    "Stamina",
-    "Dexterity"
+    "Dexterity",
+    "Charisma"
 ];
 
 // Unified onto the canonical ladder math (statSteps / statFromSteps).
@@ -50,8 +53,8 @@ export function getDefaultMaxHitPointsFromProps(props = {}) {
     return Math.max(
         0,
         Number(props?.Stats_StrengthDice ?? 1)
-        + Number(props?.Stats_StaminaDice ?? 1)
         + Number(props?.Stats_DexterityDice ?? 1)
+        + Number(props?.Stats_CharismaDice ?? 1)
     );
 }
 

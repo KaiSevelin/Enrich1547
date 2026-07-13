@@ -10,15 +10,17 @@ const {
 console.log("primary-stats helpers...");
 
 {
+    // Max HP base = Str + Dex + Cha dice (2026-07-12).
     const props = {
         Stats_StrengthDice: 2,
-        Stats_StaminaDice: 3,
         Stats_DexterityDice: 1,
+        Stats_CharismaDice: 3,
+        Stats_StaminaDice: 9, // ignored — Stamina no longer drives HP
     };
     assert.strictEqual(getDefaultMaxHitPointsFromProps(props), 6);
     assert.strictEqual(getStoredOrDefaultMaxHitPoints({ ...props, MaxHitPoints: 8 }), 8);
     assert.strictEqual(getStoredOrDefaultMaxHitPoints(props), 6);
-    console.log("  ✓ max HP resolves from stored value or derived dice total");
+    console.log("  ✓ max HP resolves from stored value or Str+Dex+Cha dice total");
 }
 
 {
