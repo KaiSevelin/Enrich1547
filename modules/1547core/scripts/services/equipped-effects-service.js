@@ -75,7 +75,11 @@ function desiredEquippedEffects(actor) {
  */
 export async function syncActorEquippedEffects(actor) {
     if (actor?.documentName !== "Actor") return;
-    if (!isResponsibleForActor(actor)) return;
+    const responsible = isResponsibleForActor(actor);
+    if (globalThis.CONFIG?.debug?.equip1547) {
+        console.log(`1547core | equip-sync '${actor?.name}' responsible=${responsible} desired=${desiredEquippedEffects(actor).length}`);
+    }
+    if (!responsible) return;
 
     const desired = desiredEquippedEffects(actor);
     const desiredKeys = new Set(desired.map((d) => d.key));
@@ -93,6 +97,25 @@ export async function syncActorEquippedEffects(actor) {
     if (toCreate.length) await actor.createEmbeddedDocuments("ActiveEffect", toCreate);
 }
 
+// Console diagnostic: `game.modules.get("1547core").api.debugEquippedEffects(_token.actor)`
+// Reports, per item, why it does or doesn't contribute an equipped effect.
+export function debugEquippedEffects(actor) {
+    const items = actor?.items?.contents ?? actor?.items ?? [];
+    const rows = items.map((item) => ({
+        name: item?.name,
+        template: item?.system?.template,
+        carrier: isSupportedCarrierItem(item),
+        equipped: isEquipped(item),
+        rawEquipped: item?.system?.props?.Equipped,
+        livePropsHasEffects: Array.isArray(item?.system?.props?.EquippedEffects),
+        collected: (isSupportedCarrierItem(item) ? collectUsageEffectsFromCarrier(item) : [])
+            .map((e) => `${e.EffectType}/${e.EffectSubtype} ${e.TargetType} ${e.ApplicationMode}`),
+    }));
+    console.log(`1547core | equip-debug '${actor?.name}' responsible=${isResponsibleForActor(actor)}`);
+    console.table(rows);
+    return rows;
+}
+
 export function registerEquippedEffectsService() {
     const onCarrierItemChange = (item) => {
         // Only carrier items contribute equipped effects; skip everything else
@@ -108,4 +131,11 @@ export function registerEquippedEffectsService() {
     Hooks.once("ready", () => {
         for (const actor of globalThis.game?.actors ?? []) void syncActorEquippedEffects(actor);
     });
+
+    const moduleApi = globalThis.game?.modules?.get?.(MODULE_ID);
+    if (moduleApi) {
+        moduleApi.api = moduleApi.api ?? {};
+        moduleApi.api.syncEquippedEffects = syncActorEquippedEffects;
+        moduleApi.api.debugEquippedEffects = debugEquippedEffects;
+    }
 }

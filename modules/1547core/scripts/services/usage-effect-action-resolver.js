@@ -115,12 +115,25 @@ export function collectUsageEffectsFromCarrier(item) {
     const props = getCarrierProps(item);
     const effects = [];
 
-    for (const key of EFFECT_ARRAY_KEYS) {
-        if (Array.isArray(props?.[key])) {
-            for (const entry of props[key]) {
-                effects.push(normalizeEffectProps(entry));
+    const pushArraysFrom = (bag) => {
+        for (const key of EFFECT_ARRAY_KEYS) {
+            if (Array.isArray(bag?.[key])) {
+                for (const entry of bag[key]) effects.push(normalizeEffectProps(entry));
             }
         }
+    };
+
+    pushArraysFrom(props);
+    // CSB drops props whose key the item's template doesn't declare (the
+    // equippable/magic-item template has no "EquippedEffects" field). If the
+    // live item exposed no effect arrays, read the seed copy from
+    // flags.sourceData — flags survive both pruning and import. Gated on "found
+    // nothing" so carriers that DO keep their props (spells, monster magic) are
+    // never double-counted from both live props and sourceData.
+    if (effects.length === 0) {
+        const sourceData = readSourceData(item);
+        pushArraysFrom(sourceData?.system?.props ?? {});
+        if (effects.length === 0) pushArraysFrom(sourceData ?? {});
     }
 
     // Truly-nested child items (rare; e.g. a compendium item before import).
