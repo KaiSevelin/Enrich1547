@@ -112,6 +112,11 @@ Hooks.once("init", () => {
         (module) => module.registerChangeSetCascadeService()
     );
     void runImportedModuleStep(
+        "registerEquippedEffectsService",
+        () => import("./services/equipped-effects-service.js"),
+        (module) => module.registerEquippedEffectsService()
+    );
+    void runImportedModuleStep(
         "registerBaseAutoApply",
         () => import("./services/base-autoapply-service.js"),
         (module) => module.registerBaseAutoApply()

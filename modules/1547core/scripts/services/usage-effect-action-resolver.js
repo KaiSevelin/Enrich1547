@@ -9,6 +9,9 @@ const SUPPORTED_CARRIER_TEMPLATE_IDS = new Set([
     "2kiWw3Cv5Zk1lZxn", // Spell
     "w9ky0ZTDvXDs5Ce7", // Supernatural Mark
     "M0nMgk7Yp2RsT5Vu", // Monster Magic
+    "HkiFlUWUkUycJdBZ", // Magic Item / equippable charm (e.g. Nazar) — Effects container holds usage-effect children
+    "uLlgZXz3GlXPFtsj", // Armor — can carry equipped-while-worn effects
+    "eCIZRFXbcQVZKqEr", // Equippable
 ]);
 
 const EFFECT_ARRAY_KEYS = [
@@ -364,7 +367,7 @@ function buildEffectDuration(effect) {
     return { startTime: game?.time?.worldTime ?? 0, label };
 }
 
-function buildManagedActiveEffectData(carrierItem, effect, targetDoc, outcome) {
+export function buildManagedActiveEffectData(carrierItem, effect, targetDoc, outcome) {
     const subtype = String(effect.EffectSubtype ?? "").trim();
     return {
         name: buildEffectName(carrierItem, effect),

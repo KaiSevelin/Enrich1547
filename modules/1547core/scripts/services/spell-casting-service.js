@@ -723,6 +723,11 @@ function resolveEvilEyeCarrier(actor, options = {}) {
     return null;
 }
 
+// Immunity is purely status-based: an active effect carrying the
+// "evil-eye-protection" status (or subtype) grants it. That effect can come
+// from the "Prayer Against the Evil Eye" spell OR, generically, from any
+// equipped warding item (e.g. the Nazar) via the equipped-effects service —
+// no item-specific logic here. See [[equipped-effects-service]].
 function actorHasEvilEyeImmunity(actor) {
     const effects = actor?.appliedEffects ?? actor?.effects ?? [];
     for (const effect of effects) {
