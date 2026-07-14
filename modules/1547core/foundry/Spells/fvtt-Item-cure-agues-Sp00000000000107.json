@@ -1,0 +1,843 @@
+{
+    "_id": "Sp00000000000107",
+    "name": "Cure Agues",
+    "type": "equippableItem",
+    "img": "media/home/games/1547/Skills/spell.webp",
+    "system": {
+        "body": {
+            "contents": [
+                {
+                    "key": "PrerequisitesTable",
+                    "type": "dynamicTable",
+                    "contents": [],
+                    "rowLayout": [
+                        {
+                            "key": "RequirementType",
+                            "type": "select",
+                            "size": "full-size",
+                            "defaultValue": "Skill",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Skill",
+                                    "value": "Skill"
+                                },
+                                {
+                                    "key": "State",
+                                    "value": "State"
+                                },
+                                {
+                                    "key": "Location",
+                                    "value": "Location"
+                                },
+                                {
+                                    "key": "Item",
+                                    "value": "Item"
+                                },
+                                {
+                                    "key": "Knowledge",
+                                    "value": "Knowledge"
+                                },
+                                {
+                                    "key": "Oath",
+                                    "value": "Oath"
+                                },
+                                {
+                                    "key": "Pact",
+                                    "value": "Pact"
+                                }
+                            ],
+                            "colName": "Type"
+                        },
+                        {
+                            "key": "RequirementTarget",
+                            "type": "textField",
+                            "size": "full-size",
+                            "defaultValue": "",
+                            "colName": "Target"
+                        },
+                        {
+                            "key": "RequirementLevel",
+                            "type": "numberField",
+                            "size": "full-size",
+                            "defaultValue": "1",
+                            "allowDecimal": false,
+                            "minVal": "0",
+                            "maxVal": "10",
+                            "allowRelative": false,
+                            "showControls": true,
+                            "controlsStyle": "hover",
+                            "inputStyle": "text",
+                            "colName": "Level"
+                        },
+                        {
+                            "key": "RequirementNotes",
+                            "type": "textField",
+                            "size": "full-size",
+                            "defaultValue": "",
+                            "colName": "Notes"
+                        }
+                    ],
+                    "head": false,
+                    "deleteWarning": false,
+                    "labelWhenEmpty": "",
+                    "predefinedLines": [],
+                    "canPlayerAdd": true,
+                    "hiddenColumns": [],
+                    "sortOption": "manual",
+                    "sortPredicates": []
+                },
+                {
+                    "key": "SchoolRequirementsTable",
+                    "type": "dynamicTable",
+                    "contents": [],
+                    "rowLayout": [
+                        {
+                            "key": "School",
+                            "type": "select",
+                            "size": "full-size",
+                            "defaultValue": "Alchemy",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Alchemy",
+                                    "value": "Alchemy"
+                                },
+                                {
+                                    "key": "Astrology",
+                                    "value": "Astrology"
+                                },
+                                {
+                                    "key": "Divination",
+                                    "value": "Divination"
+                                },
+                                {
+                                    "key": "Grimoire",
+                                    "value": "Grimoire"
+                                },
+                                {
+                                    "key": "Knot",
+                                    "value": "Knot"
+                                },
+                                {
+                                    "key": "Necromancy",
+                                    "value": "Necromancy"
+                                },
+                                {
+                                    "key": "Religion",
+                                    "value": "Religion"
+                                },
+                                {
+                                    "key": "Wards",
+                                    "value": "Wards"
+                                }
+                            ],
+                            "colName": "School"
+                        },
+                        {
+                            "key": "Level",
+                            "type": "numberField",
+                            "size": "full-size",
+                            "defaultValue": "1",
+                            "allowDecimal": false,
+                            "minVal": "1",
+                            "maxVal": "10",
+                            "allowRelative": false,
+                            "showControls": true,
+                            "controlsStyle": "hover",
+                            "inputStyle": "text",
+                            "colName": "Level"
+                        }
+                    ],
+                    "head": false,
+                    "deleteWarning": false,
+                    "labelWhenEmpty": "",
+                    "predefinedLines": [],
+                    "canPlayerAdd": true,
+                    "hiddenColumns": [],
+                    "sortOption": "manual",
+                    "sortPredicates": []
+                },
+                {
+                    "key": "StaticRitualSteps",
+                    "type": "itemContainer",
+                    "contents": [],
+                    "rowLayout": [],
+                    "head": false,
+                    "deleteWarning": false,
+                    "labelWhenEmpty": "No static ritual steps.",
+                    "title": "Static Ritual Steps",
+                    "hideEmpty": false,
+                    "hiddenColumns": [],
+                    "sortOption": "manual",
+                    "headDisplay": true,
+                    "showCreate": true,
+                    "defaultTemplate": "R7sTu4Qn2Lp8Vx5K",
+                    "createItemDialogShowTemplateList": false,
+                    "showDelete": true,
+                    "statusIcon": false,
+                    "nameAlign": "left",
+                    "nameLabel": "Step",
+                    "templateFilter": [
+                        "R7sTu4Qn2Lp8Vx5K"
+                    ],
+                    "itemFilterFormula": "",
+                    "sortPredicates": []
+                },
+                {
+                    "key": "SuccessEffects",
+                    "type": "itemContainer",
+                    "contents": [],
+                    "rowLayout": [],
+                    "head": false,
+                    "deleteWarning": false,
+                    "labelWhenEmpty": "",
+                    "title": "Canonical Effects",
+                    "hideEmpty": false,
+                    "hiddenColumns": [],
+                    "sortOption": "manual",
+                    "headDisplay": true,
+                    "showCreate": true,
+                    "defaultTemplate": "mwPqEYUoOfzXpyT9",
+                    "createItemDialogShowTemplateList": false,
+                    "showDelete": true,
+                    "statusIcon": false,
+                    "nameAlign": "left",
+                    "nameLabel": "Effect",
+                    "templateFilter": [
+                        "mwPqEYUoOfzXpyT9"
+                    ],
+                    "itemFilterFormula": "",
+                    "sortPredicates": []
+                },
+                {
+                    "key": "RitualGenerationPanel",
+                    "type": "panel",
+                    "title": "Ritual Generation",
+                    "titleStyle": "default",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "RitualStrengthTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Strength Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "RandomStepRollFormula",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Random Step Rolls:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "RitualStepTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Ritual Step Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "RitualModifierTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Modifier Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "RitualAssemblyNotes",
+                            "type": "textArea",
+                            "size": "full-size",
+                            "label": "Assembly Notes:",
+                            "defaultValue": "",
+                            "style": "sheet"
+                        }
+                    ]
+                },
+                {
+                    "key": "FailureGenerationPanel",
+                    "type": "panel",
+                    "title": "Failure Generation",
+                    "titleStyle": "default",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "FailureTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Failure Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "FailureEscalationTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Escalation Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "FailureNotes",
+                            "type": "textArea",
+                            "size": "full-size",
+                            "label": "Failure Notes:",
+                            "defaultValue": "",
+                            "style": "sheet"
+                        }
+                    ]
+                },
+                {
+                    "key": "SupportGenerationPanel",
+                    "type": "panel",
+                    "title": "Support Tables",
+                    "titleStyle": "default",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "SupportRollTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Support Roll Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "SupportRollNotes",
+                            "type": "textArea",
+                            "size": "full-size",
+                            "label": "Support Notes:",
+                            "defaultValue": "",
+                            "style": "sheet"
+                        }
+                    ]
+                }
+            ],
+            "key": "custom_body",
+            "type": "panel"
+        },
+        "display": {
+            "width": 780,
+            "height": 860,
+            "fix_size": false,
+            "pp_width": 64,
+            "pp_height": 64
+        },
+        "header": {
+            "contents": [
+                {
+                    "key": "Description",
+                    "type": "textArea",
+                    "size": "full-size",
+                    "label": "",
+                    "defaultValue": "",
+                    "style": "sheet"
+                },
+                {
+                    "key": "SpellIdentityPanel",
+                    "type": "panel",
+                    "flow": "grid-2",
+                    "title": "Spell Identity",
+                    "titleStyle": "default",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "SpellKind",
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Kind:",
+                            "defaultValue": "Protection",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Binding",
+                                    "value": "Binding"
+                                },
+                                {
+                                    "key": "Blessing",
+                                    "value": "Blessing"
+                                },
+                                {
+                                    "key": "Conjuration",
+                                    "value": "Conjuration"
+                                },
+                                {
+                                    "key": "Curse",
+                                    "value": "Curse"
+                                },
+                                {
+                                    "key": "Divination",
+                                    "value": "Divination"
+                                },
+                                {
+                                    "key": "Oath",
+                                    "value": "Oath"
+                                },
+                                {
+                                    "key": "Protection",
+                                    "value": "Protection"
+                                },
+                                {
+                                    "key": "Summoning",
+                                    "value": "Summoning"
+                                },
+                                {
+                                    "key": "Transformation",
+                                    "value": "Transformation"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "Strength",
+                            "type": "numberField",
+                            "size": "full-size",
+                            "label": "Strength:",
+                            "defaultValue": "1",
+                            "allowDecimal": false,
+                            "minVal": "1",
+                            "maxVal": "10",
+                            "allowRelative": false,
+                            "showControls": true,
+                            "controlsStyle": "hover",
+                            "inputStyle": "text"
+                        },
+                        {
+                            "key": "Complexity",
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Complexity:",
+                            "defaultValue": "Medium",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Easy",
+                                    "value": "Easy"
+                                },
+                                {
+                                    "key": "Medium",
+                                    "value": "Medium"
+                                },
+                                {
+                                    "key": "Hard",
+                                    "value": "Hard"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "RitualProfile",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Ritual Profile:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "SchoolRequirementMode",
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "School Logic:",
+                            "defaultValue": "Any",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Any",
+                                    "value": "Any"
+                                },
+                                {
+                                    "key": "All",
+                                    "value": "All"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "FailureProfile",
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Failure Profile:",
+                            "defaultValue": "Minor",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Minor",
+                                    "value": "Minor"
+                                },
+                                {
+                                    "key": "Major",
+                                    "value": "Major"
+                                },
+                                {
+                                    "key": "Catastrophic",
+                                    "value": "Catastrophic"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "RandomOutcome",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Random Outcome:",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "SpellNotes",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Notes:",
+                            "defaultValue": ""
+                        }
+                    ]
+                },
+                {
+                    "key": "SchoolPanel",
+                    "type": "panel",
+                    "flow": "grid-4",
+                    "title": "Schools",
+                    "titleStyle": "default",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "School_Alchemy",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Alchemy",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Astrology",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Astrology",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Divination",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Divination",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Grimoire",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Grimoire",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Knot",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Knot",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Necromancy",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Necromancy",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Religion",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Religion",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Wards",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Wards",
+                            "defaultChecked": false
+                        }
+                    ]
+                }
+            ],
+            "key": "custom_header",
+            "type": "panel"
+        },
+        "hidden": [],
+        "modifiers": [],
+        "template": "2kiWw3Cv5Zk1lZxn",
+        "props": {
+            "Description": "An herbal cure for Agues. The right plants, gathered and prepared, drive the affliction from the body when the working takes.",
+            "SpellKind": "Herbalism",
+            "Strength": 1,
+            "Complexity": "Easy",
+            "RitualProfile": "Herbalism",
+            "SchoolRequirementMode": "Any",
+            "FailureProfile": "None",
+            "RandomOutcome": false,
+            "SpellNotes": "Canonical effect: remove Agues from the target.",
+            "SchoolRequirementsTable": [
+                {
+                    "School": "Herbalism",
+                    "Level": 1
+                }
+            ],
+            "PrerequisitesTable": [
+                {
+                    "RequirementType": "Item",
+                    "RequirementTarget": "Fresh or dried herbs and a means to prepare them (mortar, pot, or cloth).",
+                    "RequirementLevel": 1,
+                    "RequirementNotes": "Herbal healing depends on prepared plant matter."
+                }
+            ],
+            "StaticRitualSteps": [
+                {
+                    "StepScope": "Mandatory",
+                    "AlternativeGroup": "",
+                    "StepType": "StaticSkill",
+                    "StepText": "Meet the Herbalism casting requirement.",
+                    "SkillCheck": "Pagan Expertise Herbalism",
+                    "Difficulty": "1",
+                    "StepNotes": "Static core school requirement.",
+                    "Icon": "fa-graduation-cap",
+                    "Tooltip": "Meet the Herbalism casting requirement. (easy)"
+                },
+                {
+                    "StepScope": "Mandatory",
+                    "AlternativeGroup": "",
+                    "StepType": "RareMaterial",
+                    "StepText": "Gather willow bark, feverfew, and a bitter fever-bark.",
+                    "SkillCheck": "",
+                    "Difficulty": "",
+                    "StepNotes": "Gathered or prepared material — no roll.",
+                    "Icon": "fa-leaf",
+                    "Tooltip": "Gather willow bark, feverfew, and a bitter fever-bark. (required material, no roll)"
+                },
+                {
+                    "StepScope": "Mandatory",
+                    "AlternativeGroup": "",
+                    "StepType": "RareMaterial",
+                    "StepText": "Boil them down to a bitter febrifuge draught.",
+                    "SkillCheck": "",
+                    "Difficulty": "",
+                    "StepNotes": "Gathered or prepared material — no roll.",
+                    "Icon": "fa-leaf",
+                    "Tooltip": "Boil them down to a bitter febrifuge draught. (required material, no roll)"
+                },
+                {
+                    "StepScope": "Mandatory",
+                    "AlternativeGroup": "",
+                    "StepType": "AlchemicalOperation",
+                    "StepText": "Dose the sufferer through the fever's return and break the ague.",
+                    "SkillCheck": "",
+                    "Difficulty": "",
+                    "StepNotes": "Preparation step — no roll.",
+                    "Icon": "fa-mortar-pestle",
+                    "Tooltip": "Dose the sufferer through the fever's return and break the ague. (required preparation, no roll)"
+                }
+            ],
+            "SuccessEffects": [
+                {
+                    "Description": "Cure Agues: remove the affliction",
+                    "ApplicationMode": "DirectDataChange",
+                    "EffectType": "Remove",
+                    "EffectSubtype": "Disease",
+                    "Visible": true,
+                    "TargetType": "Actor",
+                    "TargetCount": "1",
+                    "TargetRange": "Touch",
+                    "TargetFilter": "",
+                    "TargetDescription": "A person afflicted with Agues.",
+                    "CheckType": "None",
+                    "CheckFormula": "",
+                    "ResistanceType": "",
+                    "ResistanceFormula": "",
+                    "OnPartial": "",
+                    "OnFailure": "",
+                    "DetectionCheck": "",
+                    "PayloadTarget": "Disease:Agues",
+                    "PayloadOperation": "Remove",
+                    "PayloadValue": "Agues",
+                    "PayloadDice": "",
+                    "PayloadTag": "",
+                    "PayloadTraitName": "",
+                    "PayloadTraitText": "",
+                    "GrantedItemTemplate": "",
+                    "GrantedItemName": "",
+                    "PayloadNotes": "Removes Agues from the target outright.",
+                    "DurationType": "Permanent",
+                    "DurationValue": "",
+                    "ExpiryTrigger": "",
+                    "RemovalMethod": "",
+                    "SuppressedBy": ""
+                }
+            ],
+            "RitualStrengthTable": "",
+            "RandomStepRollFormula": "1d2+1",
+            "RitualStepTable": "RitualSteps_Easy",
+            "RitualModifierTable": "",
+            "RitualAssemblyNotes": "Assembled from the herbal materials and preparation steps below.",
+            "FailureTable": "SpellFailure_None",
+            "FailureEscalationTable": "",
+            "FailureNotes": "Herbalism has no failure consequence — a failed working simply does not take.",
+            "SupportRollTable": "",
+            "SupportRollNotes": "",
+            "School_Alchemy": false,
+            "School_Astrology": false,
+            "School_Divination": false,
+            "School_Grimoire": false,
+            "School_Knot": false,
+            "School_Necromancy": false,
+            "School_Religion": false,
+            "School_Wards": false
+        }
+    },
+    "effects": [],
+    "folder": null,
+    "flags": {
+        "custom-system-builder": {
+            "version": "5.2.0"
+        },
+        "1547Core": {
+            "folderHint": "Spells",
+            "sourceData": {
+                "_id": "Sp00000000000107",
+                "id": "Sp00000000000107",
+                "name": "Cure Agues",
+                "uuid": "Item.Sp00000000000107",
+                "folder": "Spells",
+                "itemType": "spell",
+                "spellKind": "Herbalism",
+                "strength": 1,
+                "ritualProfile": "Herbalism",
+                "failureProfile": "None",
+                "randomOutcome": false,
+                "spellNotes": "Canonical effect: remove Agues from the target.",
+                "description": "An herbal cure for Agues. The right plants, gathered and prepared, drive the affliction from the body when the working takes.",
+                "schools": [
+                    "Herbalism"
+                ],
+                "prerequisitesTable": [
+                    {
+                        "RequirementType": "Item",
+                        "RequirementTarget": "Fresh or dried herbs and a means to prepare them (mortar, pot, or cloth).",
+                        "RequirementLevel": 1,
+                        "RequirementNotes": "Herbal healing depends on prepared plant matter."
+                    }
+                ],
+                "successEffects": [
+                    {
+                        "Description": "Cure Agues: remove the affliction",
+                        "ApplicationMode": "DirectDataChange",
+                        "EffectType": "Remove",
+                        "EffectSubtype": "Disease",
+                        "Visible": true,
+                        "TargetType": "Actor",
+                        "TargetCount": "1",
+                        "TargetRange": "Touch",
+                        "TargetFilter": "",
+                        "TargetDescription": "A person afflicted with Agues.",
+                        "CheckType": "None",
+                        "CheckFormula": "",
+                        "ResistanceType": "",
+                        "ResistanceFormula": "",
+                        "OnPartial": "",
+                        "OnFailure": "",
+                        "DetectionCheck": "",
+                        "PayloadTarget": "Disease:Agues",
+                        "PayloadOperation": "Remove",
+                        "PayloadValue": "Agues",
+                        "PayloadDice": "",
+                        "PayloadTag": "",
+                        "PayloadTraitName": "",
+                        "PayloadTraitText": "",
+                        "GrantedItemTemplate": "",
+                        "GrantedItemName": "",
+                        "PayloadNotes": "Removes Agues from the target outright.",
+                        "DurationType": "Permanent",
+                        "DurationValue": "",
+                        "ExpiryTrigger": "",
+                        "RemovalMethod": "",
+                        "SuppressedBy": ""
+                    }
+                ],
+                "ritualStrengthTable": "",
+                "ritualStepTable": "RitualSteps_Easy",
+                "ritualModifierTable": "",
+                "ritualAssemblyNotes": "Assembled from the herbal materials and preparation steps below.",
+                "failureTable": "",
+                "failureEscalationTable": "",
+                "failureNotes": "Herbalism has no failure consequence — a failed working simply does not take.",
+                "img": "media/home/games/1547/Skills/spell.webp",
+                "schoolRequirementMode": "Any",
+                "schoolRequirements": [
+                    {
+                        "School": "Herbalism",
+                        "Level": 1
+                    }
+                ],
+                "staticRitualSteps": [
+                    {
+                        "StepScope": "Mandatory",
+                        "AlternativeGroup": "",
+                        "StepType": "StaticSkill",
+                        "StepText": "Meet the Herbalism casting requirement.",
+                        "SkillCheck": "Pagan Expertise Herbalism",
+                        "Difficulty": "1",
+                        "StepNotes": "Static core school requirement.",
+                        "Icon": "fa-graduation-cap",
+                        "Tooltip": "Meet the Herbalism casting requirement. (easy)"
+                    },
+                    {
+                        "StepScope": "Mandatory",
+                        "AlternativeGroup": "",
+                        "StepType": "RareMaterial",
+                        "StepText": "Gather willow bark, feverfew, and a bitter fever-bark.",
+                        "SkillCheck": "",
+                        "Difficulty": "",
+                        "StepNotes": "Gathered or prepared material — no roll.",
+                        "Icon": "fa-leaf",
+                        "Tooltip": "Gather willow bark, feverfew, and a bitter fever-bark. (required material, no roll)"
+                    },
+                    {
+                        "StepScope": "Mandatory",
+                        "AlternativeGroup": "",
+                        "StepType": "RareMaterial",
+                        "StepText": "Boil them down to a bitter febrifuge draught.",
+                        "SkillCheck": "",
+                        "Difficulty": "",
+                        "StepNotes": "Gathered or prepared material — no roll.",
+                        "Icon": "fa-leaf",
+                        "Tooltip": "Boil them down to a bitter febrifuge draught. (required material, no roll)"
+                    },
+                    {
+                        "StepScope": "Mandatory",
+                        "AlternativeGroup": "",
+                        "StepType": "AlchemicalOperation",
+                        "StepText": "Dose the sufferer through the fever's return and break the ague.",
+                        "SkillCheck": "",
+                        "Difficulty": "",
+                        "StepNotes": "Preparation step — no roll.",
+                        "Icon": "fa-mortar-pestle",
+                        "Tooltip": "Dose the sufferer through the fever's return and break the ague. (required preparation, no roll)"
+                    }
+                ],
+                "complexity": "Easy",
+                "randomStepRollFormula": "1d2+1"
+            }
+        }
+    },
+    "items": [],
+    "ownership": {
+        "default": 0
+    }
+}

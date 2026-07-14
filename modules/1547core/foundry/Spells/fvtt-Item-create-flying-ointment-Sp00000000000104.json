@@ -1,0 +1,821 @@
+{
+    "_id": "Sp00000000000104",
+    "name": "Create Flying Ointment",
+    "type": "equippableItem",
+    "img": "media/home/games/1547/Skills/spell.webp",
+    "system": {
+        "body": {
+            "contents": [
+                {
+                    "key": "PrerequisitesTable",
+                    "type": "dynamicTable",
+                    "contents": [],
+                    "rowLayout": [
+                        {
+                            "key": "RequirementType",
+                            "type": "select",
+                            "size": "full-size",
+                            "defaultValue": "Skill",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Skill",
+                                    "value": "Skill"
+                                },
+                                {
+                                    "key": "State",
+                                    "value": "State"
+                                },
+                                {
+                                    "key": "Location",
+                                    "value": "Location"
+                                },
+                                {
+                                    "key": "Item",
+                                    "value": "Item"
+                                },
+                                {
+                                    "key": "Knowledge",
+                                    "value": "Knowledge"
+                                },
+                                {
+                                    "key": "Oath",
+                                    "value": "Oath"
+                                },
+                                {
+                                    "key": "Pact",
+                                    "value": "Pact"
+                                }
+                            ],
+                            "colName": "Type"
+                        },
+                        {
+                            "key": "RequirementTarget",
+                            "type": "textField",
+                            "size": "full-size",
+                            "defaultValue": "",
+                            "colName": "Target"
+                        },
+                        {
+                            "key": "RequirementLevel",
+                            "type": "numberField",
+                            "size": "full-size",
+                            "defaultValue": "1",
+                            "allowDecimal": false,
+                            "minVal": "0",
+                            "maxVal": "10",
+                            "allowRelative": false,
+                            "showControls": true,
+                            "controlsStyle": "hover",
+                            "inputStyle": "text",
+                            "colName": "Level"
+                        },
+                        {
+                            "key": "RequirementNotes",
+                            "type": "textField",
+                            "size": "full-size",
+                            "defaultValue": "",
+                            "colName": "Notes"
+                        }
+                    ],
+                    "head": false,
+                    "deleteWarning": false,
+                    "labelWhenEmpty": "",
+                    "predefinedLines": [],
+                    "canPlayerAdd": true,
+                    "hiddenColumns": [],
+                    "sortOption": "manual",
+                    "sortPredicates": []
+                },
+                {
+                    "key": "SchoolRequirementsTable",
+                    "type": "dynamicTable",
+                    "contents": [],
+                    "rowLayout": [
+                        {
+                            "key": "School",
+                            "type": "select",
+                            "size": "full-size",
+                            "defaultValue": "Alchemy",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Alchemy",
+                                    "value": "Alchemy"
+                                },
+                                {
+                                    "key": "Astrology",
+                                    "value": "Astrology"
+                                },
+                                {
+                                    "key": "Divination",
+                                    "value": "Divination"
+                                },
+                                {
+                                    "key": "Grimoire",
+                                    "value": "Grimoire"
+                                },
+                                {
+                                    "key": "Knot",
+                                    "value": "Knot"
+                                },
+                                {
+                                    "key": "Necromancy",
+                                    "value": "Necromancy"
+                                },
+                                {
+                                    "key": "Religion",
+                                    "value": "Religion"
+                                },
+                                {
+                                    "key": "Wards",
+                                    "value": "Wards"
+                                }
+                            ],
+                            "colName": "School"
+                        },
+                        {
+                            "key": "Level",
+                            "type": "numberField",
+                            "size": "full-size",
+                            "defaultValue": "1",
+                            "allowDecimal": false,
+                            "minVal": "1",
+                            "maxVal": "10",
+                            "allowRelative": false,
+                            "showControls": true,
+                            "controlsStyle": "hover",
+                            "inputStyle": "text",
+                            "colName": "Level"
+                        }
+                    ],
+                    "head": false,
+                    "deleteWarning": false,
+                    "labelWhenEmpty": "",
+                    "predefinedLines": [],
+                    "canPlayerAdd": true,
+                    "hiddenColumns": [],
+                    "sortOption": "manual",
+                    "sortPredicates": []
+                },
+                {
+                    "key": "StaticRitualSteps",
+                    "type": "itemContainer",
+                    "contents": [],
+                    "rowLayout": [],
+                    "head": false,
+                    "deleteWarning": false,
+                    "labelWhenEmpty": "No static ritual steps.",
+                    "title": "Static Ritual Steps",
+                    "hideEmpty": false,
+                    "hiddenColumns": [],
+                    "sortOption": "manual",
+                    "headDisplay": true,
+                    "showCreate": true,
+                    "defaultTemplate": "R7sTu4Qn2Lp8Vx5K",
+                    "createItemDialogShowTemplateList": false,
+                    "showDelete": true,
+                    "statusIcon": false,
+                    "nameAlign": "left",
+                    "nameLabel": "Step",
+                    "templateFilter": [
+                        "R7sTu4Qn2Lp8Vx5K"
+                    ],
+                    "itemFilterFormula": "",
+                    "sortPredicates": []
+                },
+                {
+                    "key": "SuccessEffects",
+                    "type": "itemContainer",
+                    "contents": [],
+                    "rowLayout": [],
+                    "head": false,
+                    "deleteWarning": false,
+                    "labelWhenEmpty": "",
+                    "title": "Canonical Effects",
+                    "hideEmpty": false,
+                    "hiddenColumns": [],
+                    "sortOption": "manual",
+                    "headDisplay": true,
+                    "showCreate": true,
+                    "defaultTemplate": "mwPqEYUoOfzXpyT9",
+                    "createItemDialogShowTemplateList": false,
+                    "showDelete": true,
+                    "statusIcon": false,
+                    "nameAlign": "left",
+                    "nameLabel": "Effect",
+                    "templateFilter": [
+                        "mwPqEYUoOfzXpyT9"
+                    ],
+                    "itemFilterFormula": "",
+                    "sortPredicates": []
+                },
+                {
+                    "key": "RitualGenerationPanel",
+                    "type": "panel",
+                    "title": "Ritual Generation",
+                    "titleStyle": "default",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "RitualStrengthTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Strength Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "RandomStepRollFormula",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Random Step Rolls:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "RitualStepTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Ritual Step Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "RitualModifierTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Modifier Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "RitualAssemblyNotes",
+                            "type": "textArea",
+                            "size": "full-size",
+                            "label": "Assembly Notes:",
+                            "defaultValue": "",
+                            "style": "sheet"
+                        }
+                    ]
+                },
+                {
+                    "key": "FailureGenerationPanel",
+                    "type": "panel",
+                    "title": "Failure Generation",
+                    "titleStyle": "default",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "FailureTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Failure Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "FailureEscalationTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Escalation Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "FailureNotes",
+                            "type": "textArea",
+                            "size": "full-size",
+                            "label": "Failure Notes:",
+                            "defaultValue": "",
+                            "style": "sheet"
+                        }
+                    ]
+                },
+                {
+                    "key": "SupportGenerationPanel",
+                    "type": "panel",
+                    "title": "Support Tables",
+                    "titleStyle": "default",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "SupportRollTable",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Support Roll Table:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "SupportRollNotes",
+                            "type": "textArea",
+                            "size": "full-size",
+                            "label": "Support Notes:",
+                            "defaultValue": "",
+                            "style": "sheet"
+                        }
+                    ]
+                }
+            ],
+            "key": "custom_body",
+            "type": "panel"
+        },
+        "display": {
+            "width": 780,
+            "height": 860,
+            "fix_size": false,
+            "pp_width": 64,
+            "pp_height": 64
+        },
+        "header": {
+            "contents": [
+                {
+                    "key": "Description",
+                    "type": "textArea",
+                    "size": "full-size",
+                    "label": "",
+                    "defaultValue": "",
+                    "style": "sheet"
+                },
+                {
+                    "key": "SpellIdentityPanel",
+                    "type": "panel",
+                    "flow": "grid-2",
+                    "title": "Spell Identity",
+                    "titleStyle": "default",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "SpellKind",
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Kind:",
+                            "defaultValue": "Protection",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Binding",
+                                    "value": "Binding"
+                                },
+                                {
+                                    "key": "Blessing",
+                                    "value": "Blessing"
+                                },
+                                {
+                                    "key": "Conjuration",
+                                    "value": "Conjuration"
+                                },
+                                {
+                                    "key": "Curse",
+                                    "value": "Curse"
+                                },
+                                {
+                                    "key": "Divination",
+                                    "value": "Divination"
+                                },
+                                {
+                                    "key": "Oath",
+                                    "value": "Oath"
+                                },
+                                {
+                                    "key": "Protection",
+                                    "value": "Protection"
+                                },
+                                {
+                                    "key": "Summoning",
+                                    "value": "Summoning"
+                                },
+                                {
+                                    "key": "Transformation",
+                                    "value": "Transformation"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "Strength",
+                            "type": "numberField",
+                            "size": "full-size",
+                            "label": "Strength:",
+                            "defaultValue": "1",
+                            "allowDecimal": false,
+                            "minVal": "1",
+                            "maxVal": "10",
+                            "allowRelative": false,
+                            "showControls": true,
+                            "controlsStyle": "hover",
+                            "inputStyle": "text"
+                        },
+                        {
+                            "key": "Complexity",
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Complexity:",
+                            "defaultValue": "Medium",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Easy",
+                                    "value": "Easy"
+                                },
+                                {
+                                    "key": "Medium",
+                                    "value": "Medium"
+                                },
+                                {
+                                    "key": "Hard",
+                                    "value": "Hard"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "RitualProfile",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Ritual Profile:",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "SchoolRequirementMode",
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "School Logic:",
+                            "defaultValue": "Any",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Any",
+                                    "value": "Any"
+                                },
+                                {
+                                    "key": "All",
+                                    "value": "All"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "FailureProfile",
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Failure Profile:",
+                            "defaultValue": "Minor",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "Minor",
+                                    "value": "Minor"
+                                },
+                                {
+                                    "key": "Major",
+                                    "value": "Major"
+                                },
+                                {
+                                    "key": "Catastrophic",
+                                    "value": "Catastrophic"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "RandomOutcome",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Random Outcome:",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "SpellNotes",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Notes:",
+                            "defaultValue": ""
+                        }
+                    ]
+                },
+                {
+                    "key": "SchoolPanel",
+                    "type": "panel",
+                    "flow": "grid-4",
+                    "title": "Schools",
+                    "titleStyle": "default",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "contents": [
+                        {
+                            "key": "School_Alchemy",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Alchemy",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Astrology",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Astrology",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Divination",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Divination",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Grimoire",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Grimoire",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Knot",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Knot",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Necromancy",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Necromancy",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Religion",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Religion",
+                            "defaultChecked": false
+                        },
+                        {
+                            "key": "School_Wards",
+                            "type": "checkbox",
+                            "size": "full-size",
+                            "label": "Wards",
+                            "defaultChecked": false
+                        }
+                    ]
+                }
+            ],
+            "key": "custom_header",
+            "type": "panel"
+        },
+        "hidden": [],
+        "modifiers": [],
+        "template": "2kiWw3Cv5Zk1lZxn",
+        "props": {
+            "Description": "A transgressive necromantic working that renders a flying ointment from forbidden matter. The witch lies with an unnatural of the infernal domain and devil role, carries and bears its offspring, then boils that offspring down into a pale grease. Smeared upon a broom, a beast, or any bearing thing, the ointment lifts it into the night air. It sits at the far, dangerous end of the craft, demanding steadiness, secrecy, and someone willing to bear its cost.",
+            "SpellKind": "Necromancy",
+            "Strength": 3,
+            "Complexity": "Hard",
+            "RitualProfile": "Necromancy",
+            "SchoolRequirementMode": "Any",
+            "FailureProfile": "Catastrophic",
+            "RandomOutcome": false,
+            "SpellNotes": "Canonical effect: on success the caster renders one jar of flying ointment, which grants flight for one hour to a beast or an inanimate object. The rite always requires congress with an infernal Devil-role unnatural and the boiling of the resulting offspring.",
+            "SchoolRequirementsTable": [
+                {
+                    "School": "Necromancy",
+                    "Level": 3
+                }
+            ],
+            "PrerequisitesTable": [
+                {
+                    "RequirementType": "Item",
+                    "RequirementTarget": "A cauldron and rendering fire, and an infernal-sired offspring",
+                    "RequirementLevel": 1,
+                    "RequirementNotes": "The rite consumes the offspring conceived with an infernal Devil-role unnatural."
+                }
+            ],
+            "StaticRitualSteps": [
+                {
+                    "StepScope": "Mandatory",
+                    "AlternativeGroup": "",
+                    "StepType": "StaticSkill",
+                    "StepText": "Meet the Necromancy school casting requirement.",
+                    "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
+                    "Difficulty": "3",
+                    "StepNotes": "Static core school requirement.",
+                    "Icon": "fa-graduation-cap",
+                    "Tooltip": "Meet the Necromancy school casting requirement. (average)"
+                },
+                {
+                    "StepScope": "Mandatory",
+                    "AlternativeGroup": "",
+                    "StepType": "RareMaterial",
+                    "StepText": "Lie with an unnatural of the Infernal domain and Devil role, and conceive its offspring.",
+                    "SkillCheck": "",
+                    "Difficulty": "",
+                    "StepNotes": "Always required. The ointment can only be rendered from an infernal-sired offspring.",
+                    "Icon": "fa-gem",
+                    "Tooltip": "Lie with an infernal Devil-role unnatural and conceive its offspring. (required condition, no roll)"
+                },
+                {
+                    "StepScope": "Mandatory",
+                    "AlternativeGroup": "",
+                    "StepType": "AlchemicalOperation",
+                    "StepText": "Boil the offspring down to render the flying ointment.",
+                    "SkillCheck": "",
+                    "Difficulty": "",
+                    "StepNotes": "Always required. Render the ointment by boiling the offspring.",
+                    "Icon": "fa-flask",
+                    "Tooltip": "Boil the offspring to render the ointment. (required condition, no roll)"
+                }
+            ],
+            "SuccessEffects": [
+                {
+                    "Description": "Create Flying Ointment: Grant/Ointment of Flying",
+                    "ApplicationMode": "GrantItem",
+                    "EffectType": "Grant",
+                    "EffectSubtype": "Item",
+                    "Visible": true,
+                    "TargetType": "Self",
+                    "TargetCount": "1",
+                    "TargetRange": "Self",
+                    "TargetFilter": "",
+                    "TargetDescription": "The caster receives the finished ointment.",
+                    "CheckType": "None",
+                    "CheckFormula": "",
+                    "ResistanceType": "",
+                    "ResistanceFormula": "",
+                    "OnPartial": "",
+                    "OnFailure": "",
+                    "DetectionCheck": "",
+                    "PayloadTarget": "Item",
+                    "PayloadOperation": "Grant",
+                    "PayloadValue": "Ointment of flying",
+                    "PayloadDice": "",
+                    "PayloadTag": "",
+                    "PayloadTraitName": "",
+                    "PayloadTraitText": "",
+                    "GrantedItemTemplate": "Item.OintmntOfFlyng01",
+                    "GrantedItemName": "Ointment of flying",
+                    "PayloadNotes": "Produces one jar of flying ointment (grants flight for one hour to a beast or object).",
+                    "DurationType": "Permanent",
+                    "DurationValue": "",
+                    "ExpiryTrigger": "",
+                    "RemovalMethod": "",
+                    "SuppressedBy": ""
+                }
+            ],
+            "RitualStrengthTable": "",
+            "RandomStepRollFormula": "1d6+1",
+            "RitualStepTable": "RitualSteps_Hard",
+            "RitualModifierTable": "",
+            "RitualAssemblyNotes": "To be generated from recipes and ritual tables defined later.",
+            "FailureTable": "SpellFailure_Catastrophic",
+            "FailureEscalationTable": "",
+            "FailureNotes": "Failure is roll-table-driven per the magic source document.",
+            "SupportRollTable": "",
+            "SupportRollNotes": "",
+            "School_Alchemy": false,
+            "School_Astrology": false,
+            "School_Divination": false,
+            "School_Grimoire": false,
+            "School_Knot": false,
+            "School_Necromancy": true,
+            "School_Religion": false,
+            "School_Wards": false
+        }
+    },
+    "effects": [],
+    "folder": null,
+    "flags": {
+        "custom-system-builder": {
+            "version": "5.2.0"
+        },
+        "1547Core": {
+            "folderHint": "Spells",
+            "sourceData": {
+                "_id": "Sp00000000000104",
+                "id": "Sp00000000000104",
+                "name": "Create Flying Ointment",
+                "uuid": "Item.Sp00000000000104",
+                "folder": "Spells",
+                "itemType": "spell",
+                "spellKind": "Necromancy",
+                "strength": 3,
+                "ritualProfile": "Necromancy",
+                "failureProfile": "Catastrophic",
+                "randomOutcome": false,
+                "spellNotes": "Canonical effect: on success the caster renders one jar of flying ointment, which grants flight for one hour to a beast or an inanimate object. The rite always requires congress with an infernal Devil-role unnatural and the boiling of the resulting offspring.",
+                "description": "A transgressive necromantic working that renders a flying ointment from forbidden matter. The witch lies with an unnatural of the infernal domain and devil role, carries and bears its offspring, then boils that offspring down into a pale grease. Smeared upon a broom, a beast, or any bearing thing, the ointment lifts it into the night air. It sits at the far, dangerous end of the craft, demanding steadiness, secrecy, and someone willing to bear its cost.",
+                "schools": [
+                    "Necromancy"
+                ],
+                "prerequisitesTable": [
+                    {
+                        "RequirementType": "Item",
+                        "RequirementTarget": "A cauldron and rendering fire, and an infernal-sired offspring",
+                        "RequirementLevel": 1,
+                        "RequirementNotes": "The rite consumes the offspring conceived with an infernal Devil-role unnatural."
+                    }
+                ],
+                "successEffects": [
+                    {
+                        "Description": "Create Flying Ointment: Grant/Ointment of Flying",
+                        "ApplicationMode": "GrantItem",
+                        "EffectType": "Grant",
+                        "EffectSubtype": "Item",
+                        "Visible": true,
+                        "TargetType": "Self",
+                        "TargetCount": "1",
+                        "TargetRange": "Self",
+                        "TargetFilter": "",
+                        "TargetDescription": "The caster receives the finished ointment.",
+                        "CheckType": "None",
+                        "CheckFormula": "",
+                        "ResistanceType": "",
+                        "ResistanceFormula": "",
+                        "OnPartial": "",
+                        "OnFailure": "",
+                        "DetectionCheck": "",
+                        "PayloadTarget": "Item",
+                        "PayloadOperation": "Grant",
+                        "PayloadValue": "Ointment of flying",
+                        "PayloadDice": "",
+                        "PayloadTag": "",
+                        "PayloadTraitName": "",
+                        "PayloadTraitText": "",
+                        "GrantedItemTemplate": "Item.OintmntOfFlyng01",
+                        "GrantedItemName": "Ointment of flying",
+                        "PayloadNotes": "Produces one jar of flying ointment (grants flight for one hour to a beast or object).",
+                        "DurationType": "Permanent",
+                        "DurationValue": "",
+                        "ExpiryTrigger": "",
+                        "RemovalMethod": "",
+                        "SuppressedBy": ""
+                    }
+                ],
+                "ritualStrengthTable": "",
+                "ritualStepTable": "RitualSteps_Hard",
+                "ritualModifierTable": "",
+                "ritualAssemblyNotes": "To be generated from recipes and ritual tables defined later.",
+                "failureTable": "",
+                "failureEscalationTable": "",
+                "failureNotes": "Failure is roll-table-driven per the magic source document.",
+                "img": "media/home/games/1547/Skills/spell.webp",
+                "schoolRequirementMode": "Any",
+                "schoolRequirements": [
+                    {
+                        "School": "Necromancy",
+                        "Level": 3
+                    }
+                ],
+                "staticRitualSteps": [
+                    {
+                        "StepScope": "Mandatory",
+                        "AlternativeGroup": "",
+                        "StepType": "StaticSkill",
+                        "StepText": "Meet the Necromancy school casting requirement.",
+                        "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
+                        "Difficulty": "3",
+                        "StepNotes": "Static core school requirement.",
+                        "Icon": "fa-graduation-cap",
+                        "Tooltip": "Meet the Necromancy school casting requirement. (average)"
+                    },
+                    {
+                        "StepScope": "Mandatory",
+                        "AlternativeGroup": "",
+                        "StepType": "RareMaterial",
+                        "StepText": "Lie with an unnatural of the Infernal domain and Devil role, and conceive its offspring.",
+                        "SkillCheck": "",
+                        "Difficulty": "",
+                        "StepNotes": "Always required. The ointment can only be rendered from an infernal-sired offspring.",
+                        "Icon": "fa-gem",
+                        "Tooltip": "Lie with an infernal Devil-role unnatural and conceive its offspring. (required condition, no roll)"
+                    },
+                    {
+                        "StepScope": "Mandatory",
+                        "AlternativeGroup": "",
+                        "StepType": "AlchemicalOperation",
+                        "StepText": "Boil the offspring down to render the flying ointment.",
+                        "SkillCheck": "",
+                        "Difficulty": "",
+                        "StepNotes": "Always required. Render the ointment by boiling the offspring.",
+                        "Icon": "fa-flask",
+                        "Tooltip": "Boil the offspring to render the ointment. (required condition, no roll)"
+                    }
+                ],
+                "complexity": "Hard",
+                "randomStepRollFormula": "1d6+1"
+            }
+        }
+    },
+    "items": [],
+    "ownership": {
+        "default": 0
+    }
+}

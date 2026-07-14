@@ -537,10 +537,32 @@ function removalMatchesEffect(activeEffect, effect) {
     }
 }
 
+// CSB disease-affliction items carry this template id (they are Items on the
+// actor, not ActiveEffects) — a Remove/Disease effect deletes them outright.
+const DISEASE_TEMPLATE_ID = "DZ7sK2mLp9Qx4TvR";
+
 async function applyRemovalEffect(carrierItem, effect, targetDoc) {
     if (!targetDoc?.deleteEmbeddedDocuments) {
         return { applied: false, note: "Target document cannot remove embedded effects." };
     }
+
+    // Remove/Disease cures an affliction: delete the disease ITEM(s) on the
+    // target. PayloadValue names the disease (e.g. "Plague"); empty cures every
+    // disease the target carries. Used by the Herbalism cure line.
+    if (String(effect.EffectSubtype ?? "").trim() === "Disease") {
+        const wanted = String(effect.PayloadValue ?? "").trim().toLowerCase();
+        const diseaseItems = Array.from(targetDoc.items ?? [])
+            .filter((item) => String(item?.system?.template ?? "") === DISEASE_TEMPLATE_ID
+                && (!wanted || String(item?.name ?? "").trim().toLowerCase() === wanted));
+        const ids = diseaseItems.map((item) => item.id).filter(Boolean);
+        if (!ids.length) {
+            return { applied: false, note: wanted ? `The target does not carry ${effect.PayloadValue}.` : "The target carries no disease to cure." };
+        }
+        const names = diseaseItems.map((item) => item.name).join(", ");
+        await targetDoc.deleteEmbeddedDocuments("Item", ids);
+        return { applied: true, note: `Cured: ${names}.` };
+    }
+
     const matchingIds = Array.from(targetDoc.effects ?? [])
         .filter((activeEffect) => removalMatchesEffect(activeEffect, effect))
         .map((activeEffect) => activeEffect.id)

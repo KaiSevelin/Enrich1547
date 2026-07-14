@@ -607,7 +607,9 @@
                     "StepText": "Meet the Alchemy school casting requirement.",
                     "SkillCheck": "Learning Expertise Alchemy",
                     "Difficulty": "1",
-                    "StepNotes": "Static core school requirement."
+                    "StepNotes": "Static core school requirement.",
+                    "Icon": "fa-graduation-cap",
+                    "Tooltip": "Meet the Alchemy school casting requirement. (trivial)"
                 }
             ],
             "SuccessEffects": [
@@ -681,7 +683,7 @@
                 }
             ],
             "RitualStrengthTable": "",
-            "RandomStepRollFormula": "1d2",
+            "RandomStepRollFormula": "1d2+1",
             "RitualStepTable": "RitualSteps_Easy",
             "RitualModifierTable": "",
             "RitualAssemblyNotes": "To be generated from recipes and ritual tables defined later.",
@@ -826,11 +828,13 @@
                         "StepText": "Meet the Alchemy school casting requirement.",
                         "SkillCheck": "Learning Expertise Alchemy",
                         "Difficulty": "1",
-                        "StepNotes": "Static core school requirement."
+                        "StepNotes": "Static core school requirement.",
+                        "Icon": "fa-graduation-cap",
+                        "Tooltip": "Meet the Alchemy school casting requirement. (trivial)"
                     }
                 ],
                 "complexity": "Easy",
-                "randomStepRollFormula": "1d2"
+                "randomStepRollFormula": "1d2+1"
             }
         }
     },

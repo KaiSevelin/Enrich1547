@@ -617,7 +617,9 @@
                     "StepText": "Meet the Alchemy school casting requirement.",
                     "SkillCheck": "Learning Expertise Alchemy",
                     "Difficulty": "3",
-                    "StepNotes": "Static core school requirement."
+                    "StepNotes": "Static core school requirement.",
+                    "Icon": "fa-graduation-cap",
+                    "Tooltip": "Meet the Alchemy school casting requirement. (average)"
                 },
                 {
                     "StepScope": "Mandatory",
@@ -626,7 +628,9 @@
                     "StepText": "Meet the Grimoire school casting requirement.",
                     "SkillCheck": "Learning Expertise Occult",
                     "Difficulty": "2",
-                    "StepNotes": "Static core school requirement."
+                    "StepNotes": "Static core school requirement.",
+                    "Icon": "fa-graduation-cap",
+                    "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
                 }
             ],
             "SuccessEffects": [
@@ -700,7 +704,7 @@
                 }
             ],
             "RitualStrengthTable": "",
-            "RandomStepRollFormula": "1d6",
+            "RandomStepRollFormula": "1d6+1",
             "RitualStepTable": "RitualSteps_Hard",
             "RitualModifierTable": "",
             "RitualAssemblyNotes": "To be generated from recipes and ritual tables defined later.",
@@ -856,7 +860,9 @@
                         "StepText": "Meet the Alchemy school casting requirement.",
                         "SkillCheck": "Learning Expertise Alchemy",
                         "Difficulty": "3",
-                        "StepNotes": "Static core school requirement."
+                        "StepNotes": "Static core school requirement.",
+                        "Icon": "fa-graduation-cap",
+                        "Tooltip": "Meet the Alchemy school casting requirement. (average)"
                     },
                     {
                         "StepScope": "Mandatory",
@@ -865,11 +871,13 @@
                         "StepText": "Meet the Grimoire school casting requirement.",
                         "SkillCheck": "Learning Expertise Occult",
                         "Difficulty": "2",
-                        "StepNotes": "Static core school requirement."
+                        "StepNotes": "Static core school requirement.",
+                        "Icon": "fa-graduation-cap",
+                        "Tooltip": "Meet the Grimoire school casting requirement. (easy)"
                     }
                 ],
                 "complexity": "Hard",
-                "randomStepRollFormula": "1d6"
+                "randomStepRollFormula": "1d6+1"
             }
         }
     },

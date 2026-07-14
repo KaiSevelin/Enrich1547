@@ -617,7 +617,9 @@
                     "StepText": "Meet the Grimoire school casting requirement.",
                     "SkillCheck": "Learning Expertise Occult",
                     "Difficulty": "3",
-                    "StepNotes": "Static core school requirement."
+                    "StepNotes": "Static core school requirement.",
+                    "Icon": "fa-graduation-cap",
+                    "Tooltip": "Meet the Grimoire school casting requirement. (average)"
                 },
                 {
                     "StepScope": "Alternative",
@@ -626,7 +628,9 @@
                     "StepText": "Meet the Divination school casting requirement.",
                     "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                     "Difficulty": "3",
-                    "StepNotes": "Static core school requirement."
+                    "StepNotes": "Static core school requirement.",
+                    "Icon": "fa-graduation-cap",
+                    "Tooltip": "Meet the Divination school casting requirement. (average)"
                 }
             ],
             "SuccessEffects": [
@@ -666,7 +670,7 @@
                 }
             ],
             "RitualStrengthTable": "",
-            "RandomStepRollFormula": "1d6",
+            "RandomStepRollFormula": "1d6+1",
             "RitualStepTable": "RitualSteps_Hard",
             "RitualModifierTable": "",
             "RitualAssemblyNotes": "To be generated from recipes and ritual tables defined later.",
@@ -788,7 +792,9 @@
                         "StepText": "Meet the Grimoire school casting requirement.",
                         "SkillCheck": "Learning Expertise Occult",
                         "Difficulty": "3",
-                        "StepNotes": "Static core school requirement."
+                        "StepNotes": "Static core school requirement.",
+                        "Icon": "fa-graduation-cap",
+                        "Tooltip": "Meet the Grimoire school casting requirement. (average)"
                     },
                     {
                         "StepScope": "Alternative",
@@ -797,11 +803,13 @@
                         "StepText": "Meet the Divination school casting requirement.",
                         "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                         "Difficulty": "3",
-                        "StepNotes": "Static core school requirement."
+                        "StepNotes": "Static core school requirement.",
+                        "Icon": "fa-graduation-cap",
+                        "Tooltip": "Meet the Divination school casting requirement. (average)"
                     }
                 ],
                 "complexity": "Hard",
-                "randomStepRollFormula": "1d6"
+                "randomStepRollFormula": "1d6+1"
             }
         }
     },

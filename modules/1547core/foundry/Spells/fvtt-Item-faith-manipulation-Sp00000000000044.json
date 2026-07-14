@@ -607,12 +607,14 @@
                     "StepText": "Meet the Divination school casting requirement.",
                     "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                     "Difficulty": "2",
-                    "StepNotes": "Static core school requirement."
+                    "StepNotes": "Static core school requirement.",
+                    "Icon": "fa-graduation-cap",
+                    "Tooltip": "Meet the Divination school casting requirement. (easy)"
                 }
             ],
             "SuccessEffects": [],
             "RitualStrengthTable": "",
-            "RandomStepRollFormula": "1d3",
+            "RandomStepRollFormula": "1d3+1",
             "RitualStepTable": "RitualSteps_Medium",
             "RitualModifierTable": "",
             "RitualAssemblyNotes": "To be generated from recipes and ritual tables defined later.",
@@ -688,11 +690,13 @@
                         "StepText": "Meet the Divination school casting requirement.",
                         "SkillCheck": "Pagan Expertise Divination or Learning Expertise Astrology",
                         "Difficulty": "2",
-                        "StepNotes": "Static core school requirement."
+                        "StepNotes": "Static core school requirement.",
+                        "Icon": "fa-graduation-cap",
+                        "Tooltip": "Meet the Divination school casting requirement. (easy)"
                     }
                 ],
                 "complexity": "Medium",
-                "randomStepRollFormula": "1d3"
+                "randomStepRollFormula": "1d3+1"
             }
         }
     },

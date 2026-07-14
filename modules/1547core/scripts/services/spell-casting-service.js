@@ -171,6 +171,16 @@ async function postCastingSummaryToChat(spell, sourceToken, evaluation, outcome,
 async function rollSpellFailure(spell) {
     const props = getSpellProps(spell);
     const failureProfile = String(props.FailureProfile ?? "Minor").trim() || "Minor";
+    // Benign failure (Herbalism cures, etc.): the working simply does not take —
+    // no failure table, no ill consequence. Set failureProfile "None".
+    if (failureProfile.toLowerCase() === "none") {
+        return {
+            ok: true,
+            failureProfile,
+            failureTableRef: "",
+            text: "The remedy does not take hold — no ill effect. The working simply fails.",
+        };
+    }
     const failureTableRef = String(props.FailureTable ?? `SpellFailure_${failureProfile}`).trim();
     const table = await resolveTableByNameOrId(failureTableRef);
     if (!table) {

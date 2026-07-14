@@ -613,7 +613,9 @@
                     "StepText": "Meet the Wards school casting requirement.",
                     "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                     "Difficulty": "1",
-                    "StepNotes": "Static core school requirement."
+                    "StepNotes": "Static core school requirement.",
+                    "Icon": "fa-graduation-cap",
+                    "Tooltip": "Meet the Wards school casting requirement. (trivial)"
                 }
             ],
             "SuccessEffects": [
@@ -687,7 +689,7 @@
                 }
             ],
             "RitualStrengthTable": "",
-            "RandomStepRollFormula": "1d2",
+            "RandomStepRollFormula": "1d2+1",
             "RitualStepTable": "RitualSteps_Easy",
             "RitualModifierTable": "",
             "RitualAssemblyNotes": "To be generated from recipes and ritual tables defined later.",
@@ -838,11 +840,13 @@
                         "StepText": "Meet the Wards school casting requirement.",
                         "SkillCheck": "Pagan Expertise Warding or Learning Expertise Religion",
                         "Difficulty": "1",
-                        "StepNotes": "Static core school requirement."
+                        "StepNotes": "Static core school requirement.",
+                        "Icon": "fa-graduation-cap",
+                        "Tooltip": "Meet the Wards school casting requirement. (trivial)"
                     }
                 ],
                 "complexity": "Easy",
-                "randomStepRollFormula": "1d2"
+                "randomStepRollFormula": "1d2+1"
             }
         }
     },
