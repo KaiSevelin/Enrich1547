@@ -202,7 +202,6 @@ const MANUAL_SPELLS = new Set([
     "Command",
     "Curse of Withering",
     "Death Knots",
-    "Evil Eye",
     "Exorcism",
     "Faith Manipulation",
     "Humoral Rebalancing",

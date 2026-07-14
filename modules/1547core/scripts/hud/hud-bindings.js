@@ -104,6 +104,27 @@ export function bindHudInteractions(root, token, deps = {}) {
         });
     }
 
+    for (const button of root.querySelectorAll("[data-hud-use-power]")) {
+        button.addEventListener("click", async () => {
+            const itemId = button.dataset.hudUsePower;
+            if (!token?.actor || !itemId || button.disabled) return;
+            const item = token.actor.items?.get?.(itemId) ?? null;
+            const apiName = button.dataset.hudUsePowerApi || "useEvilEyePower";
+            const usePower = game.modules.get("1547core")?.api?.[apiName];
+            if (typeof usePower !== "function") {
+                ui.notifications?.warn?.("Power resolver is not available.");
+                return;
+            }
+            try {
+                await usePower(token.document, { carrierItemId: itemId });
+            } catch (error) {
+                console.error(error);
+                ui.notifications?.error?.(`1547 Core: failed to use '${item?.name ?? "power"}'. ${error?.message ?? ""}`.trim());
+            }
+            void renderHudForSelection();
+        });
+    }
+
     for (const button of root.querySelectorAll("[data-hud-use-monster-magic]")) {
         button.addEventListener("click", async () => {
             const itemId = button.dataset.hudUseMonsterMagic;

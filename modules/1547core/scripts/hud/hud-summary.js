@@ -8,6 +8,12 @@ import {
 import { getMovementBudget } from "../combat/movement-budget.mjs";
 ﻿import { conditionCombatDisadvantage } from "../services/condition-registry.js";
 
+// Supernatural marks that are *activated* powers usable from the HUD. Keyed by
+// mark name; `api` names the module API method the "Use" button invokes.
+const ACTIVATED_MARK_POWERS = {
+    "Evil Eye": { api: "useEvilEyePower", label: "Cast Gaze" },
+    "Evil Eye (Innate)": { api: "useEvilEyePower", label: "Cast Gaze" }
+};
 
 function parseManeuverJson(value, fallback = null) {
     if (typeof value !== "string" || value.trim() === "") return fallback;
@@ -912,11 +918,18 @@ export function summarizeActor(actor, token, deps = {}) {
             ? rawDescription.split(/\r?\n/).map((line) => line.trim()).filter(Boolean)[0] ?? ""
             : "";
         const kindLabel = itemKind === "supernatural-mark" ? "Supernatural Mark" : "Power";
+        // Some marks are *activated* powers (usable from the HUD), not just
+        // descriptive. Evil Eye is the first: a Necromancy gaze used against a
+        // target. Activated marks render a "Use" button wired to the module API.
+        const activatedPower = itemKind === "supernatural-mark"
+            ? (ACTIVATED_MARK_POWERS[item.name] ?? null)
+            : null;
         return {
             id: item.id,
             name: item.name,
             description,
             itemKind,
+            activatedPower: activatedPower ? { ...activatedPower } : null,
             // Full (untruncated) description for the hover tooltip.
             tooltip: [kindLabel, rawDescription].filter(Boolean).join(" — ")
         };

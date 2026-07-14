@@ -621,7 +621,22 @@ function buildCategoryContent(data, activeCategory, deps = {}) {
         case "supernatural-marks":
             return (() => {
                 const markRows = data.supernaturalMarks.length
-                    ? buildTreeList(data.supernaturalMarks, (mark) => `
+                    ? buildTreeList(data.supernaturalMarks, (mark) => mark.activatedPower
+                        ? `
+                        <li class="hud-tree-item hud-weapon-card" title="${escapeHtml(mark.tooltip || mark.name)}">
+                            <div class="hud-row-main">${escapeHtml(mark.name)}</div>
+                            ${mark.description ? `<div class="hud-row-sub">${escapeHtml(mark.description)}</div>` : ""}
+                            <div class="hud-weapon-action-strip">
+                                <button type="button" class="hud-mini-button hud-mini-button-primary" data-hud-use-power="${escapeHtml(mark.id)}" data-hud-use-power-api="${escapeHtml(mark.activatedPower.api || "")}">
+                                    ${escapeHtml(mark.activatedPower.label || "Use")}
+                                </button>
+                                <button type="button" class="hud-mini-button" data-hud-open-item="${escapeHtml(mark.id)}">
+                                    Open
+                                </button>
+                            </div>
+                        </li>
+                    `
+                        : `
                         <li class="hud-tree-item">
                             <button type="button" class="hud-action-row" data-hud-open-item="${escapeHtml(mark.id)}" title="${escapeHtml(mark.tooltip || mark.name)}">
                                 <span class="hud-row-main">${escapeHtml(mark.name)}</span>

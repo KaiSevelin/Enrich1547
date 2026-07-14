@@ -1231,7 +1231,6 @@ const SPELL_MAP = {
     "Dream Warding": ["Ward/AntiPossession", "Possession/ShieldFromPossession"],
     "Empty Mirror": ["Trait/VisibleTell", "Revelation/Identity"],
     "Enchant Object": ["Transformation/Object", "Grant/Spell"],
-    "Evil Eye": ["Status/IllLuck", "Status/Cursed"],
     "Exorcism": ["Possession/DriveOut", "Remove/Possession"],
     "Faith Manipulation": ["Influence/Doubt", "Status/LostFaith"],
     "Favor Knot": ["Influence/SocialFavor", "Status/Charmed"],

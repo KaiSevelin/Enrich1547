@@ -4754,63 +4754,6 @@
   "randomStepRollFormula": "1d6+1"
  },
  {
-  "_id": "Sp00000000000042",
-  "id": "Sp00000000000042",
-  "name": "Evil Eye",
-  "uuid": "Item.Sp00000000000042",
-  "folder": "Spells",
-  "itemType": "spell",
-  "spellKind": "Curse",
-  "strength": 2,
-  "ritualProfile": "Necromancy",
-  "failureProfile": "Major",
-  "randomOutcome": false,
-  "spellNotes": "",
-  "description": "Strike the victim with the evil eye and let harm travel through hostile attention. It belongs to malignant workings meant to afflict, weaken, or trouble the victim rather than merely frighten them. It is a serious working that usually demands care, preparation, and a practiced hand.",
-  "schools": [
-   "Necromancy"
-  ],
-  "prerequisitesTable": [
-   {
-    "RequirementType": "Location",
-    "RequirementTarget": "Corpse, grave, remains, or death-touched place",
-    "RequirementLevel": 1,
-    "RequirementNotes": "The working must be anchored in the dead, the grave, or a place touched by death."
-   }
-  ],
-  "successEffects": [],
-  "ritualStrengthTable": "",
-  "ritualStepTable": "RitualSteps_Medium",
-  "ritualModifierTable": "",
-  "ritualAssemblyNotes": "To be generated from recipes and ritual tables defined later.",
-  "failureTable": "",
-  "failureEscalationTable": "",
-  "failureNotes": "Failure is roll-table-driven per the magic source document.",
-  "img": "media/home/games/1547/Skills/spell.webp",
-  "schoolRequirementMode": "Any",
-  "schoolRequirements": [
-   {
-    "School": "Necromancy",
-    "Level": 2
-   }
-  ],
-  "staticRitualSteps": [
-   {
-    "StepScope": "Mandatory",
-    "AlternativeGroup": "",
-    "StepType": "StaticSkill",
-    "StepText": "Meet the Necromancy school casting requirement.",
-    "SkillCheck": "Pagan Expertise Necromancy or Learning Expertise Occult",
-    "Difficulty": "2",
-    "StepNotes": "Static core school requirement.",
-    "Icon": "fa-graduation-cap",
-    "Tooltip": "Meet the Necromancy school casting requirement. (easy)"
-   }
-  ],
-  "complexity": "Medium",
-  "randomStepRollFormula": "1d3+1"
- },
- {
   "_id": "Sp00000000000043",
   "id": "Sp00000000000043",
   "name": "Exorcism",

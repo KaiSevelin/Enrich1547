@@ -6,6 +6,7 @@ import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 import { readSourceData, getProps as getSpellProps, isSpellItem, escapeHtml, slugify } from "../lib/foundry-utils.mjs";
 import { emitDomainEvent, DOMAIN_EVENTS } from "./domain-events.js";
 import { getDefaultSourceTokenForActor } from "./token-utils.mjs";
+import { getChebyshevDistanceSquares } from "../combat/weapon-state.mjs";
 
 function resolveSourceTokenForSpell(spell, explicitSourceToken = null) {
     if (explicitSourceToken?.documentName === "Token") return explicitSourceToken;
@@ -495,31 +496,6 @@ async function resolveManualSpell(spell, sourceToken, options = {}) {
                 manualResolved: true,
             };
         }
-        case "Evil Eye": {
-            const targetToken = requireTargetToken(spell, options);
-            const contest = await rollManualContest({
-                sourceActor,
-                targetActor: targetToken.actor,
-                sourceStat: "Power",
-                targetStat: "Power",
-            });
-            if (!contest.success) {
-                return {
-                    ok: true,
-                    outcome: "manual",
-                    detailText: formatContestResultText("Evil Eye", contest, "The curse takes hold.", "The target resists the curse."),
-                    manualResolved: true,
-                };
-            }
-            const damageRoll = await evaluateRollFormula("1d3");
-            const nextHp = await applyNumericPropDelta(targetToken.actor, "system.props.CurrentHitPoints", -damageRoll.total);
-            return {
-                ok: true,
-                outcome: "manual",
-                detailText: `${formatContestResultText("Evil Eye", contest, "The curse bites.", "The target resists.")} Target loses ${damageRoll.total} HP and is now at ${nextHp}.`,
-                manualResolved: true,
-            };
-        }
         case "Faith Manipulation": {
             const targetToken = requireTargetToken(spell, options);
             const lossRoll = await evaluateRollFormula("1d3");
@@ -689,6 +665,172 @@ export async function castSpellItem(spell, options = {}) {
     };
 }
 
+// --- Evil Eye (Necromancy Power) -------------------------------------------
+// Evil Eye is a supernatural mark (a "Power"), not a spell. It is granted to
+// necromancers (Pagan Expertise: Necromancy 1+) and used from the HUD "Powers"
+// tab against a targeted token: a Power-vs-Power contest that, on success,
+// inflicts Soul damage that armor cannot stop. Cost is 1 Core Point, spent
+// whether or not the gaze lands (including against a warded target).
+
+const EVIL_EYE_NECROMANCY_SKILL = "Pagan Expertise Necromancy";
+const EVIL_EYE_CORE_COST = 1;
+// Ranged power: the target must be within 5 squares (nearest-edge, like a
+// ranged weapon). Checked before any Core Point is spent.
+const EVIL_EYE_RANGE_SQUARES = 5;
+// Status slug produced by "Prayer Against the Evil Eye" (slugify("Evil Eye
+// Protection")). Any active effect carrying this status — from the prayer or
+// from a worn charm — grants immunity.
+const EVIL_EYE_PROTECTION_STATUS = slugify("Evil Eye Protection");
+
+// A rolled multiplier die (denomination "x"): faces map 1 -> x0, 2/3 -> x1
+// (blank), 4/5 -> x2, 6 -> x3. Evil Eye damage is 1 x the PRODUCT of one such
+// die per rank of Necromancy, so a single x0 zeroes the whole strike.
+function multiplierDieFactor(face) {
+    switch (Number(face)) {
+        case 1: return 0;
+        case 4:
+        case 5: return 2;
+        case 6: return 3;
+        default: return 1; // faces 2 and 3 are blank (x1)
+    }
+}
+
+async function rollEvilEyeDamage(necromancyRank) {
+    const diceCount = Math.max(0, Math.trunc(Number(necromancyRank) || 0));
+    if (diceCount <= 0) {
+        return { damage: 1, breakdown: "1 (no multiplier dice)", roll: null };
+    }
+    const roll = await new Roll(`${diceCount}dx`).evaluate();
+    const faces = (roll.dice ?? []).flatMap((term) => (term.results ?? []).map((result) => Number(result.result)));
+    const factors = faces.map(multiplierDieFactor);
+    const product = factors.reduce((acc, factor) => acc * factor, 1);
+    const damage = 1 * product;
+    const breakdown = `1 x ${factors.length ? factors.map((f) => `x${f}`).join(" x ") : "1"} = ${damage}`;
+    return { damage, breakdown, roll };
+}
+
+// Resolve the mark/item the gaze is being channelled through, so we can read
+// its innate marker. Prefers an explicit carrier, then an id, then the first
+// Evil Eye mark the actor owns.
+function resolveEvilEyeCarrier(actor, options = {}) {
+    if (options.carrierItem?.flags) return options.carrierItem;
+    const id = options.carrierItemId ?? options.itemId ?? null;
+    if (id && typeof actor?.items?.get === "function") return actor.items.get(id) ?? null;
+    const items = actor?.items?.contents ?? actor?.items ?? [];
+    for (const item of items) {
+        if (/^evil eye/i.test(String(item?.name ?? ""))) return item;
+    }
+    return null;
+}
+
+function actorHasEvilEyeImmunity(actor) {
+    const effects = actor?.appliedEffects ?? actor?.effects ?? [];
+    for (const effect of effects) {
+        if (!effect || effect.disabled) continue;
+        if (effect.active === false) continue;
+        const statuses = effect.statuses;
+        if (statuses && typeof statuses.has === "function" && statuses.has(EVIL_EYE_PROTECTION_STATUS)) return true;
+        const subtype = effect.flags?.[MODULE_ID]?.effectSubtype
+            ?? effect.flags?.[MODULE_ID]?.usageEffect?.EffectSubtype
+            ?? "";
+        if (String(subtype).toLowerCase() === "evil eye protection") return true;
+    }
+    return false;
+}
+
+async function postEvilEyeMessage(sourceToken, sourceActor, content) {
+    const speaker = ChatMessage.getSpeaker({ actor: sourceActor ?? null, token: sourceToken ?? null });
+    await ChatMessage.create({ speaker, content: `<div class="spell-cast-card"><b>Evil Eye</b> — ${content}</div>` });
+}
+
+// Resolve the Evil Eye power. `sourceToken` is a TokenDocument (or Token);
+// target comes from the user's targeting (options.targetTokens or game.user.targets).
+export async function useEvilEyePower(sourceToken, options = {}) {
+    const token = sourceToken?.documentName === "Token"
+        ? sourceToken
+        : (sourceToken?.document?.documentName === "Token" ? sourceToken.document : sourceToken);
+    const sourceActor = token?.actor ?? null;
+    if (!sourceActor) {
+        ui.notifications?.warn?.("Evil Eye needs an acting token.");
+        return { ok: false, reason: "no-source" };
+    }
+
+    // Rank drives the multiplier-dice count. Two sources:
+    //   * PC path: the caster's Pagan Expertise: Necromancy rank (skill-gated).
+    //   * Innate path (monsters / creatures with an innate Evil Eye mark): no
+    //     skill required — rank comes from the mark's evilEyeRank, else the
+    //     creature's Power stat dice.
+    const carrier = resolveEvilEyeCarrier(sourceActor, options);
+    const carrierSource = carrier?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData
+        ?? carrier?.flags?.[MODULE_ID]?.sourceData ?? {};
+    const innate = carrierSource.evilEyeInnate === true || options.innate === true;
+
+    let necromancyRank;
+    if (innate) {
+        const flagRank = Number(carrierSource.evilEyeRank);
+        necromancyRank = Number.isFinite(flagRank) && flagRank > 0
+            ? Math.trunc(flagRank)
+            : Math.max(1, Math.trunc(Number(sourceActor.system?.props?.Stats_PowerDice) || 1));
+    } else {
+        necromancyRank = getActorSkillLevel(sourceActor, EVIL_EYE_NECROMANCY_SKILL);
+        if (necromancyRank < 1) {
+            ui.notifications?.warn?.("Evil Eye requires Pagan Expertise: Necromancy 1.");
+            return { ok: false, reason: "no-necromancy" };
+        }
+    }
+
+    const targetToken = getSelectedTargetTokens(options)[0] ?? null;
+    if (!targetToken?.actor) {
+        ui.notifications?.warn?.("Target a token before using Evil Eye.");
+        return { ok: false, reason: "no-target" };
+    }
+
+    // Range: must be within 5 squares. Checked before spending Core.
+    const distance = getChebyshevDistanceSquares(token, targetToken);
+    if (distance != null && distance > EVIL_EYE_RANGE_SQUARES) {
+        ui.notifications?.warn?.(`Target is out of Evil Eye range (${distance} squares; max ${EVIL_EYE_RANGE_SQUARES}).`);
+        return { ok: false, reason: "out-of-range", distance };
+    }
+
+    // Core cost: must be affordable, and is spent regardless of outcome.
+    const props = sourceActor.system?.props ?? {};
+    const maxCore = Number(props.MaxCorePoints ?? 0) || 0;
+    const spentCore = Number(props.SpentCorePoints ?? 0) || 0;
+    const availableCore = Number.isFinite(Number(props.AvailableCorePoints))
+        ? Number(props.AvailableCorePoints)
+        : (maxCore - spentCore);
+    if (availableCore < EVIL_EYE_CORE_COST) {
+        ui.notifications?.warn?.("Not enough Core Points to use Evil Eye.");
+        return { ok: false, reason: "no-core" };
+    }
+    const nextSpent = maxCore > 0
+        ? Math.min(maxCore, spentCore + EVIL_EYE_CORE_COST)
+        : spentCore + EVIL_EYE_CORE_COST;
+    await sourceActor.update({ "system.props.SpentCorePoints": nextSpent });
+
+    // Warded targets: the Core is still spent, but the gaze finds no purchase.
+    if (actorHasEvilEyeImmunity(targetToken.actor)) {
+        await postEvilEyeMessage(token, sourceActor, `${targetToken.actor.name} is warded against the evil eye; the gaze finds no purchase. (1 Core Point spent.)`);
+        return { ok: true, outcome: "immune", coreSpent: EVIL_EYE_CORE_COST };
+    }
+
+    const contest = await rollManualContest({
+        sourceActor,
+        targetActor: targetToken.actor,
+        sourceStat: "Power",
+        targetStat: "Power",
+    });
+    if (!contest.success) {
+        await postEvilEyeMessage(token, sourceActor, `${formatContestResultText("Power vs Power", contest, "", "")} ${targetToken.actor.name} meets the gaze and shrugs it off. (1 Core Point spent.)`);
+        return { ok: true, outcome: "resisted", coreSpent: EVIL_EYE_CORE_COST };
+    }
+
+    const damage = await rollEvilEyeDamage(necromancyRank);
+    const nextHp = await applyNumericPropDelta(targetToken.actor, "system.props.CurrentHitPoints", -damage.damage);
+    await postEvilEyeMessage(token, sourceActor, `${formatContestResultText("Power vs Power", contest, "the gaze takes hold.", "")} Soul damage (armor ignored): ${damage.breakdown}. ${targetToken.actor.name} loses ${damage.damage} HP (now ${nextHp}).`);
+    return { ok: true, outcome: "hit", damage: damage.damage, coreSpent: EVIL_EYE_CORE_COST };
+}
+
 export function registerSpellCastingService() {
     const moduleApi = game.modules.get(MODULE_ID);
     if (!moduleApi) {
@@ -698,4 +840,5 @@ export function registerSpellCastingService() {
     moduleApi.api = moduleApi.api ?? {};
     moduleApi.api.castSpellItem = castSpellItem;
     moduleApi.api.effectuateSpellOutcome = effectuateSpellOutcome;
+    moduleApi.api.useEvilEyePower = useEvilEyePower;
 }

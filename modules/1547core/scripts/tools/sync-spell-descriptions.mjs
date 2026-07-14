@@ -46,7 +46,6 @@ const FIRST_SENTENCE_OVERRIDES = {
     "Dream Warding": "Set a protection over sleep so hostile dreams or night visitations find poorer footing.",
     "Empty Mirror": "Use a prepared mirror to catch, redirect, or hollow out what should have been reflected.",
     "Enchant Object": "Imbue an object with prepared magical force so it carries more than its common use.",
-    "Evil Eye": "Strike the victim with the evil eye and let harm travel through hostile attention.",
     "Exorcism": "Drive out an occupying or attached supernatural force through forceful holy rejection.",
     "Faith Manipulation": "Twist, burden, or redirect the target's faith through supernatural pressure.",
     "Favor Knot": "Tie a knot that bends another's favor, sympathy, or goodwill toward you.",

@@ -3307,7 +3307,41 @@ export class SkillTreeChargenApp extends FormApplication {
         };
     }
 
-    async _grantSkillToward(run, targetKey, targetLevel, fallback, { silent = false } = {}) {
+    async _grantSkillToward(run, targetKey, targetLevel, fallback, opts = {}) {
+        const result = await this._grantSkillTowardCore(run, targetKey, targetLevel, fallback, opts);
+        try {
+            await this._maybeGrantEvilEyeWithNecromancy(run, targetKey, result);
+        } catch (err) {
+            console.warn("1547core | chargen Evil Eye grant failed", err);
+        }
+        return result;
+    }
+
+    // When chargen grants Pagan Expertise: Necromancy (rank >= 1), the character
+    // has a high chance to also gain the Evil Eye power (a supernatural mark).
+    // It is possible to have Necromancy without the Evil Eye.
+    async _maybeGrantEvilEyeWithNecromancy(run, targetKey, result) {
+        const EVIL_EYE_CHANCE = 0.8;
+        if (!result?.ok) return;
+        if (Number(result.level) < 1) return;
+        const key = `${targetKey ?? ""} ${result.nodeName ?? ""}`;
+        if (!/necromanc/i.test(key)) return;
+        // Only ever grant it once.
+        if (this.actor.items.some((item) => /^evil eye$/i.test(String(item?.name ?? "")))) return;
+        if (Math.random() >= EVIL_EYE_CHANCE) {
+            await this._addBio(run, "The dead withhold their gaze — no Evil Eye is granted.");
+            return;
+        }
+        const doc = await this._getItemDocFromSpec("Evil Eye");
+        if (!doc) {
+            await this._addBio(run, "Evil Eye power could not be granted (mark not found).");
+            return;
+        }
+        await this._grantItemToActor(run, doc, 1);
+        await this._addBio(run, `Gained the ${itemRef("Evil Eye")} power.`);
+    }
+
+    async _grantSkillTowardCore(run, targetKey, targetLevel, fallback, { silent = false } = {}) {
         const st = globalThis.SkillTree;
         if ((!st?.grantFirstAvailableNode && !st?.nextStepToward) || (!st?.grantFirstAvailableNode && !st?.NODES)) {
             if (fallback?.type === "stat") {
