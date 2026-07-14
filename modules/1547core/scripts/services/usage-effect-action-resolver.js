@@ -18,9 +18,11 @@ const EFFECT_ARRAY_KEYS = [
     "SuccessEffects",
     "MarkEffects",
     "MagicEffects",
+    "EquippedEffects",
     "successEffects",
     "markEffects",
     "magicEffects",
+    "equippedEffects",
 ];
 
 const STAT_KEY_MAP = {
@@ -121,10 +123,24 @@ export function collectUsageEffectsFromCarrier(item) {
         }
     }
 
+    // Truly-nested child items (rare; e.g. a compendium item before import).
     const childItems = item?.items?.contents ?? item?.items ?? [];
     for (const child of childItems) {
         if (String(child?.system?.template ?? "") === USAGE_EFFECT_TEMPLATE_ID) {
             effects.push(normalizeEffectProps(child));
+        }
+    }
+
+    // CSB "item-in-item" is really a sibling item on the same actor that points
+    // back at this carrier via `system.container` (see changeset-cascade /
+    // weapon-modifier attachment). So an effect authored in an equippable's
+    // "Effects" container lives here, not in `item.items`.
+    const siblingItems = item?.parent?.items?.contents ?? item?.parent?.items ?? [];
+    for (const sibling of siblingItems) {
+        if (sibling === item || sibling?.id === item?.id) continue;
+        if (String(sibling?.system?.container ?? "") !== String(item?.id ?? "")) continue;
+        if (String(sibling?.system?.template ?? "") === USAGE_EFFECT_TEMPLATE_ID) {
+            effects.push(normalizeEffectProps(sibling));
         }
     }
 
