@@ -51,6 +51,10 @@ export function bindHudInteractions(root, token, deps = {}) {
         getDiceTabAttackSelection,
         setDiceTabAttackSelectionCount,
         clearDiceTabAttackSelection,
+        getDiceTabDefenseSelection,
+        setDiceTabDefenseSelectionCount,
+        clearDiceTabDefenseSelection,
+        getDefenseDiceTabOptions,
         setPendingNextAttackDice,
         clearPendingNextAttackDice,
         getDiceTabSkillDice,
@@ -202,6 +206,39 @@ export function bindHudInteractions(root, token, deps = {}) {
             const current = getDiceTabAttackSelection(token.actor.id);
             const nextValue = Math.max(0, Number(current?.[dieKey] ?? 0) + delta);
             setDiceTabAttackSelectionCount(token.actor.id, dieKey, nextValue);
+            void renderHudForSelection();
+        });
+    }
+    for (const button of root.querySelectorAll("[data-hud-dice-defense-adjust]")) {
+        button.addEventListener("click", (event) => {
+            if (!token?.actor) return;
+            const dieKey = event.currentTarget.dataset.hudDiceDefenseAdjust;
+            const delta = Number(event.currentTarget.dataset.hudDiceDelta ?? 0) || 0;
+            const current = getDiceTabDefenseSelection(token.actor.id);
+            const nextValue = Math.max(0, Number(current?.[dieKey] ?? 0) + delta);
+            setDiceTabDefenseSelectionCount(token.actor.id, dieKey, nextValue);
+            void renderHudForSelection();
+        });
+    }
+    for (const button of root.querySelectorAll("[data-hud-dice-defense-roll]")) {
+        button.addEventListener("click", async () => {
+            if (!token?.actor || button.disabled) return;
+            const selection = getDiceTabDefenseSelection(token.actor.id);
+            const terms = (getDefenseDiceTabOptions?.() ?? []).flatMap((option) => Array.from({ length: Math.max(0, Number(selection?.[option.key] ?? 0) || 0) }, () => `1d${option.code}`));
+            if (!terms.length) return;
+            await rollToChat({
+                formula: terms.join(" + "),
+                speaker: ChatMessage.getSpeaker({ actor: token.actor, token: token.document }),
+                flavor: "Dice Tab Defense Dice",
+                rollMode: "default",
+                waitForTotals: false,
+            });
+        });
+    }
+    for (const button of root.querySelectorAll("[data-hud-dice-defense-clear]")) {
+        button.addEventListener("click", () => {
+            if (!token?.actor || button.disabled) return;
+            clearDiceTabDefenseSelection(token.actor.id);
             void renderHudForSelection();
         });
     }

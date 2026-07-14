@@ -1,6 +1,7 @@
 ﻿import { COMBAT_EVENTS, onCombatEvent } from "../services/combat-events.js";
 import {
     DICE_TAB_ATTACK_OPTIONS,
+    DICE_TAB_DEFENSE_OPTIONS,
     isUnarmedWeapon,
     getWeaponReach,
     getWeaponRangeBands,
@@ -48,6 +49,9 @@ import {
     getDiceTabAttackSelection,
     setDiceTabAttackSelectionCount,
     clearDiceTabAttackSelection,
+    getDiceTabDefenseSelection,
+    setDiceTabDefenseSelectionCount,
+    clearDiceTabDefenseSelection,
     getPendingNextAttackDice,
     setPendingNextAttackDice,
     clearPendingNextAttackDice,
@@ -136,12 +140,25 @@ function getAttackDiceTabOptions() {
     return DICE_TAB_ATTACK_OPTIONS.map((option) => ({ ...option }));
 }
 
-function formatAttackDiceSelectionLabel(diceMap = {}) {
-    const parts = DICE_TAB_ATTACK_OPTIONS.flatMap((option) => {
+function getDefenseDiceTabOptions() {
+    return DICE_TAB_DEFENSE_OPTIONS.map((option) => ({ ...option }));
+}
+
+// Format a selection map ({key: count}) as "2de + 1da" over the given options.
+function formatDiceSelectionLabel(diceMap = {}, options = []) {
+    const parts = options.flatMap((option) => {
         const count = Math.max(0, Number(diceMap?.[option.key] ?? 0) || 0);
         return count > 0 ? [String(count) + "d" + option.code] : [];
     });
     return parts.join(" + ") || "0 dice";
+}
+
+function formatAttackDiceSelectionLabel(diceMap = {}) {
+    return formatDiceSelectionLabel(diceMap, DICE_TAB_ATTACK_OPTIONS);
+}
+
+function formatDefenseDiceSelectionLabel(diceMap = {}) {
+    return formatDiceSelectionLabel(diceMap, DICE_TAB_DEFENSE_OPTIONS);
 }
 
 function formatSkillD6SelectionLabel(count = 0) {
@@ -969,11 +986,14 @@ function summarizeActor(actor, token) {
         getActivePersistentEffectsForActor,
         getActiveDefenseStateForActor,
         getDiceTabAttackSelection,
+        getDiceTabDefenseSelection,
         getPendingNextAttackDice,
         getDiceTabSkillDice,
         getPendingNextSkillDice,
         getAttackDiceTabOptions,
+        getDefenseDiceTabOptions,
         formatAttackDiceSelectionLabel,
+        formatDefenseDiceSelectionLabel,
         formatSkillD6SelectionLabel,
     });
 }
@@ -1136,6 +1156,10 @@ async function renderHudForSelection() {
         getDiceTabAttackSelection,
         setDiceTabAttackSelectionCount,
         clearDiceTabAttackSelection,
+        getDiceTabDefenseSelection,
+        setDiceTabDefenseSelectionCount,
+        clearDiceTabDefenseSelection,
+        getDefenseDiceTabOptions,
         setPendingNextAttackDice,
         clearPendingNextAttackDice,
         getDiceTabSkillDice,

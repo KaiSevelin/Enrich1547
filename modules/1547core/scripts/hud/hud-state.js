@@ -52,6 +52,7 @@
     // Core-maneuver stacking: actorId -> { maneuverId -> Core Points spent }.
     coreStackCountByActor: {},
     diceTabAttackSelectionByActor: {},
+    diceTabDefenseSelectionByActor: {},
     pendingNextAttackDiceByActor: {},
     diceTabSkillDiceByActor: {},
     pendingNextSkillDiceByActor: {},
@@ -146,6 +147,32 @@ export function clearDiceTabAttackSelection(actorId) {
     const key = normalizeActorKey(actorId);
     if (!key) return;
     delete HUD_STATE.diceTabAttackSelectionByActor?.[key];
+}
+
+// Dice tab DEFENSE selection (Evade / Armor dice) — a manual defense-dice
+// roller mirroring the attack-dice picker.
+export function getDiceTabDefenseSelection(actorId) {
+    return getActorDiceMap(HUD_STATE.diceTabDefenseSelectionByActor, actorId);
+}
+
+export function setDiceTabDefenseSelection(actorId, valueMap) {
+    setActorDiceMap("diceTabDefenseSelectionByActor", actorId, valueMap);
+}
+
+export function setDiceTabDefenseSelectionCount(actorId, dieKey, value) {
+    const current = getDiceTabDefenseSelection(actorId);
+    const normalizedKey = String(dieKey ?? "").trim();
+    if (!normalizedKey) return;
+    const count = sanitizeDiceCount(value);
+    if (count > 0) current[normalizedKey] = count;
+    else delete current[normalizedKey];
+    setDiceTabDefenseSelection(actorId, current);
+}
+
+export function clearDiceTabDefenseSelection(actorId) {
+    const key = normalizeActorKey(actorId);
+    if (!key) return;
+    delete HUD_STATE.diceTabDefenseSelectionByActor?.[key];
 }
 
 export function getPendingNextAttackDice(actorId) {

@@ -491,6 +491,20 @@ function buildDiceTree(data, deps = {}) {
     `).join("");
     const attackSelectionLabel = diceTab.attackSelectionLabel || "0 dice";
     const pendingAttackLabel = diceTab.pendingAttackLabel || "0 dice";
+    const defenseRows = (diceTab.defenseOptions ?? []).map((option) => `
+        <li class="hud-tree-item hud-dice-row">
+            <div class="hud-dice-row-main">
+                <span class="hud-row-main" title="${escapeHtml(option.tooltip || "")}">${escapeHtml(option.label)}</span>
+                <span class="hud-row-sub">d${escapeHtml(option.code)}</span>
+            </div>
+            <div class="hud-dice-row-controls">
+                <button type="button" class="hud-mini-button" data-hud-dice-defense-adjust="${escapeHtml(option.key)}" data-hud-dice-delta="-1" title="${escapeHtml(option.tooltip || "")}">-</button>
+                <span class="hud-dice-count" title="${escapeHtml(option.tooltip || "")}">${escapeHtml(option.selectedCount ?? 0)}</span>
+                <button type="button" class="hud-mini-button" data-hud-dice-defense-adjust="${escapeHtml(option.key)}" data-hud-dice-delta="1" title="${escapeHtml(option.tooltip || "")}">+</button>
+            </div>
+        </li>
+    `).join("");
+    const defenseSelectionLabel = diceTab.defenseSelectionLabel || "0 dice";
     const skillSelectionLabel = diceTab.skillSelectionLabel || "0d6";
     const pendingSkillLabel = diceTab.pendingSkillLabel || "0d6";
 
@@ -505,6 +519,15 @@ function buildDiceTree(data, deps = {}) {
                 <button type="button" class="hud-mini-button hud-mini-button-primary" data-hud-dice-attack-roll${diceTab.hasAttackSelection ? "" : " disabled"}>Roll</button>
                 <button type="button" class="hud-mini-button" data-hud-dice-attack-add${diceTab.hasAttackSelection ? "" : " disabled"}>Add</button>
                 <button type="button" class="hud-mini-button" data-hud-dice-attack-clear${hasAnyAttackToClear ? "" : " disabled"}>Clear</button>
+            </div>
+        </div>
+        <div class="hud-tree-block">
+            <div class="hud-section-title">Defense Dice</div>
+            <ul class="hud-list hud-tree-list hud-dice-grid">${defenseRows || '<li class="hud-empty-row">No defense dice</li>'}</ul>
+            <div class="hud-dice-preview-row"><span class="hud-tree-key">Selected</span><span class="hud-tree-value">${escapeHtml(defenseSelectionLabel)}</span></div>
+            <div class="hud-weapon-action-strip hud-dice-action-strip">
+                <button type="button" class="hud-mini-button hud-mini-button-primary" data-hud-dice-defense-roll${diceTab.hasDefenseSelection ? "" : " disabled"}>Roll</button>
+                <button type="button" class="hud-mini-button" data-hud-dice-defense-clear${diceTab.hasDefenseSelection ? "" : " disabled"}>Clear</button>
             </div>
         </div>
         <div class="hud-tree-block">

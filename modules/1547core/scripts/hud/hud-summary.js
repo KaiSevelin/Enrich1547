@@ -352,11 +352,14 @@ export function summarizeActor(actor, token, deps = {}) {
         getActivePersistentEffectsForActor,
         getActiveDefenseStateForActor,
         getDiceTabAttackSelection,
+        getDiceTabDefenseSelection,
         getPendingNextAttackDice,
         getDiceTabSkillDice,
         getPendingNextSkillDice,
         getAttackDiceTabOptions,
+        getDefenseDiceTabOptions,
         formatAttackDiceSelectionLabel,
+        formatDefenseDiceSelectionLabel,
         formatSkillD6SelectionLabel,
     } = deps;
     const props = getActorProps(actor);
@@ -1024,6 +1027,7 @@ export function summarizeActor(actor, token, deps = {}) {
         extraD6: getPendingNextSkillDice(actor.id),
     };
     const attackDiceSelection = getDiceTabAttackSelection(actor.id);
+    const defenseDiceSelection = typeof getDiceTabDefenseSelection === "function" ? getDiceTabDefenseSelection(actor.id) : {};
     const pendingAttackDice = getPendingNextAttackDice(actor.id);
     const selectedSkillDice = getDiceTabSkillDice(actor.id);
     const pendingSkillDice = getPendingNextSkillDice(actor.id);
@@ -1042,6 +1046,7 @@ export function summarizeActor(actor, token, deps = {}) {
         attackPreview: activeWeaponSummary?.activeAttackFormula ?? "",
     };
     const attackDiceOptions = getAttackDiceTabOptions();
+    const defenseDiceOptions = typeof getDefenseDiceTabOptions === "function" ? getDefenseDiceTabOptions() : [];
 
     const activePersistentEffects = [
         ...getActivePersistentEffectsForActor(actor, {
@@ -1079,6 +1084,12 @@ export function summarizeActor(actor, token, deps = {}) {
         pendingAttackLabel: formatAttackDiceSelectionLabel(pendingAttackDice),
         hasAttackSelection: Object.keys(attackDiceSelection ?? {}).length > 0,
         hasPendingAttackDice: Object.keys(pendingAttackDice ?? {}).length > 0,
+        defenseOptions: defenseDiceOptions.map((option) => ({
+            ...option,
+            selectedCount: Math.max(0, Number(defenseDiceSelection?.[option.key] ?? 0) || 0),
+        })),
+        defenseSelectionLabel: typeof formatDefenseDiceSelectionLabel === "function" ? formatDefenseDiceSelectionLabel(defenseDiceSelection) : "0 dice",
+        hasDefenseSelection: Object.keys(defenseDiceSelection ?? {}).length > 0,
         selectedSkillDice,
         pendingSkillDice,
         skillSelectionLabel: formatSkillD6SelectionLabel(selectedSkillDice),

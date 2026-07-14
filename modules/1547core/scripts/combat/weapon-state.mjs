@@ -43,6 +43,13 @@ export const DICE_TAB_ATTACK_OPTIONS = [
     { key: "risk", label: "Risk", dieName: "Risk", code: "r", tooltip: "Volatile die with danger and payoff.\n1: 0x\n2: Fumble\n3: Fumble\n4: Blank\n5: Damage 2\n6: Critical" },
 ];
 
+// Defensive dice for the HUD's manual defense-dice roller (Evade / Armor).
+// Both roll protection; Evade crits earlier, Armor soaks harder.
+export const DICE_TAB_DEFENSE_OPTIONS = [
+    { key: "evade", label: "Evade", dieName: "Evade", code: "e", tooltip: "Nimble defense die.\n1: Fumble\n2: Blank\n3: Protection 1\n4: Protection 2\n5: Critical\n6: Critical" },
+    { key: "armor", label: "Armor", dieName: "Armor", code: "a", tooltip: "Heavy soak die.\n1: Fumble\n2: Blank\n3: Protection 1\n4: Protection 2\n5: Protection 4\n6: Critical" },
+];
+
 export function isUnarmedWeapon(item) {
     const itemProps = item?.system?.props ?? {};
     const sourceData = item?.flags?.[SOURCE_FLAG_SCOPE]?.sourceData ?? item?.flags?.[MODULE_ID]?.sourceData ?? {};
