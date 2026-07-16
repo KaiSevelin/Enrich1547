@@ -5,35 +5,35 @@
         "drawFormula": "3d6",
         "entries": [
             {
-                "id": "DrRU01",
+                "id": "e0",
                 "resultText": "Return to the place where I died and make it mine again."
             },
             {
-                "id": "DrRU02",
+                "id": "e1",
                 "resultText": ""
             },
             {
-                "id": "DrRU03",
+                "id": "e2",
                 "resultText": "Punish the living who wronged me in life."
             },
             {
-                "id": "DrRU04",
+                "id": "e3",
                 "resultText": "Reclaim what was taken from my grave."
             },
             {
-                "id": "DrRU05",
-                "resultText": ""
-            },
-            {
-                "id": "DrRU06",
+                "id": "e4",
                 "resultText": "Drag the living down into my cold company."
             },
             {
-                "id": "DrRU07",
+                "id": "e5",
                 "resultText": "Finish the task that death interrupted."
             },
             {
-                "id": "DrRU08",
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
                 "resultText": "Silence those who speak my name without dread."
             }
         ]
@@ -1604,6 +1604,1371 @@
             {
                 "id": "b24",
                 "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvCrrpNs00000001",
+        "name": "Drives - Corrupted (Spirit)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "The land is sick through me, and I will spread the sickness."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "What I once tended, I now rot."
+            },
+            {
+                "id": "e3",
+                "resultText": "Let the blight reach every root and well."
+            },
+            {
+                "id": "e4",
+                "resultText": "I answer my place with ruin, not mending."
+            },
+            {
+                "id": "e5",
+                "resultText": "Nothing green stays green where I hold."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I was a guardian once. Now I am the wound."
+            }
+        ]
+    },
+    {
+        "id": "DvDevlNu00000001",
+        "name": "Drives - Devil (Unnatural)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Every soul has a price; I only name it."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "The terms were agreed. The terms will be kept."
+            },
+            {
+                "id": "e3",
+                "resultText": "I tempt first, and torment those who refuse."
+            },
+            {
+                "id": "e4",
+                "resultText": "Cold iron and blessing wound me, so I deal in words instead."
+            },
+            {
+                "id": "e5",
+                "resultText": "Sign, and I am generous. Refuse, and I am patient."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "What is owed to me is owed in full, with interest."
+            }
+        ]
+    },
+    {
+        "id": "DvPrncNu00000001",
+        "name": "Drives - Prince (Unnatural)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I issue the decree; lesser things obey."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "My word is law in my own cosmology."
+            },
+            {
+                "id": "e3",
+                "resultText": "Kneel, and be spared. Stand, and be corrected."
+            },
+            {
+                "id": "e4",
+                "resultText": "I bear a crown, and I will be addressed as such."
+            },
+            {
+                "id": "e5",
+                "resultText": "The hierarchy bends to me, not I to it."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I do not ask. I command."
+            }
+        ]
+    },
+    {
+        "id": "DvSdheTu00000001",
+        "name": "Drives - Sidhe (TheUnseen)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I am of the court, and courtesy is owed to me."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "Slight me and the debt is collected in kind."
+            },
+            {
+                "id": "e3",
+                "resultText": "Beauty and cruelty are the same tool in my hand."
+            },
+            {
+                "id": "e4",
+                "resultText": "The old etiquette must be observed, exactly."
+            },
+            {
+                "id": "e5",
+                "resultText": "I speak for the hollow hill; mind how you answer."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Mortals amuse me until they forget their manners."
+            }
+        ]
+    },
+    {
+        "id": "DvAncnTu00000001",
+        "name": "Drives - Ancient (TheUnseen)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I stood before your courts, your gods, your names."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "I am older than the place, and I will outlast it."
+            },
+            {
+                "id": "e3",
+                "resultText": "Your rules are recent things; mine are the first."
+            },
+            {
+                "id": "e4",
+                "resultText": "Address me as the elder power I am."
+            },
+            {
+                "id": "e5",
+                "resultText": "I remember what the world was, and I want it back."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Time is a shallow thing to me; I can wait."
+            }
+        ]
+    },
+    {
+        "id": "DvKngtPe00000001",
+        "name": "Drives - Knight (People)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Hold the line; my oath does not permit retreat."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "Honor is owed, and I collect what station demands."
+            },
+            {
+                "id": "e4",
+                "resultText": "I answer challenge with challenge, never with flight."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "My rank is my armor and my burden both."
+            }
+        ]
+    },
+    {
+        "id": "DvBndtPe00000001",
+        "name": "Drives - Bandit (People)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Take what I can and be gone before the answer."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "Strike from cover; a fair fight is a fool's fight."
+            },
+            {
+                "id": "e4",
+                "resultText": "Every purse on the road is already mine."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I owe no lord, no law, no toll."
+            }
+        ]
+    },
+    {
+        "id": "DvVtrnPe00000001",
+        "name": "Drives - Veteran (People)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I read the fight before it lands."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "I know where to stand when everything breaks."
+            },
+            {
+                "id": "e4",
+                "resultText": "I have buried better than you; I am not afraid."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Survive first. Everything else comes after."
+            }
+        ]
+    },
+    {
+        "id": "DvSldrPe00000001",
+        "name": "Drives - Soldier (People)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Form on the captain and hold formation."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "Orders are orders; I do not question the line."
+            },
+            {
+                "id": "e4",
+                "resultText": "I have marched worse ground than this."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Discipline keeps me alive where courage would not."
+            }
+        ]
+    },
+    {
+        "id": "DvPsntPe00000001",
+        "name": "Drives - Peasant (People)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "This is my soil, my season, my saint."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "I stand with the village or not at all."
+            },
+            {
+                "id": "e4",
+                "resultText": "The land takes what it is owed, and so do I."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Push me off my field and learn what I will do."
+            }
+        ]
+    },
+    {
+        "id": "DvCmnrPe00000001",
+        "name": "Drives - Commoner (People)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I know the market, the parish, the watch, and I use them."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "Raise the alarm before raising a hand."
+            },
+            {
+                "id": "e4",
+                "resultText": "The town looks after its own; so do I."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I am nobody, which is how I get by."
+            }
+        ]
+    },
+    {
+        "id": "DvNoblNu00000001",
+        "name": "Drives - Noble (Unnatural)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Command the lesser; that is my right by rank."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "I travel with retinue and expect it honored."
+            },
+            {
+                "id": "e4",
+                "resultText": "Lesser kin answer to me, and mortals should learn to."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Bind the small things; I hold the authority."
+            }
+        ]
+    },
+    {
+        "id": "DvMjorNu00000001",
+        "name": "Drives - Major (Unnatural)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I hold an office, and I exert its named power."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "Every act of mine brings its due consequence."
+            },
+            {
+                "id": "e4",
+                "resultText": "I am named in grimoire and scripture; use the name with care."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I bring what I was invoked to bring."
+            }
+        ]
+    },
+    {
+        "id": "DvMnorNu00000001",
+        "name": "Drives - Minor (Unnatural)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I pester, I nettle, I wear the mortal down."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "I am the first sign of a greater thing behind me."
+            },
+            {
+                "id": "e4",
+                "resultText": "Small I may be, but I come in numbers."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Bargain with me and I will serve, for now."
+            }
+        ]
+    },
+    {
+        "id": "DvPrstNs00000001",
+        "name": "Drives - Pristine (Spirit)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I keep my place whole, and I answer for it."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "Renew the grove, the well, the stone."
+            },
+            {
+                "id": "e4",
+                "resultText": "I am the right answer for this land."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Harm what I guard and I will mend it against you."
+            }
+        ]
+    },
+    {
+        "id": "DvSvrdNs00000001",
+        "name": "Drives - Severed (Spirit)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I am land-lost, and I wander the wrong way."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "Nothing anchors me now; I drift and I take."
+            },
+            {
+                "id": "e4",
+                "resultText": "I had a place once. I want a place again."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Uprooted, I answer to no ground at all."
+            }
+        ]
+    },
+    {
+        "id": "DvSpirUn00000001",
+        "name": "Drives - Spirit (Undead)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Walls do not hold me; nothing does."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "I am presence and intent, and I intend to stay."
+            },
+            {
+                "id": "e4",
+                "resultText": "What I was is gone; what I want remains."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I pass where the living cannot follow."
+            }
+        ]
+    },
+    {
+        "id": "DvCorpUn00000001",
+        "name": "Drives - Corpse (Undead)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I bear more wounds than the living ever could."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "Cut me and I keep coming; that is all I do."
+            },
+            {
+                "id": "e4",
+                "resultText": "Still bodied, still walking, still owed."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I do not tire, and I do not stop."
+            }
+        ]
+    },
+    {
+        "id": "DvSmlhHf00000001",
+        "name": "Drives - Small (HiddenFolk)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I slip the hand and vanish behind the threshold."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "Underestimate me; it is how I win."
+            },
+            {
+                "id": "e4",
+                "resultText": "Quick fingers, quick feet, quick mischief."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I am small, and small things get everywhere."
+            }
+        ]
+    },
+    {
+        "id": "DvAvrgHf00000001",
+        "name": "Drives - Average (HiddenFolk)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I carry myself as folk, not as a wee thing."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "Speak to me properly, as you would a neighbour."
+            },
+            {
+                "id": "e4",
+                "resultText": "I keep to the old courtesies between our kinds."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I am more than you take me for."
+            }
+        ]
+    },
+    {
+        "id": "DvCrtlUs00000001",
+        "name": "Drives - Courtly",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Observe the courtesies, or answer for the lapse."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "I grant favor to those who please me and ruin to those who do not."
+            },
+            {
+                "id": "e3",
+                "resultText": "Rank is everything; mind where you stand before me."
+            },
+            {
+                "id": "e4",
+                "resultText": "The hollow hill has its manners, and you will keep them."
+            },
+            {
+                "id": "e5",
+                "resultText": "Flatter me well and you may leave whole."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I remember every slight, and I repay each one."
+            }
+        ]
+    },
+    {
+        "id": "DvGravUn00000001",
+        "name": "Drives - Grave",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I rise from the grave and will not be put back easily."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "The tomb is mine; disturb it and answer to me."
+            },
+            {
+                "id": "e3",
+                "resultText": "I am anchored to this mound, and I defend it."
+            },
+            {
+                "id": "e4",
+                "resultText": "Leave the dead their rest, or join them."
+            },
+            {
+                "id": "e5",
+                "resultText": "What was buried with me stays with me."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I answer the churchyard's wrongs, not the living's."
+            }
+        ]
+    },
+    {
+        "id": "DvCursBs00000001",
+        "name": "Drives - Cursed",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I bear the curse, and I make others bear it too."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "The malediction shows in me; do not look away."
+            },
+            {
+                "id": "e3",
+                "resultText": "What was done to me will be done through me."
+            },
+            {
+                "id": "e4",
+                "resultText": "I carry the consequence, and I spread the sign."
+            },
+            {
+                "id": "e5",
+                "resultText": "Touch me and take a share of the harm."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I did not choose this shape, but I will use it."
+            }
+        ]
+    },
+    {
+        "id": "DvWntrUs00000001",
+        "name": "Drives - Winter",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Sleep, labor, and harsh blessing are mine to give."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "I am the cold that judges who is worthy of spring."
+            },
+            {
+                "id": "e3",
+                "resultText": "Idle hands and unkept homes earn my displeasure."
+            },
+            {
+                "id": "e4",
+                "resultText": "I bless the diligent and freeze the rest."
+            },
+            {
+                "id": "e5",
+                "resultText": "The long dark is my season, and my rule."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Kneel to winter, or be buried by it."
+            }
+        ]
+    },
+    {
+        "id": "DvSmkFUs00000001",
+        "name": "Drives - Smokeless Fire (TheUnseen)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I am smoke and invisible fire; I keep no shape you trust."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "Every bargain with me has a hidden ember in it."
+            },
+            {
+                "id": "e3",
+                "resultText": "Insult me and burn; honor me and prosper."
+            },
+            {
+                "id": "e4",
+                "resultText": "I pass through the ruin as heat passes through air."
+            },
+            {
+                "id": "e5",
+                "resultText": "Swear to me carefully; I hold you to the letter."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I was old when your fires were first lit."
+            }
+        ]
+    },
+    {
+        "id": "DvInfnNu00000001",
+        "name": "Drives - Infernal (Unnatural)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Seal the bargain; the soul is the only real coin."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "I tempt toward corruption, patiently, thoroughly."
+            },
+            {
+                "id": "e3",
+                "resultText": "Every hierarchy has a rung for the newly damned."
+            },
+            {
+                "id": "e4",
+                "resultText": "I offer what they want and collect what they are."
+            },
+            {
+                "id": "e5",
+                "resultText": "The contract is binding, in this world and the next."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I do not force; I persuade, and I wait."
+            }
+        ]
+    },
+    {
+        "id": "DvAnglNu00000001",
+        "name": "Drives - Angelic (Unnatural)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Announce the sentence; the order must be kept."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "I am revelation and judgment, not mercy."
+            },
+            {
+                "id": "e3",
+                "resultText": "Terrible order is still order, and I serve it."
+            },
+            {
+                "id": "e4",
+                "resultText": "I burn away what will not be corrected."
+            },
+            {
+                "id": "e5",
+                "resultText": "My word is the sentence, and it is final."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Kneel before the revelation or be undone by it."
+            }
+        ]
+    },
+    {
+        "id": "DvBtlfUn00000001",
+        "name": "Drives - Battlefield (Undead)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Rise among the fallen; the battle is not over."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "I died in the line and I hold the line still."
+            },
+            {
+                "id": "e3",
+                "resultText": "The slaughter-field is mine; all who cross it are enemies."
+            },
+            {
+                "id": "e4",
+                "resultText": "I do not know the war has ended, and I will not be told."
+            },
+            {
+                "id": "e5",
+                "resultText": "Every corpse here is a soldier I can raise."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Finish the charge that killed me."
+            }
+        ]
+    },
+    {
+        "id": "DvHrthUs00000001",
+        "name": "Drives - Hearth (TheUnseen)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I judge the household: the tidy, the wasteful, the cruel."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "Keep the old customs and I bless your hall."
+            },
+            {
+                "id": "e3",
+                "resultText": "Neglect the hearth and I will make you regret it."
+            },
+            {
+                "id": "e4",
+                "resultText": "I am the matron of this threshold, and I hold court here."
+            },
+            {
+                "id": "e5",
+                "resultText": "Offerings are noted; so are insults."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "The domestic order is sacred, and I enforce it."
+            }
+        ]
+    },
+    {
+        "id": "DvHrthHf00000001",
+        "name": "Drives - Hearth (HiddenFolk)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Keep the hearth-bargain and I keep your home."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "A bowl of milk buys my goodwill; forgetting it does not."
+            },
+            {
+                "id": "e4",
+                "resultText": "I press close to the hall and expect my due."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Small kindnesses to me return as small blessings."
+            }
+        ]
+    },
+    {
+        "id": "DvBtlfPe00000001",
+        "name": "Drives - Battlefield (People)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Advance in line; the formation is everything."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "I know camp, march, and the press of battle."
+            },
+            {
+                "id": "e4",
+                "resultText": "Ground taken is ground held."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "The captain's order moves me before fear can."
+            }
+        ]
+    },
+    {
+        "id": "DvSetlNs00000001",
+        "name": "Drives - Settlement (Spirit)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I guard the holding; bless it or be answered."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "I am local, protective, and easily turned dangerous."
+            },
+            {
+                "id": "e4",
+                "resultText": "Respect the farmstead's spirit and prosper."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Wrong this place and I will wrong you back."
+            }
+        ]
+    },
+    {
+        "id": "DvSetlHf00000001",
+        "name": "Drives - Settlement (HiddenFolk)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Spoil the work of those who slight the old ways."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "I keep to the lanes and edges of your village."
+            },
+            {
+                "id": "e4",
+                "resultText": "Court my goodwill or curse your tools."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I am underfoot and everywhere in this settlement."
+            }
+        ]
+    },
+    {
+        "id": "DvGlemCn00000001",
+        "name": "Drives - Golem (Construct)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Guard the threshold; that is the whole of my letter."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "I obey the word set into me, and nothing else."
+            },
+            {
+                "id": "e4",
+                "resultText": "I do not tire, question, or turn aside from the task."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Cross the line I keep and be stopped."
+            }
+        ]
+    },
+    {
+        "id": "DvHmncCn00000001",
+        "name": "Drives - Homunculus (Construct)",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I whisper my maker's errands, small and constant."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "I serve, I carry, I listen where I am sent."
+            },
+            {
+                "id": "e4",
+                "resultText": "Made for a purpose, I pursue only that purpose."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I am little, artificial, and always at work."
             }
         ]
     }
