@@ -4,14 +4,1364 @@
         "name": "Drives — Restless Dead",
         "drawFormula": "3d6",
         "entries": [
-            { "id": "DrRU01", "resultText": "Return to the place where I died and make it mine again." },
-            { "id": "DrRU02", "resultText": "" },
-            { "id": "DrRU03", "resultText": "Punish the living who wronged me in life." },
-            { "id": "DrRU04", "resultText": "Reclaim what was taken from my grave." },
-            { "id": "DrRU05", "resultText": "" },
-            { "id": "DrRU06", "resultText": "Drag the living down into my cold company." },
-            { "id": "DrRU07", "resultText": "Finish the task that death interrupted." },
-            { "id": "DrRU08", "resultText": "Silence those who speak my name without dread." }
+            {
+                "id": "DrRU01",
+                "resultText": "Return to the place where I died and make it mine again."
+            },
+            {
+                "id": "DrRU02",
+                "resultText": ""
+            },
+            {
+                "id": "DrRU03",
+                "resultText": "Punish the living who wronged me in life."
+            },
+            {
+                "id": "DrRU04",
+                "resultText": "Reclaim what was taken from my grave."
+            },
+            {
+                "id": "DrRU05",
+                "resultText": ""
+            },
+            {
+                "id": "DrRU06",
+                "resultText": "Drag the living down into my cold company."
+            },
+            {
+                "id": "DrRU07",
+                "resultText": "Finish the task that death interrupted."
+            },
+            {
+                "id": "DrRU08",
+                "resultText": "Silence those who speak my name without dread."
+            }
+        ]
+    },
+    {
+        "id": "DvHungBs00000001",
+        "name": "Drives - Hungry",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": ""
+            },
+            {
+                "id": "e1",
+                "resultText": "The youngest and softest first."
+            },
+            {
+                "id": "e2",
+                "resultText": "Nothing warm leaves my ground uneaten."
+            },
+            {
+                "id": "e3",
+                "resultText": "Hollow them out; wear the quiet after."
+            },
+            {
+                "id": "e4",
+                "resultText": "Whatever lives here is owed to me."
+            },
+            {
+                "id": "e5",
+                "resultText": "Feed. The ache never stops."
+            },
+            {
+                "id": "e6",
+                "resultText": "Eat until the hunger sleeps - it never sleeps."
+            },
+            {
+                "id": "e7",
+                "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvHuntBs00000001",
+        "name": "Drives - Hunter",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": ""
+            },
+            {
+                "id": "e1",
+                "resultText": "Once I have the scent, the chase is already over."
+            },
+            {
+                "id": "e2",
+                "resultText": "The one that runs is the one I want."
+            },
+            {
+                "id": "e3",
+                "resultText": "Wear them down; patience is the killing part."
+            },
+            {
+                "id": "e4",
+                "resultText": "Take the strays before the herd knows they are gone."
+            },
+            {
+                "id": "e5",
+                "resultText": "Every trail ends where I decide it ends."
+            },
+            {
+                "id": "e6",
+                "resultText": "Let them tire. I do not."
+            },
+            {
+                "id": "e7",
+                "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvTerrBs00000001",
+        "name": "Drives - Territorial",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": ""
+            },
+            {
+                "id": "e1",
+                "resultText": "This ground is mine to the last root and stone."
+            },
+            {
+                "id": "e2",
+                "resultText": "Cross my boundary and I answer in full."
+            },
+            {
+                "id": "e3",
+                "resultText": "My den, my range, my young - untouched."
+            },
+            {
+                "id": "e4",
+                "resultText": "Drive them out before they think to stay."
+            },
+            {
+                "id": "e5",
+                "resultText": "I mark it, I hold it, I do not share it."
+            },
+            {
+                "id": "e6",
+                "resultText": "Nothing feeds here but me and mine."
+            },
+            {
+                "id": "e7",
+                "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvVengCu00000001",
+        "name": "Drives - Vengeful",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": ""
+            },
+            {
+                "id": "e1",
+                "resultText": "Strike the one who caused this, whatever it costs."
+            },
+            {
+                "id": "e2",
+                "resultText": "The blood-price is owed and I will collect it."
+            },
+            {
+                "id": "e3",
+                "resultText": "I remember the name. The name will suffer."
+            },
+            {
+                "id": "e4",
+                "resultText": "No wall, no oath, no years will shield them."
+            },
+            {
+                "id": "e5",
+                "resultText": "Their kin will pay what they cannot."
+            },
+            {
+                "id": "e6",
+                "resultText": "Only their end quiets me."
+            },
+            {
+                "id": "e7",
+                "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvASumCn00000001",
+        "name": "Drives - Await the Summons",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": ""
+            },
+            {
+                "id": "e1",
+                "resultText": "I wait. I have always waited."
+            },
+            {
+                "id": "e2",
+                "resultText": "When the word comes, I obey it wholly."
+            },
+            {
+                "id": "e3",
+                "resultText": "Nothing moves me until the one who binds me calls."
+            },
+            {
+                "id": "e4",
+                "resultText": "I am patient as stone and sudden as the strike."
+            },
+            {
+                "id": "e5",
+                "resultText": "My purpose sleeps until it is woken."
+            },
+            {
+                "id": "e6",
+                "resultText": "The command, when it comes, is absolute."
+            },
+            {
+                "id": "e7",
+                "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvFuCuCu00000001",
+        "name": "Drives - Fulfill the Curse",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": ""
+            },
+            {
+                "id": "e1",
+                "resultText": "The pattern repeats, and I with it."
+            },
+            {
+                "id": "e2",
+                "resultText": "I do what the curse makes me do."
+            },
+            {
+                "id": "e3",
+                "resultText": "There is no choice left in me, only the shape of the fate."
+            },
+            {
+                "id": "e4",
+                "resultText": "What was laid on me will be carried out."
+            },
+            {
+                "id": "e5",
+                "resultText": "Again, and again, until the terms are met."
+            },
+            {
+                "id": "e6",
+                "resultText": "I cannot stop. I was never meant to stop."
+            },
+            {
+                "id": "e7",
+                "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvRtSlCl00000001",
+        "name": "Drives - Return to Old Sleep",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": ""
+            },
+            {
+                "id": "e1",
+                "resultText": "Let me lie down again. That is all I want."
+            },
+            {
+                "id": "e2",
+                "resultText": "Smash whatever kept me awake."
+            },
+            {
+                "id": "e3",
+                "resultText": "I was woken against my will; I will punish the waking."
+            },
+            {
+                "id": "e4",
+                "resultText": "Drag them down into the quiet with me."
+            },
+            {
+                "id": "e5",
+                "resultText": "Every noise that stirs me will be silenced."
+            },
+            {
+                "id": "e6",
+                "resultText": "Back to the dark. Back to the long sleep."
+            },
+            {
+                "id": "e7",
+                "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvCnHtZc00000001",
+        "name": "Drives - Continue the Hunt",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": ""
+            },
+            {
+                "id": "e1",
+                "resultText": "The chase cannot stop. It will not stop."
+            },
+            {
+                "id": "e2",
+                "resultText": "I take my prey from those who watched me pass."
+            },
+            {
+                "id": "e3",
+                "resultText": "Forward, always forward, until the horn falls silent."
+            },
+            {
+                "id": "e4",
+                "resultText": "Whoever sees the hunt joins the hunted."
+            },
+            {
+                "id": "e5",
+                "resultText": "There is no rest on the ride, only the next quarry."
+            },
+            {
+                "id": "e6",
+                "resultText": "Mark them. They are already running."
+            },
+            {
+                "id": "e7",
+                "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvSrvtUv00000001",
+        "name": "Drives - Servant of a Higher",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": ""
+            },
+            {
+                "id": "e1",
+                "resultText": "I carry the order, not my own will."
+            },
+            {
+                "id": "e2",
+                "resultText": "My master's word moves my hand."
+            },
+            {
+                "id": "e3",
+                "resultText": "I act for the one who is not here."
+            },
+            {
+                "id": "e4",
+                "resultText": "Ask me nothing; I answer only to them."
+            },
+            {
+                "id": "e5",
+                "resultText": "Their purpose is the only purpose I have."
+            },
+            {
+                "id": "e6",
+                "resultText": "I will not be turned from what I was sent to do."
+            },
+            {
+                "id": "e7",
+                "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvBPlcUv00000001",
+        "name": "Drives - Bound to Place",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": ""
+            },
+            {
+                "id": "e1",
+                "resultText": "I cannot leave, so none shall pass."
+            },
+            {
+                "id": "e2",
+                "resultText": "Stand the boundary; it is the whole of my purpose."
+            },
+            {
+                "id": "e3",
+                "resultText": "Oath, geis, or curse holds me here, and I hold the line."
+            },
+            {
+                "id": "e4",
+                "resultText": "Come to my edge and come no further."
+            },
+            {
+                "id": "e5",
+                "resultText": "This place and I are one thing now."
+            },
+            {
+                "id": "e6",
+                "resultText": "I defend the border past all reason."
+            },
+            {
+                "id": "e7",
+                "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvPlgrUv00000001",
+        "name": "Drives - Pilgrim",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": ""
+            },
+            {
+                "id": "e1",
+                "resultText": "Press toward the place; nothing turns me aside for long."
+            },
+            {
+                "id": "e2",
+                "resultText": "The road ends where it is sacred to me."
+            },
+            {
+                "id": "e3",
+                "resultText": "Delay me and you become the delay I remove."
+            },
+            {
+                "id": "e4",
+                "resultText": "Every step is owed to the destination."
+            },
+            {
+                "id": "e5",
+                "resultText": "I have walked too far to stop now."
+            },
+            {
+                "id": "e6",
+                "resultText": "The place is calling, and I answer with my feet."
+            },
+            {
+                "id": "e7",
+                "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvPnshUv00000001",
+        "name": "Drives - Punisher",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": ""
+            },
+            {
+                "id": "e1",
+                "resultText": "Pronounce the sentence on those who break the rule."
+            },
+            {
+                "id": "e2",
+                "resultText": "The rule is the rule, however strange it seems."
+            },
+            {
+                "id": "e3",
+                "resultText": "Keep it and I pass you by; break it and I come."
+            },
+            {
+                "id": "e4",
+                "resultText": "I do not argue guilt; I deliver it."
+            },
+            {
+                "id": "e5",
+                "resultText": "The transgression names its own punishment."
+            },
+            {
+                "id": "e6",
+                "resultText": "Judgment is mine to give, and I give it fully."
+            },
+            {
+                "id": "e7",
+                "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvEndsUv00000001",
+        "name": "Drives - Wants to End",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": ""
+            },
+            {
+                "id": "e1",
+                "resultText": "I am so old, and I want only to end."
+            },
+            {
+                "id": "e2",
+                "resultText": "Strike true and I will thank you for it."
+            },
+            {
+                "id": "e3",
+                "resultText": "I fight only to delay, not to win."
+            },
+            {
+                "id": "e4",
+                "resultText": "Let this be the last of it. The last."
+            },
+            {
+                "id": "e5",
+                "resultText": "Oblivion is the one mercy left to want."
+            },
+            {
+                "id": "e6",
+                "resultText": "I would welcome the final blow."
+            },
+            {
+                "id": "e7",
+                "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvSeekUv00000001",
+        "name": "Drives - Seek What Was Lost",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": ""
+            },
+            {
+                "id": "e1",
+                "resultText": "Find the trail; every act serves the search."
+            },
+            {
+                "id": "e2",
+                "resultText": "The heir, the relic, the place - I will have it."
+            },
+            {
+                "id": "e3",
+                "resultText": "Nothing matters beside the thing I have lost."
+            },
+            {
+                "id": "e4",
+                "resultText": "I follow the faintest sign to its end."
+            },
+            {
+                "id": "e5",
+                "resultText": "Stand in my way and become part of the search."
+            },
+            {
+                "id": "e6",
+                "resultText": "I do not rest while it is still missing."
+            },
+            {
+                "id": "e7",
+                "resultText": ""
+            }
+        ]
+    },
+    {
+        "id": "DvGardNs00000001",
+        "name": "Drives - Guardian",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "What I keep is not yours to touch."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "I warn once. There is no second warning."
+            },
+            {
+                "id": "e3",
+                "resultText": "Turn back the threat before it reaches the ground I hold."
+            },
+            {
+                "id": "e4",
+                "resultText": "The grove, the stream, the stone - I stand for them."
+            },
+            {
+                "id": "e5",
+                "resultText": "Trespass is answered in kind."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I do not sleep while it is threatened."
+            }
+        ]
+    },
+    {
+        "id": "DvPrtkPe00000001",
+        "name": "Drives - Protector of Kin",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Step between them and the harm, always."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "My own come first, and last, and only."
+            },
+            {
+                "id": "e3",
+                "resultText": "Whoever threatens the young threatens me."
+            },
+            {
+                "id": "e4",
+                "resultText": "I will spend myself to the bone for them."
+            },
+            {
+                "id": "e5",
+                "resultText": "Take me before you take one of mine."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Nothing gets past me to them."
+            }
+        ]
+    },
+    {
+        "id": "DvGrdyUv00000001",
+        "name": "Drives - Greedy",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "What I take, I keep. It is never given back."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "Add it to the hoard - gold, names, teeth, souls."
+            },
+            {
+                "id": "e3",
+                "resultText": "Mine grows. It only grows."
+            },
+            {
+                "id": "e4",
+                "resultText": "I count what is mine, and I want more."
+            },
+            {
+                "id": "e5",
+                "resultText": "Every shining thing belongs in my keeping."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Loss is the one wound I will not bear."
+            }
+        ]
+    },
+    {
+        "id": "DvClltUv00000001",
+        "name": "Drives - Collector of Trophies",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Every meeting leaves me a token to keep."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "A finger, a name, a lock of hair - I take one."
+            },
+            {
+                "id": "e3",
+                "resultText": "I remember them by what I kept of them."
+            },
+            {
+                "id": "e4",
+                "resultText": "No kill goes unmarked in my collection."
+            },
+            {
+                "id": "e5",
+                "resultText": "Give me the small thing that was yours."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "The set is never complete."
+            }
+        ]
+    },
+    {
+        "id": "DvRecrNu00000001",
+        "name": "Drives - Recruiter",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Offer them the side before I offer them the blade."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "Every soul can be won; I only need the right price."
+            },
+            {
+                "id": "e3",
+                "resultText": "Better a servant gained than an enemy killed."
+            },
+            {
+                "id": "e4",
+                "resultText": "I will find what they want and hold it out."
+            },
+            {
+                "id": "e5",
+                "resultText": "The pact is always open to those who kneel."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "One more for the master's count."
+            }
+        ]
+    },
+    {
+        "id": "DvPHOdUs00000001",
+        "name": "Drives - Preserve the Hidden Order",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "The old order must not be seen or broken."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "I judge harshly those who threaten what is hidden."
+            },
+            {
+                "id": "e3",
+                "resultText": "Continuity above the wants of any one mortal."
+            },
+            {
+                "id": "e4",
+                "resultText": "Command in the name of what came before."
+            },
+            {
+                "id": "e5",
+                "resultText": "The secret keeps because I keep it."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Let none unravel what took ages to weave."
+            }
+        ]
+    },
+    {
+        "id": "DvRetHUn00000001",
+        "name": "Drives - Return to the House",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I must go back to the house that was mine."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "Resume the old habit; the hearth remembers me."
+            },
+            {
+                "id": "e3",
+                "resultText": "The wrong done there pulls me home again and again."
+            },
+            {
+                "id": "e4",
+                "resultText": "I belong to that threshold, cursed or not."
+            },
+            {
+                "id": "e5",
+                "resultText": "Those living in my place are living in my place."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "The door should open to me. It always did."
+            }
+        ]
+    },
+    {
+        "id": "DvMZonZc00000001",
+        "name": "Drives - Manifest the Zone",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Bring the wrongness with me wherever I go."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "The world bends here; let it bend further."
+            },
+            {
+                "id": "e3",
+                "resultText": "Make this ground into my ground."
+            },
+            {
+                "id": "e4",
+                "resultText": "What is real yields to what I am."
+            },
+            {
+                "id": "e5",
+                "resultText": "Spread the warping until it is the only truth."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Nothing right may stand where I have passed."
+            }
+        ]
+    },
+    {
+        "id": "DvLureNs00000001",
+        "name": "Drives - Lurer",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Lead them to the bad ground and let it take them."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "My voice is the path; they will follow it down."
+            },
+            {
+                "id": "e3",
+                "resultText": "Into the water, the bog, the cold, the roots."
+            },
+            {
+                "id": "e4",
+                "resultText": "I do not fight what I can misdirect."
+            },
+            {
+                "id": "e5",
+                "resultText": "Sweet words, wrong turns, deep places."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "The lost are so much easier than the wary."
+            }
+        ]
+    },
+    {
+        "id": "DvTstrUv00000001",
+        "name": "Drives - Tester",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Set the test, and judge who passes."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "The worthy go on; the rest are mine."
+            },
+            {
+                "id": "e3",
+                "resultText": "I answer virtue with mercy and failure with the rod."
+            },
+            {
+                "id": "e4",
+                "resultText": "Every stranger must be tried before trusted."
+            },
+            {
+                "id": "e5",
+                "resultText": "Riddle, trial, or temptation - choose and be measured."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I punish the ones who fail, exactly as they failed."
+            }
+        ]
+    },
+    {
+        "id": "DvMornUv00000001",
+        "name": "Drives - Mourner",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Lay my grief on them until they carry it too."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "Something is lost, and all must feel its absence."
+            },
+            {
+                "id": "e3",
+                "resultText": "I weep, and where I weep, others learn to weep."
+            },
+            {
+                "id": "e4",
+                "resultText": "Let them mourn what I have mourned alone too long."
+            },
+            {
+                "id": "e5",
+                "resultText": "The old age is gone; make them grieve it."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "My sorrow is a thing I give, not keep."
+            }
+        ]
+    },
+    {
+        "id": "DvLnlyUv00000001",
+        "name": "Drives - Lonely",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Take a companion; the empty place must be filled."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "The absent kin can be replaced, and will be."
+            },
+            {
+                "id": "e3",
+                "resultText": "I will keep whoever I can catch."
+            },
+            {
+                "id": "e4",
+                "resultText": "Do not leave me. I will not allow leaving."
+            },
+            {
+                "id": "e5",
+                "resultText": "Gift, lure, or theft - I only want the company."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Stay with me, one way or another."
+            }
+        ]
+    },
+    {
+        "id": "DvTrckUv00000001",
+        "name": "Drives - Trickster",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Set the trick for the joy of the turning."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "Reverse what they expect and watch them fall."
+            },
+            {
+                "id": "e3",
+                "resultText": "No real malice - only the trap, the jest, the twist."
+            },
+            {
+                "id": "e4",
+                "resultText": "Every certainty is a thing to upend."
+            },
+            {
+                "id": "e5",
+                "resultText": "I would rather fool them than fight them."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "The best prank costs them more than they know."
+            }
+        ]
+    },
+    {
+        "id": "DvLbrtUv00000001",
+        "name": "Drives - Liberator",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Open the way; free them from their state."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "Curse, body, or bondage - I break it, by any means."
+            },
+            {
+                "id": "e3",
+                "resultText": "What I call freedom, I will impose as freedom."
+            },
+            {
+                "id": "e4",
+                "resultText": "No cage stands once I have named it a cage."
+            },
+            {
+                "id": "e5",
+                "resultText": "I free them whether they ask it or not."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Release is justice, and justice is mine to deal."
+            }
+        ]
+    },
+    {
+        "id": "DvMakrUv00000001",
+        "name": "Drives - Maker",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Add to the work; it is never finished."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "I shape, I build, I scribe - I cannot stop making."
+            },
+            {
+                "id": "e3",
+                "resultText": "The unfinished thing is an ache I must answer."
+            },
+            {
+                "id": "e4",
+                "resultText": "Give me material and I will give it form."
+            },
+            {
+                "id": "e5",
+                "resultText": "Every idle hour is a wound to the work."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "What I make outlasts what I destroy."
+            }
+        ]
+    },
+    {
+        "id": "DvSprdUv00000001",
+        "name": "Drives - Spread the Word",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Carry the doctrine into every listening ear."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "The message must take root in all who hear."
+            },
+            {
+                "id": "e3",
+                "resultText": "Convert or condemn; there is no third way."
+            },
+            {
+                "id": "e4",
+                "resultText": "I speak the word until the word is everywhere."
+            },
+            {
+                "id": "e5",
+                "resultText": "Every stranger is a field not yet sown."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Let none leave me without the truth in them."
+            }
+        ]
+    },
+    {
+        "id": "DvHDwpPe00000001",
+        "name": "Drives - High Drive When Pressed",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Challenge the thing I hold and I only hold it harder."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": "Press me on this and I will not bend."
+            },
+            {
+                "id": "e3",
+                "resultText": "The more you name my grievance, the deeper it sets."
+            },
+            {
+                "id": "e4",
+                "resultText": "Corner me on what matters and I become worse to face."
+            },
+            {
+                "id": "e5",
+                "resultText": "My loyalty hardens the instant it is tested."
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "Push here, and find the one place I never yield."
+            }
+        ]
+    },
+    {
+        "id": "DvCuriUv00000001",
+        "name": "Drives - Curious",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "I want to know what the mortals are doing here."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "Follow them. Watch. Learn the why of it."
+            },
+            {
+                "id": "e4",
+                "resultText": "Do not end it yet - I am not done looking."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "New things are worth the risk of nearing them."
+            }
+        ]
+    },
+    {
+        "id": "DvBordUv00000001",
+        "name": "Drives - Bored",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Make it interesting, or make it stop."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "Set the game and see how they play."
+            },
+            {
+                "id": "e4",
+                "resultText": "Their fear is the only entertainment out here."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I did not mean to kill it. It stopped being fun."
+            }
+        ]
+    },
+    {
+        "id": "DvWtnsUv00000001",
+        "name": "Drives - Witness",
+        "drawFormula": "3d6",
+        "entries": [
+            {
+                "id": "e0",
+                "resultText": "Note the crossing; remember who passed."
+            },
+            {
+                "id": "e1",
+                "resultText": ""
+            },
+            {
+                "id": "e2",
+                "resultText": ""
+            },
+            {
+                "id": "e3",
+                "resultText": "I watch, and I do not forget."
+            },
+            {
+                "id": "e4",
+                "resultText": "Break your vow before me and I will act."
+            },
+            {
+                "id": "e5",
+                "resultText": ""
+            },
+            {
+                "id": "e6",
+                "resultText": ""
+            },
+            {
+                "id": "e7",
+                "resultText": "I stand, and I hold the record of it all."
+            }
         ]
     }
 ]
