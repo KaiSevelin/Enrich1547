@@ -22,16 +22,39 @@
  * @returns {object[]} resolved child item documents, in declaration order
  */
 export function getContainerChildItems(set, actor, containerKey, expectedTemplateId) {
-    const linkage = set?.system?.props?.[containerKey];
-    if (!linkage || typeof linkage !== "object") return [];
-    const ids = Array.isArray(linkage) ? linkage : Object.keys(linkage);
+    const setId = set?.id ?? null;
     const out = [];
+    const seen = new Set();
+
+    // Primary: find children by their CSB `system.container` back-pointer among
+    // the actor's items. This is the ONLY reliable source on a live actor —
+    // CSB's data-prep RECOMPUTES the parent's itemContainer linkage prop
+    // (ChangeDisplayer/RequirementsDisplayer) from the actual children and
+    // EMPTIES it when it thinks there are none, so reading `set.system.props`
+    // returns nothing. `container` is a scalar back-pointer CSB does not touch.
+    if (setId != null) {
+        for (const item of (actor?.items ?? [])) {
+            const container = String(item?.system?.container ?? item?._source?.system?.container ?? "");
+            if (container !== String(setId)) continue;
+            if (expectedTemplateId && item.system?.template !== expectedTemplateId) continue;
+            out.push(item);
+            if (item?.id) seen.add(item.id);
+        }
+    }
+    if (out.length) return out;
+
+    // Fallback: the linkage prop (older data, or non-actor contexts). Read
+    // `_source` first — the prepared prop is the one CSB empties.
+    const linkage = set?._source?.system?.props?.[containerKey] ?? set?.system?.props?.[containerKey];
+    if (!linkage || typeof linkage !== "object") return out;
+    const ids = Array.isArray(linkage) ? linkage : Object.keys(linkage);
     for (const id of ids) {
-        if (!id || typeof id !== "string") continue;
+        if (!id || typeof id !== "string" || seen.has(id)) continue;
         const item = actor?.items?.get?.(id) ?? null;
         if (!item) continue;
         if (expectedTemplateId && item.system?.template !== expectedTemplateId) continue;
         out.push(item);
+        seen.add(id);
     }
     return out;
 }

@@ -135,6 +135,18 @@ export async function resyncActorChangeSets(actor) {
         await handleChangeSetCreate(changeSet, {});
         cascaded += 1;
     }
+
+    // Now that the child Changes exist, re-run the downstream consumers that
+    // read them (item grants → actual weapons/armor; composition cache →
+    // stats/traits recompute). They resolve children via `system.container`, so
+    // this is reliable even when CSB has emptied the linkage props. Idempotent.
+    try {
+        const api = globalThis.game?.modules?.get?.(MODULE_ID)?.api;
+        api?.composition?.invalidateEffectiveActorCache?.(actor);
+        await api?.reconcileGrantedItems?.(actor);
+    } catch (err) {
+        console.warn(`${MODULE_ID} | resyncActorChangeSets: downstream refresh failed`, err);
+    }
     return { cascaded };
 }
 
