@@ -66,6 +66,21 @@ export function formatDriveLine(category, text) {
     return cat ? `[${cat}] ${clean}` : clean;
 }
 
+// A Random-Drive meta-table stores each pick as `SUBTABLEID|Category`. Parse
+// that into the referenced sub-table id + category so the service can roll one
+// level down. Returns null for a plain drive line (the common case) — the
+// pre-`|` segment must be a 16-char Foundry id for this to fire, so prose
+// containing a stray `|` won't false-match.
+const FOUNDRY_ID_RE = /^[A-Za-z0-9]{16}$/;
+export function parseNestedRef(text) {
+    const raw = String(text ?? "");
+    const bar = raw.indexOf("|");
+    if (bar < 0) return null;
+    const tableId = raw.slice(0, bar).trim();
+    if (!FOUNDRY_ID_RE.test(tableId)) return null;
+    return { tableId, category: raw.slice(bar + 1).trim() };
+}
+
 // Roll 3d6 (or the table's own formula) and return the matching result's text.
 // Rolls the formula directly rather than table.roll() so a compendium-sourced
 // table isn't written to.
@@ -83,6 +98,20 @@ async function rollTableText(table) {
         }
     }
     return "";
+}
+
+// Roll a drive table to a `{ text, category }` pair. If the result is a
+// Random-Drive meta pick (`SUBTABLEID|Category`) that resolves to a real table,
+// roll that sub-table one level down and carry its category; otherwise it's a
+// plain drive line and category stays null (the change's own DriveCategory wins).
+async function resolveDriveRoll(table) {
+    const raw = await rollTableText(table);
+    const ref = parseNestedRef(raw);
+    if (ref) {
+        const sub = getTableById(ref.tableId);
+        if (sub) return { text: await rollTableText(sub), category: ref.category };
+    }
+    return { text: raw, category: null };
 }
 
 const inFlight = new WeakSet();
@@ -106,8 +135,8 @@ export async function rollDriveTables(actor) {
                 console.warn(`${MODULE_ID} | DriveRoll: table '${target.tableId}' not found for actor ${actor.name}`);
                 continue;
             }
-            const text = await rollTableText(table);
-            const line = formatDriveLine(target.category, text);
+            const { text, category } = await resolveDriveRoll(table);
+            const line = formatDriveLine(category ?? target.category, text);
             if (line) await addDrive(actor, line);
             await change.setFlag(MODULE_ID, ROLLED_FLAG, {
                 tableUuid: target.tableId,

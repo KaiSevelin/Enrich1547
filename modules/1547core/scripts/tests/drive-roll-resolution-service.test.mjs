@@ -3,7 +3,7 @@ import assert from "assert";
 if (typeof globalThis.game === "undefined") globalThis.game = { modules: { get: () => ({ api: {} }) } };
 if (typeof globalThis.Hooks === "undefined") globalThis.Hooks = { on: () => {}, off: () => {} };
 
-const { getDriveRollTarget, findDriveRollsNeeded, formatDriveLine } =
+const { getDriveRollTarget, findDriveRollsNeeded, formatDriveLine, parseNestedRef } =
     await import("../services/drive-roll-resolution-service.js");
 
 const CHANGESET_ID = "b7A1z6cSZO4dYTKT";
@@ -65,6 +65,22 @@ console.log("drive-roll: findDriveRollsNeeded...");
     const a = actor([changeSet("cs-1"), change({ id: "g1", container: "cs-1", kind: "ItemGrant" })]);
     assert.deepStrictEqual(findDriveRollsNeeded(a), []);
     console.log("  ✓ Ignores non-DriveRoll Changes");
+}
+
+console.log("drive-roll: parseNestedRef (Random Drive meta pick)...");
+{
+    // 16-char id before the bar => a nested pick
+    assert.deepStrictEqual(parseNestedRef("DvHungBs00000001|Hunger"), { tableId: "DvHungBs00000001", category: "Hunger" });
+    // category may be empty
+    assert.deepStrictEqual(parseNestedRef("DvHungBs00000001|"), { tableId: "DvHungBs00000001", category: "" });
+    // a plain drive line is not a ref
+    assert.strictEqual(parseNestedRef("Feed. The ache never stops."), null);
+    // blank result
+    assert.strictEqual(parseNestedRef(""), null);
+    // a stray bar in prose whose prefix is not a 16-char id does not false-match
+    assert.strictEqual(parseNestedRef("Take a companion | fill the empty place"), null);
+    assert.strictEqual(parseNestedRef("short|Hunger"), null);
+    console.log("  ✓ Parses SUBTABLEID|Category; ignores plain lines, blanks, and stray bars");
 }
 
 console.log("\nAll drive-roll-resolution tests passed.");

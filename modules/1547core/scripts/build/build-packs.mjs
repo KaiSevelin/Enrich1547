@@ -24,7 +24,7 @@ import { compilePack } from "@foundryvtt/foundryvtt-cli";
 import { annotateRitualStepTables } from "./reorder-ritual-tables.mjs";
 import { deepClone, ACTOR_TYPES, isValidFoundryId, deriveFoundryIdFromText, normalizeTraitKey, normalizeTypeList, normalizeSourceEntry, mergeDefinedProps } from "../lib/build-helpers.mjs";
 import { buildAmmoProps, buildArmorProps, buildChangeProps, buildChangeSetProps, buildDiseaseProps, buildMonsterMagicProps, buildPactProps, buildRequirementProps, buildSpellProps, buildSupernaturalMarkProps, buildWeaponModifierProps, buildWeaponProps, buildManeuverProps } from "../lib/prop-builders.mjs";
-import { buildBoostResults, ritualStepFormula, ritualStepDescription, buildRitualStepResults, buildBellCurveResults, buildPactResults } from "../lib/rolltable-results.mjs";
+import { buildBoostResults, ritualStepFormula, ritualStepDescription, buildRitualStepResults, buildBellCurveResults, buildUniformResults, buildPactResults } from "../lib/rolltable-results.mjs";
 import { csbItemBody, mergeActorParts } from "../lib/doc-builders.mjs";
 import { STAT_INFO } from "../hud/stat-info.js";
 import { HUMOUR_INFO } from "../services/humour-info.js";
@@ -1047,19 +1047,25 @@ function buildDriveRollTableDoc(table) {
     const normalized = normalizeSourceEntry(table, "driveRollTable", "RollTable");
     // A blank entry (resultText: "") yields an empty result — the drive-roll
     // service treats that as "no drive this roll".
-    const results = buildBellCurveResults(normalized, { entryKey: "driveEntry", defaultText: "", img: "icons/svg/aura.svg" });
+    // `distribution: "uniform"` = a flat 1dN where every entry is equally likely
+    // (the Random Drive meta-table); otherwise a 3d6 bell curve.
+    const uniform = table?.distribution === "uniform";
+    const results = uniform
+        ? buildUniformResults(normalized, { defaultText: "", img: "icons/svg/aura.svg" })
+        : buildBellCurveResults(normalized, { entryKey: "driveEntry", defaultText: "", img: "icons/svg/aura.svg" });
+    const formula = uniform ? `1d${Math.max(results.length, 1)}` : (normalized.drawFormula ?? "3d6");
     return rollTableDoc({
         _id: normalized._id,
         name: normalized.name,
-        description: `Roll ${normalized.drawFormula ?? "3d6"} for a monster drive. A blank result adds no drive.`,
+        description: `Roll ${formula} for a monster drive. A blank result adds no drive.`,
         results,
-        formula: normalized.drawFormula ?? "3d6",
+        formula,
         flags: {
             [SOURCE_FLAG_SCOPE]: {
                 sourceKey: String(table?.id ?? table?.name ?? "").trim(),
                 folderHint: normalized.folder ?? null,
                 sourceData: normalized,
-                drawFormula: normalized.drawFormula ?? "3d6"
+                drawFormula: formula
             }
         }
     });

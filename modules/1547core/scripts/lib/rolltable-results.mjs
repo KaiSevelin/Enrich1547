@@ -92,6 +92,29 @@ export function buildBellCurveResults(normalized, { entryKey, defaultText, img }
 }
 
 /**
+ * Uniform table: a flat 1dN where each entry gets exactly one roll value, so
+ * every entry (drive-table reference or blank) is equally likely. Used by the
+ * "Random Drive" meta-table, whose results are `SUBTABLEID|Category` refs the
+ * drive-roll service resolves one level down.
+ */
+export function buildUniformResults(normalized, { defaultText, img }) {
+    const entries = Array.isArray(normalized.entries) ? normalized.entries : [];
+    return entries.map((entry, index) => {
+        const value = index + 1;
+        return {
+            _id: deriveFoundryIdFromText(`${normalized._id}:${entry.id ?? index}:result`),
+            type: TEXT_RESULT(),
+            text: entry.resultText ?? `${defaultText} ${index + 1}`,
+            img,
+            weight: 1,
+            range: [value, value],
+            drawn: false,
+            flags: { [SOURCE_FLAG_SCOPE]: { driveEntry: deepClone(entry) } }
+        };
+    });
+}
+
+/**
  * Pact table: a flat 1dN over the authored rollTable strings. Returns the
  * derived id/name/formula plus the results, or null if the pact has no table.
  */
