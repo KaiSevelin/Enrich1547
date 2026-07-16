@@ -15,7 +15,7 @@
  */
 
 import { findChangeSetsByGroup, getItemById } from "./content-registry.js";
-import { MODULE_ID } from "../lib/constants.mjs";
+import { MODULE_ID, ACTOR_TEMPLATE_ID } from "../lib/constants.mjs";
 import { escapeHtml } from "../lib/foundry-utils.mjs";
 
 const ACTOR_TYPES = [
@@ -339,8 +339,26 @@ class MonsterWizard extends Application {
                 // skips _template, so the base chassis never auto-applied either).
                 type: "character",
                 folder: actorFolder?.id ?? null,
-                system: { props: { TypeDropdown: s.typeKey } }
+                // Bind to the CSB actor template explicitly (mirrors chargen). CSB no
+                // longer auto-assigns a template to a bare "character" actor, so
+                // without this the monster has no props/HP and the base chassis,
+                // natural weapons, and changesets have nothing to build on.
+                system: { template: ACTOR_TEMPLATE_ID, props: { TypeDropdown: s.typeKey } }
             });
+
+            // Apply the CSB template immediately so props/default stats (incl. Hit
+            // Points) exist before Base auto-apply and changesets layer on. Method
+            // name is CSB-version-dependent; a failure must not abort creation.
+            try {
+                if (typeof actor?.reloadTemplate === "function") {
+                    await actor.reloadTemplate(ACTOR_TEMPLATE_ID);
+                } else if (typeof actor?.system?.reloadTemplate === "function") {
+                    await actor.system.reloadTemplate(ACTOR_TEMPLATE_ID);
+                }
+            } catch (err) {
+                try { await actor?.reloadTemplate?.(); } catch { /* leave for manual reload */ }
+                console.warn(`${MODULE_ID} | monster wizard: could not auto-apply CSB template; reload manually if the sheet looks bare`, err);
+            }
 
             // Wait briefly for Base auto-apply to settle so natural weapons/armor exist.
             await new Promise((r) => setTimeout(r, 250));
