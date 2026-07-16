@@ -111,6 +111,25 @@ async function handleChangeSetDelete(item, options) {
     await actor.deleteEmbeddedDocuments("Item", orphanIds, { [CASCADE_GUARD]: true });
 }
 
+// Explicitly (re)cascade every ChangeSet on an actor whose child items are
+// missing. Idempotent — a ChangeSet that already has children is skipped. Used
+// by the monster wizard after creation to guarantee the chassis/role/etc.
+// expand even when the createItem-hook cascade was missed (registry still
+// warming up at create time, or a concurrent CSB template reload racing it).
+export async function resyncActorChangeSets(actor) {
+    if (actor?.documentName !== "Actor") return { cascaded: 0 };
+    const changeSets = (actor.items?.contents ?? Array.from(actor.items ?? [])).filter(isChangeSetItem);
+    let cascaded = 0;
+    for (const changeSet of changeSets) {
+        const current = actor.items?.contents ?? Array.from(actor.items ?? []);
+        const hasChildren = current.some((it) => String(it?.system?.container ?? "") === changeSet.id);
+        if (hasChildren) continue;
+        await handleChangeSetCreate(changeSet, {});
+        cascaded += 1;
+    }
+    return { cascaded };
+}
+
 export function registerChangeSetCascadeService() {
     Hooks.on("createItem", (item, options) => {
         void handleChangeSetCreate(item, options);
@@ -118,4 +137,9 @@ export function registerChangeSetCascadeService() {
     Hooks.on("deleteItem", (item, options) => {
         void handleChangeSetDelete(item, options);
     });
+    const moduleApi = globalThis.game?.modules?.get?.(MODULE_ID);
+    if (moduleApi) {
+        moduleApi.api = moduleApi.api ?? {};
+        moduleApi.api.resyncActorChangeSets = resyncActorChangeSets;
+    }
 }

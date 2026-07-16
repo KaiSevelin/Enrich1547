@@ -376,6 +376,23 @@ class MonsterWizard extends Application {
                 await actor.createEmbeddedDocuments("Item", itemDataArr);
             }
 
+            // The createItem-hook cascade can be missed during rapid creation
+            // (content registry still warming up, or the template reload above
+            // racing base auto-apply), leaving ChangeSets attached but never
+            // expanded into their Changes (no Tags/Traits/stat mods/natural
+            // weapons). Now that everything is settled, explicitly (re)cascade
+            // every ChangeSet whose children are missing. Idempotent.
+            try {
+                await new Promise((r) => setTimeout(r, 150));
+                const resync = game.modules.get(MODULE_ID)?.api?.resyncActorChangeSets;
+                if (typeof resync === "function") {
+                    const { cascaded } = await resync(actor) ?? {};
+                    if (cascaded) console.log(`${MODULE_ID} | monster wizard: cascaded ${cascaded} ChangeSet(s) for ${actor.name}`);
+                }
+            } catch (err) {
+                console.warn(`${MODULE_ID} | monster wizard: ChangeSet resync failed`, err);
+            }
+
             this.state.actorId = actor.id;
             ui.notifications.info(`1547 Core: created ${actor.name} with ${itemDataArr.length} ChangeSet(s). Roll boosts or click Done.`);
 
