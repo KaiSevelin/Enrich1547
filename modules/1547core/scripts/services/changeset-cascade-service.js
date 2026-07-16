@@ -33,8 +33,16 @@ function isChangeSetItem(item) {
 
 // CSB container linkage shape is `{ [childId]: { name, id, uuid } }`. Older
 // fixtures used a plain array of ids; tolerate both.
+//
+// IMPORTANT: read from `_source` (raw stored data), not `system` (prepared).
+// `ChangeDisplayer`/`RequirementsDisplayer` are CSB itemContainer props: CSB's
+// data-prep RECOMPUTES them from the actor's actual container-children and
+// EMPTIES them when there are none yet. So on a freshly-dropped ChangeSet the
+// prepared `item.system.props[key]` is `{}` — the cascade would read no child
+// ids and create nothing. The seed linkage (pointing at the canonical Change
+// ids) survives only on `_source`.
 function readLinkageIds(item, key) {
-    const linkage = item?.system?.props?.[key];
+    const linkage = item?._source?.system?.props?.[key] ?? item?.system?.props?.[key];
     if (!linkage || typeof linkage !== "object") return [];
     if (Array.isArray(linkage)) return linkage.filter((id) => typeof id === "string" && id);
     return Object.keys(linkage).filter((id) => typeof id === "string" && id);
