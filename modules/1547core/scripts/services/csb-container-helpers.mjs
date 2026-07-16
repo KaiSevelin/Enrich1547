@@ -76,3 +76,15 @@ export function firstRefId(refValue) {
     }
     return null;
 }
+
+/**
+ * All referenced item ids from a CSB ref field (a single ref field can hold
+ * many, e.g. an ItemGrant that grants Claws + Bite + Natural Armor). Returns
+ * them in declaration order.
+ */
+export function allRefIds(refValue) {
+    if (!refValue) return [];
+    if (Array.isArray(refValue)) return refValue.filter((v) => typeof v === "string" && v);
+    if (typeof refValue === "object") return Object.keys(refValue).filter((k) => typeof k === "string" && k);
+    return [];
+}

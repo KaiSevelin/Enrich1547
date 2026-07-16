@@ -62,11 +62,11 @@ function changeSet({ id, changeIds = [] }) {
     };
 }
 
-function grantedItem({ id, changeSetId, changeId, name = "Granted" }) {
+function grantedItem({ id, changeSetId, changeId, sourceItemId, name = "Granted" }) {
     return {
         id,
         name,
-        flags: { "1547core": { grantedBy: { changeSetId, changeId } } }
+        flags: { "1547core": { grantedBy: { changeSetId, changeId, sourceItemId } } }
     };
 }
 
@@ -100,7 +100,8 @@ console.log("computeGrantedItemReconciliation...");
     assert.strictEqual(toCreate[0].name, "Claws");
     assert.deepStrictEqual(toCreate[0].flags["1547core"].grantedBy, {
         changeSetId: "cs-1",
-        changeId: "ch-1"
+        changeId: "ch-1",
+        sourceItemId: "source-claws"
     });
     assert.strictEqual(toCreate[0]._id, undefined);
     assert.deepStrictEqual(unresolved, []);
@@ -113,7 +114,7 @@ console.log("computeGrantedItemReconciliation...");
         items: [
             changeSet({ id: "cs-1", changeIds: ["ch-1"] }),
             ch,
-            grantedItem({ id: "claws-instance", changeSetId: "cs-1", changeId: "ch-1", name: "Claws" })
+            grantedItem({ id: "claws-instance", changeSetId: "cs-1", changeId: "ch-1", sourceItemId: "source-claws", name: "Claws" })
         ]
     });
     const { toCreate, toDelete } = computeGrantedItemReconciliation(a, resolve);
@@ -125,7 +126,7 @@ console.log("computeGrantedItemReconciliation...");
 {
     const a = actor({
         items: [
-            grantedItem({ id: "claws-instance", changeSetId: "cs-1", changeId: "ch-1", name: "Claws" })
+            grantedItem({ id: "claws-instance", changeSetId: "cs-1", changeId: "ch-1", sourceItemId: "source-claws", name: "Claws" })
         ]
     });
     const { toCreate, toDelete } = computeGrantedItemReconciliation(a, resolve);
@@ -140,8 +141,8 @@ console.log("computeGrantedItemReconciliation...");
         items: [
             changeSet({ id: "cs-1", changeIds: ["ch-1"] }),
             ch,
-            grantedItem({ id: "claws-instance", changeSetId: "cs-1", changeId: "ch-1", name: "Claws" }),
-            grantedItem({ id: "stale-bite", changeSetId: "cs-1", changeId: "ch-removed", name: "Bite" })
+            grantedItem({ id: "claws-instance", changeSetId: "cs-1", changeId: "ch-1", sourceItemId: "source-claws", name: "Claws" }),
+            grantedItem({ id: "stale-bite", changeSetId: "cs-1", changeId: "ch-removed", sourceItemId: "source-bite", name: "Bite" })
         ]
     });
     const { toCreate, toDelete } = computeGrantedItemReconciliation(a, resolve);
@@ -200,7 +201,7 @@ console.log("computeGrantedItemReconciliation...");
     assert.deepStrictEqual(toDelete, []);
     assert.strictEqual(toCreate.length, 1);
     assert.strictEqual(toCreate[0].name, "Bite");
-    assert.deepStrictEqual(toCreate[0].flags["1547core"].grantedBy, { changeSetId: "cs-1", changeId: "ch-1" });
+    assert.deepStrictEqual(toCreate[0].flags["1547core"].grantedBy, { changeSetId: "cs-1", changeId: "ch-1", sourceItemId: "source-bite" });
     console.log("  ✓ RollTable mode with cached sourceItemId creates the granted item");
 }
 

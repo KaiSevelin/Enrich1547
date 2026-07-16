@@ -18,7 +18,8 @@
  * GM-only and gated by an options flag to prevent self-trigger recursion.
  */
 
-import { getContainerChildItems, firstRefId } from "./csb-container-helpers.mjs";
+import { getContainerChildItems, allRefIds } from "./csb-container-helpers.mjs";
+import { getItemById } from "./content-registry.js";
 import { MODULE_ID, CHANGESET_TEMPLATE_ID, CHANGE_TEMPLATE_ID } from "../lib/constants.mjs";
 
 const CHANGE_CONTAINER_KEY = "ChangeDisplayer";
@@ -33,8 +34,8 @@ function isChange(item) {
     return item?.system?.template === CHANGE_TEMPLATE_ID;
 }
 
-function grantKey(changeSetId, changeId) {
-    return `${changeSetId}::${changeId}`;
+function grantKey(changeSetId, changeId, sourceItemId) {
+    return `${changeSetId}::${changeId}::${sourceItemId ?? ""}`;
 }
 
 function readGrantedByFlag(item) {
@@ -59,20 +60,29 @@ export function computeGrantedItemReconciliation(actor, resolveSource) {
         const childChanges = getContainerChildItems(set, actor, CHANGE_CONTAINER_KEY, CHANGE_TEMPLATE_ID);
         for (const change of childChanges) {
             const props = change.system?.props ?? {};
-            if (props.Kind !== "ItemGrant") continue;
-            const mode = String(props.ItemGrantMode ?? "Direct").trim();
-            let sourceItemId = null;
+            // CSB empties ref/container props (Kind is a scalar and survives, but
+            // ItemGrantRef is a ref field that data-prep clears) — read the raw
+            // `_source` copy for the linkage.
+            const sourceProps = change._source?.system?.props ?? {};
+            if ((props.Kind ?? sourceProps.Kind) !== "ItemGrant") continue;
+            const mode = String(props.ItemGrantMode ?? sourceProps.ItemGrantMode ?? "Direct").trim();
+            let sourceItemIds = [];
             if (mode === "Direct") {
-                sourceItemId = firstRefId(props.ItemGrantRef);
+                // One ItemGrant Change can grant several items (e.g. Claws +
+                // Bite + Natural Armor) — grant them all, not just the first.
+                sourceItemIds = allRefIds(sourceProps.ItemGrantRef ?? props.ItemGrantRef);
             } else if (mode === "RollTable") {
-                sourceItemId = change.flags?.[MODULE_ID]?.rolledResult?.sourceItemId ?? null;
+                const rolled = change.flags?.[MODULE_ID]?.rolledResult?.sourceItemId ?? null;
+                if (rolled) sourceItemIds = [rolled];
             }
-            if (!sourceItemId) continue;
-            targetGrants.set(grantKey(set.id, change.id), {
-                changeSetId: set.id,
-                changeId: change.id,
-                sourceItemId
-            });
+            for (const sourceItemId of sourceItemIds) {
+                if (!sourceItemId) continue;
+                targetGrants.set(grantKey(set.id, change.id, sourceItemId), {
+                    changeSetId: set.id,
+                    changeId: change.id,
+                    sourceItemId
+                });
+            }
         }
     }
 
@@ -80,7 +90,7 @@ export function computeGrantedItemReconciliation(actor, resolveSource) {
     for (const item of items) {
         const grantedBy = readGrantedByFlag(item);
         if (!grantedBy?.changeSetId || !grantedBy?.changeId) continue;
-        existingGranted.set(grantKey(grantedBy.changeSetId, grantedBy.changeId), item);
+        existingGranted.set(grantKey(grantedBy.changeSetId, grantedBy.changeId, grantedBy.sourceItemId), item);
     }
 
     const toDelete = [];
@@ -119,7 +129,8 @@ export function computeGrantedItemReconciliation(actor, resolveSource) {
         itemData.flags[MODULE_ID] = itemData.flags[MODULE_ID] ?? {};
         itemData.flags[MODULE_ID][FLAG_KEY] = {
             changeSetId: target.changeSetId,
-            changeId: target.changeId
+            changeId: target.changeId,
+            sourceItemId: target.sourceItemId
         };
         toCreate.push(itemData);
     }
@@ -137,6 +148,11 @@ function defaultResolveSource(id, actor) {
     // synthetic actor we're reconciling for.
     const ownOnActor = actor?.items?.get?.(id);
     if (ownOnActor) return ownOnActor.toObject();
+    // The content registry (world items overlaid on the compendium packs) —
+    // natural weapons like Bite/Claws/Natural Armor live in the weapons pack and
+    // may not exist as standalone world items.
+    const registryItem = getItemById(id);
+    if (registryItem) return registryItem.toObject();
     // Then world items
     const worldItem = globalThis.game?.items?.get?.(id);
     if (worldItem) return worldItem.toObject();
