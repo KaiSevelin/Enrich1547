@@ -280,4 +280,64 @@ console.log("computeGrantedItemReconciliation...");
     console.log("  ✓ Auto-equips items with an Equipped prop; leaves others alone");
 }
 
+{
+    // One ItemGrant Change can reference several items (e.g. the Beast base's
+    // "Claws + Bite + Natural Armor") — every ref must be granted, not just the first.
+    const multiChange = {
+        id: "ch-multi",
+        system: {
+            template: CHANGE_ID,
+            props: {
+                Kind: "ItemGrant",
+                ItemGrantMode: "Direct",
+                ItemGrantRef: {
+                    "source-claws": { name: "Claws", id: "source-claws", uuid: "Item.source-claws" },
+                    "source-bite": { name: "Bite", id: "source-bite", uuid: "Item.source-bite" },
+                    "source-armor": { name: "Armor", id: "source-armor", uuid: "Item.source-armor" }
+                }
+            }
+        },
+        flags: {}
+    };
+    const lib = { ...sourceLibrary, "source-armor": { name: "Armor", system: { props: {} } } };
+    const r = (id) => (lib[id] ? { ...lib[id] } : null);
+    const a = actor({ items: [changeSet({ id: "cs-1", changeIds: ["ch-multi"] }), multiChange] });
+    const { toCreate } = computeGrantedItemReconciliation(a, r);
+    assert.strictEqual(toCreate.length, 3);
+    assert.deepStrictEqual(toCreate.map((d) => d.name).sort(), ["Armor", "Bite", "Claws"]);
+    // Each grant keyed per-ref so re-running is stable (no duplicates).
+    const { toCreate: again, toDelete } = computeGrantedItemReconciliation(
+        actor({ items: [
+            changeSet({ id: "cs-1", changeIds: ["ch-multi"] }),
+            multiChange,
+            ...toCreate.map((d, i) => ({ id: `granted-${i}`, name: d.name, flags: d.flags }))
+        ] }),
+        r
+    );
+    assert.deepStrictEqual(again, []);
+    assert.deepStrictEqual(toDelete, []);
+    console.log("  ✓ Multi-ref ItemGrant grants every referenced item and stays stable");
+}
+
+{
+    // Regression: CSB empties ItemGrantRef in the prepared props during
+    // data-prep; the reconciler must read the raw `_source` copy.
+    const prunedChange = {
+        id: "ch-pruned",
+        system: {
+            template: CHANGE_ID,
+            props: { Kind: "ItemGrant", ItemGrantMode: "Direct", ItemGrantRef: {} }
+        },
+        _source: {
+            system: { props: { ItemGrantRef: ref("source-claws") } }
+        },
+        flags: {}
+    };
+    const a = actor({ items: [changeSet({ id: "cs-1", changeIds: ["ch-pruned"] }), prunedChange] });
+    const { toCreate } = computeGrantedItemReconciliation(a, resolve);
+    assert.strictEqual(toCreate.length, 1);
+    assert.strictEqual(toCreate[0].name, "Claws");
+    console.log("  ✓ Reads ItemGrantRef from _source when CSB has emptied the prepared prop");
+}
+
 console.log("\nAll item-grant-service tests passed.");

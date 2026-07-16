@@ -92,6 +92,11 @@ Hooks.once("init", () => {
         (module) => module.registerCompositionService()
     );
     void runImportedModuleStep(
+        "registerDerivedCompositionService",
+        () => import("./services/derived-composition-service.js"),
+        (module) => module.registerDerivedCompositionService()
+    );
+    void runImportedModuleStep(
         "registerMonsterImageResolverService",
         () => import("./services/monster-image-resolver-service.js"),
         (module) => module.registerMonsterImageResolverService()
