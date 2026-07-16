@@ -1043,11 +1043,34 @@ async function buildMonstersPack() {
     await compilePackFromDocs("monsters", docs);
 }
 
+function buildDriveRollTableDoc(table) {
+    const normalized = normalizeSourceEntry(table, "driveRollTable", "RollTable");
+    // A blank entry (resultText: "") yields an empty result — the drive-roll
+    // service treats that as "no drive this roll".
+    const results = buildBellCurveResults(normalized, { entryKey: "driveEntry", defaultText: "", img: "icons/svg/aura.svg" });
+    return rollTableDoc({
+        _id: normalized._id,
+        name: normalized.name,
+        description: `Roll ${normalized.drawFormula ?? "3d6"} for a monster drive. A blank result adds no drive.`,
+        results,
+        formula: normalized.drawFormula ?? "3d6",
+        flags: {
+            [SOURCE_FLAG_SCOPE]: {
+                sourceKey: String(table?.id ?? table?.name ?? "").trim(),
+                folderHint: normalized.folder ?? null,
+                sourceData: normalized,
+                drawFormula: normalized.drawFormula ?? "3d6"
+            }
+        }
+    });
+}
+
 async function buildRollTablesPack() {
     const boostTables = loadJson(path.join(TEMPLATES_DIR, "boost-roll-tables.json"));
     const ritualStepTables = loadJson(path.join(TEMPLATES_DIR, "ritual-step-roll-tables.json"));
     const failureTables = loadJson(path.join(TEMPLATES_DIR, "spell-failure-roll-tables.json"));
     const supportTables = loadJson(path.join(TEMPLATES_DIR, "spell-support-roll-tables.json"));
+    const driveTables = loadJson(path.join(TEMPLATES_DIR, "drive-roll-tables.json"));
     const pacts = loadJson(path.join(TEMPLATES_DIR, "pacts.json"));
 
     const docs = [
@@ -1055,6 +1078,7 @@ async function buildRollTablesPack() {
         ...ritualStepTables.map(buildRitualStepRollTableDoc),
         ...failureTables.map(buildSpellFailureRollTableDoc),
         ...supportTables.map(buildSpellSupportRollTableDoc),
+        ...driveTables.map(buildDriveRollTableDoc),
         ...pacts.map(buildPactRollTableDoc).filter(Boolean)
     ];
     await compilePackFromDocs("roll-tables", docs);

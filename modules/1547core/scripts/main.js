@@ -142,6 +142,11 @@ Hooks.once("init", () => {
         (module) => module.registerRollTableResolutionService()
     );
     void runImportedModuleStep(
+        "registerDriveRollResolutionService",
+        () => import("./services/drive-roll-resolution-service.js"),
+        (module) => module.registerDriveRollResolutionService()
+    );
+    void runImportedModuleStep(
         "registerRitualGenerationService",
         () => import("./services/ritual-generation-service.js"),
         (module) => module.registerRitualGenerationService()

@@ -68,6 +68,8 @@ export function buildChangeProps(change) {
         ItemGrantMode: change.itemGrantMode ?? "Direct",
         ItemGrantRef: change.itemGrantRef ?? [],
         ItemGrantRollTable: change.itemGrantRollTable ?? "",
+        DriveRollTable: change.driveRollTable ?? "",
+        DriveCategory: change.driveCategory ?? "",
         TagName: change.tagName ?? "",
         TraitName: change.traitName ?? "",
         TraitDescription: change.traitDescription ?? "",
