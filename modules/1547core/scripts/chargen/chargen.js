@@ -1,5 +1,6 @@
 import { MODULE_ID, ACTOR_TEMPLATE_ID } from "../lib/constants.mjs";
 import { renderDriveHintHtml, getDriveHintData } from "./drive-prompts.js";
+import { getDrives, addDrive, removeDriveAt } from "../services/drive-store.mjs";
 import { PRIMARY_STATS, statSteps, statFromSteps } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
 import { getDefaultMaxHitPointsFromProps } from "../services/primary-stats.js";
 import { getStatTooltip } from "../hud/stat-info.js";
@@ -2188,10 +2189,7 @@ export class SkillTreeChargenApp extends FormApplication {
     }
 
     _getDriveLinesFromActor() {
-        const raw = String(this.actor.system?.props?.Drives ?? "").trim();
-        return raw
-            ? raw.split("\n").map(line => line.trim()).filter(Boolean)
-            : [];
+        return getDrives(this.actor);
     }
 
     _buildSimulationOutcome(run) {
@@ -4080,21 +4078,14 @@ export class SkillTreeChargenApp extends FormApplication {
             advanceStat,
             promptAddDrive: async (actor, category) => {
                 if (this._simulationEnabled()) {
-                    const line = `[${category}] ${this._generateSimulationDriveText(category)}`;
-                    const existing = String(actor.system?.props?.Drives ?? "").trim();
-                    const updated = existing ? `${existing}\n${line}` : line;
-                    await actor.update({ "system.props.Drives": updated });
+                    await addDrive(actor, `[${category}] ${this._generateSimulationDriveText(category)}`);
                     return true;
                 }
                 return await this._inlinePromptAddDrive(actor, category);
             },
             promptRemoveDrive: async (actor) => {
                 if (this._simulationEnabled()) {
-                    const lines = this._getDriveLinesFromActor();
-                    if (!lines.length) return false;
-                    const updated = lines.slice(1).join("\n");
-                    await actor.update({ "system.props.Drives": updated });
-                    return true;
+                    return await removeDriveAt(actor, 0);
                 }
                 return await this._inlinePromptRemoveDrive(actor);
             }
@@ -4120,16 +4111,12 @@ export class SkillTreeChargenApp extends FormApplication {
             cancelValue: null,
         });
         if (!text) return false;
-        const line = `[${category}] ${text}`;
-        const existing = String(actor.system?.props?.Drives ?? "").trim();
-        const updated = existing ? `${existing}\n${line}` : line;
-        await actor.update({ "system.props.Drives": updated });
+        await addDrive(actor, `[${category}] ${text}`);
         return true;
     }
 
     async _inlinePromptRemoveDrive(actor) {
-        const raw = String(actor.system?.props?.Drives ?? "").trim();
-        const lines = raw ? raw.split("\n").map(s => s.trim()).filter(Boolean) : [];
+        const lines = getDrives(actor);
         if (!lines.length) return false;
 
         const picked = await this._inlinePrompt({
@@ -4148,11 +4135,7 @@ export class SkillTreeChargenApp extends FormApplication {
             cancelValue: null,
         });
         if (picked == null) return false;
-        const idx = Number(picked);
-        if (!Number.isInteger(idx) || idx < 0 || idx >= lines.length) return false;
-        const updated = lines.filter((_, i) => i !== idx).join("\n");
-        await actor.update({ "system.props.Drives": updated });
-        return true;
+        return await removeDriveAt(actor, Number(picked));
     }
 
     async _rollLuckTable(run) {

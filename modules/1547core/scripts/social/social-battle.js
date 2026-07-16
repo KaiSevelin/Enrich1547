@@ -15,7 +15,7 @@
  *
  * Reuses the game's own pieces: stats off the actor (Stats_<Name>Dice / _Mod);
  * skills roll as base-stat dice + the skill's level dice-shift (mirrors the HUD);
- * a lost battle grants a Drive/Mood via the chargen model (system.props.Drives).
+ * a lost battle grants a Drive/Mood via the chargen model (the DriveTable, through drive-store).
  *
  * Launch: a GM-only Scene Controls tool (token group). See Social Battle Light.
  */
@@ -24,6 +24,7 @@ import { MODULE_ID, SOURCE_FLAG_SCOPE } from "../lib/constants.mjs";
 import { statDice, statMod, escapeHtml } from "../lib/foundry-utils.mjs";
 import { numProp, skillDiceShift, marksFromExchange, socialPoolFormula } from "./social-math.mjs";
 import { promptAddDrive } from "../chargen/drive-prompts.js";
+import { getDrives, addDrive, removeDrivesWhere } from "../services/drive-store.mjs";
 import {
     buildAlarmContext, defaultAlarm, ALARM_MAX_LEVEL,
     buildVisibilityOptions, normalizeVisibility, VISIBILITY_HIDDEN, VISIBILITY_ALL
@@ -38,7 +39,6 @@ const MIN_MARKS = 1;
 const MAX_MARKS = 24;
 const EVENT_STATE_COUNT = 3;       // none → red(1) → amber(2) → none
 
-const DRIVE_PROP = "system.props.Drives";
 const SOCIAL_DRIVE_CATEGORY = "Social Battle";
 
 // Read-only player mirrors, keyed by battle id, kept in sync over the socket.
@@ -65,7 +65,7 @@ function actorSkills(actor) {
         .sort((a, b) => a.name.localeCompare(b.name));
 }
 function drivesTooltip(actor) {
-    const lines = String(actorProps(actor).Drives ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
+    const lines = getDrives(actor);
     return lines.length ? `Drives:\n${lines.join("\n")}` : "No drives.";
 }
 /* ---------------------------------------- */
@@ -128,9 +128,7 @@ function grantMood(actor) {
                     callback: async (html) => {
                         const text = String(html.find("[name=mood]").val() ?? "").trim();
                         if (!text) return finish(false);
-                        const existing = String(actorProps(actor).Drives ?? "").trim();
-                        const line = `[Mood] ${text}`;
-                        await actor.update({ [DRIVE_PROP]: existing ? `${existing}\n${line}` : line });
+                        await addDrive(actor, `[Mood] ${text}`);
                         finish(true);
                     }
                 },
@@ -531,11 +529,7 @@ export async function startSocialBattle() {
 export async function clearMoods(actorOrToken) {
     const actor = actorOrToken?.actor ?? actorOrToken;
     if (!actor) return 0;
-    const lines = String(actorProps(actor).Drives ?? "").split("\n");
-    const kept = lines.filter((l) => !/^\s*\[Mood\]/i.test(l));
-    if (kept.length === lines.length) return 0;
-    await actor.update({ [DRIVE_PROP]: kept.join("\n") });
-    return lines.length - kept.length;
+    return await removeDrivesWhere(actor, (l) => /^\s*\[Mood\]/i.test(l));
 }
 
 // Players receive the GM's reveal/update/hide messages and mirror the board

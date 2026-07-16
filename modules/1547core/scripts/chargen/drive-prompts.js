@@ -1,3 +1,5 @@
+import { getDrives, addDrive, removeDriveAt } from "../services/drive-store.mjs";
+
 const DRIVE_HINTS = {
     Adaptability: {
         prompt: "What flexibility or refusal to be trapped now defines you?",
@@ -907,14 +909,7 @@ export async function promptAddDrive(actor, category) {
                         const text = html.find("#drive-text").val()?.trim();
                         if (!text) return finish(false);
 
-                        const line = `[${category}] ${text}`;
-
-                        const props = actor.system?.props ?? {};
-                        const existing = String(props.Drives ?? "").trim();
-
-                        const updated = existing ? `${existing}\n${line}` : line;
-
-                        await actor.update({ "system.props.Drives": updated });
+                        await addDrive(actor, `[${category}] ${text}`);
                         finish(true);
                     }
                 },
@@ -931,11 +926,7 @@ export async function promptAddDrive(actor, category) {
 
 
 export async function promptRemoveDrive(actor) {
-    const props = actor.system?.props ?? {};
-    const raw = String(props.Drives ?? "").trim();
-    if (!raw) return false;
-
-    const lines = raw.split("\n").map(s => s.trim()).filter(Boolean);
+    const lines = getDrives(actor);
     if (lines.length === 0) return false;
 
     return new Promise(resolve => {
@@ -975,11 +966,7 @@ export async function promptRemoveDrive(actor) {
                         const idxStr = html.find("input[name=drive]:checked").val();
                         if (idxStr === undefined) return finish(false);
 
-                        const idx = Number(idxStr);
-                        const updatedLines = lines.filter((_, i) => i !== idx);
-                        const updated = updatedLines.join("\n");
-
-                        await actor.update({ "system.props.Drives": updated });
+                        await removeDriveAt(actor, Number(idxStr));
                         finish(true);
                     }
                 },
