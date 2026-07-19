@@ -393,6 +393,19 @@ class MonsterWizard extends Application {
                 console.warn(`${MODULE_ID} | monster wizard: ChangeSet resync failed`, err);
             }
 
+            // Portrait: with Type + Role + Domain now attached, resolve the
+            // registry image (e.g. Beast:Wolf → beast-wolf.webp) and stamp it
+            // on the actor + prototype token, which otherwise stay mystery-man.
+            try {
+                const applyImage = game.modules.get(MODULE_ID)?.api?.imageResolver?.applyResolvedMonsterImage;
+                if (typeof applyImage === "function") {
+                    const applied = await applyImage(actor);
+                    if (applied) console.log(`${MODULE_ID} | monster wizard: portrait resolved to ${applied}`);
+                }
+            } catch (err) {
+                console.warn(`${MODULE_ID} | monster wizard: portrait resolution failed`, err);
+            }
+
             this.state.actorId = actor.id;
             ui.notifications.info(`1547 Core: created ${actor.name} with ${itemDataArr.length} ChangeSet(s). Roll boosts or click Done.`);
 

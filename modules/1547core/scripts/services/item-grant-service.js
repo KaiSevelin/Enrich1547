@@ -26,6 +26,26 @@ const CHANGE_CONTAINER_KEY = "ChangeDisplayer";
 const FLAG_KEY = "grantedBy";
 const RECONCILE_GUARD = "_1547core_reconciling";
 
+// Per-actor promise chains. Reconciles are triggered fire-and-forget from
+// create/update/delete hooks, so a wizard build (a dozen Changes landing in
+// under a second) fires that many overlapping reconciles. Each concurrent run
+// diffs against a snapshot that excludes its siblings' in-flight creates,
+// concludes the granted items are missing, and creates the whole set again —
+// an actor ends up with 10+ copies of every granted weapon. Chaining runs
+// per actor makes each one see the previous run's writes.
+const reconcileChains = new Map();
+
+function enqueuePerActor(key, task) {
+    const tail = reconcileChains.get(key) ?? Promise.resolve();
+    const run = tail.then(task, task);
+    const tracked = run.catch(() => {});
+    reconcileChains.set(key, tracked);
+    tracked.then(() => {
+        if (reconcileChains.get(key) === tracked) reconcileChains.delete(key);
+    });
+    return run;
+}
+
 function isChangeSet(item) {
     return item?.system?.template === CHANGESET_TEMPLATE_ID;
 }
@@ -86,14 +106,24 @@ export function computeGrantedItemReconciliation(actor, resolveSource) {
         }
     }
 
+    // First copy per grantKey wins; surplus copies (left behind by historical
+    // reconcile races) are deleted. Without this a duplicated grant is
+    // invisible to the diff — its key matches a target, so it never churns
+    // but never heals either.
     const existingGranted = new Map();
+    const duplicateGrantedIds = [];
     for (const item of items) {
         const grantedBy = readGrantedByFlag(item);
         if (!grantedBy?.changeSetId || !grantedBy?.changeId) continue;
-        existingGranted.set(grantKey(grantedBy.changeSetId, grantedBy.changeId, grantedBy.sourceItemId), item);
+        const key = grantKey(grantedBy.changeSetId, grantedBy.changeId, grantedBy.sourceItemId);
+        if (existingGranted.has(key)) {
+            duplicateGrantedIds.push(item.id);
+            continue;
+        }
+        existingGranted.set(key, item);
     }
 
-    const toDelete = [];
+    const toDelete = [...duplicateGrantedIds];
     for (const [key, item] of existingGranted) {
         if (!targetGrants.has(key)) toDelete.push(item.id);
     }
@@ -169,7 +199,8 @@ function defaultResolveSource(id, actor) {
 
 /**
  * Reconcile granted items on an actor. GM-only; no-op for non-GMs and for
- * `_template` actors.
+ * `_template` actors. Runs are serialized per actor — concurrent calls queue
+ * behind the in-flight one and diff against its committed writes.
  */
 export async function reconcileGrantedItems(actor, { resolveSource } = {}) {
     if (!actor || actor.documentName !== "Actor") return;
@@ -180,6 +211,11 @@ export async function reconcileGrantedItems(actor, { resolveSource } = {}) {
     if (!resolveSource) resolveSource = (id) => defaultResolveSource(id, actor);
     if (!globalThis.game?.user?.isGM) return;
 
+    const queueKey = actor.uuid ?? actor.id ?? actor;
+    return enqueuePerActor(queueKey, () => reconcileGrantedItemsNow(actor, resolveSource));
+}
+
+async function reconcileGrantedItemsNow(actor, resolveSource) {
     const { toCreate, toDelete, unresolved } = computeGrantedItemReconciliation(actor, resolveSource);
 
     if (unresolved?.length) {

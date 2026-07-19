@@ -7,21 +7,24 @@ cover. **Reset to a clean state (unchecked, no carried-over notes) each release.
 _Current target: 1547core 0.3.117._
 
 ## Setup
-- [ ] Update to the current **1547core** build, reload the world (GM).
-- [ ] Run **Game Settings -> 1547 Core -> Setup Data**.
-- [ ] Keep the browser console (F12) open — "no `1547core | ... failed` / no red errors" is an implicit pass condition for every step.
+
+- [x] Update to the current **1547core** build, reload the world (GM).
+- [x] Run **Game Settings -> 1547 Core -> Setup Data**.
+- [x] Keep the browser console (F12) open — "no `1547core | ... failed` / no red errors" is an implicit pass condition for every step.
 
 ---
 
 ## 1. Load & Setup Data
-- [ ] World loads with no `1547core | ... failed` errors; exactly **one** `CHARGEN.JS LOADED FROM ...` line.
-- [ ] Setup Data reports counts and finishes without uncaught errors.
-- [ ] No `No Base ChangeSet found for type "..."` warnings for **any** wired type — including the renamed **Spirit** (was NatureSpirit). **Regression.**
-- [ ] **Monster bases are compendium-only (Regression):** Setup Data does **not** create monster base actors in the world (only the **Actor Template**); re-running it **removes** previously-seeded world bases (user/wizard monsters in the Monsters folder are kept). The bases are in the **`1547core.monsters` compendium**; importing one (or setting a monster's type) auto-applies the **Base**-group ChangeSet + derived stats.
+
+- [x] World loads with no `1547core | ... failed` errors; exactly **one** `CHARGEN.JS LOADED FROM ...` line.
+- [x] Setup Data reports counts and finishes without uncaught errors.
+- [x] No `No Base ChangeSet found for type "..."` warnings for **any** wired type — including the renamed **Spirit** (was NatureSpirit). **Regression.**
+- [x] **Monster bases are compendium-only (Regression):** Setup Data does **not** create monster base actors in the world (only the **Actor Template**); re-running it **removes** previously-seeded world bases (user/wizard monsters in the Monsters folder are kept). The bases are in the **`1547core.monsters` compendium**; importing one (or setting a monster's type) auto-applies the **Base**-group ChangeSet + derived stats.
 
 ---
 
 ## 2. Item sheet actions
+
 - [ ] **Spell** / **Supernatural Mark** / **Monster Magic** sheets -> **no** Actions panel / Resolve Effects button.
 - [ ] Right-click a **spell** -> **Generate Ritual** works; right-click a **ritual** -> **Open Ritual Board** works.
 - [ ] Actor-owned **Disease/affliction** -> **Treat** opens the cure board.
@@ -29,6 +32,7 @@ _Current target: 1547core 0.3.117._
 ---
 
 ## 3. Character generation — **Regression** (inline prompts in the flipped bio panel; no dialogs)
+
 - [ ] Run a full chargen start->finish; cards roll, choices apply, biography fills in.
 - [ ] **Inline prompts flip the biography panel** (card-style rotation) to show the prompt — **no separate Dialog window** opens; the bio flips back after continuing.
 - [ ] Inputs are **radios** (career picks, language award/upgrade, optional transition) or a **text box pre-filled** with a suggestion (drive / new language). There are **no confirm/cancel buttons**.
@@ -53,6 +57,7 @@ _Current target: 1547core 0.3.117._
 ---
 
 ## 4. Actor sheets & monster wizard
+
 - [ ] **Composition gating:** a **player character** sheet shows **no** Composition panel; a **typed monster** sheet **does**. _(Requires Setup Data.)_
 - [ ] **Monster wizard:** creates a **real monster** (`character` actor in a **Monsters** folder — created if absent), **not** a `_template`, with its Base chassis auto-applied.
 - [ ] **Spirit type (Regression — renamed from NatureSpirit):** the monster wizard lists **Spirit**; creating one applies the **Spirit Base** chassis; the actor sheet's **Actor Type** dropdown offers **Spirit**.
@@ -60,6 +65,7 @@ _Current target: 1547core 0.3.117._
 ---
 
 ## 4b. Side assignment & side initiative — **Regression**
+
 - [ ] **Co-op (players + at least one NPC):** two+ players start a combat with a monster present → **all players share one side**; hostile NPCs oppose them. Players are NOT split against each other.
 - [ ] **Duel (players only, no NPCs):** two players start a combat with no NPC → they land on **different sides** (Team 1 vs Team 2). 3+ players-only → alternate across the two teams.
 - [ ] **Split shows on add (Regression):** in a players-only combat, the two players appear on **different teams as soon as the second is added** to the tracker — not only after Begin Combat. Holds even for **GM-owned player characters** (PC type), which must not both land on Team 2.
@@ -71,6 +77,7 @@ _Current target: 1547core 0.3.117._
 ---
 
 ## 5. Combat HUD
+
 - [ ] Token select -> HUD renders; hover/target/rotate mid-combat -> no console errors; buttons stay clickable.
 - [ ] **Criticals filter (Regression):** the maneuver **Filter -> Criticals** now lists the actor's **critical (post) maneuvers** (e.g. Disarm, Throw, Lock); affordable ones show directly, the rest under **View all**.
 - [ ] **Maneuver filter default (Regression):** the filter auto-selects **Reactions** when a reaction window is open, **Criticals** when the actor has critical points, **Preparations** while in combat, and **All** out of combat — and a manual pick sticks until the context next changes.
@@ -80,6 +87,7 @@ _Current target: 1547core 0.3.117._
 ---
 
 ## 6. Reactions & monster stats
+
 - [ ] Overwatch/free counterattack does **not** pop a fresh reaction window against the original attacker.
 - [ ] A movement reaction nobody is prompted for does **not** silently consume that reactor's movement reaction.
 - [ ] **One reaction per round (Regression):** after a token **uses** a reaction (movement OR attack), it gets **no further reaction window** that round — neither a later attack against it nor another opponent's movement prompts it again.
@@ -102,11 +110,13 @@ _Current target: 1547core 0.3.117._
 ---
 
 ## 7. Cross-client (second client)
+
 - [ ] GM edits a **ChangeSet** on an actor a **player** has open -> the player's derived values update **without** reload.
 
 ---
 
 ## Known issues (expected — not test failures)
+
 - **CharacterSheetV2 close error** — closing some actor sheets throws `You must provide an _id for every object in the update data Array` (a CSB dynamic-table form-submit issue, seen with the corrupt/duplicate Zone Base). **Open — under investigation.**
 - **Duplicate "Zone Base"** in an existing world is a stale orphan (earlier seed, different `_id`); source/packs have one. Setup does not prune orphaned actors — delete the orphan manually (keep id `MonBaseZone0001`).
 - **move-remaining** stat on monsters is the per-turn movement budget on the shared actor template — intentional.
@@ -114,6 +124,7 @@ _Current target: 1547core 0.3.117._
 ---
 
 ## Pass criteria
+
 - [ ] Every checked item behaves as described.
 - [ ] Console clean of `1547core` errors throughout.
 

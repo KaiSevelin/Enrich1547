@@ -20,8 +20,9 @@ import assert from "assert";
 
 if (typeof globalThis.game === "undefined") globalThis.game = { modules: { get: () => ({ api: {} }) } };
 if (typeof globalThis.Hooks === "undefined") globalThis.Hooks = { on: () => {}, off: () => {} };
+globalThis.game.user = globalThis.game.user ?? { isGM: true };
 
-const { computeGrantedItemReconciliation } = await import("../services/item-grant-service.js");
+const { computeGrantedItemReconciliation, reconcileGrantedItems } = await import("../services/item-grant-service.js");
 
 const CHANGESET_ID = "b7A1z6cSZO4dYTKT";
 const CHANGE_ID = "WsrkfjBmudnIhvEK";
@@ -338,6 +339,102 @@ console.log("computeGrantedItemReconciliation...");
     assert.strictEqual(toCreate.length, 1);
     assert.strictEqual(toCreate[0].name, "Claws");
     console.log("  ✓ Reads ItemGrantRef from _source when CSB has emptied the prepared prop");
+}
+
+{
+    // Regression (bloated-wolf bug): historical reconcile races left several
+    // copies of the same grant on the actor. Duplicate copies share a valid
+    // grantKey, so the old diff saw them as "target matches existing" and
+    // never removed them. The diff must keep the first copy and delete the rest.
+    const ch = change({ id: "ch-1", itemRef: "source-claws" });
+    const a = actor({
+        items: [
+            changeSet({ id: "cs-1", changeIds: ["ch-1"] }),
+            ch,
+            grantedItem({ id: "claws-keep", changeSetId: "cs-1", changeId: "ch-1", sourceItemId: "source-claws", name: "Claws" }),
+            grantedItem({ id: "claws-dup-1", changeSetId: "cs-1", changeId: "ch-1", sourceItemId: "source-claws", name: "Claws" }),
+            grantedItem({ id: "claws-dup-2", changeSetId: "cs-1", changeId: "ch-1", sourceItemId: "source-claws", name: "Claws" })
+        ]
+    });
+    const { toCreate, toDelete } = computeGrantedItemReconciliation(a, resolve);
+    assert.deepStrictEqual(toCreate, []);
+    assert.deepStrictEqual(toDelete.sort(), ["claws-dup-1", "claws-dup-2"]);
+    console.log("  ✓ Deletes surplus duplicate copies sharing a grantKey, keeps the first");
+}
+
+console.log("\nreconcileGrantedItems (serialization)...");
+
+// A mutable mock actor whose createEmbeddedDocuments actually lands the items
+// (with a delay, to give concurrent reconciles room to interleave).
+function liveActor(initialItems) {
+    const map = new Map(initialItems.map((i) => [i.id, i]));
+    let counter = 0;
+    const createCalls = [];
+    const deleteCalls = [];
+    const a = {
+        documentName: "Actor",
+        type: "character",
+        id: "actor-live",
+        uuid: "Actor.actor-live",
+        items: {
+            get: (id) => map.get(id),
+            filter: (pred) => Array.from(map.values()).filter(pred),
+            [Symbol.iterator]: () => map.values()
+        },
+        async createEmbeddedDocuments(_type, payloads) {
+            createCalls.push(payloads);
+            await new Promise((r) => setTimeout(r, 10));
+            for (const data of payloads) {
+                const id = `created-${++counter}`;
+                map.set(id, { id, name: data.name, flags: data.flags, system: data.system });
+            }
+            return payloads;
+        },
+        async deleteEmbeddedDocuments(_type, ids) {
+            deleteCalls.push(ids);
+            await new Promise((r) => setTimeout(r, 5));
+            for (const id of ids) map.delete(id);
+            return ids;
+        }
+    };
+    return { a, createCalls, deleteCalls };
+}
+
+{
+    // Regression (bloated-wolf bug): concurrent reconciles used to each diff
+    // against a snapshot missing the other's in-flight creates, so every one
+    // of them created the full granted set again. Serialized runs must land
+    // exactly one copy no matter how many triggers fire at once.
+    const { a, createCalls } = liveActor([
+        changeSet({ id: "cs-1", changeIds: ["ch-1"] }),
+        change({ id: "ch-1", itemRef: "source-claws" })
+    ]);
+    await Promise.all([
+        reconcileGrantedItems(a, { resolveSource: resolve }),
+        reconcileGrantedItems(a, { resolveSource: resolve }),
+        reconcileGrantedItems(a, { resolveSource: resolve })
+    ]);
+    assert.strictEqual(createCalls.length, 1, "only the first reconcile may create; the rest must see its writes");
+    const granted = a.items.filter((i) => i.flags?.["1547core"]?.grantedBy);
+    assert.strictEqual(granted.length, 1);
+    assert.strictEqual(granted[0].name, "Claws");
+    console.log("  ✓ Concurrent reconciles are serialized — one create, no duplicates");
+}
+
+{
+    // Runtime self-heal: an actor already carrying duplicate copies loses the
+    // surplus on the next reconcile.
+    const { a, deleteCalls } = liveActor([
+        changeSet({ id: "cs-1", changeIds: ["ch-1"] }),
+        change({ id: "ch-1", itemRef: "source-claws" }),
+        grantedItem({ id: "claws-keep", changeSetId: "cs-1", changeId: "ch-1", sourceItemId: "source-claws", name: "Claws" }),
+        grantedItem({ id: "claws-dup", changeSetId: "cs-1", changeId: "ch-1", sourceItemId: "source-claws", name: "Claws" })
+    ]);
+    await reconcileGrantedItems(a, { resolveSource: resolve });
+    assert.deepStrictEqual(deleteCalls, [["claws-dup"]]);
+    assert.ok(a.items.get("claws-keep"));
+    assert.strictEqual(a.items.get("claws-dup"), undefined);
+    console.log("  ✓ Reconcile deletes pre-existing duplicate copies (self-heal)");
 }
 
 console.log("\nAll item-grant-service tests passed.");

@@ -104,6 +104,33 @@ export function resolveMonsterImage(actor) {
     return DEFAULT_IMAGE;
 }
 
+/**
+ * Resolve the portrait for an actor and write it onto `actor.img` and the
+ * prototype token texture. Conservative: only fields still on the
+ * mystery-man default (or empty) are written, so a portrait the GM set by
+ * hand is never clobbered. Returns the resolved path when anything was
+ * updated, null otherwise.
+ *
+ * Called by the monster wizard right after ChangeSets are attached — that's
+ * the earliest point where Type + Domain + Role are all present for the
+ * registry cascade.
+ */
+export async function applyResolvedMonsterImage(actor) {
+    if (!actor || actor.documentName !== "Actor") return null;
+
+    const resolved = resolveMonsterImage(actor);
+    if (!resolved || resolved === DEFAULT_IMAGE) return null;
+
+    const updates = {};
+    if (!actor.img || actor.img === DEFAULT_IMAGE) updates.img = resolved;
+    const tokenSrc = actor.prototypeToken?.texture?.src;
+    if (!tokenSrc || tokenSrc === DEFAULT_IMAGE) updates["prototypeToken.texture.src"] = resolved;
+    if (!Object.keys(updates).length) return null;
+
+    await actor.update(updates);
+    return resolved;
+}
+
 export function registerMonsterImageResolverService() {
     const moduleApi = game.modules.get(MODULE_ID);
     if (!moduleApi) {
@@ -113,11 +140,13 @@ export function registerMonsterImageResolverService() {
 
     moduleApi.api = moduleApi.api ?? {};
     moduleApi.api.imageResolver = {
-        resolveMonsterImage
+        resolveMonsterImage,
+        applyResolvedMonsterImage
     };
 }
 
 export default {
     registerMonsterImageResolverService,
-    resolveMonsterImage
+    resolveMonsterImage,
+    applyResolvedMonsterImage
 };
