@@ -5,5 +5,85 @@
     "Beast:Wolf": "modules/1547core/art/portraits/beast-wolf.webp",
     "Beast:Wood:Wolf": "modules/1547core/art/portraits/beast-wood-wolf.webp"
   },
-  "registry": {}
+  "registry": {
+    "People": "games/1547/ImageResolver/people.webp",
+    "Beast": "games/1547/ImageResolver/beast.webp",
+    "HiddenFolk": "games/1547/ImageResolver/hidden-folk.webp",
+    "Spirit": "games/1547/ImageResolver/spirit.webp",
+    "Undead": "games/1547/ImageResolver/undead.webp",
+    "TheUnseen": "games/1547/ImageResolver/the-unseen.webp",
+    "Unnatural": "games/1547/ImageResolver/unnatural.webp",
+    "Construct": "games/1547/ImageResolver/construct.webp",
+    "Colossal": "games/1547/ImageResolver/colossal.webp",
+    "Zone": "games/1547/ImageResolver/zone.webp",
+
+    "Beast:Bear": "games/1547/ImageResolver/beast-bear.webp",
+    "Beast:Boar": "games/1547/ImageResolver/beast-boar.webp",
+    "Beast:Wolf": "games/1547/ImageResolver/beast-wolf.webp",
+    "Beast:Cursed": "games/1547/ImageResolver/beast-cursed.webp",
+    "Beast:Wood": "games/1547/ImageResolver/beast-wood.webp",
+
+    "Colossal:Storm": "games/1547/ImageResolver/colossal-storm.webp",
+    "Colossal:Water": "games/1547/ImageResolver/colossal-water.webp",
+
+    "Construct:Golem": "games/1547/ImageResolver/construct-golem.webp",
+    "Construct:Homunculus": "games/1547/ImageResolver/construct-homunculus.webp",
+
+    "HiddenFolk:Average": "games/1547/ImageResolver/hidden-folk-average.webp",
+    "HiddenFolk:Small": "games/1547/ImageResolver/hidden-folk-small.webp",
+    "HiddenFolk:Hearth": "games/1547/ImageResolver/hidden-folk-hearth.webp",
+    "HiddenFolk:Hill": "games/1547/ImageResolver/hidden-folk-hill.webp",
+    "HiddenFolk:Settlement": "games/1547/ImageResolver/hidden-folk-settlement.webp",
+    "HiddenFolk:Underground": "games/1547/ImageResolver/hidden-folk-underground.webp",
+    "HiddenFolk:Water": "games/1547/ImageResolver/hidden-folk-water.webp",
+    "HiddenFolk:Wood": "games/1547/ImageResolver/hidden-folk-wood.webp",
+
+    "People:Bandit": "games/1547/ImageResolver/people-bandit.webp",
+    "People:Commoner": "games/1547/ImageResolver/people-commoner.webp",
+    "People:Knight": "games/1547/ImageResolver/people-knight.webp",
+    "People:Peasant": "games/1547/ImageResolver/people-peasant.webp",
+    "People:Soldier": "games/1547/ImageResolver/people-soldier.webp",
+    "People:Veteran": "games/1547/ImageResolver/people-veteran.webp",
+    "People:Battlefield": "games/1547/ImageResolver/people-battlefield.webp",
+    "People:Settlement": "games/1547/ImageResolver/people-settlement.webp",
+
+    "Spirit:Corrupted": "games/1547/ImageResolver/spirit-corrupted.webp",
+    "Spirit:Pristine": "games/1547/ImageResolver/spirit-pristine.webp",
+    "Spirit:Severed": "games/1547/ImageResolver/spirit-severed.webp",
+    "Spirit:Bog": "games/1547/ImageResolver/spirit-bog.webp",
+    "Spirit:Hill": "games/1547/ImageResolver/spirit-hill.webp",
+    "Spirit:Mountain": "games/1547/ImageResolver/spirit-mountain.webp",
+    "Spirit:Settlement": "games/1547/ImageResolver/spirit-settlement.webp",
+    "Spirit:Stone": "games/1547/ImageResolver/spirit-stone.webp",
+    "Spirit:Water": "games/1547/ImageResolver/spirit-water.webp",
+    "Spirit:Wood": "games/1547/ImageResolver/spirit-wood.webp",
+
+    "TheUnseen:Ancient": "games/1547/ImageResolver/the-unseen-ancient.webp",
+    "TheUnseen:Sidhe": "games/1547/ImageResolver/the-unseen-sidhe.webp",
+    "TheUnseen:Courtly": "games/1547/ImageResolver/the-unseen-courtly.webp",
+    "TheUnseen:Hearth": "games/1547/ImageResolver/the-unseen-hearth.webp",
+    "TheUnseen:Hunt": "games/1547/ImageResolver/the-unseen-hunt.webp",
+    "TheUnseen:Smokeless Fire": "games/1547/ImageResolver/the-unseen-smokeless-fire.webp",
+    "TheUnseen:Water": "games/1547/ImageResolver/the-unseen-water.webp",
+    "TheUnseen:Winter": "games/1547/ImageResolver/the-unseen-winter.webp",
+
+    "Undead:Corpse": "games/1547/ImageResolver/undead-corpse.webp",
+    "Undead:Restless": "games/1547/ImageResolver/undead-restless.webp",
+    "Undead:Spirit": "games/1547/ImageResolver/undead-spirit.webp",
+    "Undead:Battlefield": "games/1547/ImageResolver/undead-battlefield.webp",
+    "Undead:Grave": "games/1547/ImageResolver/undead-grave.webp",
+
+    "Unnatural:Devil": "games/1547/ImageResolver/unnatural-devil.webp",
+    "Unnatural:Major": "games/1547/ImageResolver/unnatural-major.webp",
+    "Unnatural:Minor": "games/1547/ImageResolver/unnatural-minor.webp",
+    "Unnatural:Noble": "games/1547/ImageResolver/unnatural-noble.webp",
+    "Unnatural:Prince": "games/1547/ImageResolver/unnatural-prince.webp",
+    "Unnatural:Angelic": "games/1547/ImageResolver/unnatural-angelic.webp",
+    "Unnatural:Infernal": "games/1547/ImageResolver/unnatural-infernal.webp",
+
+    "Zone:Colossus": "games/1547/ImageResolver/zone-colossus.webp",
+    "Zone:Lurker": "games/1547/ImageResolver/zone-lurker.webp",
+    "Zone:Border Zone": "games/1547/ImageResolver/zone-border-zone.webp",
+    "Zone:Deep Zone": "games/1547/ImageResolver/zone-deep-zone.webp"
+  }
 }
