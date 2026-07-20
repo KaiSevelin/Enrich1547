@@ -47,10 +47,18 @@ The resolver may inspect:
 2. `PortraitKey` (flag or actor prop) looked up in the registry
 3. `Type:Domain:Role` registry lookup
 4. `Type:Role`
-5. `Type:Domain`
-6. `Type`
-7. actor base image `actor.img`
-8. `icons/svg/mystery-man.svg`
+5. `Type:Loadout` — body plan (Winged, Constrictor, Mounted, ...) outranks
+   Domain. Loadout is not a singleton group; each attached Loadout is tried
+   in item order and the first with a registry entry wins.
+6. `Type:Domain`
+7. `Type`
+8. actor base image `actor.img`
+9. `icons/svg/mystery-man.svg`
+
+Deliberately NOT supported (kept simple): combined loadout keys
+(`Quadruped+Winged`), loadout priority tables, and `Type:Role:Loadout` /
+`Type:Domain:Loadout` steps. For one-off composite creatures (a griffin),
+use `PortraitKey` — it beats the whole cascade.
 
 `VisualTheme` remains a future extension.
 

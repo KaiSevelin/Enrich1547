@@ -44,6 +44,7 @@ registry = {
     "Beast": "art/beast.webp",
     "Beast:Wolf": "art/beast-wolf.webp",
     "Beast:Wood": "art/beast-wood.webp",
+    "Beast:Winged": "art/beast-winged.webp",
     "Named:Fenrir": "art/fenrir.webp"
 };
 
@@ -68,6 +69,39 @@ console.log("resolveMonsterImage...");
     const a = actor({ type: "Beast" });
     assert.strictEqual(resolveMonsterImage(a), "art/beast.webp");
     console.log("  ✓ Falls to bare Type");
+}
+
+{
+    // Loadout step: a winged beast with no role art looks winged, and body
+    // plan outranks Domain ("winged" before "of the woods").
+    const a = actor({
+        type: "Beast",
+        items: [changeSet("Wood (Beast)", "Domain"), changeSet("Winged", "Loadout")]
+    });
+    assert.strictEqual(resolveMonsterImage(a), "art/beast-winged.webp");
+    console.log("  ✓ Type:Loadout resolves and outranks Type:Domain");
+}
+
+{
+    // Role still outranks Loadout: a winged WOLF keeps its wolf art.
+    const a = actor({
+        type: "Beast",
+        items: [changeSet("Wolf (Beast)", "Role"), changeSet("Winged", "Loadout")]
+    });
+    assert.strictEqual(resolveMonsterImage(a), "art/beast-wolf.webp");
+    console.log("  ✓ Type:Role still outranks Type:Loadout");
+}
+
+{
+    // Multiple loadouts (griffin case: Quadruped + Winged): the first one
+    // that actually has a registry entry wins — attachment order of art-less
+    // loadouts doesn't matter.
+    const a = actor({
+        type: "Beast",
+        items: [changeSet("Quadruped", "Loadout"), changeSet("Winged", "Loadout")]
+    });
+    assert.strictEqual(resolveMonsterImage(a), "art/beast-winged.webp");
+    console.log("  ✓ Multiple loadouts: first with a registry entry wins");
 }
 
 {

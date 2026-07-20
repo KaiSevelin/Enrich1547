@@ -7,10 +7,11 @@ const DEFAULT_IMAGE = "icons/svg/mystery-man.svg";
  *   2. PortraitKey lookup in registry (per-actor key set in flags or props)
  *   3. Type:Domain:Role composition lookup
  *   4. Type:Role composition lookup
- *   5. Type:Domain composition lookup
- *   6. Type composition lookup
- *   7. actor.img (the Foundry portrait field)
- *   8. mystery-man default
+ *   5. Type:Loadout lookup (first attached Loadout with an entry wins)
+ *   6. Type:Domain composition lookup
+ *   7. Type composition lookup
+ *   8. actor.img (the Foundry portrait field)
+ *   9. mystery-man default
  *
  * Registry source: world setting "1547core.portraitRegistry" — a flat map of
  * colon-delimited keys to image paths, populated by Setup Data from
@@ -38,6 +39,21 @@ function findGroupConcept(actor, groupName) {
         return extractConceptFromName(item.name);
     }
     return null;
+}
+
+// Unlike Role/Domain, Loadout is not a singleton group — an actor can carry
+// several (e.g. Quadruped + Winged). Return every attached concept in item
+// order; the ladder takes the first one that has a registry entry.
+function findGroupConcepts(actor, groupName) {
+    const out = [];
+    for (const item of actor.items ?? []) {
+        if (!isChangeSet(item)) continue;
+        const itemGroup = String(item.system?.props?.Group ?? "").trim();
+        if (itemGroup !== groupName) continue;
+        const concept = extractConceptFromName(item.name);
+        if (concept) out.push(concept);
+    }
+    return out;
 }
 
 function getPortraitRegistry() {
@@ -80,17 +96,34 @@ export function resolveMonsterImage(actor) {
         const domainKey = findGroupConcept(actor, "Domain");
         const roleKey = findGroupConcept(actor, "Role");
 
-        // 3. Type + Domain + Role (most specific)
-        const tdr = lookupRegistry(registry, baseKey, domainKey, roleKey);
-        if (tdr) return tdr;
+        // 3. Type + Domain + Role (most specific). Guarded on both parts —
+        // lookupRegistry drops null segments, so an unguarded call with a
+        // missing Role would collapse into a premature Type:Domain lookup
+        // and jump the queue past Role/Loadout.
+        if (domainKey && roleKey) {
+            const tdr = lookupRegistry(registry, baseKey, domainKey, roleKey);
+            if (tdr) return tdr;
+        }
 
         // 4. Type + Role
-        const tr = lookupRegistry(registry, baseKey, roleKey);
-        if (tr) return tr;
+        if (roleKey) {
+            const tr = lookupRegistry(registry, baseKey, roleKey);
+            if (tr) return tr;
+        }
+
+        // 4b. Type + Loadout — body plan (Winged, Constrictor, Mounted, ...)
+        // outranks Domain: a winged beast should look winged before it looks
+        // "of the woods". First attached loadout with a registry entry wins.
+        for (const loadoutKey of findGroupConcepts(actor, "Loadout")) {
+            const tl = lookupRegistry(registry, baseKey, loadoutKey);
+            if (tl) return tl;
+        }
 
         // 5. Type + Domain
-        const td = lookupRegistry(registry, baseKey, domainKey);
-        if (td) return td;
+        if (domainKey) {
+            const td = lookupRegistry(registry, baseKey, domainKey);
+            if (td) return td;
+        }
 
         // 6. Type only
         const t = lookupRegistry(registry, baseKey);
