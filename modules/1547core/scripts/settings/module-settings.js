@@ -1347,7 +1347,14 @@ function createModuleSetupFormApplicationClass() {
                 this.#loadDataset("changes.json"),
                 this.#loadDataset("requirements.json"),
                 this.#loadDataset("pacts.json"),
-                this.#loadDataset("portrait-registry.json").catch(() => ({ registry: {} })),
+                // NOTE: portrait-registry.json is an OBJECT ({ registry: {...} }),
+                // so it must go through #loadTemplate — #loadDataset rejects
+                // any non-array payload. Log load failures instead of silently
+                // seeding {} (that silence hid a never-worked portrait registry).
+                this.#loadTemplate("portrait-registry.json").catch((err) => {
+                    console.warn(`${MODULE_ID} | portrait-registry.json failed to load — portraits will not resolve`, err);
+                    return { registry: {} };
+                }),
                 this.#loadDataset("supernatural-marks.json").catch(() => []),
                 this.#loadDataset("diseases.json").catch(() => [])
             ]);

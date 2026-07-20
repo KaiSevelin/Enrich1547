@@ -143,4 +143,25 @@ console.log("\napplyResolvedMonsterImage...");
     console.log("  ✓ No-op when the resolver only finds the default");
 }
 
+console.log("\nportrait-registry.json data shape...");
+
+{
+    // Regression: Setup Data seeded an empty registry for months because the
+    // loader it used rejects non-array JSON — and portrait-registry.json is an
+    // object. Pin the shipped file's shape here so the contract stays visible:
+    // an object with a non-empty `registry` map of string keys → string paths.
+    const fs = await import("fs");
+    const url = new URL("../../foundry/Templates/portrait-registry.json", import.meta.url);
+    const file = JSON.parse(fs.readFileSync(url, "utf8"));
+    assert.ok(!Array.isArray(file), "file is an object, not an array (must load via #loadTemplate)");
+    assert.ok(file.registry && typeof file.registry === "object", "has a registry map");
+    const entries = Object.entries(file.registry);
+    assert.ok(entries.length > 0, "registry is not empty");
+    for (const [key, value] of entries) {
+        assert.ok(typeof value === "string" && value.length > 0, `registry["${key}"] is a non-empty string path`);
+    }
+    assert.ok(file.registry["Beast:Wolf"], "Beast:Wolf entry exists (the wizard-wolf case)");
+    console.log(`  ✓ Shipped registry parses: ${entries.length} entries, object shape`);
+}
+
 console.log("\nAll monster-image-resolver tests passed.");
