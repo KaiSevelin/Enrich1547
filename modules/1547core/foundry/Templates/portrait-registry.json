@@ -5,8 +5,7 @@
         "Beast:Wolf": "modules/1547core/art/portraits/beast-wolf.webp",
         "Beast:Wood:Wolf": "modules/1547core/art/portraits/beast-wood-wolf.webp"
     },
-    "_planned_comment": "Keys waiting on art. Move a line into `registry` once its file is uploaded (an entry pointing at a missing file shows a broken image, not the fallback), then re-run Setup Data. Type:Loadout keys resolve after Type:Role and before Type:Domain.",
-    "_planned": {
+    "registry": {
         "Beast:Winged": "media/home/games/1547/ImageResolver/beast-winged.webp",
         "Beast:Constrictor": "media/home/games/1547/ImageResolver/beast-constrictor.webp",
         "People:Mounted": "media/home/games/1547/ImageResolver/people-mounted.webp",
@@ -15,11 +14,8 @@
         "Beast:Cursed:Wolf": "media/home/games/1547/ImageResolver/beast-cursed-wolf.webp",
         "Beast:Cursed:Bear": "media/home/games/1547/ImageResolver/beast-cursed-bear.webp",
         "Beast:Cursed:Boar": "media/home/games/1547/ImageResolver/beast-cursed-boar.webp",
-        "Undead:Battlefield:Corpse": "media/home/games/1547/ImageResolver/undead-battlefield-corpse.webp",
         "Undead:Grave:Spirit": "media/home/games/1547/ImageResolver/undead-grave-spirit.webp",
-        "TheUnseen:Winter:Sidhe": "media/home/games/1547/ImageResolver/the-unseen-winter-sidhe.webp"
-    },
-    "registry": {
+        "TheUnseen:Winter:Sidhe": "media/home/games/1547/ImageResolver/the-unseen-winter-sidhe.webp",
         "People": "media/home/games/1547/ImageResolver/people.webp",
         "Beast": "media/home/games/1547/ImageResolver/beast.webp",
         "HiddenFolk": "media/home/games/1547/ImageResolver/hidden-folk.webp",

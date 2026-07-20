@@ -1,5 +1,5 @@
-2026/07/20-16:53:12.880 b3dc Delete type=3 #1
-2026/07/20-16:53:12.883 2d0c Level-0 table #5: started
-2026/07/20-16:53:12.884 2d0c Level-0 table #5: 32118 bytes OK
-2026/07/20-16:53:12.885 2d0c Delete type=0 #3
-2026/07/20-16:53:12.886 2d0c Manual compaction at level-0 from '!items!PcBldPact0000001' @ 72057594037927935 : 1 .. '!items!PcSupOath0000001' @ 0 : 0; will stop at (end)
+2026/07/20-21:26:10.380 4fa8 Delete type=3 #1
+2026/07/20-21:26:10.382 aba0 Level-0 table #5: started
+2026/07/20-21:26:10.384 aba0 Level-0 table #5: 32118 bytes OK
+2026/07/20-21:26:10.385 aba0 Delete type=0 #3
+2026/07/20-21:26:10.385 aba0 Manual compaction at level-0 from '!items!PcBldPact0000001' @ 72057594037927935 : 1 .. '!items!PcSupOath0000001' @ 0 : 0; will stop at (end)
