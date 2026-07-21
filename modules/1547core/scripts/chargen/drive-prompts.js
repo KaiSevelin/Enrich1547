@@ -1,4 +1,4 @@
-import { getDrives, addDrive, removeDriveAt } from "../services/drive-store.mjs";
+import { getDrives, addDriveCapped, removeDriveAt } from "../services/drive-store.mjs";
 
 const DRIVE_HINTS = {
     Adaptability: {
@@ -909,7 +909,10 @@ export async function promptAddDrive(actor, category) {
                         const text = html.find("#drive-text").val()?.trim();
                         if (!text) return finish(false);
 
-                        await addDrive(actor, `[${category}] ${text}`);
+                        const { removed } = await addDriveCapped(actor, `[${category}] ${text}`);
+                        for (const line of removed) {
+                            ui.notifications?.info(`1547 Core: drive limit reached — "${line}" was forgotten to make room.`);
+                        }
                         finish(true);
                     }
                 },

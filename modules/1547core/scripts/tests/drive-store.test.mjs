@@ -8,7 +8,7 @@ import assert from "assert";
  * legacy newline `Drives` string is read as a fallback and cleared on write.
  */
 
-const { getDrives, buildSetDrivesUpdate, addDrive, removeDriveAt, removeDrivesWhere } =
+const { getDrives, buildSetDrivesUpdate, addDrive, addDriveCapped, removeDriveAt, removeDrivesWhere, CHARGEN_DRIVE_CAP } =
     await import("../services/drive-store.mjs");
 
 function actorWith(props) {
@@ -111,5 +111,53 @@ assert.strictEqual(await addDrive(captureActor().actor, "   "), false);
     console.log("  ✓ removeDrivesWhere strips matching lines (e.g. Moods) and returns the count");
 }
 assert.strictEqual(await removeDrivesWhere(captureActor({ DriveTable: { "0": { DriveText: "keep" } } }).actor, () => false), 0);
+
+console.log("drive-store: addDriveCapped...");
+
+{
+    assert.strictEqual(CHARGEN_DRIVE_CAP, 3);
+    const { actor, calls } = captureActor({ DriveTable: { "0": { DriveText: "a" }, "1": { DriveText: "b" } } });
+    const { added, removed } = await addDriveCapped(actor, "c");
+    assert.strictEqual(added, true);
+    assert.deepStrictEqual(removed, []);
+    const live = Object.entries(calls[0]["system.props.DriveTable"]).filter(([, r]) => !r.$deleted).map(([, r]) => r.DriveText);
+    assert.deepStrictEqual(live, ["a", "b", "c"]);
+    console.log("  ✓ Under the cap appends normally");
+}
+
+{
+    // At the cap: the randomly-picked OLD line goes; the new line survives.
+    const { actor, calls } = captureActor({ DriveTable: {
+        "0": { DriveText: "a" }, "1": { DriveText: "b" }, "2": { DriveText: "c" }
+    } });
+    const { added, removed } = await addDriveCapped(actor, "d", { random: () => 0.5 }); // picks index 1 of 3
+    assert.strictEqual(added, true);
+    assert.deepStrictEqual(removed, ["b"]);
+    const live = Object.entries(calls[0]["system.props.DriveTable"]).filter(([, r]) => !r.$deleted).map(([, r]) => r.DriveText);
+    assert.deepStrictEqual(live, ["a", "c", "d"]);
+    console.log("  ✓ Fourth drive evicts one random old line; the new one stays");
+}
+
+{
+    // Over-full table (legacy data): removes as many old lines as needed.
+    const { actor, calls } = captureActor({ DriveTable: {
+        "0": { DriveText: "a" }, "1": { DriveText: "b" }, "2": { DriveText: "c" },
+        "3": { DriveText: "d" }, "4": { DriveText: "e" }
+    } });
+    const { removed } = await addDriveCapped(actor, "f", { random: () => 0 }); // always evicts the head
+    assert.deepStrictEqual(removed, ["a", "b", "c"]);
+    const live = Object.entries(calls[0]["system.props.DriveTable"]).filter(([, r]) => !r.$deleted).map(([, r]) => r.DriveText);
+    assert.deepStrictEqual(live, ["d", "e", "f"]);
+    console.log("  ✓ Over-full legacy list shrinks to the cap");
+}
+
+{
+    const { actor, calls } = captureActor({});
+    const { added, removed } = await addDriveCapped(actor, "   ");
+    assert.strictEqual(added, false);
+    assert.deepStrictEqual(removed, []);
+    assert.strictEqual(calls.length, 0);
+    console.log("  ✓ Blank input → no write");
+}
 
 console.log("\nAll drive-store tests passed.");

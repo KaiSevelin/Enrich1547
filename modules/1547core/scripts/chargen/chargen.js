@@ -1,6 +1,6 @@
 import { MODULE_ID, ACTOR_TEMPLATE_ID } from "../lib/constants.mjs";
 import { renderDriveHintHtml, getDriveHintData } from "./drive-prompts.js";
-import { getDrives, addDrive, removeDriveAt } from "../services/drive-store.mjs";
+import { getDrives, addDriveCapped, removeDriveAt } from "../services/drive-store.mjs";
 import { PRIMARY_STATS, statSteps, statFromSteps } from "../../foundry/Templates/chargen/foundry-primary-stats/stats.js";
 import { getDefaultMaxHitPointsFromProps } from "../services/primary-stats.js";
 import { getStatTooltip } from "../hud/stat-info.js";
@@ -4078,7 +4078,7 @@ export class SkillTreeChargenApp extends FormApplication {
             advanceStat,
             promptAddDrive: async (actor, category) => {
                 if (this._simulationEnabled()) {
-                    await addDrive(actor, `[${category}] ${this._generateSimulationDriveText(category)}`);
+                    await addDriveCapped(actor, `[${category}] ${this._generateSimulationDriveText(category)}`);
                     return true;
                 }
                 return await this._inlinePromptAddDrive(actor, category);
@@ -4111,7 +4111,10 @@ export class SkillTreeChargenApp extends FormApplication {
             cancelValue: null,
         });
         if (!text) return false;
-        await addDrive(actor, `[${category}] ${text}`);
+        const { removed } = await addDriveCapped(actor, `[${category}] ${text}`);
+        for (const line of removed) {
+            ui.notifications?.info(`1547 Core: drive limit reached — "${line}" was forgotten to make room.`);
+        }
         return true;
     }
 

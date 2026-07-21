@@ -122,6 +122,11 @@ Hooks.once("init", () => {
         (module) => module.registerEquippedEffectsService()
     );
     void runImportedModuleStep(
+        "registerEncumbranceService",
+        () => import("./services/encumbrance-service.js"),
+        (module) => module.registerEncumbranceService()
+    );
+    void runImportedModuleStep(
         "registerBaseAutoApply",
         () => import("./services/base-autoapply-service.js"),
         (module) => module.registerBaseAutoApply()

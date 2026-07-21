@@ -79,6 +79,32 @@ export async function addDrive(actor, line) {
     return true;
 }
 
+/** Maximum drives a chargen character carries. */
+export const CHARGEN_DRIVE_CAP = 3;
+
+/**
+ * Append one drive line under a cap: when the append would exceed `max`,
+ * randomly-chosen OLD lines are removed until the list fits — the new line
+ * always survives. Returns { added, removed } where `removed` lists the
+ * lines that were dropped (empty when the cap wasn't hit).
+ *
+ * `random` is injectable for tests (defaults to Math.random).
+ */
+export async function addDriveCapped(actor, line, { max = CHARGEN_DRIVE_CAP, random = Math.random } = {}) {
+    const clean = String(line ?? "").trim();
+    if (!clean) return { added: false, removed: [] };
+    const old = getDrives(actor);
+    const removed = [];
+    const kept = [...old];
+    while (kept.length + 1 > max && kept.length > 0) {
+        const idx = Math.floor(random() * kept.length);
+        removed.push(kept[idx]);
+        kept.splice(idx, 1);
+    }
+    await setDrives(actor, [...kept, clean]);
+    return { added: true, removed };
+}
+
 /** Remove the drive at `index`. Returns false if out of range. */
 export async function removeDriveAt(actor, index) {
     const lines = getDrives(actor);
